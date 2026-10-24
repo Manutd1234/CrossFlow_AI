@@ -11,16 +11,19 @@ function respond(value: unknown): void {
 function freshObservation(score: number, at: number): CorridorObservedTraffic {
   const observedAt = new Date(at - 5_000).toISOString();
   const freshUntil = new Date(at + 60_000).toISOString();
+  const pressure = Number(Math.min(100, score * 2.5).toFixed(1));
   return {
     status: 'available', source: 'tomtom_live', scope: 'representative_provider_point',
-    condition: score <= 5 ? 'FREE_FLOW' : score < 40 ? 'SLOWING' : score < 70 ? 'HEAVY' : 'CRITICAL',
-    condition_policy: 'observed_speed_loss_bands_v1', provider_confidence: 0.9,
+    condition: score <= 5 ? 'FREE_FLOW' : score < 20 ? 'SLOWING' : score < 40 ? 'HEAVY' : 'CRITICAL',
+    condition_policy: 'observed_speed_loss_bands_v2', provider_confidence: 0.9,
     current_speed_kmh: 50 * (1 - score / 100), free_flow_speed_kmh: 50,
     checked_at: new Date(at).toISOString(), observed_at: observedAt, fresh_until: freshUntil,
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
+    pressure_index: pressure, pressure_multiplier: 2.5, pressure_policy: 'congestion_pressure_v1',
     camera_congestion_index: null, camera_condition: null, camera_warning: false, camera_fresh_until: null,
     corridor_wide: false,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
+    pressure_forecast_30m: pressure, pressure_forecast_60m: pressure,
     forecast_observed_at: observedAt, forecast_fresh_until: freshUntil,
   };
 }
@@ -72,6 +75,7 @@ describe('corridor telemetry API evidence boundary', () => {
       condition: 'UNAVAILABLE', condition_policy: 'unavailable',
       provider_confidence: null, current_speed_kmh: null, free_flow_speed_kmh: null,
       observed_at: null, fresh_until: null, congestion_index: null, provider_point_count: 0,
+      pressure_index: null, pressure_forecast_30m: null, pressure_forecast_60m: null,
       forecast_30m: null, forecast_60m: null, forecast_method: 'unavailable',
       forecast_observed_at: null, forecast_fresh_until: null,
     };
@@ -99,8 +103,8 @@ describe('corridor telemetry API evidence boundary', () => {
     expect(result.source).toBe('live');
     expect(result.data[0].observed_traffic).toEqual(corridor.observed_traffic);
     expect(corridorLiveView(result.data[0], now)).toMatchObject({
-      available: true, status: 'FREE_FLOW', score: 0, delay: null,
-      forecast30: 0, forecast60: 0, forecastMethod: 'persistence',
+      available: true, status: 'FREE_FLOW', score: 0, pressureScore: 0, delay: null,
+      forecast30: 0, forecast60: 0, pressureForecast30: 0, pressureForecast60: 0, forecastMethod: 'persistence',
     });
   });
 
@@ -115,6 +119,19 @@ describe('corridor telemetry API evidence boundary', () => {
 
     expect(corridorLiveView(result.data[0])).toMatchObject({
       available: false, score: null, delay: null, forecast30: null, forecast60: null,
+    });
+  });
+
+  it('preserves separate raw measurements and backend pressure through the API response', async () => {
+    const now = Date.now();
+    const evidence = freshObservation(15, now);
+    const row = { ...CORRIDOR_CATALOG[0], observed_traffic: evidence };
+    respond({ data_source: 'live', generated_at: new Date(now).toISOString(), corridors: [row] });
+    const result = await fetchCorridors();
+    expect(result.data[0].observed_traffic).toEqual(evidence);
+    expect(corridorLiveView(result.data[0], now)).toMatchObject({
+      available: true, score: 15, pressureScore: 37.5,
+      forecast30: 15, forecast60: 15, pressureForecast30: 37.5, pressureForecast60: 37.5,
     });
   });
 });

@@ -34,8 +34,8 @@ function ChartLegend({ items }: { items: Array<{ name: string; color: string; va
 }
 
 export function ObservedTrafficCharts({ samples, expectedCount }: { samples: TrafficPoint[]; expectedCount?: number }) {
-  const { speeds, conditions } = measuredChartData(samples);
-  const coverage = `${speeds.length}${expectedCount ? ` of ${expectedCount}` : ''} representative road points`;
+  const { speeds, conditions, pointCount } = measuredChartData(samples);
+  const coverage = `${pointCount}${expectedCount ? ` of ${expectedCount}` : ''} sampled road points`;
   return <div className="analytics-charts-grid" aria-label="Observed traffic charts">
     <ChartCard title="Road speeds at a glance" icon={ChartColumn} source="Measured speeds"
       description="Current provider speed alongside its free-flow reference, in km/h.">
@@ -59,9 +59,9 @@ export function ObservedTrafficCharts({ samples, expectedCount }: { samples: Tra
         </table></div></details>
       </> : <p className="analytics-chart-empty" role="status">No fresh measured speeds are available.</p>}
     </ChartCard>
-    <ChartCard title="Traffic conditions" icon={Activity} source="Observed snapshot"
-      description={`${coverage}. Counts describe these points, not the whole island.`}>
-      {speeds.length ? <>
+    <ChartCard title="Traffic conditions" icon={Activity} source={speeds.length ? 'Observed snapshot' : 'Measurements unavailable'}
+      description={`${coverage}. Unqualified measurements remain unavailable.`}>
+      {pointCount ? <>
         <div className="analytics-chart-plot analytics-chart-donut">
           <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 540, height: 260 }}>
             <PieChart accessibilityLayer>
@@ -69,14 +69,14 @@ export function ObservedTrafficCharts({ samples, expectedCount }: { samples: Tra
                 paddingAngle={2} stroke="var(--warm-card)" isAnimationActive={false}>
                 {conditions.filter(item => item.count > 0).map(item => <Cell key={item.name} fill={item.color} />)}
               </Pie>
-              <text x="50%" y="48%" textAnchor="middle" className="analytics-donut-count">{speeds.length}</text>
+              <text x="50%" y="48%" textAnchor="middle" className="analytics-donut-count">{pointCount}</text>
               <text x="50%" y="59%" textAnchor="middle" className="analytics-donut-caption">road points</text>
               <Tooltip contentStyle={tooltipStyle} formatter={value => [`${value} road points`, 'Count']} />
             </PieChart>
           </ResponsiveContainer>
         </div>
         <ChartLegend items={conditions.map(item => ({ name: item.name, color: item.color, value: `${item.count}` }))} />
-        <p className="analytics-chart-footnote">Congestion index: smooth &lt;40 · heavy 40–69 · critical ≥70.</p>
+        <p className="analytics-chart-footnote">Conditions cover sampled road points only.</p>
       </> : <p className="analytics-chart-empty" role="status">Traffic conditions are unavailable without fresh observations.</p>}
     </ChartCard>
   </div>;

@@ -18,6 +18,9 @@ function count(value: unknown): value is number {
 export interface CorridorLiveView {
   available: boolean;
   score: number | null;
+  pressureScore: number | null;
+  pressureForecast30: number | null;
+  pressureForecast60: number | null;
   status: CorridorObservedCondition;
   tone: 'smooth' | 'heavy' | 'critical' | 'neutral';
   cameraWarning: boolean;
@@ -33,7 +36,8 @@ export interface CorridorLiveView {
 /** Legacy planning numbers and bundled simulations are never live evidence. */
 export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): CorridorLiveView {
   const unknown: CorridorLiveView = {
-    available: false, score: null, status: 'UNAVAILABLE', tone: 'neutral', cameraWarning: false,
+    available: false, score: null, pressureScore: null, pressureForecast30: null, pressureForecast60: null,
+    status: 'UNAVAILABLE', tone: 'neutral', cameraWarning: false,
     color: corridorColor('UNAVAILABLE'),
     coverage: 'No fresh measurements for this corridor.', observedAt: null,
     delay: null, forecast30: null, forecast60: null, forecastMethod: 'unavailable',
@@ -61,8 +65,8 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
     const speed = evidence.current_speed_kmh;
     const freeFlow = evidence.free_flow_speed_kmh;
     const confidence = evidence.provider_confidence;
-    const expectedCondition = score <= 5 ? 'FREE_FLOW' : score < 40 ? 'SLOWING' : score < 70 ? 'HEAVY' : 'CRITICAL';
-    if (evidence.condition_policy !== 'observed_speed_loss_bands_v1'
+    const expectedCondition = score <= 5 ? 'FREE_FLOW' : score < 20 ? 'SLOWING' : score < 40 ? 'HEAVY' : 'CRITICAL';
+    if (evidence.condition_policy !== 'observed_speed_loss_bands_v2'
       || evidence.condition !== expectedCondition
       || typeof confidence !== 'number' || !Number.isFinite(confidence) || confidence < 0.5 || confidence > 1
       || typeof speed !== 'number' || !Number.isFinite(speed) || speed < 0 || speed > 250
@@ -84,6 +88,12 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
     && count(evidence.camera_count) && index(evidence.camera_congestion_index)
     && evidence.camera_congestion_index >= 40 && evidence.camera_condition === 'LOCAL_CONGESTION_ESTIMATE'
     && cameraUntil !== null && cameraUntil > nowMs && cameraUntil <= checked + 120_000;
+  // Pressure is a separate sensitivity scale supplied by the backend. Never
+  // substitute the raw measured index when a pressure response is missing.
+  const pressureMetadata = evidence.pressure_policy === 'congestion_pressure_v1' && evidence.pressure_multiplier === 2.5;
+  const pressureValue = (raw: unknown, amplified: unknown): number | null => pressureMetadata && index(raw) && index(amplified)
+    && Math.abs(amplified - Math.min(100, raw * 2.5)) <= 0.051 ? amplified : null;
+  const pressureScore = pressureValue(score, evidence.pressure_index);
   const forecastObserved = timestamp(evidence.forecast_observed_at);
   const forecastUntil = timestamp(evidence.forecast_fresh_until);
   const forecastAvailable = provider && index(evidence.forecast_30m) && index(evidence.forecast_60m)
@@ -95,7 +105,7 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
     && (evidence.forecast_method !== 'persistence' || (forecastObserved === observed
       && evidence.forecast_30m === score && evidence.forecast_60m === score));
   return {
-    available: true, score, status, tone, color, cameraWarning,
+    available: true, score, pressureScore, status, tone, color, cameraWarning,
     coverage: provider
       ? `Partial coverage · ${evidence.provider_point_count} measured road point${evidence.provider_point_count === 1 ? '' : 's'}`
       : `Partial coverage · ${evidence.camera_count} mapped road view${evidence.camera_count === 1 ? '' : 's'} · Estimated`,
@@ -105,6 +115,8 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
     forecast30: forecastAvailable ? evidence.forecast_30m : null,
     forecast60: forecastAvailable ? evidence.forecast_60m : null,
     forecastMethod: forecastAvailable ? evidence.forecast_method : 'unavailable',
+    pressureForecast30: forecastAvailable ? pressureValue(evidence.forecast_30m, evidence.pressure_forecast_30m) : null,
+    pressureForecast60: forecastAvailable ? pressureValue(evidence.forecast_60m, evidence.pressure_forecast_60m) : null,
   };
 }
 

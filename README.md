@@ -83,9 +83,11 @@ hold-latest outlook is labelled **Latest-observation baseline**, and a point or
 camera view cannot establish a whole-corridor physical delay. These reads do
 not create historical records.
 
-Corridor conditions use the versioned `observed_speed_loss_bands_v1` policy:
-**Free flow** at an index up to 5, **Slowing** above 5 and below 40,
-**Heavy** from 40 to below 70, and **Critical** at 70 or above. These are
+Live corridor conditions and the observed analytics distribution use the shared
+versioned `observed_speed_loss_bands_v2` policy:
+**Free flow** at an index up to 5, **Slowing** above 5 and below 20,
+**Heavy** from 20 to below 40, and **Critical** at 40 or above. These more
+sensitive warning bands preserve the measured speed-loss index. They are
 engineering display bands, not independently calibrated traffic service levels.
 Only valid measured speeds with provider confidence of at least 0.5 qualify.
 Image-only evidence is labelled **Camera estimate**, including an empty view;
@@ -93,6 +95,19 @@ it cannot establish measured free flow. A fresh mapped camera estimate at 40 or
 above produces a separate local-congestion warning when the provider point is
 below 40. Its own expiry withdraws the warning without extending the provider
 measurement. No rule forces a mix of conditions when all sampled points are clear.
+Unqualified analytics entries remain neutral rather than being counted as free
+flow. The displayed **Congestion pressure** is a separate, versioned
+`congestion_pressure_v1` sensitivity scale: `min(100, source_index * 2.5)`,
+rounded to one decimal. It applies only to an available primary source and
+preserves the original speed-loss or camera-proxy index in the API. A raw index
+of 20 therefore yields pressure 50, while 40 yields pressure 100. Camera-derived
+pressure remains estimated; it is not measured road speed. The operations mean
+averages the capped pressure of each qualified provider point, rather than
+amplifying the mean or blending camera and provider units. This multiplier is an
+engineering sensitivity setting, not a calibration or accuracy improvement.
+Missing pressure fields cannot fall back to a raw or synthetic value in the UI.
+A failed workspace bundle displays an explicit reload action instead of a
+blank page; it does not automatically reload and discard an in-progress draft.
 
 The simplified **History** workspace requests
 `/api/historical-congestion?modelled_only=true`. This mode selects only the

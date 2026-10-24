@@ -73,7 +73,14 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
   const metadata = operations.analytics_metadata;
   const apiAvailable = Boolean(operationsSnapshot && operationsSnapshot.source !== 'offline');
   const observedTraffic = apiAvailable && metadata?.traffic_observed === true;
-  const average = observedTraffic ? operations.average_congestion_index : null;
+  const average = observedTraffic
+    && operations.pressure_policy === 'congestion_pressure_v1'
+    && operations.pressure_multiplier === 2.5
+    && typeof operations.average_congestion_pressure === 'number'
+    && Number.isFinite(operations.average_congestion_pressure)
+    && operations.average_congestion_pressure >= 0
+    && operations.average_congestion_pressure <= 100
+    ? operations.average_congestion_pressure : null;
   const bottlenecks = observedTraffic ? operations.active_bottlenecks : null;
   const departures = apiAvailable ? operations.scheduled_ferry_departures_next_12h : null;
   const bottleneckNames = operations.bottleneck_corridors?.map(item => shortCorridorName(item.name)).join(' & ');
@@ -108,7 +115,7 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
             <div className="operations-section-stack">
               <section className="operations-metrics" aria-label="Operations headline metrics">
                 <article className="glass-panel operations-metric-card">
-                  <div className="operations-metric-card__label"><ChartColumn aria-hidden="true" size={ICON_SIZE.medium} /> Observed Traffic Index</div>
+                  <div className="operations-metric-card__label"><ChartColumn aria-hidden="true" size={ICON_SIZE.medium} /> Congestion pressure</div>
                   <div className="operations-metric-card__value">{average ?? 'Unavailable'}{average !== null ? <span className="operations-metric-card__unit"> / 100</span> : null}</div>
                   <p className="operations-metric-card__detail">{metadata?.observed_corridor_count ?? 0} fresh road points</p>
                 </article>
@@ -135,7 +142,7 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
               {observedTraffic && operations.current_traffic_samples?.length ? (
                 <section className="glass-panel operations-chart-card">
                   <h3>Current observed corridor points</h3>
-                  <div className="operations-observed-table"><table><thead><tr><th>Corridor point</th><th>Measured speed</th><th>Free-flow speed</th><th>Congestion index</th><th>Snapshot (SGT)</th></tr></thead><tbody>
+                  <div className="operations-observed-table"><table><thead><tr><th>Corridor point</th><th>Measured speed</th><th>Free-flow speed</th><th>Measured congestion index</th><th>Snapshot (SGT)</th></tr></thead><tbody>
                     {operations.current_traffic_samples.map(point => <tr key={point.id}><th>{shortCorridorName(point.name)}</th><td>{point.current_speed_kmh} km/h</td><td>{point.free_flow_speed_kmh} km/h</td><td>{point.score} / 100</td><td><time dateTime={point.as_of}>{timestamp(point.as_of)}</time></td></tr>)}
                   </tbody></table></div>
                 </section>

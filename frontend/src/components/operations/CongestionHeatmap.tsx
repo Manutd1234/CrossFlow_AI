@@ -421,9 +421,9 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
             </div>
             <div className="operations-history-legend">
               {[
-                { tone: 'smooth', label: 'Smooth (<40)' },
-                { tone: 'heavy', label: 'Heavy (40–70)' },
-                { tone: 'critical', label: 'Critical (≥70)' },
+                { tone: 'smooth', label: modelledOnly ? 'Lower scenario index (<40)' : 'Smooth (<40)' },
+                { tone: 'heavy', label: modelledOnly ? 'Mid-range scenario index (40–69)' : 'Heavy (40–69)' },
+                { tone: 'critical', label: modelledOnly ? 'Higher scenario index (≥70)' : 'Critical (≥70)' },
               ].map(item => (
                 <div key={item.label} className="operations-history-legend__item">
                   <span className={`operations-history-legend__swatch is-${item.tone}`} aria-hidden="true" />

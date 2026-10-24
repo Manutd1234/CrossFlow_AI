@@ -69,8 +69,13 @@ export interface CorridorObservedTraffic {
   observed_at: string | null;
   fresh_until: string | null;
   congestion_index: number | null;
+  pressure_index?: number | null;
+  pressure_multiplier?: number;
+  pressure_policy?: 'congestion_pressure_v1';
+  pressure_forecast_30m?: number | null;
+  pressure_forecast_60m?: number | null;
   condition: CorridorObservedCondition;
-  condition_policy: 'observed_speed_loss_bands_v1' | 'mapped_camera_proxy_v1' | 'unavailable';
+  condition_policy: 'observed_speed_loss_bands_v2' | 'mapped_camera_proxy_v1' | 'unavailable';
   current_speed_kmh: number | null;
   free_flow_speed_kmh: number | null;
   provider_confidence: number | null;
@@ -803,7 +808,15 @@ export interface OperationsSummary extends Envelope {
   current_traffic_samples?: Array<{
     id: string; name: string; score: number; as_of: string; age_seconds: number;
     current_speed_kmh: number; free_flow_speed_kmh: number; provider_confidence: number | null;
+    condition?: CorridorObservedCondition;
+    condition_policy?: CorridorObservedTraffic['condition_policy'];
+    pressure_index?: number | null;
+    pressure_multiplier?: number;
+    pressure_policy?: 'congestion_pressure_v1';
   }>;
+  average_congestion_pressure?: number | null;
+  pressure_multiplier?: number;
+  pressure_policy?: 'congestion_pressure_v1';
   overall_network_status: string;
   average_congestion_index: number | null;
   active_bottlenecks: number | null;

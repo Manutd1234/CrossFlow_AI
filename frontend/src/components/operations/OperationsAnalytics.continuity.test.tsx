@@ -103,6 +103,77 @@ afterEach(() => {
 });
 
 describe('operations provenance presentation', () => {
+  const observedOperations = (): OperationsSummary => ({
+    ...MOCK_OPERATIONS,
+    average_congestion_index: 20,
+    average_congestion_pressure: 50,
+    pressure_policy: 'congestion_pressure_v1',
+    pressure_multiplier: 2.5,
+    analytics_metadata: {
+      generated_at: referenceTime.toISOString(), as_of: referenceTime.toISOString(),
+      input_snapshot_at: referenceTime.toISOString(), snapshot_age_seconds: 0,
+      traffic_observed: true, traffic_source: 'tomtom_live', observed_corridor_count: 1,
+      expected_corridor_count: 5, limitations: [],
+    },
+    current_traffic_samples: [{
+      id: 'corridor-1', name: 'Measured road point', score: 20, as_of: referenceTime.toISOString(),
+      age_seconds: 0, current_speed_kmh: 40, free_flow_speed_kmh: 50, provider_confidence: .9,
+    }],
+  });
+
+  it('shows the backend congestion pressure separately from unchanged measured values', () => {
+    const operations = observedOperations();
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    const headline = container.querySelector('.operations-metric-card');
+    expect(headline?.querySelector('.operations-metric-card__label')?.textContent).toContain('Congestion pressure');
+    expect(headline?.querySelector('.operations-metric-card__value')?.textContent).toBe('50 / 100');
+    const sourceTable = container.querySelector('.operations-observed-table');
+    expect(sourceTable?.textContent).toContain('Measured congestion index');
+    expect(sourceTable?.textContent).toContain('40 km/h');
+    expect(sourceTable?.textContent).toContain('50 km/h');
+    expect(sourceTable?.textContent).toContain('20 / 100');
+    expect(operations.average_congestion_index).toBe(20);
+    expect(operations.current_traffic_samples?.[0].score).toBe(20);
+  });
+
+  it.each([
+    { name: 'missing pressure', changes: { average_congestion_pressure: undefined } },
+    { name: 'null pressure', changes: { average_congestion_pressure: null } },
+    { name: 'missing policy', changes: { pressure_policy: undefined } },
+    { name: 'unknown policy', changes: { pressure_policy: 'unknown_policy' } },
+    { name: 'wrong multiplier', changes: { pressure_multiplier: 3 } },
+    { name: 'missing multiplier', changes: { pressure_multiplier: undefined } },
+    { name: 'nonfinite pressure', changes: { average_congestion_pressure: Number.NaN } },
+    { name: 'negative pressure', changes: { average_congestion_pressure: -1 } },
+    { name: 'over-range pressure', changes: { average_congestion_pressure: 101 } },
+  ])('withholds $name instead of multiplying or falling back to the raw index', ({ changes }) => {
+    const operations = { ...observedOperations(), ...changes } as OperationsSummary;
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    expect(container.querySelector('.operations-metric-card__value')?.textContent).toBe('Unavailable');
+    expect(container.querySelector('.operations-observed-table')?.textContent).toContain('20 / 100');
+  });
+
+  it.each([0, 100])('retains legitimate backend pressure %s within the published bounds', pressure => {
+    const operations = { ...observedOperations(), average_congestion_pressure: pressure };
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    expect(container.querySelector('.operations-metric-card__value')?.textContent).toBe(`${pressure} / 100`);
+  });
+
+  it.each(['offline', 'unobserved'] as const)('withholds pressure for an %s snapshot', state => {
+    const operations = observedOperations();
+    if (state === 'unobserved') operations.analytics_metadata!.traffic_observed = false;
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: state === 'offline' ? 'offline' : 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    expect(container.querySelector('.operations-metric-card__value')?.textContent).toBe('Unavailable');
+  });
+
   it('exposes only Overview, Ports and History and does not mount removed workspaces', () => {
     const container = renderIntoDom(<OperationsAnalytics operations={MOCK_OPERATIONS}
       operationsSnapshot={null} corridors={INITIAL_CORRIDORS} />);
@@ -146,7 +217,7 @@ describe('operations provenance presentation', () => {
     expect(text).not.toContain('Model');
     expect(text).not.toContain('Alerts');
     expect(text).toContain('History');
-    expect(text).toContain('Observed Traffic Index');
+    expect(text).toContain('Congestion pressure');
     expect(markup).toContain('ui-card-shadow-hover official-evidence-panel');
     expect(text).toContain('Live operational measurements unavailable');
     expect(text).toContain('Measured Emissions Impact');
@@ -193,7 +264,7 @@ describe('operations provenance presentation', () => {
 
     expect(markup).not.toContain('Operations planning data source:');
     expect(markup).not.toContain('operations-tabs__planning-badge');
-    expect(text).toContain('Observed Traffic Index');
+    expect(text).toContain('Congestion pressure');
     expect(text).not.toContain('kg CO2/hr');
     expect(text).not.toContain('TOMTOM');
   });
@@ -205,7 +276,7 @@ describe('operations provenance presentation', () => {
       corridors={INITIAL_CORRIDORS} ferryAndPortsContent={<p>Ferry workspace content</p>} />);
     const visiblePanels = () => container.querySelectorAll('.operations-tabs > [role="tabpanel"]:not([hidden])');
     expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0].textContent).toContain('Observed Traffic Index');
+    expect(visiblePanels()[0].textContent).toContain('Congestion pressure');
     expect(historyMock).not.toHaveBeenCalled();
 
     selectWorkspaceTab(container, 'History');
@@ -223,7 +294,7 @@ describe('operations provenance presentation', () => {
     selectWorkspaceTab(container, 'Ports');
     expect(visiblePanels()[0].textContent).toContain('Ferry workspace content');
     selectWorkspaceTab(container, 'Overview');
-    expect(visiblePanels()[0].textContent).toContain('Observed Traffic Index');
+    expect(visiblePanels()[0].textContent).toContain('Congestion pressure');
     selectWorkspaceTab(container, 'History');
     expect(historyMock).toHaveBeenCalledOnce();
   });

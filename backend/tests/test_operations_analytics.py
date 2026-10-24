@@ -65,6 +65,98 @@ class CurrentOperationsAnalyticsTests(unittest.TestCase):
         self.assertEqual(metadata["snapshot_age_seconds"], 60)
         self.assertTrue(metadata["traffic_observed"])
 
+    def test_current_samples_use_shared_free_flow_slowing_and_congested_bands(self):
+        for speed, score, condition in (
+            (50., 0., "FREE_FLOW"), (47.5, 5., "FREE_FLOW"),
+            (42.5, 15., "SLOWING"), (40.05, 19.9, "SLOWING"),
+            (40., 20., "HEAVY"), (30.05, 39.9, "HEAVY"),
+            (30., 40., "CRITICAL"),
+            (15., 70., "CRITICAL"), (0., 95., "CRITICAL"),
+        ):
+            with self.subTest(speed=speed):
+                result = self.summary({"corridor-1": self.segment(speed=speed)})
+                sample = result["current_traffic_samples"][0]
+                self.assertEqual(sample["score"], score)
+                self.assertEqual(sample["condition"], condition)
+                self.assertEqual(sample["condition_policy"], "observed_speed_loss_bands_v2")
+                self.assertEqual(sample["current_speed_kmh"], speed)
+                self.assertEqual(sample["provider_confidence"], .9)
+
+    def test_low_confidence_points_do_not_enter_current_labels_counts_or_average(self):
+        result = self.summary({
+            "corridor-1": self.segment(speed=50., confidence=.49),
+            "corridor-2": self.segment(speed=42.5, confidence=.5),
+        })
+        self.assertEqual(result["average_congestion_index"], 15.)
+        self.assertEqual(result["analytics_metadata"]["observed_corridor_count"], 1)
+        self.assertEqual([row["id"] for row in result["current_traffic_samples"]], ["corridor-2"])
+        result = self.summary({"corridor-1": self.segment(speed=50., confidence=.49)})
+        self.assertEqual(result["current_traffic_samples"], [])
+        self.assertIsNone(result["average_congestion_index"])
+        self.assertFalse(result["analytics_metadata"]["traffic_observed"])
+
+    def test_live_bottleneck_critical_boundary_is_inclusive_and_matches_condition_policy(self):
+        for speed, score, count, status in (
+            (30.05, 39.9, 0, "MODERATE"), (30., 40., 1, "CONGESTED"),
+        ):
+            with self.subTest(score=score):
+                result = self.summary({"corridor-1": self.segment(speed=speed)})
+                self.assertEqual(result["average_congestion_index"], score)
+                self.assertEqual(result["active_bottlenecks"], count)
+                self.assertEqual(len(result["bottleneck_corridors"]), count)
+                self.assertEqual(result["overall_network_status"], status)
+                self.assertEqual(result["bottleneck_threshold"], 40.)
+                self.assertEqual(result["bottleneck_comparison"], "greater_than_or_equal")
+
+    def test_average_network_status_uses_the_same_live_warning_bands(self):
+        for speed, score, status in (
+            (50., 0., "OPTIMAL"), (47.5, 5., "OPTIMAL"),
+            (47.45, 5.1, "SLOWING"), (40.05, 19.9, "SLOWING"),
+            (40., 20., "MODERATE"), (30.05, 39.9, "MODERATE"),
+            (30., 40., "CONGESTED"),
+        ):
+            with self.subTest(score=score):
+                result = self.summary({"corridor-1": self.segment(speed=speed)})
+                self.assertEqual(result["average_congestion_index"], score)
+                self.assertEqual(result["overall_network_status"], status)
+
+    def test_average_pressure_averages_capped_points_instead_of_capping_the_raw_average(self):
+        result = self.summary({
+            "corridor-1": self.segment(speed=0.),
+            "corridor-2": self.segment(speed=50.),
+        })
+        self.assertEqual(result["average_congestion_index"], 47.5)
+        self.assertEqual(result["average_congestion_pressure"], 50.)
+        self.assertEqual(result["pressure_policy"], "congestion_pressure_v1")
+        self.assertEqual(result["pressure_multiplier"], 2.5)
+        self.assertEqual([row["score"] for row in result["current_traffic_samples"]], [95., 0.])
+        self.assertEqual([row["pressure_index"] for row in result["current_traffic_samples"]], [100., 0.])
+        self.assertTrue(all(row["pressure_policy"] == "congestion_pressure_v1" and row["pressure_multiplier"] == 2.5
+                            for row in result["current_traffic_samples"]))
+
+    def test_low_confidence_and_absent_points_cannot_create_pressure_measurements(self):
+        for segments in ({}, {"corridor-1": self.segment(speed=50., confidence=.49)}):
+            with self.subTest(segments=segments):
+                result = self.summary(segments)
+                self.assertEqual(result["current_traffic_samples"], [])
+                self.assertIsNone(result["average_congestion_index"])
+                self.assertIsNone(result["average_congestion_pressure"])
+
+    def test_current_source_expiry_is_not_renewed_by_refreshing_analytics(self):
+        original = self.segment(speed=42.5, age=179)
+        current = self.summary({"corridor-1": original})
+        self.assertEqual(current["current_traffic_samples"][0]["as_of"], original["snapshot_generated_at"])
+        self.assertEqual(current["current_traffic_samples"][0]["condition"], "SLOWING")
+        expired = self.summary({"corridor-1": original}, now=self.now + timedelta(seconds=1))
+        self.assertEqual(expired["current_traffic_samples"], [])
+        self.assertIsNone(expired["average_congestion_index"])
+        # The shared transport parser retains its prior acceptance, including
+        # a small request-start/network-I/O clock difference and legal low
+        # confidence. The stricter gate belongs only to current live cards.
+        self.assertIsNotNone(analytics._sample(self.segment(age=-1, confidence=.1), self.now))
+        skewed = self.summary({"corridor-1": self.segment(speed=42.5, age=-1)})
+        self.assertEqual(skewed["current_traffic_samples"][0]["condition"], "SLOWING")
+
     def test_unavailable_measurements_do_not_become_simulation_or_zero(self):
         summary = self.summary({})
         self.assertIsNone(summary["average_congestion_index"])

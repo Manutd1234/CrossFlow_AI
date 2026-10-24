@@ -56,6 +56,10 @@ function hotspotPriorityColor(priority: HotspotWatchPriority): string {
     : MAP_PALETTE.traffic.heavy;
 }
 
+function hotspotPriorityLabel(priority: HotspotWatchPriority): string {
+  return priority === 'CRITICAL' ? 'High priority' : 'Watch priority';
+}
+
 export const MapView: React.FC<MapViewProps> = ({
   corridors,
   routes,
@@ -272,7 +276,7 @@ export const MapView: React.FC<MapViewProps> = ({
       line.bindTooltip(linesTooltip([
         { text: prettyArrow(corridor.name), strong: true },
         {
-          text: traffic.available ? `Sampled index ${traffic.score} · ${traffic.status.replace(/_/g, ' ')}` : 'Traffic unavailable',
+          text: traffic.available ? `${traffic.pressureScore === null ? 'Pressure unavailable' : `Congestion pressure ${traffic.pressureScore}`} · ${traffic.status.replace(/_/g, ' ')}` : 'Traffic unavailable',
           color: traffic.color,
         },
         { text: traffic.coverage },
@@ -300,7 +304,7 @@ export const MapView: React.FC<MapViewProps> = ({
       const isCritical = zone.priority === 'CRITICAL';
       const color = hotspotPriorityColor(zone.priority);
       const tooltipLines = [
-        { text: `${zone.priority} WATCH AREA`, strong: true, color },
+        { text: `${hotspotPriorityLabel(zone.priority)} · modelled watch area`, strong: true, color },
         { text: zone.name, strong: true },
         { text: zone.category, italic: true },
         { text: `Watch score: ${zone.planningScore}` },
@@ -381,8 +385,8 @@ export const MapView: React.FC<MapViewProps> = ({
             Batam Mobility Watch • Hotspots
           </div>
           <div className="map-radar-card__legend" aria-label="Map radar legend">
-            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-critical" /> Critical</span>
-            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-heavy" /> Heavy</span>
+            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-critical" /> High priority</span>
+            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-heavy" /> Watch priority</span>
             <span className="map-radar-card__legend-item"><MapPin aria-hidden="true" size={ICON_SIZE.small} /> {hotspots.length} areas</span>
           </div>
         </div>
@@ -422,9 +426,9 @@ export const MapView: React.FC<MapViewProps> = ({
                   Ports, neighbourhoods and the roads between.
                 </p>
               </div>
-              <div className="hotspot-watch__counts" aria-label={`${criticalHotspots} critical and ${heavyHotspots} heavy planning priorities`}>
-                <span className="badge badge-critical">{criticalHotspots} critical</span>
-                <span className="badge badge-heavy">{heavyHotspots} heavy</span>
+              <div className="hotspot-watch__counts" aria-label={`${criticalHotspots} high priority and ${heavyHotspots} watch priority modelled planning areas`}>
+                <span className="badge badge-critical">{criticalHotspots} high priority</span>
+                <span className="badge badge-heavy">{heavyHotspots} watch priority</span>
               </div>
             </div>
 
@@ -445,7 +449,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     type="button"
                     className="hotspot-card__focus"
                     aria-pressed={focusedHotspotId === zone.id}
-                    aria-label={`Inspect ${zone.name}, ${zone.priority.toLowerCase()} modelled planning priority, on the map`}
+                    aria-label={`Inspect ${zone.name}, ${hotspotPriorityLabel(zone.priority).toLowerCase()} modelled planning area, on the map`}
                     title={zone.name}
                     onClick={() => focusHotspot(zone)}
                   >
@@ -474,7 +478,7 @@ export const MapView: React.FC<MapViewProps> = ({
                       <strong className="hotspot-card__name">{zone.name}</strong>
                       <span className="hotspot-card__meta">
                         <span className={`badge ${zone.priority === 'CRITICAL' ? 'badge-critical' : 'badge-heavy'} hotspot-card__priority`}>
-                          {zone.priority === 'CRITICAL' ? 'Critical' : 'Heavy'}
+                          {hotspotPriorityLabel(zone.priority)}
                         </span>
                         <strong className="hotspot-card__score" aria-label={`Watch score ${zone.planningScore} out of 100`}>
                           {zone.planningScore}<small> / 100</small>
@@ -530,10 +534,10 @@ export const MapView: React.FC<MapViewProps> = ({
             <div className="selected-corridor-panel__metrics">
               <article className="selected-corridor-panel__metric">
                 <div className="selected-corridor-panel__metric-label">
-                  <Gauge aria-hidden="true" size={ICON_SIZE.medium} color="var(--accent-cyan)" /> Current Congestion
+                  <Gauge aria-hidden="true" size={ICON_SIZE.medium} color="var(--accent-cyan)" /> Congestion pressure
                 </div>
-                <div className={`selected-corridor-panel__metric-value${selectedTraffic.available ? '' : ' is-unavailable'}`} style={{ color: selectedTraffic.color }}>
-                  {selectedTraffic.score === null ? 'Unavailable' : <>{selectedTraffic.score} <span className="selected-corridor-panel__metric-suffix">/ 100</span></>}
+                <div className={`selected-corridor-panel__metric-value${selectedTraffic.pressureScore === null ? ' is-unavailable' : ''}`} style={{ color: selectedTraffic.pressureScore === null ? corridorColor('UNAVAILABLE') : selectedTraffic.color }}>
+                  {selectedTraffic.pressureScore === null ? 'Unavailable' : <>{selectedTraffic.pressureScore} <span className="selected-corridor-panel__metric-suffix">/ 100</span></>}
                 </div>
               </article>
 
@@ -552,9 +556,9 @@ export const MapView: React.FC<MapViewProps> = ({
                 <Sparkles aria-hidden="true" size={ICON_SIZE.medium} /> 30 / 60 min outlook
               </div>
               <p className="selected-corridor-panel__forecast-copy">
-                {selectedTraffic.forecast30 === null || selectedTraffic.forecast60 === null
+                {selectedTraffic.pressureForecast30 === null || selectedTraffic.pressureForecast60 === null
                   ? 'Forecast unavailable for this corridor.'
-                  : <>{selectedTraffic.forecastMethod === 'persistence' ? 'Latest-observation baseline' : 'Observed-data forecast'}: <strong>{selectedTraffic.forecast30}</strong> in 30 min · <strong>{selectedTraffic.forecast60}</strong> in 60 min <span>/ 100</span>.</>}
+                  : <>{selectedTraffic.forecastMethod === 'persistence' ? 'Latest-observation baseline' : 'Observed-data forecast'}: <strong>{selectedTraffic.pressureForecast30}</strong> in 30 min · <strong>{selectedTraffic.pressureForecast60}</strong> in 60 min <span>/ 100 pressure</span>.</>}
               </p>
             </div>
 
@@ -586,7 +590,7 @@ export const MapView: React.FC<MapViewProps> = ({
                 type="button"
                 className="ui-sand-interactive corridor-feed-item"
                 aria-pressed={activeSelectedId === c.id}
-                aria-label={`Select ${prettyArrow(c.name)}, ${traffic.available ? `sampled ${traffic.status.replace(/_/g, ' ').toLowerCase()}, congestion index ${traffic.score}${traffic.cameraWarning ? ', local congestion estimated' : ''}` : 'traffic unavailable'}`}
+                aria-label={`Select ${prettyArrow(c.name)}, ${traffic.available ? `sampled ${traffic.status.replace(/_/g, ' ').toLowerCase()}, ${traffic.pressureScore === null ? 'pressure unavailable' : `congestion pressure ${traffic.pressureScore}`}${traffic.cameraWarning ? ', local congestion estimated' : ''}` : 'traffic unavailable'}`}
                 onClick={() => {
                   focusSelectedTabOnOpenRef.current = true;
                   setSelectedId(c.id);
@@ -602,7 +606,7 @@ export const MapView: React.FC<MapViewProps> = ({
                 <div className="corridor-feed-item__metrics">
                   <span>{c.distance_km === null ? 'Distance unavailable' : `Dist: ${c.distance_km} km`}</span>
                   <span>{traffic.delay === null ? 'Delay: Unavailable' : `Delay: +${traffic.delay}m`}</span>
-                  <span>{traffic.score === null ? 'Idx: Unavailable' : `Idx: ${traffic.score}`}</span>
+                  <span>{traffic.pressureScore === null ? 'Pressure: Unavailable' : `Pressure: ${traffic.pressureScore}`}</span>
                 </div>
               </button>
               );

@@ -9,18 +9,21 @@ const iso = (offsetMs: number) => new Date(NOW + offsetMs).toISOString();
 function observedTraffic(overrides: Record<string, unknown> = {}): CorridorObservedTraffic {
   const score = typeof overrides.congestion_index === 'number' ? overrides.congestion_index : 72;
   const camera = overrides.source === 'cctv_camera';
+  const pressure = Number(Math.min(100, score * 2.5).toFixed(1));
   return {
     status: 'available', source: 'tomtom_live', scope: 'representative_provider_point',
-    condition: camera ? 'CAMERA_ESTIMATE' : score <= 5 ? 'FREE_FLOW' : score < 40 ? 'SLOWING' : score < 70 ? 'HEAVY' : 'CRITICAL',
-    condition_policy: camera ? 'mapped_camera_proxy_v1' : 'observed_speed_loss_bands_v1',
+    condition: camera ? 'CAMERA_ESTIMATE' : score <= 5 ? 'FREE_FLOW' : score < 20 ? 'SLOWING' : score < 40 ? 'HEAVY' : 'CRITICAL',
+    condition_policy: camera ? 'mapped_camera_proxy_v1' : 'observed_speed_loss_bands_v2',
     provider_confidence: camera ? null : 0.9,
     current_speed_kmh: camera ? null : 50 * (1 - score / 100), free_flow_speed_kmh: camera ? null : 50,
     checked_at: iso(0), observed_at: iso(-5_000), fresh_until: iso(60_000),
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
+    pressure_index: pressure, pressure_multiplier: 2.5, pressure_policy: 'congestion_pressure_v1',
     camera_congestion_index: camera ? score : null, corridor_wide: false,
     camera_condition: camera ? score >= 40 ? 'LOCAL_CONGESTION_ESTIMATE' : 'LOW_PRESSURE_ESTIMATE' : null,
     camera_warning: false, camera_fresh_until: camera ? iso(60_000) : null,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
+    pressure_forecast_30m: pressure, pressure_forecast_60m: pressure,
     forecast_observed_at: iso(-5_000), forecast_fresh_until: iso(60_000),
     ...overrides,
   } as CorridorObservedTraffic;
@@ -42,8 +45,8 @@ function view(overrides: Record<string, unknown> = {}, now = NOW) {
 describe('current corridor observation contract', () => {
   it('keeps genuine zero independent of disagreeing legacy estimates', () => {
     expect(view({ congestion_index: 0, forecast_30m: 0, forecast_60m: 0 })).toMatchObject({
-      available: true, score: 0, status: 'FREE_FLOW', delay: null,
-      forecast30: 0, forecast60: 0, forecastMethod: 'persistence',
+      available: true, score: 0, pressureScore: 0, status: 'FREE_FLOW', delay: null,
+      forecast30: 0, forecast60: 0, pressureForecast30: 0, pressureForecast60: 0, forecastMethod: 'persistence',
       coverage: 'Partial coverage · 1 measured road point',
     });
   });
@@ -151,8 +154,8 @@ describe('current corridor observation contract', () => {
   });
 
   it.each([
-    [0, 'FREE_FLOW'], [5, 'FREE_FLOW'], [5.1, 'SLOWING'], [20, 'SLOWING'],
-    [39.9, 'SLOWING'], [40, 'HEAVY'], [69.9, 'HEAVY'], [70, 'CRITICAL'], [95, 'CRITICAL'],
+    [0, 'FREE_FLOW'], [5, 'FREE_FLOW'], [5.1, 'SLOWING'], [19.9, 'SLOWING'],
+    [20, 'HEAVY'], [39.9, 'HEAVY'], [40, 'CRITICAL'], [95, 'CRITICAL'],
   ] as const)('uses the explicit observed speed-loss condition at index %s: %s', (score, status) => {
     const result = view({ congestion_index: score });
     expect(result).toMatchObject({ available: true, score, status });
@@ -166,6 +169,7 @@ describe('current corridor observation contract', () => {
     ['incoherent free-flow claim', { condition: 'FREE_FLOW' }],
     ['camera condition for provider speed', { condition: 'CAMERA_ESTIMATE' }],
     ['condition policy missing', { condition_policy: undefined }],
+    ['retired warning policy', { condition_policy: 'observed_speed_loss_bands_v1' }],
     ['wrong condition policy', { condition_policy: 'mapped_camera_proxy_v1' }],
     ['confidence missing', { provider_confidence: null }],
     ['confidence below minimum', { provider_confidence: 0.49 }],
@@ -188,7 +192,7 @@ describe('current corridor observation contract', () => {
 
   it('accepts the minimum supported provider confidence without substituting a legacy condition', () => {
     expect(view({ congestion_index: 20, provider_confidence: 0.5 })).toMatchObject({
-      available: true, score: 20, status: 'SLOWING',
+      available: true, score: 20, status: 'HEAVY',
     });
   });
 
@@ -234,5 +238,53 @@ describe('current corridor observation contract', () => {
       camera_condition: 'LOCAL_CONGESTION_ESTIMATE', camera_warning: true,
       camera_fresh_until: iso(2_000), ...overrides,
     })).toMatchObject({ available: true, score: 0, status: 'FREE_FLOW', cameraWarning: false });
+  });
+
+  it.each([
+    [0, 0], [15, 37.5], [20, 50], [40, 100], [95, 100],
+  ] as const)('keeps measured index %s while exposing its separate capped pressure %s', (score, pressure) => {
+    const evidence = observedTraffic({ congestion_index: score });
+    const original = JSON.stringify(evidence);
+    const result = corridorLiveView(corridor(evidence), NOW);
+    expect(result).toMatchObject({
+      available: true, score, pressureScore: pressure,
+      forecast30: score, forecast60: score, pressureForecast30: pressure, pressureForecast60: pressure,
+    });
+    expect(JSON.stringify(evidence)).toBe(original);
+  });
+
+  it.each([
+    ['missing pressure', { pressure_index: undefined }],
+    ['null pressure', { pressure_index: null }],
+    ['non-finite pressure', { pressure_index: Number.NaN }],
+    ['negative pressure', { pressure_index: -1 }],
+    ['unbounded pressure', { pressure_index: 101 }],
+    ['incoherent pressure', { pressure_index: 99 }],
+    ['missing multiplier', { pressure_multiplier: undefined }],
+    ['wrong multiplier', { pressure_multiplier: 3 }],
+    ['string multiplier', { pressure_multiplier: '2.5' }],
+    ['missing policy', { pressure_policy: undefined }],
+    ['unsupported policy', { pressure_policy: 'legacy_pressure' }],
+  ])('withholds an unsupported pressure without discarding valid raw evidence: %s', (_name, overrides) => {
+    expect(view({ congestion_index: 15, ...overrides })).toMatchObject({
+      available: true, score: 15, status: 'SLOWING', pressureScore: null,
+      forecast30: 15, forecast60: 15,
+    });
+  });
+
+  it('does not present a raw forecast as a pressure outlook when pressure fields are missing', () => {
+    expect(view({ congestion_index: 15, pressure_forecast_30m: undefined, pressure_forecast_60m: undefined }))
+      .toMatchObject({
+        available: true, score: 15, pressureScore: 37.5,
+        forecast30: 15, forecast60: 15, pressureForecast30: null, pressureForecast60: null,
+      });
+  });
+
+  it('withholds an incoherent pressure forecast while preserving the raw forecast values', () => {
+    expect(view({ congestion_index: 15, pressure_forecast_30m: 99 }))
+      .toMatchObject({
+        available: true, score: 15, pressureScore: 37.5,
+        forecast30: 15, forecast60: 15, pressureForecast30: null, pressureForecast60: 37.5,
+      });
   });
 });

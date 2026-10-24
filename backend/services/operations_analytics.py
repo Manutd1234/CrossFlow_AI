@@ -12,12 +12,16 @@ from typing import Any, Optional
 
 from services import clock, ferry_schedule, live_traffic, cctv_routing, cctv_store, router
 from services.congestion_math import speed_ratio_congestion_score
+from services.observed_conditions import (
+    CRITICAL_MIN_SCORE, MIN_PROVIDER_CONFIDENCE, OBSERVED_CONDITION_POLICY,
+    PRESSURE_MULTIPLIER, PRESSURE_POLICY, observed_speed_condition, pressure_index,
+)
 from services.route_solver import CORRIDORS
 
 
 MAX_SNAPSHOT_AGE_SECONDS = 180
 MAX_FUTURE_SKEW_SECONDS = 30
-BOTTLENECK_THRESHOLD = 60.0
+BOTTLENECK_THRESHOLD = CRITICAL_MIN_SCORE
 
 
 def _coverage(now: datetime) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -135,11 +139,19 @@ def get_operations_analytics(now: Optional[datetime] = None) -> dict[str, Any]:
     samples = []
     for corridor in CORRIDORS:
         sample = _sample(segments.get(corridor["id"]), now)
-        if sample is not None:
-            samples.append({"id": corridor["id"], "name": corridor["name"], **sample})
+        if (sample is not None and sample["provider_confidence"] >= MIN_PROVIDER_CONFIDENCE
+                and sample["age_seconds"] < MAX_SNAPSHOT_AGE_SECONDS):
+            samples.append({
+                "id": corridor["id"], "name": corridor["name"], **sample,
+                "condition": observed_speed_condition(sample["score"]),
+                "condition_policy": OBSERVED_CONDITION_POLICY,
+                "pressure_index": pressure_index(sample["score"]),
+                "pressure_multiplier": PRESSURE_MULTIPLIER, "pressure_policy": PRESSURE_POLICY,
+            })
     observed = bool(samples)
     avg = round(sum(item["score"] for item in samples) / len(samples), 1) if observed else None
-    bottlenecks = [item for item in samples if item["score"] > BOTTLENECK_THRESHOLD]
+    average_pressure = round(sum(item["pressure_index"] for item in samples) / len(samples), 1) if observed else None
+    bottlenecks = [item for item in samples if item["score"] >= BOTTLENECK_THRESHOLD]
     oldest = max(samples, key=lambda item: item["age_seconds"]) if samples else None
     alerts = [{
         "id": f"flow-{item['id']}", "severity": "CRITICAL",
@@ -173,6 +185,7 @@ def get_operations_analytics(now: Optional[datetime] = None) -> dict[str, Any]:
         "limitations": [
             "One measured road point per available corridor; not whole-network coverage.",
             "The congestion index is derived from measured speed/free-flow ratio.",
+            "Congestion pressure is a sensitivity-adjusted display index, not an additional measurement.",
             "Camera detections are image-view counts, not deduplicated fleet volumes or measured road speeds.",
             "Camera congestion estimates apply only to fresh registered views and explicitly bound graph edges.",
             "No measured emissions reduction is available; recorded traffic history begins with collection.",
@@ -180,17 +193,20 @@ def get_operations_analytics(now: Optional[datetime] = None) -> dict[str, Any]:
         ],
     }
     return {
-        "overall_network_status": (
-            "UNAVAILABLE" if avg is None else
-            "CONGESTED" if avg > 65 else "MODERATE" if avg > 40 else "OPTIMAL"
-        ),
+        "overall_network_status": {
+            "UNAVAILABLE": "UNAVAILABLE", "FREE_FLOW": "OPTIMAL", "SLOWING": "SLOWING",
+            "HEAVY": "MODERATE", "CRITICAL": "CONGESTED",
+        }[observed_speed_condition(avg)],
         "average_congestion_index": avg,
+        "average_congestion_pressure": average_pressure,
+        "pressure_multiplier": PRESSURE_MULTIPLIER, "pressure_policy": PRESSURE_POLICY,
         "active_bottlenecks": len(bottlenecks) if observed else None,
         "bottleneck_corridors": [
             {"id": item["id"], "name": item["name"], "score": item["score"]}
             for item in bottlenecks
         ],
         "bottleneck_threshold": BOTTLENECK_THRESHOLD,
+        "bottleneck_comparison": "greater_than_or_equal",
         "total_co2_reduced_today_kg": None,
         "co2_by_corridor_kg": {}, "co2_by_vehicle_type": {},
         "hourly_co2_distribution": [], "live_co2_rate_kg_hr": None,

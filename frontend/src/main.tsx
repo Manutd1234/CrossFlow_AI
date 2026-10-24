@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
+import { WorkspaceErrorBoundary } from './components/shared/WorkspaceErrorBoundary';
 import 'leaflet/dist/leaflet.css';
 import './index.css';
 
@@ -12,6 +13,8 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <WorkspaceErrorBoundary>
+      <App />
+    </WorkspaceErrorBoundary>
   </StrictMode>,
 );

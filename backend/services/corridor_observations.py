@@ -16,13 +16,12 @@ from typing import Any
 
 from services import clock, cctv_routing, cctv_store, live_traffic, router
 from services.operations_analytics import MAX_SNAPSHOT_AGE_SECONDS, _sample
+from services.observed_conditions import (
+    MIN_PROVIDER_CONFIDENCE, OBSERVED_CONDITION_POLICY, PRESSURE_MULTIPLIER,
+    PRESSURE_POLICY, observed_speed_condition, pressure_index,
+)
 from services.route_learning_store import LearningSnapshot
 from services.route_solver import CORRIDORS
-
-
-# Conservative card-level engineering gate, not a calibrated accuracy claim.
-# Other analytics/model domains retain their existing transport acceptance.
-MIN_PROVIDER_CONFIDENCE = 0.5
 
 
 def _instant(value: datetime | str) -> datetime:
@@ -91,6 +90,9 @@ def _empty_observation(now: datetime) -> dict[str, Any]:
         "status": "unavailable", "source": "unavailable", "scope": "unavailable",
         "checked_at": clock.iso(now), "observed_at": None, "fresh_until": None,
         "congestion_index": None, "delay_mins": None,
+        "pressure_index": None, "pressure_multiplier": PRESSURE_MULTIPLIER,
+        "pressure_policy": PRESSURE_POLICY,
+        "pressure_forecast_30m": None, "pressure_forecast_60m": None,
         "condition": "UNAVAILABLE", "condition_policy": "unavailable",
         "current_speed_kmh": None, "free_flow_speed_kmh": None,
         "provider_confidence": None,
@@ -102,15 +104,6 @@ def _empty_observation(now: datetime) -> dict[str, Any]:
         "forecast_method": "unavailable", "forecast_observed_at": None,
         "forecast_fresh_until": None,
     }
-
-
-def _provider_condition(score: float) -> str:
-    """Engineering speed-loss bands; these are not accuracy-calibrated LOS."""
-    if score <= 5:
-        return "FREE_FLOW"
-    if score < 40:
-        return "SLOWING"
-    return "CRITICAL" if score >= 70 else "HEAVY"
 
 
 def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
@@ -161,8 +154,8 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
                 # neither extend nor prematurely withdraw a provider point.
                 observed_at=clock.iso(captured), fresh_until=clock.iso(expiry),
                 congestion_index=sample["score"], provider_point_count=1,
-                condition=_provider_condition(sample["score"]),
-                condition_policy="observed_speed_loss_bands_v1",
+                condition=observed_speed_condition(sample["score"]),
+                condition_policy=OBSERVED_CONDITION_POLICY,
                 current_speed_kmh=sample["current_speed_kmh"],
                 free_flow_speed_kmh=sample["free_flow_speed_kmh"],
                 provider_confidence=sample["provider_confidence"],
@@ -180,6 +173,11 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
                 condition="CAMERA_ESTIMATE", condition_policy="mapped_camera_proxy_v1",
             )
         score = observation["congestion_index"]
+        # This display metric transforms only the chosen, already-qualified
+        # source. Camera views remain estimates and cannot invent forecasts.
+        observation["pressure_index"] = pressure_index(score)
+        observation["pressure_forecast_30m"] = pressure_index(observation["forecast_30m"])
+        observation["pressure_forecast_60m"] = pressure_index(observation["forecast_60m"])
         status = "UNAVAILABLE" if score is None else "CRITICAL" if score >= 70 else "HEAVY" if score >= 40 else "SMOOTH"
         results.append({
             "id": corridor["id"], "name": corridor["name"],

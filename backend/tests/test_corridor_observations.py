@@ -62,8 +62,9 @@ class CorridorObservationsTests(unittest.TestCase):
     def test_observed_condition_distinguishes_free_flow_slowing_and_congested_bands(self):
         for speed, score, condition in (
             (50., 0., "FREE_FLOW"), (47.5, 5., "FREE_FLOW"),
-            (47.45, 5.1, "SLOWING"), (40., 20., "SLOWING"),
-            (30., 40., "HEAVY"), (15., 70., "CRITICAL"),
+            (47.45, 5.1, "SLOWING"), (40.05, 19.9, "SLOWING"),
+            (40., 20., "HEAVY"), (30.05, 39.9, "HEAVY"),
+            (30., 40., "CRITICAL"), (15., 70., "CRITICAL"),
             # Keep the established bounded congestion-index units: the raw
             # stopped speed is0, while the finite routing index is95.
             (0., 95., "CRITICAL"),
@@ -73,7 +74,7 @@ class CorridorObservationsTests(unittest.TestCase):
                 value = self.current()["observed_traffic"]
                 self.assertEqual(value["congestion_index"], score)
                 self.assertEqual(value["condition"], condition)
-                self.assertEqual(value["condition_policy"], "observed_speed_loss_bands_v1")
+                self.assertEqual(value["condition_policy"], "observed_speed_loss_bands_v2")
 
     def test_provider_condition_retains_the_validated_speed_and_confidence_for_audit(self):
         self.provider_mock.return_value = {"corridor-1": provider(40., confidence=.87)}
@@ -81,8 +82,34 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertEqual(value["current_speed_kmh"], 40.)
         self.assertEqual(value["free_flow_speed_kmh"], 50.)
         self.assertEqual(value["provider_confidence"], .87)
-        self.assertEqual(value["condition"], "SLOWING")
+        self.assertEqual(value["condition"], "HEAVY")
         self.assertFalse(value["camera_warning"])
+
+    def test_warning_bands_do_not_change_measured_score_or_legacy_model_classification(self):
+        self.provider_mock.return_value = {"corridor-1": provider(40.)}
+        row = self.current()
+        self.assertEqual(row["live_congestion_score"], 20.)
+        self.assertEqual(row["status"], "SMOOTH")
+        self.assertEqual(row["observed_traffic"]["congestion_index"], 20.)
+        self.assertEqual(row["observed_traffic"]["condition"], "HEAVY")
+
+    def test_pressure_and_pressure_outlook_preserve_raw_provider_indices(self):
+        for speed, raw, pressure in ((50., 0., 0.), (42.5, 15., 37.5), (40., 20., 50.), (30., 40., 100.), (0., 95., 100.)):
+            with self.subTest(raw=raw):
+                self.provider_mock.return_value = {"corridor-1": provider(speed)}
+                row = self.current()
+                value = row["observed_traffic"]
+                self.assertEqual(value["pressure_policy"], "congestion_pressure_v1")
+                self.assertEqual(value["pressure_multiplier"], 2.5)
+                self.assertEqual(value["congestion_index"], raw)
+                self.assertEqual(value["pressure_index"], pressure)
+                self.assertEqual(row["live_congestion_score"], raw)
+                self.assertEqual(value["forecast_30m"], raw)
+                self.assertEqual(value["pressure_forecast_30m"], pressure)
+                self.assertEqual(value["pressure_forecast_60m"], pressure)
+        expired = self.current(now=NOW + timedelta(seconds=180))["observed_traffic"]
+        self.assertIsNone(expired["pressure_index"])
+        self.assertIsNone(expired["pressure_forecast_30m"])
 
     def test_low_confidence_provider_cannot_claim_free_flow(self):
         for confidence, available in ((.499, False), (0., False), (.5, True), (1., True)):
@@ -108,7 +135,7 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertEqual(current["source"], "unavailable")
         self.assertEqual(current["condition"], "UNAVAILABLE")
         self.assertEqual(current["condition_policy"], "unavailable")
-        for key in ("congestion_index", "delay_mins", "observed_at", "fresh_until", "forecast_30m", "forecast_60m", "camera_fresh_until"):
+        for key in ("congestion_index", "delay_mins", "observed_at", "fresh_until", "forecast_30m", "forecast_60m", "camera_fresh_until", "pressure_index", "pressure_forecast_30m", "pressure_forecast_60m"):
             self.assertIsNone(current[key], key)
         self.assertIsNone(value["live_congestion_score"])
         self.assertEqual(value["status"], "UNAVAILABLE")
@@ -167,6 +194,9 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertEqual(value["forecast_method"], "unavailable")
         self.assertEqual(value["condition"], "CAMERA_ESTIMATE")
         self.assertEqual(value["condition_policy"], "mapped_camera_proxy_v1")
+        self.assertEqual(value["pressure_index"], 100.)
+        self.assertIsNone(value["pressure_forecast_30m"])
+        self.assertIsNone(value["pressure_forecast_60m"])
         self.assertEqual(value["camera_condition"], "LOCAL_CONGESTION_ESTIMATE")
         self.assertIsNone(value["current_speed_kmh"])
         self.assertIsNone(value["provider_confidence"])
@@ -209,6 +239,7 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertEqual(value["source"], "tomtom_live")
         self.assertEqual(value["congestion_index"], 0.)
         self.assertEqual(value["camera_congestion_index"], 80.)
+        self.assertEqual(value["pressure_index"], 0.)
         self.assertEqual(value["camera_count"], 1)
         self.assertEqual(value["condition"], "FREE_FLOW")
         self.assertEqual(value["camera_condition"], "LOCAL_CONGESTION_ESTIMATE")
@@ -237,7 +268,7 @@ class CorridorObservationsTests(unittest.TestCase):
                 )
                 value = self.current()["observed_traffic"]
                 self.assertEqual(value["congestion_index"], 20.)
-                self.assertEqual(value["condition"], "SLOWING")
+                self.assertEqual(value["condition"], "HEAVY")
                 self.assertEqual(value["camera_warning"], expected)
         self.provider_mock.return_value = {"corridor-1": provider(30.)}
         self.camera_mock.return_value = cctv_routing.CameraRoutingSnapshot(NOW.isoformat(), (camera(score=80.),))

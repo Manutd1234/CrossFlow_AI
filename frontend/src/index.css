@@ -2350,13 +2350,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .map-radar-card.route-map-radar-card {
-  width: clamp(240px, 32%, 320px);
-  max-width: calc(100% - 86px);
-  max-height: min(300px, calc(100% - 72px));
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 10px 12px;
+  position: static;
+  inset: auto;
+  z-index: auto;
+  order: 0;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  padding: 9px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .route-map-radar-heading {
@@ -2383,7 +2395,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .route-map-radar-metrics {
   gap: 6px;
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 .route-map-radar-metrics .map-radar-card__legend-item {
@@ -3940,14 +3952,19 @@ a:focus-visible {
 }
 
 .route-map-route-tags {
-  bottom: 12px;
+  position: static;
+  inset: auto;
+  z-index: auto;
+  order: 2;
   display: flex;
+  flex: 0 0 auto;
   flex-wrap: wrap;
   gap: 6px;
-  left: 12px;
-  max-width: calc(100% - 24px);
-  position: absolute;
-  z-index: 1000;
+  width: 100%;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
 }
 
 .route-map-route-option.badge {
@@ -4578,8 +4595,8 @@ a:focus-visible {
   border-radius: 14px;
   background: var(--surface-1);
   display: flex;
-  flex: 1 1 320px;
-  min-height: 0;
+  flex: 1 0 320px;
+  min-height: min-content;
   overflow: hidden;
 }
 
@@ -4588,18 +4605,28 @@ a:focus-visible {
   border-radius: 0;
   box-shadow: none;
   display: flex;
+  flex-direction: column;
   flex: 1;
   margin: 0;
-  min-height: 0;
+  min-height: min-content;
   overflow: hidden;
   position: relative;
   width: 100%;
 }
 
 .route-preview-map-canvas {
-  flex: 1;
-  min-height: 0;
+  order: 1;
+  flex: 1 0 220px;
+  min-height: 220px;
   width: 100%;
+}
+
+/* Let short result panels scroll the whole map section. The summary and
+   choices take real layout space instead of covering waypoint letters. */
+.route-planner-layout .route-result-tabs #route-result-panel-1 .route-preview-shell {
+  flex: 1 0 320px;
+  height: auto;
+  min-height: min-content;
 }
 
 .route-metrics-grid {

@@ -48,6 +48,8 @@ describe('backend modelled traffic-flow analysis', () => {
     expect(view.textContent).toContain('168 modelled samples');
     expect(view.textContent).toContain('not measured speeds, vehicle counts or a live forecast');
     expect(view.textContent).toContain('Modelled peak hour');
+    expect(view.textContent).toContain('Lower scenario index (<40)');
+    expect(view.textContent).not.toContain('Critical (≥70)');
     expect(view.querySelector('[aria-label^="Modelled 24-hour congestion profile"]')).not.toBeNull();
     expect(view.querySelector('[aria-label^="Modelled daily pattern"]')).not.toBeNull();
     expect(view.querySelector('[aria-label="Historical data source"]')).toBeNull();

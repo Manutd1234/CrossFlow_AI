@@ -9,21 +9,46 @@ export const trafficBands = [
   { name: 'Critical', range: '70–100', color: 'var(--accent-rose)' },
 ] as const;
 export const trafficBand = (score: number) => score >= 70 ? 2 : score >= 40 ? 1 : 0;
+const measuredConditions = [
+  { condition: 'FREE_FLOW', name: 'Free flow', color: 'var(--accent-emerald)' },
+  { condition: 'SLOWING', name: 'Slowing', color: 'var(--accent-amber)' },
+  { condition: 'HEAVY', name: 'Heavy', color: 'var(--accent-amber)' },
+  { condition: 'CRITICAL', name: 'Critical', color: 'var(--accent-rose)' },
+  { condition: 'UNAVAILABLE', name: 'Unavailable', color: 'var(--text-muted)' },
+] as const;
+
+function qualifiedMeasuredPoint(point: TrafficPoint): boolean {
+  const confidence = point.provider_confidence;
+  if (![point.score, point.current_speed_kmh, point.free_flow_speed_kmh].every(Number.isFinite)
+    || point.score < 0 || point.score > 95
+    || point.current_speed_kmh < 0 || point.current_speed_kmh > 250
+    || point.free_flow_speed_kmh <= 0 || point.free_flow_speed_kmh > 250
+    || point.current_speed_kmh / point.free_flow_speed_kmh > 1.5
+    || typeof confidence !== 'number' || !Number.isFinite(confidence) || confidence < 0.5 || confidence > 1
+    || point.condition_policy !== 'observed_speed_loss_bands_v2') return false;
+  // Validate the declared rounded index against the serving contract; never
+  // infer a condition when the backend's declaration is absent or incoherent.
+  if (Math.abs(point.score - 100 * (1 - Math.min(1, Math.max(0.05,
+    point.current_speed_kmh / point.free_flow_speed_kmh)))) > 0.051) return false;
+  const expected = point.score <= 5 ? 'FREE_FLOW' : point.score < 20 ? 'SLOWING'
+    : point.score < 40 ? 'HEAVY' : 'CRITICAL';
+  return point.condition === expected;
+}
+
 export const forecastClock = (timestamp: string) => new Intl.DateTimeFormat('en-GB', {
   hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta',
 }).format(new Date(timestamp));
 
 export function measuredChartData(samples: TrafficPoint[]) {
-  const speeds = samples.filter(point => [point.score, point.current_speed_kmh, point.free_flow_speed_kmh]
-    .every(Number.isFinite) && point.score >= 0 && point.score <= 100
-    && point.current_speed_kmh >= 0 && point.free_flow_speed_kmh > 0).map(point => ({
+  const points = samples.map(point => ({ point, qualified: qualifiedMeasuredPoint(point) }));
+  const speeds = points.filter(({ qualified }) => qualified).map(({ point }) => ({
       id: point.id, name: shortCorridorName(point.name), measured: point.current_speed_kmh,
       freeFlow: point.free_flow_speed_kmh, score: point.score,
     }));
-  const conditions = trafficBands.map((band, index) => ({ ...band,
-    count: speeds.filter(point => trafficBand(point.score) === index).length,
+  const conditions = measuredConditions.map(band => ({ ...band,
+    count: points.filter(({ point, qualified }) => (qualified ? point.condition : 'UNAVAILABLE') === band.condition).length,
   }));
-  return { speeds, conditions };
+  return { speeds, conditions, pointCount: points.length };
 }
 
 export function corridorForecastData(simulation: AnalyticsSimulation) {

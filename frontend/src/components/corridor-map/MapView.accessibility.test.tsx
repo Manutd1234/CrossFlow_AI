@@ -72,16 +72,19 @@ let root: Root | undefined;
 function observedTraffic(score: number, at = Date.now(), secondsUntilExpiry = 60): NonNullable<Corridor['observed_traffic']> {
   const observedAt = new Date(at - 5_000).toISOString();
   const freshUntil = new Date(at + secondsUntilExpiry * 1_000).toISOString();
+  const pressure = Number(Math.min(100, score * 2.5).toFixed(1));
   return {
     status: 'available', source: 'tomtom_live', scope: 'representative_provider_point',
-    condition: score <= 5 ? 'FREE_FLOW' : score < 40 ? 'SLOWING' : score < 70 ? 'HEAVY' : 'CRITICAL',
-    condition_policy: 'observed_speed_loss_bands_v1', provider_confidence: 0.9,
+    condition: score <= 5 ? 'FREE_FLOW' : score < 20 ? 'SLOWING' : score < 40 ? 'HEAVY' : 'CRITICAL',
+    condition_policy: 'observed_speed_loss_bands_v2', provider_confidence: 0.9,
     current_speed_kmh: 50 * (1 - score / 100), free_flow_speed_kmh: 50,
     checked_at: new Date(at).toISOString(), observed_at: observedAt, fresh_until: freshUntil,
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
+    pressure_index: pressure, pressure_multiplier: 2.5, pressure_policy: 'congestion_pressure_v1',
     camera_congestion_index: null, camera_condition: null, camera_warning: false, camera_fresh_until: null,
     corridor_wide: false,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
+    pressure_forecast_30m: pressure, pressure_forecast_60m: pressure,
     forecast_observed_at: observedAt, forecast_fresh_until: freshUntil,
   };
 }
@@ -268,8 +271,8 @@ describe('MapView traffic overlay controls', () => {
     expect(container.querySelector('.hotspot-watch__list')?.getAttribute('aria-label'))
       .toContain('Scrollable');
     expect(container.textContent).toContain('30-Area Congestion Watch');
-    expect(container.textContent).toContain('20 critical');
-    expect(container.textContent).toContain('10 heavy');
+    expect(container.textContent).toContain('20 high priority');
+    expect(container.textContent).toContain('10 watch priority');
     expect(L.polyline).toHaveBeenCalledTimes(10);
     expect(leafletTestState.corridorClickHandlers).toHaveLength(5);
 
@@ -410,8 +413,8 @@ describe('MapView traffic overlay controls', () => {
     // The unselected corridor is subdued and carries its own status colour, so
     // the map cannot disagree with the badge in the feed beneath it.
     const unselected = styles.find(style => style.weight === 4);
-    // The provider reports speed loss even below the old HEAVY threshold:
-    // SLOWING is amber rather than the legacy SMOOTH/green label.
+    // The verified provider condition controls the colour even while this
+    // row's compatibility status still says SMOOTH.
     expect(unselected?.color).toBe(corridorColor('HEAVY'));
     expect(unselected?.opacity).toBe(0.75);
 
@@ -436,7 +439,7 @@ describe('MapView traffic overlay controls', () => {
 
     expect(card?.querySelector('.hotspot-card__score')?.getAttribute('aria-label'))
       .toBe('Watch score 71.3 out of 100');
-    expect(card?.querySelector('.hotspot-card__priority')?.textContent).toContain('Heavy');
+    expect(card?.querySelector('.hotspot-card__priority')?.textContent).toContain('Watch priority');
     expect(container.textContent).not.toMatch(/weighted|backend-weighted|formula/i);
     expect(card?.querySelector('.hotspot-card__score')?.textContent).not.toContain('63.4');
     expect(card?.querySelector('img')?.getAttribute('src')).toContain('wikimedia.org');
@@ -473,7 +476,7 @@ describe('MapView traffic overlay controls', () => {
     expect(panel?.textContent).not.toContain('AI 30-Min');
     const feed = container.querySelector('.corridor-feed-item');
     expect(feed?.textContent).toContain('Unavailable');
-    expect(feed?.textContent).not.toMatch(/Idx: 72|Delay: \+8/);
+    expect(feed?.textContent).not.toMatch(/Pressure: 72|Delay: \+8/);
     expect(latestCorridorStyle()?.color).toEqual(expect.any(String));
     expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
     expect(latestCorridorStyle()?.color).not.toBe(corridorColor('CRITICAL'));
@@ -495,7 +498,7 @@ describe('MapView traffic overlay controls', () => {
     const busy = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(72) };
     const container = renderIntoDom(corridorView([busy]));
     showCorridorTab(container);
-    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/72\s*\/ 100/);
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/100\s*\/ 100/);
     expect(latestCorridorStyle()?.color).toBe(corridorColor('CRITICAL'));
 
     act(() => vi.advanceTimersByTime(1_000));
@@ -506,13 +509,13 @@ describe('MapView traffic overlay controls', () => {
 
     expect(container.querySelector('#selected-corridor-title')?.textContent).toContain('Mukakuning');
     expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/^0\s*\/ 100/);
-    expect(container.querySelector('.corridor-feed-item')?.textContent).not.toContain('Idx: 72');
+    expect(container.querySelector('.corridor-feed-item')?.textContent).not.toContain('Pressure: 72');
     expect(container.querySelector('.corridor-feed-item')?.getAttribute('aria-pressed')).toBe('true');
     expect(container.querySelector('.corridor-feed-item')?.textContent).toMatch(/free.flow/i);
     expect(container.querySelector('.corridor-feed-item')?.textContent).not.toContain('SMOOTH');
     expect(latestCorridorStyle()?.color).toBe(corridorColor('SMOOTH'));
-    expect(latestCorridorTooltip()).toMatch(/index 0\b/i);
-    expect(latestCorridorTooltip()).not.toMatch(/index 72\b/i);
+    expect(latestCorridorTooltip()).toMatch(/congestion pressure 0\b/i);
+    expect(latestCorridorTooltip()).not.toMatch(/congestion pressure 100\b/i);
     expect(leafletTestState.map).toHaveBeenCalledTimes(1);
   });
 
@@ -522,8 +525,8 @@ describe('MapView traffic overlay controls', () => {
     const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(72, Date.now(), 2) };
     const container = renderIntoDom(corridorView([corridor]));
     showCorridorTab(container);
-    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toContain('72');
-    expect(latestCorridorTooltip()).toMatch(/index 72\b/i);
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toContain('100');
+    expect(latestCorridorTooltip()).toMatch(/congestion pressure 100\b/i);
 
     act(() => vi.advanceTimersByTime(3_000));
 
@@ -532,7 +535,7 @@ describe('MapView traffic overlay controls', () => {
     expect(panel?.textContent).toContain('Forecast unavailable');
     expect(container.querySelector('.corridor-feed-item')?.textContent).toContain('Unavailable');
     expect(latestCorridorTooltip()).toMatch(/unavailable/i);
-    expect(latestCorridorTooltip()).not.toMatch(/index 72\b/i);
+    expect(latestCorridorTooltip()).not.toMatch(/congestion pressure 100\b/i);
     expect(latestCorridorStyle()?.color).not.toBe(corridorColor('CRITICAL'));
     expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
     expect(leafletTestState.map).toHaveBeenCalledTimes(1);
@@ -543,7 +546,7 @@ describe('MapView traffic overlay controls', () => {
     const container = renderIntoDom(corridorView([corridor]));
     showCorridorTab(container);
     expect(latestCorridorStyle()?.color).toBe(corridorColor('CRITICAL'));
-    expect(latestCorridorTooltip()).toMatch(/index 72\b/i);
+    expect(latestCorridorTooltip()).toMatch(/congestion pressure 100\b/i);
 
     act(() => root?.render(corridorView([])));
 
@@ -552,7 +555,7 @@ describe('MapView traffic overlay controls', () => {
     expect(latestCorridorStyle()?.color).not.toBe(corridorColor('CRITICAL'));
     expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
     expect(latestCorridorTooltip()).toMatch(/unavailable/i);
-    expect(latestCorridorTooltip()).not.toMatch(/index 72\b/i);
+    expect(latestCorridorTooltip()).not.toMatch(/congestion pressure 100\b/i);
     expect(leafletTestState.map).toHaveBeenCalledTimes(1);
   });
 
@@ -577,13 +580,56 @@ describe('MapView traffic overlay controls', () => {
   });
 
   it('shows moderate observed speed loss as slowing with amber road styling', () => {
-    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(20) };
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(15) };
     const container = renderIntoDom(corridorView([corridor]));
     showCorridorTab(container);
     expect(container.querySelector('.selected-corridor-panel')?.textContent).toMatch(/slowing/i);
     expect(container.querySelector('.corridor-feed-item')?.textContent).toMatch(/slowing/i);
     expect(container.querySelector('.selected-corridor-panel')?.textContent).not.toContain('SMOOTH');
     expect(latestCorridorStyle()?.color).toBe(corridorColor('HEAVY'));
+  });
+
+  it.each([
+    { score: 0, pressure: 0, condition: 'FREE FLOW', color: 'SMOOTH' as const },
+    { score: 15, pressure: 37.5, condition: 'SLOWING', color: 'HEAVY' as const },
+    { score: 20, pressure: 50, condition: 'HEAVY', color: 'HEAVY' as const },
+    { score: 40, pressure: 100, condition: 'CRITICAL', color: 'CRITICAL' as const },
+    { score: 95, pressure: 100, condition: 'CRITICAL', color: 'CRITICAL' as const },
+  ])('shows pressure $pressure separately from the measured index $score and verified condition', ({ score, pressure, condition, color }) => {
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(score) };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel')?.textContent).toContain(condition);
+    expect(container.querySelector('.selected-corridor-panel')?.textContent).toContain('Congestion pressure');
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toBe(`${pressure} / 100`);
+    expect(container.querySelector('.corridor-feed-item')?.textContent).toContain(`Pressure: ${pressure}`);
+    expect(container.querySelector('.corridor-feed-item')?.getAttribute('aria-label')).toContain(`congestion pressure ${pressure}`);
+    expect(latestCorridorTooltip()).toContain(`Congestion pressure ${pressure}`);
+    expect(latestCorridorStyle()?.color).toBe(corridorColor(color));
+    expect(corridor.observed_traffic.congestion_index).toBe(score);
+  });
+
+  it('withholds incoherent pressure without replacing it with the valid raw index', () => {
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: { ...observedTraffic(15), pressure_index: 99 } };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel')?.textContent).toContain('SLOWING');
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toBe('Unavailable');
+    expect(container.querySelector('.corridor-feed-item')?.textContent).toContain('Pressure: Unavailable');
+    expect(latestCorridorTooltip()).toContain('Pressure unavailable');
+    expect(latestCorridorTooltip()).not.toMatch(/Congestion pressure (15|99)\b/);
+    expect(corridor.observed_traffic.congestion_index).toBe(15);
+  });
+
+  it('withholds the pressure outlook when only raw forecast fields are present', () => {
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: {
+      ...observedTraffic(15), pressure_forecast_30m: null, pressure_forecast_60m: null,
+    } };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toBe('37.5 / 100');
+    expect(container.querySelector('.selected-corridor-panel__forecast-copy')?.textContent).toContain('Forecast unavailable');
+    expect(corridor.observed_traffic.forecast_30m).toBe(15);
   });
 
   it('withholds a low-confidence provider observation instead of showing legacy smooth flow', () => {
