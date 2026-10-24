@@ -29,9 +29,9 @@ PROJECT_DIR = os.path.dirname(BACKEND_DIR)
 sys.path.append(BACKEND_DIR)
 sys.path.append(PROJECT_DIR)
 
-# Importing the API initializes its process-local history store. Point that
-# singleton at a disposable suite database before any service imports so this
-# verification file can never seed or mutate backend/data/congestion_history.db.
+# Importing the API initializes process-local stores. Isolate every default
+# store before any service import: running checks next to a live development
+# server must not save test routes or inspect its camera observations.
 _TEST_HISTORY_DIRECTORY = tempfile.TemporaryDirectory(
     prefix="crossflow-history-tests-",
 )
@@ -43,6 +43,25 @@ os.environ["CROSSFLOW_FERRY_FRESHNESS_DB"] = os.path.join(
     _TEST_HISTORY_DIRECTORY.name,
     "ferry_freshness.db",
 )
+for _setting, _filename in {
+    "CROSSFLOW_ROUTE_DB": "routes.db",
+    "CROSSFLOW_ROUTE_LEARNING_DB": "route_learning.db",
+    "CROSSFLOW_FORECAST_EVALUATION_DB": "forecast_evaluation.db",
+    "CROSSFLOW_CCTV_DB": "cctv_observations.sqlite",
+}.items():
+    os.environ[_setting] = os.path.join(_TEST_HISTORY_DIRECTORY.name, _filename)
+os.environ["CROSSFLOW_CCTV_REGISTRY"] = os.path.join(
+    _TEST_HISTORY_DIRECTORY.name, "cameras.json",
+)
+with open(os.environ["CROSSFLOW_CCTV_REGISTRY"], "w") as _registry_file:
+    json.dump({"schema_version": 1, "cameras": []}, _registry_file)
+os.environ["CROSSFLOW_CCTV_STORE"] = "local"
+os.environ["CROSSFLOW_CCTV_ENABLED"] = "0"
+os.environ["CROSSFLOW_ARCHIVE_LIVE_TRAFFIC"] = "0"
+os.environ["CROSSFLOW_WARM_ROUTING_CACHES"] = "0"
+# These tests exercise the explicitly synthetic baseline. Observed-model and
+# collector serving behavior have separate isolated service/HTTP test suites.
+os.environ["CROSSFLOW_REAL_TRAFFIC_TRAINING"] = "0"
 
 from models.congestion_model import (  # noqa: E402
     classify_status, delay_from_score, forecaster, history_training_provenance,
@@ -857,15 +876,59 @@ def test_spatial_zone_radial_cache_is_bounded_and_reused():
 
 
 def test_every_planner_location_pair_is_routable():
+    """Every ordered landmark pair has a directed, vehicle-legal path.
+
+    Reachability does not require independently scoring a complete weighted
+    A* search for every pair. Traverse the same immutable vehicle-filtered
+    production graph and reconstruct each path instead. Named endpoints outside
+    its strict public core retain their real A*-checked destination-access
+    connectors. Dedicated route-cost and alternative checks retain full searches.
+    """
     assert len(ROUTE_LOCATIONS) >= 12, "route planner did not expand beyond the original places"
     expected = len(ROUTE_LOCATIONS) * (len(ROUTE_LOCATIONS) - 1)
+    view = router._routing_view("COMMUTER", None)
+    adjacency = view.adjacency
+    hub = router.LANDMARKS["batam_centre"]
+    assert hub in view.core
+    connectors = {}
+    for location in ROUTE_LOCATIONS:
+        node = router.LANDMARKS[location["id"]]
+        if node not in view.core:
+            outward = router.astar_detailed(node, hub, vehicle_type="COMMUTER")
+            inward = router.astar_detailed(hub, node, vehicle_type="COMMUTER")
+            assert outward and inward, f"no legal endpoint connector for {location['id']}"
+            connectors[node] = (outward.nodes, inward.nodes)
     routable = 0
     for origin in ROUTE_LOCATIONS:
+        source = router.LANDMARKS[origin["id"]]
+        public_source = hub if source in connectors else source
+        parents = {public_source: None}
+        pending = [public_source]
+        while pending:
+            node = pending.pop()
+            for edge in adjacency.get(node, ()):
+                if edge.target not in parents:
+                    parents[edge.target] = node
+                    pending.append(edge.target)
         for destination in ROUTE_LOCATIONS:
             if origin["id"] == destination["id"]:
                 continue
-            route = router.route_between(origin["id"], destination["id"])
-            assert route, f"no route from {origin['id']} to {destination['id']}"
+            target = router.LANDMARKS[destination["id"]]
+            public_target = hub if target in connectors else target
+            assert public_target in parents, f"no route from {origin['id']} to {destination['id']}"
+            path = [public_target]
+            while path[-1] != public_source:
+                path.append(parents[path[-1]])
+            path.reverse()
+            if source in connectors:
+                path = connectors[source][0][:-1] + path
+            if target in connectors:
+                path += connectors[target][1][1:]
+            assert path[0] == source and path[-1] == target
+            assert all(
+                any(edge.target == nxt for edge in router.ROAD_ADJ[node])
+                for node, nxt in zip(path, path[1:])
+            ), f"non-routable directed edge from {origin['id']} to {destination['id']}"
             routable += 1
     assert routable == expected
 
@@ -5686,14 +5749,16 @@ def main() -> int:
 
         for name, fn in tests:
             try:
+                started = time.monotonic()
+                print(f"  run  {name}", flush=True)
                 fn()
-                print(f"  ok   {name}")
+                print(f"  ok   {name} ({time.monotonic() - started:.2f}s)", flush=True)
                 passed += 1
             except AssertionError as err:
-                print(f"  FAIL {name}: {err}")
+                print(f"  FAIL {name}: {err}", flush=True)
                 failures.append(name)
             except Exception as err:  # noqa: BLE001
-                print(f"  ERR  {name}: {type(err).__name__}: {err}")
+                print(f"  ERR  {name}: {type(err).__name__}: {err}", flush=True)
                 failures.append(name)
 
         print(f"\n{passed}/{len(tests)} passed")

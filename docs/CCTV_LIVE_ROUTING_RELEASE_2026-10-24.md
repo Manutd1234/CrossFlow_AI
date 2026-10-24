@@ -35,3 +35,13 @@ Validation before release: frontend 600 tests across 55 files, lint, TypeScript 
 - Published ferry schedules remain distinct from unavailable passenger queues, berth/cargo operations and emissions savings.
 
 See `CCTV_CLOUD_DELIVERY.md` for collector configuration and serverless forecasting behavior. Post-deployment evidence is recorded separately after the deployed commit is verified.
+
+## Production story verified
+
+The GitHub main release deployed successfully to `https://cross-flow-ai.vercel.app/`. The existing operator account restored normally. It issued dispatch **253J6NV** from Batam Centre Ferry Terminal to Batamindo Industrial Park; an isolated guest-driver workspace then loaded the lowercase code, normalized it, and rendered the same 9.64 km journey, map and 12 driving instructions. The code survived a subsequent production deployment and is stored in shared Supabase route storage.
+
+Camera 48 was on the selected path and its fresh observation was included in the immutable route audit. Its clear/light-traffic observation produces a small positive search preference cost; the minute-rounded API display is zero. This demonstrates the live integration, not that the real-world selected path would differ without that specific observation. A separate deterministic HTTP fixture demonstrates a changed route under stronger camera congestion.
+
+Three production camera snapshots showed 3, 4 and 4 fresh estimates, advancing capture timestamps, and 2–3 eligible mapped directed edges. Actual quality/freshness may subsequently withdraw a camera. Production forecasts loaded five fresh genuine provider points, the explicitly provisional persistence baseline, and fresh weather. Both application consoles had zero application errors; a prior Vercel-login Google/FedCM attempt logged an unrelated error before existing GitHub sign-in succeeded. Deployment protection was retained.
+
+Evidence: `verification/production-browser-story-2026-10-24.json`, `verification/cctv-cloud-delivery-live-2026-10-24.json`, and `verification/production-dispatch-253J6NV-cctv-2026-10-24.json`. Screenshots remain local to avoid publishing account/browser evidence.

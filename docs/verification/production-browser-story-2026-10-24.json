@@ -1,0 +1,97 @@
+{
+  "schema": "crossflow.production_browser_story.v1",
+  "checked_at": "2026-10-24T07:46:35.520122+00:00",
+  "verified_runtime_commit": "daf4cfbd99521e9800c5715c804bcd6b3fa68900",
+  "production_url": "https://cross-flow-ai.vercel.app/",
+  "operator": {
+    "existing_session_restored": true,
+    "role": "admin",
+    "created_dispatch": "253J6NV",
+    "origin": "Batam Centre Ferry Terminal",
+    "destination": "Batamindo Industrial Park",
+    "vehicle": "Car / Taxi",
+    "departure": "2026-10-24T14:35:00+07:00",
+    "road_distance_km": 9.64,
+    "road_time_minutes": 12.8,
+    "directions_count": 12,
+    "analytics_overview_live": true,
+    "camera_estimates_visible_as_numeric_only": true,
+    "authenticated_forecast_response": "BASELINE · PROVISIONAL",
+    "forecast_sampling_points": 5,
+    "forecast_mean_index_at_check": 7.2,
+    "forecast_horizons_minutes": [
+      15,
+      30,
+      60
+    ],
+    "weather_status": "fresh"
+  },
+  "driver": {
+    "entry": "Continue as Driver",
+    "isolated_origin": "https://cross-flow-ai-ianwangsa2-8990s-projects.vercel.app/",
+    "signed_into_crossflow": false,
+    "analytics_tab_absent": true,
+    "planning_form_absent": true,
+    "lookup_input": "253j6nv",
+    "normalized_code": "253J6NV",
+    "saved_route_loaded": true,
+    "road_distance_km": 9.64,
+    "road_time_minutes": 12.8,
+    "matching_directions_count": 12,
+    "journey_map_rendered": true,
+    "saved_departure_warning_correctly_shown": true
+  },
+  "storage_security": {
+    "production_auth_schema": 2,
+    "cctv_table_rls": true,
+    "route_tables_rls": true,
+    "anonymous_database_reads": false,
+    "backend_reads_allowed": true,
+    "existing_rows_and_roles_preserved": true
+  },
+  "console": {
+    "operator_app_errors": 0,
+    "driver_app_errors": 0,
+    "prior_vercel_login_fedcm_error": 1,
+    "prior_login_error_scope": "Vercel login page auto Google/FedCM attempt; existing GitHub sign-in succeeded; no CrossFlow runtime error"
+  },
+  "source_scopes": {
+    "registered_playlists_reviewed": 28,
+    "advancing_in_review": 5,
+    "ended_in_review": 23,
+    "reviewed_directed_bindings": [
+      "13",
+      "51",
+      "48"
+    ],
+    "plaza_camera_disabled": "1",
+    "unresolved_visible_edge": "19",
+    "ended_legacy_binding_disabled": "15",
+    "camera_media_exposed": false,
+    "camera_media_saved": false
+  },
+  "approvals": {
+    "three_production_migrations_explicitly_approved": true,
+    "scoped_collector_credential_explicitly_approved": true,
+    "deployment_protection_changed": false,
+    "browser_tokens_exported": false,
+    "emails_sent": false
+  },
+  "worker": {
+    "pid": 18566,
+    "host": "this computer",
+    "cloud_ingestion": "numeric only",
+    "persistent_cloud_inference_host_provisioned": false,
+    "offline_behavior": "camera evidence expires and withdraws from new route searches"
+  },
+  "screenshots_local_only": [
+    "production-driver-253J6NV-map-2026-10-24.png",
+    "production-operator-live-analytics-2026-10-24.png",
+    "production-operator-forecasts-2026-10-24.png"
+  ],
+  "limits": [
+    "This proves applied camera search preference and saved journey delivery, not a counterfactual real-world route change or measured travel delay.",
+    "Independent camera accuracy and full-city coverage are not established.",
+    "Production historical traffic archive is not shared; no raw historical provider data was uploaded."
+  ]
+}
