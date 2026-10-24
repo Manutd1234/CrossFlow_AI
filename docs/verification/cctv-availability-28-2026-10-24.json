@@ -1,0 +1,487 @@
+{
+  "schema": "crossflow.public_hls_metadata_availability.v1",
+  "started_at": "2026-10-24T06:11:46.701173+00:00",
+  "finished_at": "2026-10-24T06:12:16.733297+00:00",
+  "duration_seconds": 30.03,
+  "main_backend_changed": false,
+  "main_registry_changed": false,
+  "media_segments_requested": false,
+  "images_or_video_saved": false,
+  "max_parallel_checks": 2,
+  "advancement_is_not_camera_accuracy_or_inference_permission": true,
+  "history": [
+    {
+      "checked_at": "2026-10-24T06:11:46.702021+00:00",
+      "summary": {
+        "unchecked": 28
+      },
+      "running_workers": 2
+    },
+    {
+      "checked_at": "2026-10-24T06:11:51.707259+00:00",
+      "summary": {
+        "awaiting_progress": 3,
+        "ended": 11,
+        "unchecked": 14
+      },
+      "running_workers": 2
+    },
+    {
+      "checked_at": "2026-10-24T06:11:56.712459+00:00",
+      "summary": {
+        "awaiting_progress": 5,
+        "ended": 23
+      },
+      "running_workers": 2
+    },
+    {
+      "checked_at": "2026-10-24T06:12:01.717677+00:00",
+      "summary": {
+        "awaiting_progress": 5,
+        "ended": 23
+      },
+      "running_workers": 2
+    },
+    {
+      "checked_at": "2026-10-24T06:12:06.722462+00:00",
+      "summary": {
+        "advancing": 3,
+        "ended": 23,
+        "awaiting_progress": 2
+      },
+      "running_workers": 2
+    },
+    {
+      "checked_at": "2026-10-24T06:12:11.727682+00:00",
+      "summary": {
+        "advancing": 3,
+        "ended": 23,
+        "stalled": 1,
+        "awaiting_progress": 1
+      },
+      "running_workers": 2
+    },
+    {
+      "checked_at": "2026-10-24T06:12:16.733042+00:00",
+      "summary": {
+        "advancing": 4,
+        "ended": 23,
+        "stalled": 1
+      },
+      "running_workers": 2
+    }
+  ],
+  "availability": {
+    "sources": {
+      "1": {
+        "status": "advancing",
+        "code": "playlist_advancing",
+        "checked_at": "2026-10-24T06:12:03.184098Z",
+        "last_progress_at": "2026-10-24T06:12:03.184098Z",
+        "source_media_at": null,
+        "playlist_sequence": 96622,
+        "playlist_segments": 6,
+        "target_duration_seconds": 11.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "13": {
+        "status": "advancing",
+        "code": "playlist_advancing",
+        "checked_at": "2026-10-24T06:12:03.222583Z",
+        "last_progress_at": "2026-10-24T06:12:03.222583Z",
+        "source_media_at": null,
+        "playlist_sequence": 96172,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "51": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:47.991409Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 96616,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "15": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:48.064638Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 96454,
+        "playlist_segments": 2,
+        "target_duration_seconds": 9.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "14": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:48.581625Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 18338,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "31": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:48.700931Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 71326,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "18": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:49.449974Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 245,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "19": {
+        "status": "advancing",
+        "code": "playlist_advancing",
+        "checked_at": "2026-10-24T06:12:05.082075Z",
+        "last_progress_at": "2026-10-24T06:12:05.082075Z",
+        "source_media_at": null,
+        "playlist_sequence": 91743,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "5": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:49.952247Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 1,
+        "playlist_segments": 1,
+        "target_duration_seconds": 3.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "20": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:50.076780Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 244,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "23": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:50.646160Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 68968,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "36": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:50.812489Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 38015,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "35": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:51.347466Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 351,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "6": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:51.453698Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 350,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "10": {
+        "status": "stalled",
+        "code": "playlist_stalled",
+        "checked_at": "2026-10-24T06:12:07.628210Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 13693,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "27": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:52.069440Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 245,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "2": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:52.594947Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 4047,
+        "playlist_segments": 6,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "25": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:52.700552Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 38015,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "28": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:53.232996Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 69103,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "32": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:53.306479Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 35192,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "43": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:53.896132Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 38015,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "24": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:53.993218Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 213,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "3": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:54.503631Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 34852,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "40": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:54.683151Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 244,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "42": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:55.123804Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 244,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "37": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:55.331211Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 6511,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "46": {
+        "status": "ended",
+        "code": "playlist_ended",
+        "checked_at": "2026-10-24T06:11:55.753186Z",
+        "last_progress_at": null,
+        "source_media_at": null,
+        "playlist_sequence": 38017,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      },
+      "48": {
+        "status": "advancing",
+        "code": "playlist_advancing",
+        "checked_at": "2026-10-24T06:12:11.796484Z",
+        "last_progress_at": "2026-10-24T06:12:11.796484Z",
+        "source_media_at": null,
+        "playlist_sequence": 58488,
+        "playlist_segments": 2,
+        "target_duration_seconds": 10.0,
+        "consecutive_failures": 0,
+        "reachable": true,
+        "metadata_only": true,
+        "playback_verified": false
+      }
+    },
+    "summary": {
+      "advancing": 4,
+      "ended": 23,
+      "stalled": 1
+    },
+    "policy": {
+      "scope": "registered_public_hls_playlists",
+      "registered_sources": 28,
+      "maximum_parallel_checks": 2,
+      "running_check_workers": 0,
+      "poll_seconds": 15.0,
+      "failed_or_ended_retry_seconds": 60.0,
+      "check_expiry_seconds": 90.0,
+      "maximum_playlist_bytes": 65536,
+      "media_segments_requested": false,
+      "grants_inference_or_routing_eligibility": false
+    }
+  }
+}

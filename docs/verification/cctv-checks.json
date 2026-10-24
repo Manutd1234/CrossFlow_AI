@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "local_date": "2026-10-24",
+  "feature": "Registered CCTV evidence to congestion-map inputs; manual upload retired",
+  "checks": [
+    {
+      "runtime": ".venv",
+      "scope": "CCTV ASGI API, upload retirement, temporal engine and aggregate store",
+      "runner": "pytest",
+      "passed": 64,
+      "subtests_passed": 78
+    },
+    {
+      "runtime": ".venv-vision",
+      "scope": "Temporal engine, aggregate store, JSONL worker and HLS collector",
+      "runner": "unittest",
+      "passed": 69,
+      "overlap_with_previous_check": true
+    },
+    {
+      "runtime": ".venv",
+      "scope": "Existing TomTom archiver and operations analytics",
+      "runner": "pytest",
+      "passed": 20,
+      "subtests_passed": 12
+    },
+    {
+      "runtime": ".venv",
+      "scope": "Existing live-traffic, hotspot and congestion-zone regressions",
+      "runner": "pytest",
+      "passed": 6
+    },
+    {
+      "runtime": "bundled Node",
+      "scope": "CCTV client/monitor, operations continuity/computed analytics, map accessibility",
+      "runner": "vitest",
+      "passed": 86
+    },
+    {
+      "runtime": "bundled Node",
+      "scope": "TypeScript --noEmit",
+      "passed": true
+    },
+    {
+      "scope": "Frontend production build and focused ESLint",
+      "passed": true,
+      "verification_owner": "cctv_frontend"
+    },
+    {
+      "scope": "git diff --check",
+      "passed": true
+    },
+    {
+      "scope": "Default collector refuses before networking/model loading",
+      "expected_exit_code": 2,
+      "code": "collection_blocked",
+      "passed": true
+    },
+    {
+      "scope": "Browser component to actual API/store",
+      "receipt": "cctv-monitor.json",
+      "passed": true
+    }
+  ],
+  "coverage": {
+    "listed_cameras": 28,
+    "receiving_validated_camera_observations": 0,
+    "permission_pending": 28,
+    "public_camera_frames_downloaded": 0,
+    "camera_media_retained": false,
+    "camera_models_trained_or_promoted": false
+  },
+  "limitations": [
+    "Engineering fixtures and synthetic local FFmpeg video establish integration behavior, not Batam traffic accuracy.",
+    "Official candidate playlists do not establish reusable analysis rights or source capture timestamps.",
+    "No public CCTV source was decoded or activated.",
+    "Browser check used an isolated loopback operator identity; production authentication was not verified.",
+    "Camera collection requires a persistent host shared with the API or a separately managed ingestion service."
+  ],
+  "cleanup": "Temporary frontend files, Chrome tab, Vite server and loopback API server were removed/stopped; existing user app sessions were preserved.",
+  "historical": true,
+  "superseded_by": "backend-cctv-live-checks.json"
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "crossflow.yolo26_pretrained_receipt.v1",
+  "downloaded_at": "2026-10-23T19:40:32.287896+00:00",
+  "official_url": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26m.pt",
+  "resolved_host": "release-assets.githubusercontent.com",
+  "byte_count": 44255705,
+  "sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7",
+  "package_version": "8.4.184",
+  "license": "AGPL-3.0",
+  "license_url": "https://www.ultralytics.com/license"
+}

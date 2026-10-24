@@ -1,0 +1,63 @@
+# ML app readiness — 24 October 2026
+
+**Historical preview report:** the image-upload app feature described below has since been retired. Its API routes now return HTTP 410. [CCTV processing and congestion integration](CCTV_CONGESTION.md) now run in the backend while the existing frontend is preserved; prior detector/training results below remain historical evidence, not a claim of current camera readiness.
+
+In authenticated app mode, the app now has an **experimental operator vehicle counting preview** backed by a real object detector. It processes an explicitly selected static image and returns vehicle boxes and a count. It does not write traffic observations or change congestion, routing, queues or serving forecast models. Batam camera accuracy and production readiness remain unvalidated.
+
+The detector's reused foreign-image diagnostic improves substantially over the previous pixel-count model. Additional Batam published count data also support a small historical forecasting experiment. These are separate tasks and measurements; neither supports 99–100% accuracy or a comparison with Google.
+
+| Experiment | Evidence | Result | Practical scope |
+|---|---|---|---|
+| Vehicle detector | Visaitech development validation: 16 frames / 55 vehicle boxes, whole source videos separated | MAE 1.50 vehicles/frame; exact count 25%; within one vehicle 62.5% | Foreign development validation |
+| Vehicle detector | **Reused** TRANSSET diagnostic: 32 US aerial frames / 163 vehicle boxes | MAE **1.09375 vehicles/frame**, versus prior pixel regressor 3.61394; exact count **34.375%**, within one vehicle **81.25%** | Foreign transfer diagnostic, previously consumed and adaptive |
+| Sekupang next 15-minute count | 216 published cells; 180 fitting/history cells and 36 final target cells at one timestamp | MAE **1.493** vehicles per class/movement cell, versus persistence 1.889; WAPE 8.001% | One historical intersection and Sunday |
+| Gajah Mada next-survey-day U-turn count | 72 published hourly cells; 48 fitting/history cells and 24 final target cells | Persistence remains best; MAE **32.0** vehicles per class/direction/hour cell; WAPE 14.904% | One historical U-turn and three survey days |
+
+The 69.7% reduction in TRANSSET count MAE is an error reduction relative to the earlier pixel regressor. It is not 99% accuracy, independent Batam accuracy, or a benchmark against Google. The diagnostic's generic-vehicle AP50 is 0.8875, mAP50–95 is 0.4746, precision is 0.8242 and recall is 0.9202 at IoU 0.5 and the frozen threshold. Detection matching metrics and exact frame-count percentages measure different things and are kept distinct.
+
+Actual detector-head fine-tuning ran for **176 optimizer updates**: 96 SSDLite updates and 80 Faster R-CNN updates, using 32 Visaitech frames and 175 vehicle boxes with the feature backbone frozen. Fine-tuned candidates did not beat the stronger unmodified pretrained detector on source-video validation. The selected preview model is therefore **Faster R-CNN ResNet50 FPN v2 with official COCO weights**, threshold 0.4. A stronger architecture trial was added after the earlier diagnostic was examined; its adaptive history is recorded. The reused TRANSSET set was not used to pick the final threshold, but is no longer a fresh independent test.
+
+The Batam count work introduces **288 existing published count cells into new count experiments**, comprising **228 final fitting/history cells and 60 holdout targets**. It acquires zero new field observations and zero new Batam vehicle-image annotations. Raw source count cells, arithmetic warnings, source dates, attribution and licenses remain attached. The 15-minute turning counts and one-hour U-turn counts are not pooled into a single accuracy score, nor into the five canonical app corridors.
+
+## Use the preview locally
+
+Open the app's ML model panel as an authorized operator, choose a JPEG, PNG or WebP traffic image that you may process, then click **Count vehicles**. File selection creates a local preview; upload occurs only after the click. The image is processed in memory without app image retention. Results stay marked experimental and Batam validation pending. Account/session changes clear the private image and result; replaced files cancel old requests and late responses are discarded.
+
+The backend exposes `GET /api/analytics/vehicle-count-preview/status` and `POST /api/analytics/vehicle-count-preview`. Both call the existing `identity.require_route_operator` helper and return private/no-store responses. With `CROSSFLOW_AUTH_MODE=supabase`, the existing policy requires an admin profile and bearer token. Explicit disabled/demo auth mode retains the app's existing guest-access policy; it does not establish authenticated production protection. The POST body is the raw image with its MIME content type, bounded to 4 MiB. Decode dimensions are limited to 6,000 pixels per side and 12 million pixels. One bounded local subprocess performs inference; concurrent previews receive a busy response, and decode/runtime/model failures remain errors instead of fabricated zero counts. The detector verifies the selected checkpoint hash and loads its numeric tensors with `weights_only=True`. Inference performs no provider calls or model downloads.
+
+Set up the optional, persistent vision environment from `CrossFlow_AI/`:
+
+```sh
+python3.12 -m venv .venv-vision
+.venv-vision/bin/python -m pip install -r scripts/requirements-detector-training.txt
+export CROSSFLOW_VISION_PYTHON="$PWD/.venv-vision/bin/python"
+export CROSSFLOW_VISION_MODEL_DIR="$PWD/backend/data/research/detector_training"
+```
+
+Start the existing app/backend using its normal local development command with those variables available. The bridge defaults to the repository's `.venv-vision/bin/python`; it does not require a temporary runtime path. The pinned optional packages are PyTorch 2.10.0, TorchVision 0.25.0, Pillow 12.3.0 and NumPy 2.4.4. They are isolated from the ordinary API environment. The checked model file is already supplied in the update bundle; installing the runtime requires downloading the listed packages if they are absent. No credentials belong in the bundle or setup commands.
+
+The selected checkpoint is `backend/data/research/detector_training/model.pt`, 175,221,657 bytes, SHA-256 `dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf`. Measured warm model-forward CPU latency was about 1.686 seconds median and 1.929 seconds at p95 using two threads. Process startup, cold model loading, decode, network and queueing add time. These measurements do not establish live CCTV throughput.
+
+## Validation limits and remaining app release requirements
+
+The detector's development data are South Asian dashcam images without verified city/country, and the reused diagnostic consists of US aerial highway views. No Batam labeled camera session, local night/rain validation, line-crossing identity, unique-vehicle tracking, queue ground truth or current road-clock history was acquired. Road map vertices and interval-flow paper counts cannot fill these image-label gaps.
+
+The bounded source search found a concrete Tiban Mas plate-detection lead with author appendix folders and matching CC BY 4.0 declarations. Its exported datasets mix captured and external/augmented material, have unresolved per-image Batam provenance, and label plates rather than whole vehicles. No lead images, annotations, weights or raw captures entered training. The pass accepted **zero new vehicle-counting datasets**. Its evidence remains in `research/batam-traffic/datasets/round9_training_sources/`.
+
+Operational promotion needs licensed Batam camera sessions with checked vehicle boxes/counts, camera/day-separated evaluation, rainy/night coverage and independent dated locations. Flow and queue measurements require appropriate tracking/counting definitions and separately checked labels. Route travel-time accuracy requires independently observed trips and a matched baseline protocol. More repeated optimization on the same tiny retrospective sets cannot establish those claims.
+
+Visaitech and TRANSSET images/labels are CC BY 4.0 with attribution retained. Sekupang published counts are CC BY 4.0; the Gajah Mada derived count artifacts retain CC BY-SA 4.0. TorchVision software is BSD-3-Clause and PyTorch has a BSD-style license. Their software licenses do not supply blanket rights for all COCO images or derived weight use; TorchVision's dataset-terms warning and official COCO terms are retained. Production weight/data-rights clearance has not been certified. These distinctions are recorded in each source manifest and `detector_training/licenses.json`.
+
+## Verification and reproducible update
+
+Final integrated verification passed and is recorded in [the readiness status](../backend/data/research/ml_app_readiness/status.json) and [test receipt](verification/ml-app-2026-10-24/test_results.json): **39 focused backend tests** (7 count causality, 22 preview API/bridge, 10 detector runtime) and **54 focused frontend tests**, including the 41 new preview/client checks. TypeScript `--noEmit`, the Vite production build and focused ESLint passed. The count artifacts also passed 34 independent formula/hash checks. Boundary coverage includes raw MIME/bearer requests, invalid-response rejection, rapid-click deduplication, cancellation, private-session reset, object URL cleanup and box coordinates.
+
+The browser check used a separate loopback operator identity fixture with the actual app routes and final detector, while preserving the existing driver session and running servers. An explicitly uploaded public Visaitech image displayed **4 vehicles and 4 boxes**, compared with **6 author-labeled vehicles**. That verifies the UI-to-detector path and also demonstrates residual counting error; it is not an accuracy success. Real HTTP checks returned 403 without the fixture operator identity, 422 for invalid bytes and 200 for the image, each with private/no-store headers. Production sign-in was **not** verified. The [public-safe preview receipt](verification/ml-app-2026-10-24/preview_qa.json), [screenshot](verification/ml-app-2026-10-24/vehicle-count-preview.png) and [independent detector hash audit](verification/ml-app-2026-10-24/independent_detector_audit.json) retain this scope without test tokens or user-uploaded images.
+
+The additive update ZIP is produced by `scripts/package_ml_app_update.py` only after readiness verification passes. It includes the single selected checkpoint, source-specific count models and predictions, detector training/evaluation metadata, the 80 licensed development/diagnostic image-label pairs, the two licensed Batam source papers and 288-cell subsets, preview code/tests, current research training ledgers, source-check metadata and evidence, and an additive route excerpt. It excludes credentials, databases, user images, the complete modified backend application file, trial checkpoint duplicates, and the inspection-only thesis PDF/text. Trial manifests remain as historical metadata and may refer to trial weights retained only in the workspace.
+
+This ZIP updates an existing CrossFlow_AI checkout; it is not a standalone application or a wholesale replacement for local files. `APP_INTEGRATION.txt` contains the two additive routes and ML panel insertion separately. `REPLAY_COUNTS.py` refits and verifies the frozen numeric count experiments directly from the licensed subsets without unrelated observation rows; rerunning is reproducibility checking, not fresh validation. The original extraction path still requires the existing research pack and exact input CSV hashes. `FILES.sha256`, the readiness manifest and ZIP sidecars record every included member and verify CRC plus SHA-256. Earlier training reports, models and ZIP snapshots are preserved.
+
+The count helper was also run from files extracted into a temporary directory from the update ZIP, without the original composite observation CSVs. Both frozen model payloads, selections, metrics and all 60 saved final predictions reproduced successfully. No frozen model files or serving configuration were changed by this check.
+
+The selected detector can run inference from the included checkpoint and optional runtime. Full replay of every detector training trial also needs the omitted historical trial checkpoints/initializations retained in the workspace, or a deliberate new run with their documented official initialization files. The archive retains their training plans, losses, validation grids and manifests; it does not claim to contain complete trial checkpoint payloads.

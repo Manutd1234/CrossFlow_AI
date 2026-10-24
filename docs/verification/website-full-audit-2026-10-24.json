@@ -1,0 +1,150 @@
+{
+  "schema": "crossflow.website_dataflow_audit.v1",
+  "completed_at": "2026-10-24T06:37:07.935372+00:00",
+  "story": "Operator navigation and historical/live analytics -> authenticated planning -> persistent dispatch -> driver lookup, directions and road/ferry map.",
+  "fixed": [
+    "All28 public HLS sources now receive bounded metadata-only availability/recovery checks, independently of inference permission.",
+    "Availability source clocks expire on reads, delayed shutdowns can recover safely, and non-playlist/media responses are refused.",
+    "Operations summaries refresh independently before camera expiry; global road/ferry polling and upstream cache policies are preserved.",
+    "Alert acknowledgement belongs to the displayed observation rather than suppressing later observations with the same road ID.",
+    "Cached failed/partial ferry source checks preserve the original failure outcome.",
+    "Model status reports the actual serving-strategy metrics and scopes candidate scores separately.",
+    "Forecast evaluation summaries are read-only and support an isolated/persistent ledger path.",
+    "Complete provider snapshots do not depend on a warm forecasting model.",
+    "HTTP tests isolate camera/forecast/ferry stores and cannot accidentally launch production collectors.",
+    "The local API now runs detached from the launching tool session with private ignored logs."
+  ],
+  "verification": {
+    "frontend_full": {
+      "files": 55,
+      "tests": 600,
+      "lint": true,
+      "typescript": true,
+      "production_build": true
+    },
+    "http_contract_run": {
+      "tests": 34,
+      "subtests": 35
+    },
+    "auth_history_operations_run": {
+      "tests": 131,
+      "subtests": 148
+    },
+    "cctv_api_run": {
+      "tests": 15,
+      "subtests": 14
+    },
+    "independent_availability_review_run": {
+      "tests": 34,
+      "subtests": 20
+    },
+    "backend_runs_overlap_do_not_sum": true,
+    "browser_observations": 48,
+    "operator_console_errors": 0,
+    "driver_console_errors": 0,
+    "expiry_observations": [
+      {
+        "at": "2026-10-24T06:34:00.814Z",
+        "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n11.0 / 100 across 3 current road views\n\n5 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:33:52 pm SGT",
+        "visibility": "visible"
+      },
+      {
+        "at": "2026-10-24T06:34:08.827Z",
+        "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n11.0 / 100 across 3 current road views\n\n5 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:33:52 pm SGT",
+        "visibility": "visible"
+      },
+      {
+        "at": "2026-10-24T06:34:16.837Z",
+        "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n15.5 / 100 across 5 current road views\n\n14 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:34:03 pm SGT",
+        "visibility": "visible"
+      },
+      {
+        "at": "2026-10-24T06:34:24.847Z",
+        "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n7.3 / 100 across 5 current road views\n\n10 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:34:12 pm SGT",
+        "visibility": "visible"
+      },
+      {
+        "at": "2026-10-24T06:34:32.855Z",
+        "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n10.9 / 100 across 5 current road views\n\n7 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:34:22 pm SGT",
+        "visibility": "visible"
+      }
+    ],
+    "actual_api_checks": {
+      "all_public_reads_http200": true,
+      "observed_mean_matches_current_samples": true,
+      "observed_point_count_matches_rows": true,
+      "emissions_not_invented": true,
+      "camera_estimate_not_labelled_measured_speed": true,
+      "camera_estimate_not_claimed_independently_validated": true,
+      "anonymous_operator_apis_rejected": true,
+      "protected_failures_not_cached": true
+    }
+  },
+  "final_runtime": {
+    "checked_at": "2026-10-24T06:36:26.660209+00:00",
+    "detached_backend_pid": 5526,
+    "api_http_status": 200,
+    "existing_dispatch_http_status": 200,
+    "observed_speed_point_count": 5,
+    "speed_based_mean": 8.3,
+    "camera_traffic_summary": {
+      "status": "active",
+      "configured_cameras": 6,
+      "fresh_cameras": 5,
+      "validated_cameras": 0,
+      "estimated_cameras": 5,
+      "mean_congestion_index": 4.4,
+      "vehicle_detections": 5,
+      "latest_observed_at": "2026-10-24T13:36:21+07:00",
+      "oldest_observed_at": "2026-10-24T13:36:09+07:00",
+      "valid_until": "2026-10-24T13:36:39+07:00",
+      "source": "registered_camera_aggregates",
+      "scope": "fresh_registered_camera_views_only",
+      "measured_road_speed": false,
+      "independently_validated": false
+    },
+    "road_network_coverage": {
+      "source": "OpenStreetMap",
+      "scope": "bundled_batam_routing_graph",
+      "mapped_nodes": 115320,
+      "mapped_source_ways": 27018,
+      "directed_edges": 249745,
+      "live_camera_edge_count": 0,
+      "live_camera_edge_coverage_percent": 0.0,
+      "complete_live_coverage": false
+    },
+    "selected_forecast_strategy": "persistence",
+    "metrics_scope": "serving_strategy_30min_chronological_holdout"
+  },
+  "authentication_scope": {
+    "operator": "Existing admin session restored through normal UI retry; auth/session200 confirmed.",
+    "driver": "Guest driver UI exercised with real persisted dispatches; signed-in driver role enforcement covered by isolated HTTP/auth tests. No new driver login performed.",
+    "protected_availability_http_read": "Actual signed-in read not performed; boundary/privacy covered in isolated API tests.",
+    "browser_tokens_exported": false,
+    "roles_changed": false,
+    "emails_sent": false
+  },
+  "preserved": {
+    "frontend_layout_and_fonts": true,
+    "cctv_media_hidden": true,
+    "camera_media_retained": false,
+    "existing_persistent_stores": true
+  },
+  "remaining_limits": [
+    "Matanya availability changes; listed feeds are not all currently live or inference-reviewed.",
+    "Current fresh camera views lack approved directed road bindings; only mapped15 is routing-enabled and currently stale, so current camera routing-edge count is0.",
+    "Camera counts/congestion remain provisional and independently unvalidated.",
+    "Forecast serving is the gated persistence baseline; dated Batam studies and foreign benchmarks are not relabelled as current Batam telemetry.",
+    "No measured live passenger queue, berth occupancy, cargo operation or emissions-reduction feed exists; these remain unavailable.",
+    "The observed archive covers limited sites/dates and does not establish citywide or Google-level accuracy."
+  ],
+  "evidence": [
+    "website-workspace-browser-audit-2026-10-24.json",
+    "website-dataflow-api-2026-10-24.json",
+    "analytics-source-integration-audit-2026-10-24.json",
+    "cctv-availability-28-2026-10-24.json",
+    "cctv-detached-api-restore-2026-10-24.json",
+    "website-operator-overview-2026-10-24.png",
+    "website-driver-ferry-map-2026-10-24.png"
+  ]
+}

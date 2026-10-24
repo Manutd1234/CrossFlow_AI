@@ -1,0 +1,275 @@
+{
+  "url": "https://app.sindoferry.com.sg/schedule/",
+  "checked_at": "2026-10-23T09:49:53.308292+00:00",
+  "sha256": "92813604794b05acf025c83694e82b32f86cecc7a464e98dbeafe04878e84b8b",
+  "http_status": 200,
+  "cards": {
+    "sindo-hf-bct": [
+      {
+        "time": "08:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "09:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "10:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "12:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "13:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "14:50",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "16:10",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "17:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "18:30",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "19:40",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "20:45",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "21:50",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      }
+    ],
+    "sindo-bct-hf": [
+      {
+        "time": "06:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "07:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "08:40",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "10:40",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "12:40",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "14:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "15:10",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "16:10",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "17:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "18:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "19:30",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "20:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      }
+    ],
+    "sindo-hf-skp": [
+      {
+        "time": "08:30",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "10:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "11:10",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "14:10",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "16:00",
+        "calendar_icon": 6,
+        "calendar_rule": "weekend"
+      },
+      {
+        "time": "17:30",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "18:10",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "19:30",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "20:30",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      }
+    ],
+    "sindo-skp-hf": [
+      {
+        "time": "06:00",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "07:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "08:30",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "11:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "12:30",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "13:50",
+        "calendar_icon": 6,
+        "calendar_rule": "weekend"
+      },
+      {
+        "time": "15:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "17:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "20:30",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      }
+    ],
+    "sindo-tm-bct": [
+      {
+        "time": "10:20",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "12:30",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "14:30",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "16:30",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "17:40",
+        "calendar_icon": 7,
+        "calendar_rule": "sunday_only"
+      }
+    ],
+    "sindo-bct-tm": [
+      {
+        "time": "08:00",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "09:20",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "11:30",
+        "calendar_icon": null,
+        "calendar_rule": "daily"
+      },
+      {
+        "time": "13:20",
+        "calendar_icon": 2,
+        "calendar_rule": "daily"
+      }
+    ]
+  }
+}

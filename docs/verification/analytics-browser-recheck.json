@@ -1,0 +1,31 @@
+{
+  "operatorRole": "admin",
+  "driverRole": "driver",
+  "analyticsTabs": [
+    "Overview",
+    "Ferry & Ports",
+    "Trends",
+    "Alerts",
+    "History",
+    "Model"
+  ],
+  "ferrySubtabs": [
+    "Terminals",
+    "Departures",
+    "Cargo"
+  ],
+  "officialSourcesChecked": 6,
+  "officialSourcesNeedingReview": 0,
+  "driverDispatchCode": "AHMKAQM",
+  "driverDirectionSteps": 12,
+  "driverItinerary": [
+    "ROAD",
+    "FERRY",
+    "ROAD"
+  ],
+  "passedDepartureNoticeVerified": true,
+  "browserErrors": {
+    "operator": [],
+    "driver": []
+  }
+}

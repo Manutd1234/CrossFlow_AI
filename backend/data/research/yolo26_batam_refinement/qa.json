@@ -1,0 +1,45 @@
+{
+  "schema": "crossflow.yolo26_qa.v1",
+  "created_at": "2026-10-23T19:46:11.271438+00:00",
+  "software_tests": {
+    "count": 23,
+    "passed": true,
+    "command": "PYTHONPATH=backend .venv-yolo26/bin/python -m unittest backend/tests/test_yolo26_counter.py backend/tests/test_yolo26_training.py -q"
+  },
+  "actual_serving_parity_cases": 4,
+  "actual_serving_parity_passed": true,
+  "model_sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+  "effective_detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+  "inference_policy_sha256": "9cceb5b6b9869bbfa4ef61e9f59542546eb0151ffb36668fc687126082c916c3",
+  "source_annotation_checks": [
+    {
+      "partition": "train",
+      "path": "annotations/train.json",
+      "sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36",
+      "unchanged": true
+    },
+    {
+      "partition": "validation",
+      "path": "annotations/validation_v2.json",
+      "sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d",
+      "unchanged": true
+    },
+    {
+      "partition": "test",
+      "path": "annotations/test.json",
+      "sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50",
+      "unchanged": true
+    }
+  ],
+  "original_split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+  "training_optimizer_steps": 60,
+  "training_minibatches": 60,
+  "annotation_origin": "ai_visual_blind",
+  "human_certified": false,
+  "fresh_test": false,
+  "test_previously_consumed": true,
+  "new_source_images_acquired": 0,
+  "production_eligible": false,
+  "batam_camera_validated": false,
+  "independent_adapter_review": "Source audit subagent found no material trust/binding blocker; status is metadata availability and inference performs checkpoint hash verification."
+}

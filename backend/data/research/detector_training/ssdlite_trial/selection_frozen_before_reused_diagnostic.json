@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-10-23T18:07:15.789342+00:00",
+  "selected_model": "head_finetuned_epoch_8",
+  "architecture": "ssdlite320_mobilenet_v3_large",
+  "num_classes": 3,
+  "vehicle_classes": {
+    "1": "vehicle"
+  },
+  "score_threshold": 0.3,
+  "vehicle_nms_iou": 0.5,
+  "model_sha256": "d34fed09ff2e4a95e7fb56ac948a4561df84d0d71804a7b01d1b0d6f770eed81",
+  "selection_metric": "lowest macro source-video count MAE, then highest detection F1 at IoU .5; candidate/threshold fixed before reused TRANSSET",
+  "validation": {
+    "candidate": "head_finetuned_epoch_8",
+    "score_threshold": 0.3,
+    "count": {
+      "frames": 16,
+      "mae_vehicles_per_frame": 2.1875,
+      "macro_source_group_mae": 2.1875,
+      "rmse_vehicles_per_frame": 2.839454172900137,
+      "bias_vehicles_per_frame": -1.5625,
+      "exact_count_pct": 12.5,
+      "within_one_vehicle_pct": 50.0,
+      "actual_total": 55,
+      "predicted_total": 30
+    },
+    "detection": {
+      "ap": 0.3312915276057897,
+      "precision": 0.7,
+      "recall": 0.38181818181818183,
+      "f1": 0.49411764705882355,
+      "true_positive": 21,
+      "false_positive": 9,
+      "false_negative": 34,
+      "ground_truth_boxes": 55,
+      "predicted_boxes": 30
+    }
+  },
+  "production_eligible": false,
+  "batam_validated": false,
+  "diagnostic_labels_read_before_freeze": false,
+  "pretrained_weight_terms": "TorchVision warns of data-derived terms; COCO original image rights vary. No certified production clearance."
+}

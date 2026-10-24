@@ -1,0 +1,1575 @@
+{
+  "schema_version": 1,
+  "source_audit_reference": "research/round13_matanya_inventory/",
+  "cameras": [
+    {
+      "camera_id": "1",
+      "name": "Atap Kantor Walikota",
+      "road_name": "Dataran Engku Putri plaza/access sector \u2014 public road unverified",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/1",
+      "stream_url": "https://matanya.batam.go.id/cctv/atap/stream.m3u8",
+      "stream_access_status": "advancing_public_playlist_and_browser_video_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "1",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": true,
+        "authorization_reference": "Explicit user-requested local non-retained public traffic monitoring, 24 Oct 2026; no agency reuse license asserted. See research/round13_matanya_inventory and round12 published_use_policy.json.",
+        "roi": [
+          [
+            0.02,
+            0.25
+          ],
+          [
+            0.19,
+            0.24
+          ],
+          [
+            0.46,
+            0.265
+          ],
+          [
+            0.46,
+            0.325
+          ],
+          [
+            0.2,
+            0.39
+          ],
+          [
+            0.02,
+            0.42
+          ]
+        ],
+        "minimum_confidence": 0.25,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 12.0,
+        "maximum_age_seconds": 30.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": [
+          [
+            0.15,
+            0.25
+          ],
+          [
+            0.22,
+            0.37
+          ]
+        ]
+      },
+      "collector_config": {
+        "frame_interval_seconds": 1.0,
+        "fixed_view_confirmed": true,
+        "background_region": [
+          [
+            0.44,
+            0.08
+          ],
+          [
+            0.72,
+            0.08
+          ],
+          [
+            0.72,
+            0.25
+          ],
+          [
+            0.44,
+            0.25
+          ]
+        ],
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0,
+        "timestamp_mode": "stream_observation",
+        "detector_backend": "yolo26",
+        "inference_crop": [
+          0.0,
+          0.17,
+          0.5,
+          0.44
+        ],
+        "decode_max_dimension": 1920
+      },
+      "estimation_config": {
+        "enabled": false,
+        "allow_routing": false,
+        "graph_revision": null,
+        "reference": "docs/verification/cctv-road-mapping-2026-10-24/mapping-review.json camera1; civic-plaza and Astaka/Museum Raja Ali Haji access activity does not establish public road congestion. Analysis and provisional estimation disabled; source remains in all-source metadata availability monitoring. Re-enable only after a visible public-road ROI is mapped and reviewed."
+      }
+    },
+    {
+      "camera_id": "13",
+      "name": "Gerbang Selatan Engku Putri",
+      "road_name": "Jalan Engku Putri \u2014 eastbound at Dataran south gate",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/13",
+      "stream_url": "https://matanya.batam.go.id/cctv/southgate/stream.m3u8",
+      "stream_access_status": "advancing_public_playlist_and_browser_video_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "13",
+        "corridor_id": null,
+        "road_segment_id": "osm-edge:5526812765:5526750754:618",
+        "enabled": true,
+        "analysis_authorized": true,
+        "authorization_reference": "Explicit user-requested local non-retained public traffic monitoring, 24 Oct 2026; no agency reuse license asserted. See research/round13_matanya_inventory and round12 published_use_policy.json.",
+        "roi": [
+          [
+            0.035,
+            0.565
+          ],
+          [
+            0.7,
+            0.52
+          ],
+          [
+            0.7,
+            0.59
+          ],
+          [
+            0.035,
+            0.65
+          ]
+        ],
+        "minimum_confidence": 0.25,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 12.0,
+        "maximum_age_seconds": 30.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": [
+          [
+            0.45,
+            0.54
+          ],
+          [
+            0.45,
+            0.62
+          ]
+        ]
+      },
+      "collector_config": {
+        "frame_interval_seconds": 1.0,
+        "fixed_view_confirmed": true,
+        "background_region": [
+          [
+            0.24,
+            0.12
+          ],
+          [
+            0.52,
+            0.12
+          ],
+          [
+            0.52,
+            0.38
+          ],
+          [
+            0.24,
+            0.38
+          ]
+        ],
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0,
+        "timestamp_mode": "stream_observation",
+        "detector_backend": "yolo26"
+      },
+      "estimation_config": {
+        "enabled": true,
+        "allow_routing": true,
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "reference": "docs/verification/cctv-road-mapping-2026-10-24/mapping-review.json camera 13; manually reviewed public map/landmark and live single-carriageway ROI. Bounded provisional route-search penalty only; vehicle detector, physical capture clock and congestion thresholds remain independently unvalidated."
+      }
+    },
+    {
+      "camera_id": "51",
+      "name": "Depan Kantor DPRD",
+      "road_name": "Jalan Engku Putri \u2014 westbound at DPRD frontage",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/51",
+      "stream_url": "https://matanya.batam.go.id/cctv/dprd/stream.m3u8",
+      "stream_access_status": "advancing_public_playlist_and_browser_video_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "51",
+        "corridor_id": null,
+        "road_segment_id": "osm-edge:856986734:5291330620:618",
+        "enabled": true,
+        "analysis_authorized": true,
+        "authorization_reference": "Explicit user-requested local non-retained public traffic monitoring, 24 Oct 2026; no agency reuse license asserted. See research/round13_matanya_inventory and round12 published_use_policy.json.",
+        "roi": [
+          [
+            0.29,
+            0.3
+          ],
+          [
+            0.38,
+            0.31
+          ],
+          [
+            0.93,
+            0.7
+          ],
+          [
+            0.86,
+            0.87
+          ],
+          [
+            0.37,
+            0.48
+          ]
+        ],
+        "minimum_confidence": 0.25,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 12.0,
+        "maximum_age_seconds": 30.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": [
+          [
+            0.56,
+            0.5
+          ],
+          [
+            0.48,
+            0.62
+          ]
+        ]
+      },
+      "collector_config": {
+        "frame_interval_seconds": 1.0,
+        "fixed_view_confirmed": true,
+        "background_region": [
+          [
+            0.72,
+            0.1
+          ],
+          [
+            0.94,
+            0.1
+          ],
+          [
+            0.94,
+            0.3
+          ],
+          [
+            0.72,
+            0.3
+          ]
+        ],
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0,
+        "timestamp_mode": "stream_observation",
+        "detector_backend": "yolo26"
+      },
+      "estimation_config": {
+        "enabled": true,
+        "allow_routing": true,
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "reference": "docs/verification/cctv-road-mapping-2026-10-24/mapping-review.json camera 51; manually reviewed public map/landmark and live single-carriageway ROI. Bounded provisional route-search penalty only; vehicle detector, physical capture clock and congestion thresholds remain independently unvalidated."
+      }
+    },
+    {
+      "camera_id": "15",
+      "name": "Simpang BI",
+      "road_name": "Simpang BI \u2014 Jalan Engku Putri Timur approach",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/15",
+      "stream_url": "https://matanya.batam.go.id/cctv/kejaksaanbi/stream.m3u8",
+      "stream_access_status": "advancing_public_playlist_and_browser_video_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "15",
+        "corridor_id": null,
+        "road_segment_id": "osm-edge:5253032156:5394956319:619",
+        "enabled": true,
+        "analysis_authorized": true,
+        "authorization_reference": "Explicit user-requested local non-retained public traffic monitoring, 24 Oct 2026; no agency reuse license asserted. See research/round13_matanya_inventory and round12 published_use_policy.json.",
+        "roi": [
+          [
+            0.24,
+            0.31
+          ],
+          [
+            0.4,
+            0.33
+          ],
+          [
+            0.98,
+            0.58
+          ],
+          [
+            0.98,
+            0.87
+          ],
+          [
+            0.4,
+            0.64
+          ]
+        ],
+        "minimum_confidence": 0.25,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 12.0,
+        "maximum_age_seconds": 30.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": [
+          [
+            0.62,
+            0.37
+          ],
+          [
+            0.57,
+            0.7
+          ]
+        ]
+      },
+      "collector_config": {
+        "frame_interval_seconds": 1.0,
+        "fixed_view_confirmed": true,
+        "background_region": [
+          [
+            0.54,
+            0.07
+          ],
+          [
+            0.76,
+            0.07
+          ],
+          [
+            0.76,
+            0.2
+          ],
+          [
+            0.54,
+            0.2
+          ]
+        ],
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0,
+        "timestamp_mode": "stream_observation",
+        "detector_backend": "yolo26"
+      },
+      "estimation_config": {
+        "enabled": true,
+        "allow_routing": false,
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "reference": "docs/verification/cctv-road-mapping-2026-10-24/mapping-review.json camera15; legacy exact-edge proposal retained as a draft only. Source was ended and blank in this audit; its carriageway direction is not reviewed. Keep route influence disabled until a live single-carriageway scene is mapped. Detector accuracy and thresholds remain unvalidated."
+      }
+    },
+    {
+      "camera_id": "14",
+      "name": "Gerbang Utara Engku Putri",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/14",
+      "stream_url": "https://matanya.batam.go.id/cctv/gerutara/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "14",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "31",
+      "name": "Depan Perumahan Sukajadi",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/31",
+      "stream_url": "https://matanya.batam.go.id/cctv/sukajadi2/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "31",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "18",
+      "name": "Bundaran Madani Arah Sei Panas",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/18",
+      "stream_url": "https://matanya.batam.go.id/cctv/madaniseipanas/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "18",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "19",
+      "name": "Bundaran Madani Pancuran",
+      "road_name": "Bundaran Madani mixed approach/roundabout sector \u2014 direction unverified",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/19",
+      "stream_url": "https://matanya.batam.go.id/cctv/madanipancuran/stream.m3u8",
+      "stream_access_status": "advancing_public_playlist_and_browser_video_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "19",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": true,
+        "analysis_authorized": true,
+        "authorization_reference": "Explicit user-requested local non-retained public traffic monitoring, 24 Oct 2026; no agency reuse license asserted. See research/round13_matanya_inventory and round12 published_use_policy.json.",
+        "roi": [
+          [
+            0.02,
+            0.19
+          ],
+          [
+            0.28,
+            0.2
+          ],
+          [
+            0.36,
+            0.26
+          ],
+          [
+            0.27,
+            0.34
+          ],
+          [
+            0.02,
+            0.44
+          ]
+        ],
+        "minimum_confidence": 0.25,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 12.0,
+        "maximum_age_seconds": 30.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": [
+          [
+            0.1,
+            0.22
+          ],
+          [
+            0.2,
+            0.41
+          ]
+        ]
+      },
+      "collector_config": {
+        "frame_interval_seconds": 1.0,
+        "fixed_view_confirmed": true,
+        "background_region": [
+          [
+            0.39,
+            0.03
+          ],
+          [
+            0.61,
+            0.03
+          ],
+          [
+            0.61,
+            0.36
+          ],
+          [
+            0.39,
+            0.36
+          ]
+        ],
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0,
+        "timestamp_mode": "stream_observation",
+        "detector_backend": "yolo26"
+      },
+      "estimation_config": {
+        "enabled": true,
+        "allow_routing": false,
+        "graph_revision": null,
+        "reference": "research/round13_matanya_inventory/reviewed_regions.json; provisional image-space vehicle observations, counting-line events and congestion. Independent camera accuracy and map-view direction remain unvalidated."
+      }
+    },
+    {
+      "camera_id": "5",
+      "name": "Depan SP Plaza Batu Aji",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/5",
+      "stream_url": "https://matanya.batam.go.id/cctv/batuaji/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "5",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "20",
+      "name": "Mata Kucing",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/20",
+      "stream_url": "https://matanya.batam.go.id/cctv/matakucing1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "20",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "23",
+      "name": "Depan Pasar Jodoh",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/23",
+      "stream_url": "https://matanya.batam.go.id/cctv/pasarjodoh2/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "23",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "36",
+      "name": "Simpang Sei Ladi",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/36",
+      "stream_url": "https://matanya.batam.go.id/cctv/seiladi2/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "36",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "35",
+      "name": "Pertigaan Sambau 1",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/35",
+      "stream_url": "https://matanya.batam.go.id/cctv/sambau1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "35",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "6",
+      "name": "Pertigaan Sambau 2",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/6",
+      "stream_url": "https://matanya.batam.go.id/cctv/sambau2/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "6",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "10",
+      "name": "Depan Delta Villa Arah Mata Kucing",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/10",
+      "stream_url": "https://matanya.batam.go.id/cctv/delta2/stream.m3u8",
+      "stream_access_status": "stale_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "10",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "27",
+      "name": "Simpang Casablanca",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/27",
+      "stream_url": "https://matanya.batam.go.id/cctv/casablanca2/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "27",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "2",
+      "name": "Nagoya Plaza",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/2",
+      "stream_url": "https://matanya.batam.go.id/cctv/cobaan/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "2",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "25",
+      "name": "Depan Pura Sei Ladi",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/25",
+      "stream_url": "https://matanya.batam.go.id/cctv/pura1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "25",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "28",
+      "name": "Simpang Kuda",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/28",
+      "stream_url": "https://matanya.batam.go.id/cctv/simpkuda1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "28",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "32",
+      "name": "Tanjakan Southlink",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/32",
+      "stream_url": "https://matanya.batam.go.id/cctv/southlink1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "32",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "43",
+      "name": "Tanjakan Southlink PTZ",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/43",
+      "stream_url": "https://matanya.batam.go.id/cctv/ptzsouthlink/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "43",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "24",
+      "name": "Pelabuhan Punggur",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/24",
+      "stream_url": "https://matanya.batam.go.id/cctv/punggur1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "24",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "3",
+      "name": "Pelabuhan Sekupang",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/3",
+      "stream_url": "https://matanya.batam.go.id/cctv/sekupang/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "3",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "40",
+      "name": "Taman Dang Anom",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/40",
+      "stream_url": "https://matanya.batam.go.id/cctv/danganom1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "40",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "42",
+      "name": "Taman Dang Anom Arah Jalan",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/42",
+      "stream_url": "https://matanya.batam.go.id/cctv/danganom3/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "42",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "37",
+      "name": "Engku Hamidah",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/37",
+      "stream_url": "https://matanya.batam.go.id/cctv/engkuhamidah1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "37",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "46",
+      "name": "Depan Stadion Temenggung",
+      "road_name": null,
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/46",
+      "stream_url": "https://matanya.batam.go.id/cctv/batuajidamkar1/stream.m3u8",
+      "stream_access_status": "ended_playlist_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "46",
+        "corridor_id": null,
+        "road_segment_id": null,
+        "enabled": false,
+        "analysis_authorized": false,
+        "authorization_reference": null,
+        "roi": null,
+        "minimum_confidence": 0.5,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 5.0,
+        "maximum_age_seconds": 15.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": null
+      },
+      "collector_config": {
+        "frame_interval_seconds": 2.0,
+        "fixed_view_confirmed": false,
+        "background_region": null,
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0
+      }
+    },
+    {
+      "camera_id": "48",
+      "name": "Depan Stadion Temenggung Arah Batu Aji",
+      "road_name": "Jalan Jenderal Ahmad Yani \u2014 southbound toward Batu Aji at Damkar",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/48",
+      "stream_url": "https://matanya.batam.go.id/cctv/batuajidamkar3/stream.m3u8",
+      "stream_access_status": "advancing_public_playlist_and_browser_video_verified_2026_10_24",
+      "analysis_config": {
+        "camera_id": "48",
+        "corridor_id": null,
+        "road_segment_id": "osm-edge:5698748891:702710855:714",
+        "enabled": true,
+        "analysis_authorized": true,
+        "authorization_reference": "Explicit user-requested local non-retained public traffic monitoring, 24 Oct 2026; no agency reuse license asserted. See research/round13_matanya_inventory and round12 published_use_policy.json.",
+        "roi": [
+          [
+            0.47,
+            0.14
+          ],
+          [
+            0.51,
+            0.14
+          ],
+          [
+            0.98,
+            0.56
+          ],
+          [
+            0.98,
+            0.9
+          ],
+          [
+            0.72,
+            0.9
+          ]
+        ],
+        "minimum_confidence": 0.25,
+        "maximum_uncertain_fraction": 0.3,
+        "minimum_samples": 5,
+        "minimum_window_seconds": 10.0,
+        "window_seconds": 60.0,
+        "maximum_gap_seconds": 12.0,
+        "maximum_age_seconds": 30.0,
+        "maximum_future_seconds": 2.0,
+        "stationary_seconds": 15.0,
+        "stationary_motion_per_second": 0.004,
+        "match_center_distance": 0.15,
+        "congestion_persistence_seconds": 15.0,
+        "moderate_occupancy": 0.15,
+        "high_occupancy": 0.4,
+        "high_stationary_fraction": 0.6,
+        "thresholds_validated": false,
+        "threshold_validation_reference": null,
+        "independent_validation_reference": null,
+        "validated_detector_id": null,
+        "counting_line": [
+          [
+            0.57,
+            0.48
+          ],
+          [
+            0.85,
+            0.48
+          ]
+        ]
+      },
+      "collector_config": {
+        "frame_interval_seconds": 1.0,
+        "fixed_view_confirmed": true,
+        "background_region": [
+          [
+            0.42,
+            0.3
+          ],
+          [
+            0.51,
+            0.3
+          ],
+          [
+            0.6,
+            0.76
+          ],
+          [
+            0.27,
+            0.76
+          ]
+        ],
+        "source_clock_validation_reference": null,
+        "background_max_shift_px": 2.0,
+        "timestamp_mode": "stream_observation",
+        "detector_backend": "yolo26"
+      },
+      "estimation_config": {
+        "enabled": true,
+        "allow_routing": true,
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "reference": "docs/verification/cctv-road-mapping-2026-10-24/mapping-review.json camera 48; manually reviewed public map/landmark and live single-carriageway ROI. Bounded provisional route-search penalty only; vehicle detector, physical capture clock and congestion thresholds remain independently unvalidated."
+      }
+    }
+  ]
+}

@@ -149,6 +149,8 @@ export interface FerryTimetableMetadata {
   snapshot_id: string;
   timezone: 'Asia/Jakarta';
   last_verified_at: string;
+  latest_checked_at?: string | null;
+  snapshot_verified_at?: string;
   status: 'published_schedule_snapshot';
   live_board_url: string;
   limitations: string;
@@ -171,7 +173,7 @@ export interface PortStatus {
   next_sailing_in_mins?: number | null;
   next_vessel?: string | null;
   next_operator?: string | null;
-  data_source?: 'schedule_informed_planning_estimate' | 'browser_schedule_informed_estimate';
+  data_source?: 'schedule_informed_planning_estimate' | 'browser_schedule_informed_estimate' | 'published_terminal_reference' | 'published_schedule';
   observed?: false;
   estimate_basis?: string;
   official_reference_url?: string;
@@ -188,6 +190,93 @@ export interface ModelMetrics {
   rmse: number;
   last_trained_at: string | null;
   feature_importances: Record<string, number>;
+  evaluation_scope?: string;
+  feature_importance_scope?: string;
+  observed_artifact_status?: {
+    configured: boolean;
+    status: 'disabled' | 'waiting_for_eligible_model' | 'restored' | 'restore_failed_previous_model_retained';
+    restored: boolean;
+  };
+}
+
+export interface ObservedBacktestMetrics {
+  samples: number;
+  mae_points: number | null;
+  rmse_points: number | null;
+  bias_points: number | null;
+}
+
+export interface ObservedBacktestPartition {
+  rows: number;
+  start_at: string | null;
+  end_at: string | null;
+}
+
+/** A private observed candidate is evaluated; this is not the live forest's score. */
+export interface ObservedBacktestReport {
+  schema_version: number;
+  generated_at: string;
+  status: 'insufficient_observations' | 'evaluated' | 'eligible' | 'activated';
+  validation_scope: 'observed_chronological_backtest';
+  model_replaced: boolean;
+  evaluation_subject: 'private_observed_candidate_serving_pipeline';
+  running_model_evaluated: false;
+  selection: {
+    input_rows: number;
+    unique_rows: number;
+    eligible_rows: number;
+    observed_rows: number;
+    selected_rows: number;
+    excluded_non_observed_rows: number;
+    excluded_unsupported_corridor_rows: number;
+    duplicate_rows: number;
+    source_counts: Record<string, number>;
+    first_at: string | null;
+    last_at: string | null;
+    span_hours: number;
+    distinct_timestamps: number;
+    distinct_local_dates?: number;
+    observed_hour_bins?: number[];
+    sampling_policy: string;
+    selected_source_counts?: Record<string, number>;
+    location_matching?: string;
+  };
+  chronology: {
+    fit: ObservedBacktestPartition;
+    calibration: ObservedBacktestPartition;
+    holdout: ObservedBacktestPartition;
+    purge_minutes: number;
+    strict_timestamp_groups: true;
+  };
+  horizons: Array<{
+    horizon_minutes: number;
+    status: string;
+    serving_model: ObservedBacktestMetrics;
+    persistence: ObservedBacktestMetrics;
+    current_history_blend: ObservedBacktestMetrics;
+    p10_p90_coverage: number | null;
+    skipped_missing_or_stale_current?: number;
+    per_corridor?: Record<string, { serving_model: ObservedBacktestMetrics; persistence: ObservedBacktestMetrics }>;
+  }>;
+  activation: {
+    eligible: boolean;
+    reasons: string[];
+    policy: Record<string, number | string | number[]>;
+  };
+  assumptions: string[];
+  interval_calibration?: {
+    method: string;
+    calibration_rows: number;
+    calibration_forecast_pairs: number;
+    padding_points: number;
+    target_coverage: number;
+    coverage_guaranteed: false;
+  };
+}
+
+export interface ObservedBacktestResult {
+  backtest: ObservedBacktestReport;
+  evaluation_snapshot: Record<string, unknown>;
 }
 
 
@@ -210,6 +299,7 @@ export interface RoutingCostBreakdown {
   road_suitability_penalty_mins: number;
   modeled_travel_time_mins: number;
   generalized_cost_mins: number;
+  cctv_search_penalty_mins?: number;
 }
 
 export type RoutePreference = 'BALANCED' | 'FASTEST' | 'SHORTEST' | 'EASY' | 'LOCAL';
@@ -310,6 +400,17 @@ export interface LocalRoutingModelSummary {
   distance_is_raw_edge_sum: boolean;
   traffic_provenance: string;
   limitations: string;
+  cctv?: {
+    source: 'cctv_camera'; snapshot_at: string; scope: string;
+    effect: 'bounded_search_cost_only'; measured_speed_or_eta: false;
+    applied_to_objective?: boolean;
+    maximum_penalty: string; limitations: string;
+    observations: Array<{
+      camera_id: string; road_segment_id: string; congestion_index: number;
+      observed_at: string; age_seconds: number; validation_status: 'estimated' | 'validated';
+      timestamp_basis: 'source_clock' | 'stream_observation'; on_selected_path: boolean;
+    }>;
+  };
 }
 
 export interface ExternalRoutingModelSummary {
@@ -479,7 +580,16 @@ export interface RouteOptimizationResult {
   /** Content-addressed identifier returned by the authoritative route API. */
   route_id?: string;
   /** Short seven-character code suitable for driver handoff. */
-  route_code?: string;
+  route_code?: string | null;
+  /** False when calculation succeeded but no store confirmed a retrievable save. */
+  dispatch_available?: boolean;
+  route_storage?: {
+    source: 'shared_supabase' | 'local_sqlite' | 'unavailable';
+    shared: boolean;
+    durable: boolean;
+    durability: string;
+    scope: 'shared' | 'single_host' | 'unavailable';
+  };
   route_type?: 'ROAD_ROUTE' | 'MULTIMODAL_FERRY_ROUTE' | 'FASTEST_BYPASS' | 'ECO_EFFICIENT' | 'PORT_SYNC';
   corridor: {
     id: string;
@@ -504,6 +614,7 @@ export interface RouteOptimizationResult {
   planning_traffic_snapshot?: PlanningTrafficSnapshot;
   generalized_cost_mins?: number | null;
   planned_departure?: string;
+  estimated_arrival?: string;
   /** Scheduling constraint echoed by newer route APIs. */
   scheduling?: RouteSchedulingMetadata;
   /** Authority used for exact-time and ferry-slot calculations. */
@@ -520,6 +631,9 @@ export interface RouteOptimizationResult {
     status?: string;
     risk_level: string;
     trend: string;
+    model_id?: string;
+    spatial_source?: string;
+    training_data_source?: string;
   };
   estimated_travel_time_mins: number;
   customs_buffer_mins: number;
@@ -598,7 +712,7 @@ export interface OperationsScenarioAssumption {
 export interface OperationsMethodology {
   observed: false;
   source: string;
-  model: {
+  model?: {
     id: string;
     congestion: string;
     emissions: string;
@@ -608,21 +722,55 @@ export interface OperationsMethodology {
     emissions: string;
     ferries: string;
   };
-  assumptions: {
+  assumptions: Partial<{
     current_network_kg_per_hour: OperationsScenarioAssumption;
     fixed_fleet_split: OperationsScenarioAssumption;
     hourly_curves: OperationsScenarioAssumption;
-  };
+  }>;
+}
+
+export interface OperationsRoadCoverage {
+  source: 'OpenStreetMap';
+  scope: 'bundled_batam_routing_graph';
+  mapped_nodes: number;
+  mapped_source_ways: number | null;
+  directed_edges: number;
+  live_camera_edge_count: number | null;
+  live_camera_edge_coverage_percent: number | null;
+  complete_live_coverage: false;
+}
+
+export interface OperationsTrafficEstimates {
+  status: string;
+  configured_cameras: number | null;
+  fresh_cameras: number;
+  validated_cameras: number;
+  estimated_cameras: number;
+  mean_congestion_index: number | null;
+  vehicle_detections: number | null;
+  latest_observed_at: string | null;
+  oldest_observed_at: string | null;
+  valid_until?: string | null;
+  source: string;
+  scope: string;
+  measured_road_speed: false;
+  independently_validated: boolean;
 }
 
 export interface OperationsSummary extends Envelope {
+  road_network_coverage?: OperationsRoadCoverage;
+  camera_traffic_summary?: OperationsTrafficEstimates;
+  current_traffic_samples?: Array<{
+    id: string; name: string; score: number; as_of: string; age_seconds: number;
+    current_speed_kmh: number; free_flow_speed_kmh: number; provider_confidence: number | null;
+  }>;
   overall_network_status: string;
-  average_congestion_index: number;
-  active_bottlenecks: number;
+  average_congestion_index: number | null;
+  active_bottlenecks: number | null;
   bottleneck_corridors?: { id: string; name: string; score: number }[];
   bottleneck_threshold?: number;
   /** Compatibility key: a modelled scenario opportunity, never a measured reduction. */
-  total_co2_reduced_today_kg: number;
+  total_co2_reduced_today_kg: number | null;
   modeled_avoidable_emissions_opportunity_kg_today?: number;
   projected_full_day_co2_kg?: number;
   modeled_projected_full_day_avoidable_emissions_kg?: number;
@@ -630,12 +778,24 @@ export interface OperationsSummary extends Envelope {
   co2_by_vehicle_type?: Record<string, number>;
   hourly_co2_distribution?: { hour: string; baseline_co2: number; optimized_co2: number }[];
   /** Compatibility key for a modelled illustrative scenario rate; it is not live. */
-  live_co2_rate_kg_hr?: number;
+  live_co2_rate_kg_hr?: number | null;
   api_source?: string;
   co2_methodology?: Co2Methodology;
   operations_methodology?: OperationsMethodology;
-  active_ferry_sailings: number;
-  scheduled_ferry_departures_next_12h?: number;
+  active_ferry_sailings: number | null;
+  scheduled_ferry_departures_next_12h?: number | null;
+  analytics_metadata?: {
+    generated_at: string;
+    as_of: string;
+    input_snapshot_at: string | null;
+    snapshot_age_seconds: number | null;
+    traffic_observed: boolean;
+    traffic_source: string;
+    observed_corridor_count: number;
+    expected_corridor_count: number;
+    complete_corridor_coverage?: boolean;
+    limitations: string[];
+  };
   alerts: AlertItem[];
 }
 
@@ -783,6 +943,12 @@ export interface HistoricalSyntheticSeedMetadata {
 
 /** Provenance for persisted history returned by the backend. */
 export interface ApiHistoryMetadata {
+  selection_scope?: 'observed_only' | 'all_sources' | 'legacy_modelled_preview';
+  sample_count?: number;
+  snapshot_may_be_truncated?: boolean;
+  snapshot_loaded_rows?: number;
+  snapshot_max_rows?: number;
+  window_basis?: string;
   window_days: number;
   /** True only when every sample in the returned window is observed. */
   observed: boolean;
@@ -801,7 +967,7 @@ export interface ApiHistoryMetadata {
 /** Provenance for the deterministic browser continuity profile. */
 export interface BrowserHistoryMetadata {
   observed: false;
-  source: 'browser_modelled_baseline';
+  source: 'browser_modelled_baseline' | 'history_unavailable';
   model: 'crossflow_local_forecast_equation_v1';
   methodology: string;
   limitations: string[];
@@ -828,7 +994,10 @@ export interface LiveTrafficSegment {
   current_speed_kmh: number | null;
   free_flow_speed_kmh: number | null;
   provider_confidence?: number | null;
-  source: 'tomtom_live' | 'simulated';
+  source: 'tomtom_live' | 'cctv_camera' | 'simulated';
+  camera_id?: string;
+  camera_ids?: string[];
+  observed_at?: string;
 }
 
 export interface ModeledEmissionsPressure {
@@ -1006,4 +1175,11 @@ export interface RouteRunHistory {
   runs: RouteRunSummary[];
   /** 'all_accounts' only ever comes back for an administrator. */
   scope: 'all_accounts' | 'own_account';
+  history_storage?: {
+    source: 'local_sqlite' | 'shared_supabase';
+    shared: boolean;
+    durable: boolean;
+    durability: string;
+    scope: string;
+  };
 }

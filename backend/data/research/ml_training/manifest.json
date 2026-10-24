@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "report.json",
+      "bytes": 110856,
+      "sha256": "0fef27834e14aa5f18b51941b4f14344bd90869626a0788441019ac90b7e3219"
+    },
+    {
+      "path": "status.json",
+      "bytes": 6107,
+      "sha256": "f8322923c37b120dbde6d3500aa994956871f75397643541c1ca0c903a05decf"
+    },
+    {
+      "path": "../speed_training/model.json",
+      "bytes": 18327,
+      "sha256": "0592cdad28a47a82638361ac947e24e435af48a6d509fd71c2b16bf9f401d7bd"
+    },
+    {
+      "path": "../speed_training/validation.csv",
+      "bytes": 553,
+      "sha256": "9549c6966f3d1e996878bfbb383da7d0eab8ff0fa5a4f0646c301fc5af12050e"
+    },
+    {
+      "path": "../speed_training/report.json",
+      "bytes": 19361,
+      "sha256": "ffbfa94a787bfb9d65d7733c7f3c1526652075e58b53edc87fdfc122e87de888"
+    },
+    {
+      "path": "../speed_training/predictions.csv",
+      "bytes": 2752,
+      "sha256": "0a3bb273072187e3cf42a7b1668f4e03368c530e98e594b0e89a88cb571a2c07"
+    },
+    {
+      "path": "../speed_training/README.md",
+      "bytes": 2514,
+      "sha256": "b5124b6a8d19c77ae3767c600e85624ed54aae9504a68f88b88fb8339fd94e24"
+    },
+    {
+      "path": "../speed_training/manifest.json",
+      "bytes": 2146,
+      "sha256": "b2ae5524f52ac4e222a1a742cc9c37be51ad80f6b9cbb176ab9f5aaf679647fc"
+    },
+    {
+      "path": "../forecast_training/execution_state.json",
+      "bytes": 180,
+      "sha256": "b544f01c19da1fe3f37e37b7046bc1913fe8e4a01148608112844980e26a3238"
+    },
+    {
+      "path": "../forecast_training/per_arc_metrics.csv",
+      "bytes": 19287,
+      "sha256": "288216ad647121ea922e186f4b8f6eadda797706ae26157dc8d96dc1603152b1"
+    },
+    {
+      "path": "../forecast_training/report.json",
+      "bytes": 23728,
+      "sha256": "809581e628525cf0248829da33c4f6f3e8fdf496202956bd19b392eee1c2777b"
+    },
+    {
+      "path": "../forecast_training/qa.json",
+      "bytes": 824,
+      "sha256": "e21ddb00e5fffa234e189522a069558fbbd2d98f54ddee2a1436658c57c5cf97"
+    },
+    {
+      "path": "../forecast_training/selection_frozen_before_holdout.json",
+      "bytes": 788,
+      "sha256": "01aced3604e9abcc9c7c2af4e3b60d1877cf987a22e5546a1b477036fb9aefd7"
+    },
+    {
+      "path": "../forecast_training/model.joblib",
+      "bytes": 194522,
+      "sha256": "4bdab925a69531b0e6706f246987c02bd9e1404d3f2c95080b3b4daad681bd74"
+    },
+    {
+      "path": "../forecast_training/README.md",
+      "bytes": 2809,
+      "sha256": "e8fb43153e24303cca9cda1e6bf0f0a6fb7a822f3425fa1cc588c1ad37865e22"
+    },
+    {
+      "path": "../forecast_training/manifest.json",
+      "bytes": 1555,
+      "sha256": "37d532d73e59d5062a7a6f004eb6727d8322838cf341af73f3ace335c1719f01"
+    },
+    {
+      "path": "../forecast_training/test_predictions.csv.gz",
+      "bytes": 199538,
+      "sha256": "a0b792829cc56ccf09c8e115a372db1dc8e691d3f3d8e1abc9ffa9ac06c82985"
+    },
+    {
+      "path": "../vision_training/validation.csv",
+      "bytes": 9658,
+      "sha256": "d489028c824c356aab0ca6606b89fd0fefe6f1af179fd98bf10ccc237264987c"
+    },
+    {
+      "path": "../vision_training/report.json",
+      "bytes": 44536,
+      "sha256": "91fb47b12f976c0d111b3df03d9b97e0b7780dc6b0f65acdced2610556375438"
+    },
+    {
+      "path": "../vision_training/qa.json",
+      "bytes": 842,
+      "sha256": "af22ca7e1a8bb13d745c299e230356d7d168679fa9fba22c308137d202a7b166"
+    },
+    {
+      "path": "../vision_training/selection_frozen_before_holdout.json",
+      "bytes": 24405,
+      "sha256": "3dc7b0f9dccf0625066708b383c22e3ce4e2fda68635ee1a7a1ca1dc8b142b37"
+    },
+    {
+      "path": "../vision_training/predictions.csv",
+      "bytes": 2383,
+      "sha256": "5c4690c8f47dfe4bfdc65e7991f63286bb7ad81d2c26b13742c194443d57cffe"
+    },
+    {
+      "path": "../vision_training/model.joblib",
+      "bytes": 13002,
+      "sha256": "52793703300f3020305e2a67de3dcbff55297a0f54930f04f8cbc4aafd77cf7b"
+    },
+    {
+      "path": "../vision_training/frame_manifest.json",
+      "bytes": 56083,
+      "sha256": "20d2a61506f629e3098f894d2070cfb9c0bd62929f8e80a06567cdb763a33c9f"
+    },
+    {
+      "path": "../vision_training/README.md",
+      "bytes": 1765,
+      "sha256": "67eb79342bd60271af496920a221061eb161610d760f2561e09226228789ee5b"
+    },
+    {
+      "path": "../vision_training/pixel_features.npz",
+      "bytes": 191140,
+      "sha256": "d43f20b3f459174e6e1b4dc7fbc30315807659abbfbdfaaf8679d39e9fdb91b3"
+    },
+    {
+      "path": "../vision_training/duplicate_audit.json",
+      "bytes": 701,
+      "sha256": "dceebd21117fd08238a5e88beb6b3ad33586cca3e6882f166eefe68b2102034c"
+    },
+    {
+      "path": "../vision_training/manifest.json",
+      "bytes": 1830,
+      "sha256": "906f325acdcd6b332813ebeefe1b75714c17596247038f77712ad3dcaa1bf02c"
+    }
+  ],
+  "training_started": true,
+  "model_activated": false,
+  "raw_provider_rows_included": false
+}

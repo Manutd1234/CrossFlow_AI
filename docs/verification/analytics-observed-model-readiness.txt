@@ -1,0 +1,114 @@
+Browser tab: 29, Title: "CrossFlow", URL: "http://localhost:3000/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 138
+~				139 text 19:27:48
+~								136 button Run observed backtest
++								140 container
++									141 text Insufficient observed history . Generated  23 Oct 2026, 8:27 pm SGT . The running model was not replaced.
++								142 definition list
++									143 container Eligible observed rows
++										144 text Eligible observed rows
++									145 text 315
++									146 container Selected original rows
++										147 text Selected original rows
++									148 text 45
++									149 container Observed archive span
++										150 text Observed archive span
++									151 container
++										152 text 2.75  hours
++								153 container
++									154 text Archive window:  23 Oct 2026, 5:40 pm SGT  to  23 Oct 2026, 8:25 pm SGT . 63  distinct timestamps;  0  non-observed rows excluded.
++								155 container
++									156 text Temporal coverage:  1  distinct local dates.  Measurements cover 4 of 24 local hour bins.
++								157 container
++									158 text Activation requirements
++									159 content list
++										160 container
++											161 AXListMarker •
++											162 text observed span below 7 days
++										163 container
++											164 AXListMarker •
++											165 text insufficient distinct observed local days
++										166 container
++											167 AXListMarker •
++											168 text insufficient observed hour of day coverage
++										169 container
++											170 AXListMarker •
++											171 text insufficient fit rows
++										172 container
++											173 AXListMarker •
++											174 text insufficient calibration rows
++										175 container
++											176 AXListMarker •
++											177 text calibration does not cover all five corridors
++										178 container
++											179 AXListMarker •
++											180 text insufficient holdout rows
++								181 table Chronological data partitions
++									182 text Chronological data partitions
++									183 row
++										184 cell
++											185 text Partition
++										186 cell
++											187 text Rows
++										188 cell
++											189 text First observation
++										190 cell
++											191 text Last observation
++									192 row
++										193 cell
++											194 text Fit
++										195 cell
++											196 text 5
++										197 cell
++											198 text 23 Oct 2026, 5:40 pm SGT
++										199 cell
++											200 text 23 Oct 2026, 5:40 pm SGT
++									201 row
++										202 cell
++											203 text Calibration
++										204 cell
++											205 text 0
++										206 cell
++											207 text Not available
++										208 cell
++											209 text Not available
++									210 row
++										211 cell
++											212 text Holdout
++										213 cell
++											214 text 10
++										215 cell
++											216 text 23 Oct 2026, 7:16 pm SGT
++										217 cell
++											218 text 23 Oct 2026, 8:15 pm SGT
++								219 container
++									220 text Equal timestamps stay in the same partition. Purge gap:  60  minutes. Future target speeds are excluded from prediction inputs.
++								221 text No forecast-error or interval-coverage scores are available for this archive. Collect enough distinct observations across the required time span and retry.
++								222 button (collapsed) Data selection and activation policy, Secondary Actions: Expand
++									223 text Data selection and activation policy
++								224 container
++									225 text Evaluation assumptions and limits
++									226 content list
++										227 container
++											228 AXListMarker •
++											229 text Actual validated Batam speeds only; synthetic, simulated and modelled rows excluded.
++										230 container
++											231 AXListMarker •
++											232 text No random split; fit and calibration end strictly before the next partition's earliest forecast origin.
++										233 container
++											234 AXListMarker •
++											235 text Weather uses clear encoding because measurements do not record weather; weather response is not validated.
++										236 container
++											237 AXListMarker •
++											238 text Ferry proximity is unknown; the external published-timetable adjustment is not validated by this backtest.
++										239 container
++											240 AXListMarker •
++											241 text Observation times are assumed availability times; provider ingestion delays are unknown.
++										242 container
++											243 AXListMarker •
++											244 text Tree intervals are widened using calibration-only residuals; temporal dependence prevents a coverage guarantee.
++										245 container
++											246 AXListMarker •
++											247 text No observed field-accuracy claim follows merely from passing this engineering gate.
+The focused UI element is 0 AXWebArea CrossFlow, URL: localhost:3000/

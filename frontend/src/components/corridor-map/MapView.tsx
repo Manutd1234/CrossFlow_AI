@@ -16,11 +16,12 @@ import {
 import { corridorColor, prettyArrow, shortCorridorName } from '../../utils/format';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
+import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from '../../theme/mapTiles';
 import {
   BATAM_HOTSPOT_REFERENCES,
-  BATAM_HOTSPOT_WATCH_DISCLAIMER,
 } from '../../data/batamHotspots';
 import type { HotspotWatchPriority } from '../../data/batamHotspots';
+import './HotspotCards.css';
 import { WorkspaceSubtabs } from '../shared/WorkspaceSubtabs';
 
 type MapWorkspaceTab = 'hotspots' | 'corridor';
@@ -32,6 +33,7 @@ interface MapViewProps {
   routes: CorridorRoute[];
   routesLoading?: boolean;
   trafficSnapshot: Fetched<LiveTrafficData> | null;
+  canPlanRoutes?: boolean;
   onSelectCorridor: (corridorId: string) => void;
 }
 
@@ -58,6 +60,7 @@ export const MapView: React.FC<MapViewProps> = ({
   routes,
   routesLoading = false,
   trafficSnapshot,
+  canPlanRoutes = true,
   onSelectCorridor,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -126,6 +129,8 @@ export const MapView: React.FC<MapViewProps> = ({
     const smallWidthQuery = window.matchMedia?.('(max-width: 1000px)');
 
     const map = L.map(mapContainerRef.current, {
+      // Leaflet's delayed CSS-zoom callback can fire after a workspace unmount.
+      zoomAnimation: false,
       zoomControl: false,
       minZoom: BATAM_MAP_MIN_ZOOM,
       scrollWheelZoom: !smallWidthQuery?.matches,
@@ -139,8 +144,8 @@ export const MapView: React.FC<MapViewProps> = ({
     };
     smallWidthQuery?.addEventListener('change', syncWheelZoom);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    L.tileLayer(MAP_TILE_URL, {
+      attribution: MAP_TILE_ATTRIBUTION,
       maxZoom: 18,
     }).addTo(map);
 
@@ -270,14 +275,14 @@ export const MapView: React.FC<MapViewProps> = ({
       const isCritical = zone.priority === 'CRITICAL';
       const color = hotspotPriorityColor(zone.priority);
       const tooltipLines = [
-        { text: `${zone.priority} WEIGHTED WATCH AREA`, strong: true, color },
+        { text: `${zone.priority} WATCH AREA`, strong: true, color },
         { text: zone.name, strong: true },
         { text: zone.category, italic: true },
-        { text: `Weighted watch score: ${zone.planningScore}` },
+        { text: `Watch score: ${zone.planningScore}` },
         ...(zone.currentCongestionIndex === undefined ? [] : [{
           text: `Modelled congestion: ${zone.currentCongestionIndex} · ${zone.currentLevel}`,
         }]),
-        { text: 'Backend-weighted corridor and place data · not observed', italic: true },
+        { text: 'Modelled planning area', italic: true },
       ];
       const circle = L.circle([zone.lat, zone.lng], {
         radius: zone.radiusM,
@@ -348,7 +353,7 @@ export const MapView: React.FC<MapViewProps> = ({
         <div className="map-radar-card">
           <div className="map-radar-card__heading">
             <MapPin aria-hidden="true" size={ICON_SIZE.medium} color="var(--accent-cyan)" />
-            Batam Mobility Watch • Weighted Hotspots
+            Batam Mobility Watch • Hotspots
           </div>
           <div className="map-radar-card__legend" aria-label="Map radar legend">
             <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-critical" /> Critical</span>
@@ -389,7 +394,7 @@ export const MapView: React.FC<MapViewProps> = ({
                   {hotspots.length}-Area Congestion Watch
                 </h3>
                 <p className="hotspot-watch__subtitle">
-                  Backend-ranked representative Batam places
+                  Ports, neighbourhoods and the roads between.
                 </p>
               </div>
               <div className="hotspot-watch__counts" aria-label={`${criticalHotspots} critical and ${heavyHotspots} heavy planning priorities`}>
@@ -399,15 +404,16 @@ export const MapView: React.FC<MapViewProps> = ({
             </div>
 
             <p className="hotspot-watch__disclaimer">
-              {BATAM_HOTSPOT_WATCH_DISCLAIMER}
+              Modelled planning priorities · choose a place to explore.
             </p>
 
             <div className="hotspot-watch__list" role="list" tabIndex={0} aria-label="Scrollable Batam congestion planning watch areas">
-              {hotspots.map(zone => (
+              {hotspots.map((zone, index) => (
                 <article
                   key={zone.id}
                   id={`hotspot-card-${zone.id}`}
                   role="listitem"
+                  data-priority={zone.priority.toLowerCase()}
                   className={`ui-sand-interactive hotspot-card${focusedHotspotId === zone.id ? ' is-focused' : ''}`}
                 >
                   <button
@@ -415,6 +421,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     className="hotspot-card__focus"
                     aria-pressed={focusedHotspotId === zone.id}
                     aria-label={`Inspect ${zone.name}, ${zone.priority.toLowerCase()} modelled planning priority, on the map`}
+                    title={zone.name}
                     onClick={() => focusHotspot(zone)}
                   >
                     <span className="hotspot-card__media">
@@ -427,31 +434,34 @@ export const MapView: React.FC<MapViewProps> = ({
                           className="hotspot-card__photo"
                           src={zone.photo.imageUrl}
                           alt={zone.photo.alt}
+                          title={`${zone.photo.caption} · ${zone.photo.capturedYear}`}
                           loading="lazy"
                           decoding="async"
                           referrerPolicy="no-referrer"
                           onError={() => markPhotoUnavailable(zone.photo.id)}
                         />
                       )}
-                      <span className={`badge ${zone.priority === 'CRITICAL' ? 'badge-critical' : 'badge-heavy'} hotspot-card__priority`}>
-                        {zone.priority}
-                      </span>
+                      <span className="hotspot-card__rank" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                     </span>
 
                     <span className="hotspot-card__body">
-                      <strong className="hotspot-card__name">{zone.name}</strong>
                       <span className="hotspot-card__category">{zone.category}</span>
+                      <strong className="hotspot-card__name">{zone.name}</strong>
+                      <span className="hotspot-card__meta">
+                        <span className={`badge ${zone.priority === 'CRITICAL' ? 'badge-critical' : 'badge-heavy'} hotspot-card__priority`}>
+                          {zone.priority === 'CRITICAL' ? 'Critical' : 'Heavy'}
+                        </span>
+                        <strong className="hotspot-card__score" aria-label={`Watch score ${zone.planningScore} out of 100`}>
+                          {zone.planningScore}<small> / 100</small>
+                        </strong>
+                      </span>
                     </span>
-
-                    <strong className="hotspot-card__score" aria-label={`Weighted watch score ${zone.planningScore} out of 100`} style={{ color: hotspotPriorityColor(zone.priority) }}>
-                      {zone.planningScore}
-                    </strong>
                   </button>
 
                   <div className="hotspot-card__credit">
+                    <span className="hotspot-card__photo-context" title={zone.photo.caption}>{zone.photoContext} · {zone.photo.capturedYear}</span>
                     <div className="hotspot-card__credit-meta">
                       <Camera aria-hidden="true" size={ICON_SIZE.small} />
-                      <span>{zone.photoContext}: {zone.photo.caption} ({zone.photo.capturedYear}) </span>
                       <a className="hotspot-card__credit-author" href={zone.photo.sourceUrl} target="_blank" rel="noreferrer">
                         {zone.photo.author} <ExternalLink aria-hidden="true" size={ICON_SIZE.small} />
                       </a>
@@ -483,6 +493,7 @@ export const MapView: React.FC<MapViewProps> = ({
             <h3 id="selected-corridor-title" className="selected-corridor-panel__title">
               {prettyArrow(selectedCorridor.name)}
             </h3>
+            <p className="muted">Modelled corridor estimates and forecasts. Provider observations are shown separately on the map.</p>
 
             <div className="selected-corridor-panel__metrics">
               <article className="selected-corridor-panel__metric">
@@ -521,10 +532,10 @@ export const MapView: React.FC<MapViewProps> = ({
             <button
               type="button"
               className="ui-button-primary selected-corridor-panel__solve"
-              aria-label={`Solve departure route for ${prettyArrow(selectedCorridor.name)}`}
+              aria-label={canPlanRoutes ? `Solve departure route for ${prettyArrow(selectedCorridor.name)}` : 'View assigned routes'}
               onClick={() => onSelectCorridor(selectedCorridor.id)}
             >
-              Solve Route Departure <ArrowUpRight aria-hidden="true" size={ICON_SIZE.large} />
+              {canPlanRoutes ? 'Solve Route Departure' : 'View Assigned Routes'} <ArrowUpRight aria-hidden="true" size={ICON_SIZE.large} />
             </button>
           </section>
         ) : (

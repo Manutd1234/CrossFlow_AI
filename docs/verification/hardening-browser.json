@@ -1,0 +1,262 @@
+{
+  "checkedAt": "2026-10-23T13:39:28.078Z",
+  "operatorRole": "admin",
+  "driverRole": "driver",
+  "driverCode": "3B55FVN",
+  "driverSummary": "Scheduled departureForecast for the scheduled departure.Departure 2026-10-24 · 18:05 WIB 39.88 km67.9 min movement timeExact times use the committed timetable simulation because shared schedule freshness is unavailable. Verify the departure and book with the operator.Driver route IDUse this seven-character ID to retrieve the journey3B55FVNSaved on this server only. The local file persists; other servers cannot retrieve this code. Movement time67.9 min Journey distance39.88 km Total trip ETA111 min Estimated CO₂1.91 kgTerminal pair selected by estimated access time plus published crossing duration; road-provider alternatives are not mixed across modes.",
+  "typography": {
+    "body": {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "size": "14px"
+    },
+    "checkedAt": "2026-10-23T13:38:50.105Z",
+    "elements": [
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "lineHeight": "20.8px",
+        "size": "16px",
+        "tag": "H4",
+        "text": "Batam · Published road-speed survey",
+        "weight": "700"
+      },
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "lineHeight": "21px",
+        "size": "14px",
+        "tag": "SUMMARY",
+        "text": "Site backtest method and limitations",
+        "weight": "600"
+      },
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "lineHeight": "21px",
+        "size": "14px",
+        "tag": "SUMMARY",
+        "text": "Survey source, licence and limitations",
+        "weight": "600"
+      },
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "lineHeight": "20.8px",
+        "size": "16px",
+        "tag": "H4",
+        "text": "Batam · Published intersection saturation",
+        "weight": "700"
+      },
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "lineHeight": "21px",
+        "size": "14px",
+        "tag": "SUMMARY",
+        "text": "Intersection source, licence and limitations",
+        "weight": "600"
+      },
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "lineHeight": "20.8px",
+        "size": "16px",
+        "tag": "H4",
+        "text": "Singapore · Historical ML backtest",
+        "weight": "700"
+      },
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "lineHeight": "21px",
+        "size": "14px",
+        "tag": "SUMMARY",
+        "text": "Benchmark source, licence and limitations",
+        "weight": "600"
+      }
+    ],
+    "fontLoaded": true,
+    "pageWidth": 775,
+    "stylesheets": [],
+    "width": 775
+  },
+  "views": [
+    {
+      "view": "Overview",
+      "headings": [
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Current observed corridor points"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Published operating records"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "14px",
+          "text": "Januari-Agustus 2026"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Batam Authority Operating Context"
+        }
+      ],
+      "pageWidth": 775,
+      "text": "Observed Traffic Index3.4 / 100Fresh provider points only; no synthetic baseline comparison. Observed Bottlenecks0No measured points above threshold. Published Departures37Next 12 hours from the published timetable; no l",
+      "width": 775
+    },
+    {
+      "view": "Ferry & Ports",
+      "headings": [
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Official source check results"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Batam Centre"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "HarbourBay"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Sekupang"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Nongsa Pura"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Upcoming Departures"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Batam-SG Cargo Monitor"
+        }
+      ],
+      "pageWidth": 775,
+      "text": "Cross-Border Ferry & Port IntelligenceOfficial terminal references and published cross-strait departures. Live terminal operations are unavailable.TERMINAL REFERENCESOfficial sources checked 23 Oct 2026, 19:28 WIBTermina",
+      "width": 775
+    },
+    {
+      "view": "Trends",
+      "headings": [
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "24-hour congestion simulation"
+        }
+      ],
+      "pageWidth": 775,
+      "text": "24-hour congestion simulationComputed by the running Random Forest for the current server time and selected assumptions. This is a modelled forecast, not measured future traffic or a claimed improvement.Weather ClearRain",
+      "width": 775
+    },
+    {
+      "view": "Alerts",
+      "headings": [
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Observed Traffic Alerts 0 alerts"
+        }
+      ],
+      "pageWidth": 775,
+      "text": "Observed Traffic Alerts 0 alertsProvider-snapshot alerts only. Acknowledgement is local to this workspace session.No unacknowledged alerts in the observed snapshot.Acknowledged alerts0No alerts have been acknowledged.",
+      "width": 775
+    },
+    {
+      "view": "History",
+      "headings": [
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Historical traffic evidence"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Batam · Published road-speed survey"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Batam · Published intersection saturation"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Singapore · Historical ML backtest"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Historical Congestion Analysis"
+        }
+      ],
+      "pageWidth": 775,
+      "text": "Historical traffic evidenceCheck evidencePublished observations retain their original dates. Logging in or refreshing does not change historical measurements.Batam · Published road-speed surveyJalan Gajah Mada in front o",
+      "width": 775
+    },
+    {
+      "view": "Model",
+      "headings": [
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "16px",
+          "text": "Random Forest Congestion Forecasting Engine"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "14px",
+          "text": "Model Feature Importance Weights"
+        },
+        {
+          "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "size": "14px",
+          "text": "Observed-data chronological backtest"
+        }
+      ],
+      "pageWidth": 775,
+      "text": "Random Forest Congestion Forecasting EngineRefresh model statusBACKEND RF · SYNTHETICAPI MODEL STATUSChecked 23 Oct 2026, 9:41 pm SGT. API snapshot 23 Oct 2026, 9:41 pm SGT. Model status is checked every minute and when ",
+      "width": 775
+    }
+  ],
+  "newOperatorCode": "9JL6N52",
+  "newOperatorSummary": "Scheduled departureForecast for the scheduled departure.Departure 2026-10-24 · 20:39 WIB 9.11 km24.5 min road timeDriver route IDUse this seven-character ID to retrieve the journey9JL6N52Saved on this server only. The local file persists; other servers cannot retrieve this code. Road travel24.5 min Road distance9.11 km Total trip ETA59.3 min Estimated CO₂9.9 kgFewer than two sufficiently distinct routes satisfy the detour limit.",
+  "operatorHistoryIncludesNewRoute": true,
+  "operatorHistoryRestored": true,
+  "driverDirectionsPresent": true,
+  "accountFont": {
+    "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+    "headingSize": "20px"
+  },
+  "driverMapFonts": {
+    "body": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+    "localFont": true,
+    "pageWidth": 1992,
+    "pinFonts": [
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "size": "13px",
+        "weight": "800"
+      },
+      {
+        "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "size": "13px",
+        "weight": "800"
+      }
+    ],
+    "viewportWidth": 1992
+  },
+  "newOperatorRouteRetrievedByDriver": true,
+  "newDriverSummary": "Scheduled departureForecast for the scheduled departure.Departure 2026-10-24 · 20:39 WIB 9.11 km24.5 min road timeDriver route IDUse this seven-character ID to retrieve the journey9JL6N52Saved on this server only. The local file persists; other servers cannot retrieve this code. Road travel24.5 min Road distance9.11 km Total trip ETA59.3 min Estimated CO₂9.9 kgFewer than two sufficiently distinct routes satisfy the detour limit.",
+  "operatorConsoleErrors": [],
+  "driverConsoleErrors": []
+}

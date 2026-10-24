@@ -1,0 +1,69 @@
+{
+  "checked_at": "2026-10-23T10:20:50.118523+00:00",
+  "environment": "local_only",
+  "requests": {
+    "GET /api/model-status": {
+      "http_status": 200,
+      "cache_control": null,
+      "training_source": "synthetic_profile_generator",
+      "observed_fit_rows": 0,
+      "observed_artifact_status": {
+        "configured": true,
+        "restored": false,
+        "status": "waiting_for_eligible_model"
+      }
+    },
+    "GET /api/live-traffic": {
+      "http_status": 200,
+      "cache_control": null,
+      "overall_source": "tomtom_live",
+      "segment_count": 5,
+      "transports": [
+        "direct_tomtom"
+      ]
+    },
+    "GET /api/operations": {
+      "http_status": 200,
+      "cache_control": "private, no-store",
+      "data_source": "live",
+      "observed": null
+    },
+    "GET /api/routes/AHMKAQM": {
+      "http_status": 200,
+      "cache_control": "private, no-store",
+      "route_code": "AHMKAQM",
+      "dispatch_available": true,
+      "geometry_points": 62,
+      "route_storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": true,
+        "durability": "persistent_local_file",
+        "scope": "single_host"
+      },
+      "leg_modes": [
+        "ROAD",
+        "FERRY",
+        "ROAD"
+      ],
+      "navigation_maneuvers": 12
+    },
+    "GET /api/routes/2222222": {
+      "http_status": 404,
+      "cache_control": "private, no-store"
+    },
+    "POST /api/analytics/backtest": {
+      "http_status": 401,
+      "cache_control": "private, no-store"
+    },
+    "POST /api/retrain-model": {
+      "http_status": 403,
+      "cache_control": "private, no-store"
+    }
+  },
+  "browser_roles_verified": {
+    "operator": "admin",
+    "driver": "driver"
+  },
+  "observed_model_replaced": false
+}

@@ -58,7 +58,7 @@ die()  { printf '%s\n' "${R}✗${N} $*" >&2; exit 1; }
 # a stray command in .env cannot execute. Values already present in the
 # environment win, so an explicit export still overrides the file.
 load_dotenv() {
-  local file="$ROOT/.env" line key value
+  local file="${1:-$ROOT/.env}" line key value
   [ -f "$file" ] || return 0
   local loaded=0
   while IFS= read -r line || [ -n "$line" ]; do
@@ -80,9 +80,10 @@ load_dotenv() {
     export "$key=$value"
     loaded=$((loaded + 1))
   done < "$file"
-  [ "$loaded" -gt 0 ] && printf '%s\n' "${DIM}  loaded $loaded variable(s) from .env${N}"
+  [ "$loaded" -gt 0 ] && printf '%s\n' "${DIM}  loaded $loaded variable(s) from ${file##*/}${N}"
   return 0
 }
+load_dotenv "$ROOT/.env.tomtom.local"
 load_dotenv
 
 # --- preflight -------------------------------------------------------------
@@ -93,10 +94,10 @@ if [ "$RUN_BACKEND" = 1 ] || [ "$INSTALL_ONLY" = 1 ]; then
     die "Python 3.12+ is required (found $(python3 --version 2>&1))."
 fi
 if [ "$RUN_FRONTEND" = 1 ] || [ "$INSTALL_ONLY" = 1 ]; then
-  command -v node >/dev/null || die "node not found. Install Node.js 20.19+ or 22.12+."
-  command -v npm >/dev/null || die "npm not found. Install Node.js 20.19+ or 22.12+."
-  node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit((major === 20 && minor >= 19) || (major === 22 && minor >= 12) || major > 22 ? 0 : 1)' || \
-    die "Node.js 20.19+ or 22.12+ is required (found $(node --version))."
+  command -v node >/dev/null || die "node not found. Install Node.js 22.12+."
+  command -v npm >/dev/null || die "npm not found. Install Node.js 22.12+."
+  node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit((major === 22 && minor >= 12) || major > 22 ? 0 : 1)' || \
+    die "Node.js 22.12+ is required (found $(node --version))."
 fi
 
 # `[ -r /dev/tty ]` only checks permission bits on the device node — it stays

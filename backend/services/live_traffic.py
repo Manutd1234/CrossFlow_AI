@@ -1,8 +1,9 @@
 """Live traffic data integration for CrossFlow AI.
 
-Tries the TomTom Traffic Flow API first (requires TOMTOM_API_KEY env var);
-falls back to the existing simulator when the key is absent or the API is
-unreachable.
+Uses fresh independently validated CCTV evidence for registered road views.
+Otherwise tries the TomTom Traffic Flow API (requires TOMTOM_API_KEY env var).
+Without a local key, an explicitly configured trusted public CrossFlow feed
+can supply current segments; unavailable providers use labelled simulation.
 
 TomTom Flow API:
   GET https://api.tomtom.com/traffic/services/4/flowSegmentData/relative0/{zoom}/json
@@ -23,6 +24,7 @@ import json
 import math
 import os
 import time
+import threading
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -30,7 +32,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from typing import Any, Dict, List, Mapping, Optional
 
-from services import clock, tls
+from services import clock, tls, traffic_upstream, provider_json, cctv_store
+from services.congestion_math import speed_ratio_congestion_score
 
 _TOMTOM_FLOW_BASE = (
     "https://api.tomtom.com/traffic/services/4/flowSegmentData/relative0/10/json"
@@ -52,6 +55,8 @@ _CORRIDOR_POINTS: Dict[str, tuple] = {
 # cache failures too; otherwise a provider outage makes every dashboard poll
 # wait for the same failed requests again.
 _tomtom_cache: Dict[str, tuple] = {}  # key -> (result_dict | None, expires_at)
+_tomtom_request_locks: Dict[str, threading.Lock] = {}
+_tomtom_request_locks_guard = threading.Lock()
 _CACHE_TTL_S = 120
 _FAILURE_CACHE_TTL_S = 30
 
@@ -164,7 +169,7 @@ EMISSIONS_PRESSURE_MODEL = {
         "ELEVATED": EMISSIONS_PRESSURE_ELEVATED_THRESHOLD,
         "HIGH": EMISSIONS_PRESSURE_HIGH_THRESHOLD,
     },
-    "traffic_input": "simulated_corridor_forecast_plus_recurring_zone_baseline",
+    "traffic_input": "resolved_corridor_signals_plus_recurring_zone_baseline",
     "source": "crossflow_congestion_delay_model",
     "observed": False,
     "aggregate_mass_available": False,
@@ -202,6 +207,16 @@ def _tomtom_segment(
         return None
 
     cache_key = _tomtom_cache_key(lat, lng, api_key)
+    # Overview, route telemetry and the archive can request the same cold
+    # location concurrently. Share one provider response instead of spending
+    # the account's request quota several times for an identical observation.
+    with _tomtom_request_locks_guard:
+        request_lock = _tomtom_request_locks.setdefault(cache_key, threading.Lock())
+    with request_lock:
+        return _tomtom_segment_cached(lat, lng, api_key, cache_key)
+
+
+def _tomtom_segment_cached(lat: float, lng: float, api_key: str, cache_key: str) -> Optional[Dict[str, Any]]:
     cached = _tomtom_cache.get(cache_key)
     if cached is not None:
         cached_val, expires = cached
@@ -223,7 +238,7 @@ def _tomtom_segment(
         with urllib.request.urlopen(
             req, timeout=_TOMTOM_TIMEOUT_S, context=tls.default_context(),
         ) as resp:
-            data = json.loads(resp.read())
+            data = provider_json.read_json(resp, max_bytes=512 * 1024)
         segment = data.get("flowSegmentData")
         if not isinstance(segment, dict):
             raise ValueError("response did not contain flowSegmentData")
@@ -239,18 +254,24 @@ def _tomtom_segment(
             for value in numeric_values
         ):
             raise ValueError("response contained invalid traffic measurements")
-        if float(current_speed) < 0 or float(free_flow_speed) <= 0:
+        if not (0 <= float(current_speed) <= 250 and 0 < float(free_flow_speed) <= 250
+                and float(current_speed) / float(free_flow_speed) <= 1.5):
             raise ValueError("response contained invalid traffic speeds")
+        if not 0.0 <= float(confidence) <= 1.0:
+            raise ValueError("response contained invalid provider confidence")
 
         result = {
             "current_speed_kmh": float(current_speed),
             "free_flow_speed_kmh": float(free_flow_speed),
             "confidence": float(confidence),
+            "snapshot_generated_at": clock.iso(clock.now()),
         }
         _tomtom_cache[cache_key] = (result, time.monotonic() + _CACHE_TTL_S)
         return result
     except Exception as err:  # noqa: BLE001
-        print(f"[live_traffic] TomTom unreachable: {err}")
+        # Provider exceptions can contain request URLs. Never log their text,
+        # because these requests authenticate using a query-string API key.
+        print(f"[live_traffic] TomTom unavailable ({type(err).__name__})")
         _tomtom_cache[cache_key] = (
             None,
             time.monotonic() + _FAILURE_CACHE_TTL_S,
@@ -267,7 +288,7 @@ def _tomtom_segments(api_key: str) -> Dict[str, Optional[Dict[str, Any]]]:
     all five run concurrently, leaving time for response assembly and transport.
     """
     if not api_key:
-        return {}
+        return traffic_upstream.get_segments(_CORRIDOR_POINTS)
 
     results: Dict[str, Optional[Dict[str, Any]]] = {}
     with ThreadPoolExecutor(
@@ -283,7 +304,7 @@ def _tomtom_segments(api_key: str) -> Dict[str, Optional[Dict[str, Any]]]:
             try:
                 results[corridor_id] = future.result()
             except Exception as err:  # defensive: _tomtom_segment handles errors
-                print(f"[live_traffic] TomTom worker failed: {err}")
+                print(f"[live_traffic] TomTom worker failed ({type(err).__name__})")
                 results[corridor_id] = None
     return results
 
@@ -291,13 +312,12 @@ def _tomtom_segments(api_key: str) -> Dict[str, Optional[Dict[str, Any]]]:
 def _congestion_from_speed_ratio(current: float, free_flow: float) -> float:
     """Convert a speed ratio to a 0-100 congestion index.
 
-    Ratio 1.0 (free flow) → index 5.
+    Ratio 1.0 (free flow) → index 0.
     Ratio 0.0 (standstill) → index 95.
     """
     if free_flow <= 0:
         return 50.0
-    ratio = max(0.0, min(1.0, current / free_flow))
-    return round((1.0 - ratio) * 90.0 + 5.0, 1)
+    return round(speed_ratio_congestion_score(current / free_flow), 1)
 
 
 # Route planning deliberately retains the established 15 spatial areas. The
@@ -400,6 +420,10 @@ def _resolved_corridor_signals(
                 float(source_confidence["tomtom_live_policy"])
                 * provider_confidence
             )
+        elif source == "cctv_camera":
+            # A planning blend weight, not detector confidence or measured accuracy.
+            confidence = float(source_confidence["cctv_camera_policy"])
+            provider_confidence = None
         else:
             source = "simulated"
             provider_confidence = None
@@ -543,12 +567,22 @@ def get_corridor_map_hotspots(
     from services.simulator import get_live_corridor_telemetry
 
     now = (at_time or clock.now()).astimezone(clock.BATAM_TZ)
-    telemetry = {
+    def supplied_score(corridor_id):
+        value = (corridor_scores or {}).get(corridor_id)
+        return value.get("congestion_index") if isinstance(value, Mapping) else value
+
+    complete_supplied_scores = all(
+        isinstance(supplied_score(corridor_id), (int, float))
+        and not isinstance(supplied_score(corridor_id), bool)
+        and math.isfinite(float(supplied_score(corridor_id)))
+        for corridor_id in _CORRIDOR_POINTS
+    )
+    # Explicit corridor signals already supply every required input. A cold
+    # forecast model must not make a complete measured snapshot unavailable.
+    telemetry = {} if complete_supplied_scores else {
         corridor["id"]: corridor
         for corridor in get_live_corridor_telemetry(
-            now,
-            weather=weather,
-            include_route_distance=False,
+            now, weather=weather, include_route_distance=False,
         )
     }
     signals = _resolved_corridor_signals(corridor_scores, telemetry)
@@ -656,19 +690,25 @@ def get_congestion_zones(
 def get_live_traffic() -> Dict[str, Any]:
     """Return corridor-level speed and congestion data, plus spatial congestion zones.
 
-    Tries TomTom for each corridor; fills remaining corridors (or all, if no
-    key) from the simulator. Provenance is per-corridor.
+    Validated fresh camera estimates take precedence for mapped corridors;
+    other corridors retain provider/demo provenance. No camera-derived speed.
     """
     from services.simulator import get_live_corridor_telemetry
     now = clock.now()
-    sim_telemetry = {
-        c["id"]: c for c in get_live_corridor_telemetry(
-            now,
-            include_route_distance=False,
-        )
-    }
     tomtom_key = _tomtom_api_key()
     tomtom_segments = _tomtom_segments(tomtom_key)
+    sim_telemetry = {} if all(tomtom_segments.get(corridor_id) for corridor_id in _CORRIDOR_POINTS) else {
+        c["id"]: c for c in get_live_corridor_telemetry(
+            now, include_route_distance=False,
+        )
+    }
+    # Provider calls can take seconds. Recheck camera age at assembly time,
+    # rather than against the timestamp before those potentially slow calls.
+    now = clock.now()
+    try:
+        camera_scores = cctv_store.corridor_scores(now=now)
+    except (cctv_store.CCTVStoreUnavailable, ValueError, OSError):
+        camera_scores = {}
 
     segments: List[Dict[str, Any]] = []
     overall_source = "simulated"
@@ -676,14 +716,33 @@ def get_live_traffic() -> Dict[str, Any]:
     for corridor_id, (lat, lng) in _CORRIDOR_POINTS.items():
         sim = sim_telemetry.get(corridor_id, {})
         tt = tomtom_segments.get(corridor_id)
+        camera = camera_scores.get(corridor_id)
+        if not (
+            isinstance(camera, Mapping) and camera.get("operational_eligible") is True
+            and camera.get("source") == "cctv_camera"
+            and isinstance(camera.get("congestion_index"), (int, float))
+            and not isinstance(camera.get("congestion_index"), bool)
+            and math.isfinite(float(camera["congestion_index"]))
+            and 0 <= camera["congestion_index"] <= 100
+            and isinstance(camera.get("camera_ids"), list) and camera["camera_ids"]
+            and isinstance(camera.get("observed_at"), str)
+        ):
+            camera = None
 
-        if tt:
+        if camera:
+            index = float(camera["congestion_index"])
+            source = "cctv_camera"
+            provider_confidence = None
+            overall_source = "cctv_camera"
+            tt = None
+        elif tt:
             index = _congestion_from_speed_ratio(
                 tt["current_speed_kmh"], tt["free_flow_speed_kmh"]
             )
             source = "tomtom_live"
             provider_confidence = max(0.0, min(1.0, float(tt["confidence"])))
-            overall_source = "tomtom_live"
+            if overall_source != "cctv_camera":
+                overall_source = "tomtom_live"
         else:
             index = sim.get("live_congestion_score", 30.0)
             source = "simulated"
@@ -698,6 +757,14 @@ def get_live_traffic() -> Dict[str, Any]:
             "free_flow_speed_kmh": tt["free_flow_speed_kmh"] if tt else None,
             "provider_confidence": provider_confidence,
             "source": source,
+            "provider_transport": "registered_camera_worker" if camera else tt.get("provider_transport", "direct_tomtom") if tt else "simulated",
+            "upstream_source": tt.get("upstream_source") if tt else None,
+            "snapshot_generated_at": tt.get("snapshot_generated_at") if tt else None,
+            "snapshot_age_seconds": tt.get("snapshot_age_seconds") if tt else None,
+            "camera_ids": camera["camera_ids"] if camera else [],
+            "observed_at": camera["observed_at"] if camera else None,
+            "camera_age_seconds": camera.get("age_seconds") if camera else None,
+            "measurement_scope": "registered_camera_road_view" if camera else "representative_corridor_point" if tt else "simulation",
         })
 
     resolved_scores = {
@@ -739,4 +806,6 @@ def get_live_traffic() -> Dict[str, Any]:
         },
         "overall_source": overall_source,
         "tomtom_key_configured": bool(tomtom_key),
+        "traffic_upstream_configured": traffic_upstream.configured(),
+        "cctv_eligible_corridor_count": sum(s["source"] == "cctv_camera" for s in segments),
     }

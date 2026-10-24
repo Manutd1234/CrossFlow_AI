@@ -75,7 +75,7 @@
 ### Slide 1: Unclogging the Batam-Singapore Corridor
 - **Headline**: AI-Powered Mobility & Synchronized Cross-Border Logistics
 - **Problem 1**: Mukakuning & Simpang Kabil suffer heavy rush-hour bottlenecks.
-- **Problem 2**: Uncoordinated freight departure causes missed ferry connections
+- **Problem 2**: Uncoordinated road access causes missed passenger-ferry connections
   at Batam Centre & HarbourFront SG.
 - **Problem 3**: Idling freight burns fuel and increases carbon emissions.
 
@@ -88,10 +88,14 @@
   *(Not XGBoost — earlier drafts of this deck said so in error.)*
 - **Route Engine**: Vehicle-aware departure window solver (Car, Freight Truck,
   Express Van) with customs buffers and ferry boarding cutoffs.
+  Cross-border passenger-ferry composition uses compatible passenger profiles;
+  truck routing stays on local roads until an authorized cargo integration exists.
 - **Modelled Impact** — projections under stated assumptions, not measurements:
-  - **~540 kg CO2/day** of avoidable idle emissions across five corridors,
-    at 40 advised trips/corridor/hour, 35% of queue delay avoided, 1.8 kg/h
-    idle burn.
+  - The 23 October 2026 audit returned **405.3 kg CO2/day** of modelled
+    avoidable-idling opportunity across five corridors, at 40 advised
+    trips/corridor/hour, 35% of queue delay avoided and 1.8 kg/h idle burn.
+    This is a sample day-profile projection, not a fixed 540 kg/day or a
+    measured saving.
   - Departure deferral moves trips out of the modelled 08:00 and 18:00 peaks,
     where the congestion index roughly doubles.
   - Connections are only offered when reachable before boarding closes.

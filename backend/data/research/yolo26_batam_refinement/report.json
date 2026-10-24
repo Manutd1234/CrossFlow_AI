@@ -1,0 +1,213 @@
+{
+  "schema": "crossflow.yolo26_batam_report.v1",
+  "generated_at": "2026-10-23T19:42:43.172378+00:00",
+  "architecture": "yolo26s",
+  "training": {
+    "schema": "crossflow.yolo26_training_plan.v1",
+    "created_at": "2026-10-23T19:41:43.001122+00:00",
+    "protocol": "bounded_scale_resolution_and_accumulation_refinement",
+    "epochs": 20,
+    "batch": 3,
+    "nbs": 3,
+    "optimizer": "SGD",
+    "lr0": 0.001,
+    "freeze_backbone_layers": 10,
+    "training_imgsz": 640,
+    "device": "cpu",
+    "seed": 20261024,
+    "thresholds": [
+      0.25,
+      0.4,
+      0.55
+    ],
+    "pretrained_candidates": [
+      {
+        "architecture": "yolo26n",
+        "imgsz": 640,
+        "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+      },
+      {
+        "architecture": "yolo26s",
+        "imgsz": 960,
+        "sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+      },
+      {
+        "architecture": "yolo26s",
+        "imgsz": 1280,
+        "sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+      },
+      {
+        "architecture": "yolo26m",
+        "imgsz": 960,
+        "sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7"
+      },
+      {
+        "architecture": "yolo26m",
+        "imgsz": 1280,
+        "sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7"
+      }
+    ],
+    "fine_tuned_candidates": [
+      "nano_nbs3_best_val_map_640",
+      "nano_nbs3_last_640"
+    ],
+    "train_images": 9,
+    "train_boxes": 56,
+    "validation_images": 3,
+    "validation_boxes": 22,
+    "split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+    "annotation_manifest_sha256": "5efd0896bd61aa57b9d4a68668f03b94895445b71586349777604e3745edde90",
+    "adaptation_reason": "Nano640 validation misses distant vehicles; defaultnbs64 accumulated21microbatches. Newprotocolraisesresolution/modelscale andsetsnbs3foreverybatchweightupdates.",
+    "prior_validation_receipt_sha256": "1fdcfc96b4a3a393312e15a358308a7660a46f55478f299216da15c1c2826075",
+    "test_previously_consumed": true,
+    "fresh_test": false,
+    "test_not_used_for_selection": true,
+    "annotation_origin": "ai_visual_blind",
+    "human_certified": false,
+    "production_eligible": false,
+    "source_images_downloaded_this_run": 0,
+    "augmentation_exports_are_not_new_observations": true,
+    "license": "AGPL-3.0",
+    "license_url": "https://www.ultralytics.com/license"
+  },
+  "selection": {
+    "schema": "crossflow.yolo26_vehicle_selection.v1",
+    "generated_at": "2026-10-23T19:42:42.416363+00:00",
+    "architecture": "yolo26s",
+    "ultralytics_version": "8.4.184",
+    "selected_model": "pretrained_yolo26s_1280",
+    "model_id": "yolo26s-batam-646f8bc3fe0a6568-1280",
+    "model_sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+    "score_threshold": 0.25,
+    "imgsz": 1280,
+    "num_classes": 80,
+    "vehicle_classes": {
+      "1": "bicycle",
+      "2": "car",
+      "3": "motorcycle",
+      "5": "bus",
+      "7": "truck"
+    },
+    "min_vehicle_long_side_px": 12,
+    "min_vehicle_short_side_px": 4,
+    "generic_vehicle_nms_iou": 0.5,
+    "validation": {
+      "partition": "validation",
+      "candidate": "pretrained_yolo26s_1280",
+      "score_threshold": 0.25,
+      "metrics": {
+        "count": {
+          "frames": 3,
+          "source_groups": 2,
+          "mae_vehicles_per_frame": 1.3333333333333333,
+          "macro_source_group_mae": 1,
+          "rmse_vehicles_per_frame": 1.632993161855452,
+          "bias_vehicles_per_frame": -1.3333333333333333,
+          "exact_count_pct": 33.33333333333333,
+          "within_one_vehicle_pct": 33.33333333333333,
+          "actual_total": 22,
+          "predicted_total": 18
+        },
+        "detection_iou_50": {
+          "precision": 0.9444444444444444,
+          "recall": 0.7727272727272727,
+          "f1": 0.85,
+          "true_positive": 17,
+          "false_positive": 1,
+          "false_negative": 5
+        },
+        "per_source_group": {
+          "Cun Cun": {
+            "frames": 2,
+            "mae_vehicles_per_frame": 2,
+            "exact_count_pct": 0
+          },
+          "Husip": {
+            "frames": 1,
+            "mae_vehicles_per_frame": 0,
+            "exact_count_pct": 100
+          }
+        }
+      }
+    },
+    "selection_rule": "Validation macro source-group count MAE, detection IoU50 F1, higher threshold, lexical candidate name",
+    "split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+    "annotation_manifest_sha256": "5efd0896bd61aa57b9d4a68668f03b94895445b71586349777604e3745edde90",
+    "training_plan_sha256": "e6519bfd1ba49f7a04f15eeef48d26cbf1ba910cd6527f48bc9243039c37ebd3",
+    "validation_grid_sha256": "c445fc03deea36ca1d3e0857cd2c1cacd20174403f468c43a5af5e165f1e8169",
+    "test_labels_read_before_selection_this_run": false,
+    "test_previously_consumed": true,
+    "fresh_test": false,
+    "license": "AGPL-3.0",
+    "license_url": "https://www.ultralytics.com/license",
+    "production_eligible": false,
+    "batam_validated": false,
+    "human_certified": false,
+    "annotation_origin": "ai_visual_blind"
+  },
+  "reused_batam_test": {
+    "count": {
+      "frames": 4,
+      "source_groups": 4,
+      "mae_vehicles_per_frame": 1,
+      "macro_source_group_mae": 1,
+      "rmse_vehicles_per_frame": 1.224744871391589,
+      "bias_vehicles_per_frame": 0,
+      "exact_count_pct": 25.0,
+      "within_one_vehicle_pct": 75.0,
+      "actual_total": 18,
+      "predicted_total": 18
+    },
+    "detection_iou_50": {
+      "precision": 0.8888888888888888,
+      "recall": 0.8888888888888888,
+      "f1": 0.8888888888888888,
+      "true_positive": 16,
+      "false_positive": 2,
+      "false_negative": 2
+    },
+    "per_source_group": {
+      "Akinori Takemoto": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 1,
+        "exact_count_pct": 0
+      },
+      "Christian Advs Sltg": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 0,
+        "exact_count_pct": 100
+      },
+      "Jpatokal": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 2,
+        "exact_count_pct": 0
+      },
+      "Zoresirinhongen": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 1,
+        "exact_count_pct": 0
+      }
+    }
+  },
+  "test_is_fresh_independent_validation": false,
+  "test_not_used_for_model_selection": true,
+  "elapsed_seconds": 58.51651529199444,
+  "test_inference_latency_ms_median": 181.0379374983313,
+  "runtime": {
+    "python": "3.12.14 (main, Aug 12 2026, 13:57:54) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "ultralytics": "8.4.184",
+    "torch": "2.14.1",
+    "device": "cpu"
+  },
+  "production_eligible": false,
+  "batam_validated": false,
+  "human_certified": false,
+  "limitations": [
+    "Only nine qualified Batam training photos and three validation photos",
+    "Assistant visual labels are not human-certified accuracy ground truth",
+    "Four test photos were previously consumed; this is a reused diagnostic",
+    "Historical still photos are not validated current CCTV, motion, congestion or speed observations",
+    "No 99-100% or Google superiority conclusion is possible",
+    "AGPL-3.0 obligations apply to derivative distribution"
+  ]
+}

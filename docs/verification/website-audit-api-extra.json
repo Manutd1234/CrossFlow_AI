@@ -1,0 +1,104 @@
+[
+  {
+    "path": "/api/auth/status",
+    "status": 200,
+    "data": {
+      "mode": "supabase",
+      "enabled": true,
+      "configured": true,
+      "project_origin": "https://wtednggryrikyvkuhqjo.supabase.co",
+      "sign_in": "supabase_auth_direct",
+      "notes": "Clients authenticate with Supabase Auth directly and send the resulting access token as a Bearer credential. This API never receives passwords."
+    }
+  },
+  {
+    "path": "/api/authority-reports",
+    "status": 200,
+    "data": {
+      "generated_at": "2026-10-23T20:10:44+07:00",
+      "data_source": "published_report",
+      "provenance": {
+        "road_network": "OpenStreetMap Batam Extract",
+        "road_network_license": "ODbL",
+        "routing": "A* over the committed OpenStreetMap road graph (115,320 union-retention nodes; a mutually reachable vehicle-specific core is selected per request)",
+        "traffic": "Historical & Telemetry Model",
+        "operations": "BP Batam official reporting-period aggregates, parsed from its public source page"
+      },
+      "status": "fresh",
+      "checked_at": "2026-10-23T20:10:44+07:00",
+      "fetched_at": "2026-10-23T20:10:44+07:00",
+      "report": {
+        "publisher": "BP Batam Port Business Entity",
+        "source_url": "https://batamport.bpbatam.go.id/pelabuhan-penumpang/",
+        "period_label": "Januari-Agustus 2026",
+        "period_start": "2026-01",
+        "period_end": "2026-08",
+        "metrics": [
+          {
+            "id": "vessel_calls",
+            "label": "Passenger-vessel calls",
+            "value": 51733,
+            "unit": "calls"
+          },
+          {
+            "id": "domestic_passengers",
+            "label": "Domestic passenger movements",
+            "value": 3075059,
+            "unit": "people"
+          },
+          {
+            "id": "international_passengers",
+            "label": "International passenger movements",
+            "value": 3643016,
+            "unit": "people"
+          }
+        ],
+        "content_sha256": "e7b0522059f13293897c42a72b0b799e94bc5478dc1edd6c5c5bb107731a69a0",
+        "fetched_at": "2026-10-23T20:10:44+07:00"
+      },
+      "stored_reports": [
+        {
+          "publisher": "BP Batam Port Business Entity",
+          "source_url": "https://batamport.bpbatam.go.id/pelabuhan-penumpang/",
+          "period_label": "Januari-Agustus 2026",
+          "period_start": "2026-01",
+          "period_end": "2026-08",
+          "metrics": [
+            {
+              "id": "vessel_calls",
+              "label": "Passenger-vessel calls",
+              "value": 51733,
+              "unit": "calls"
+            },
+            {
+              "id": "domestic_passengers",
+              "label": "Domestic passenger movements",
+              "value": 3075059,
+              "unit": "people"
+            },
+            {
+              "id": "international_passengers",
+              "label": "International passenger movements",
+              "value": 3643016,
+              "unit": "people"
+            }
+          ],
+          "content_sha256": "e7b0522059f13293897c42a72b0b799e94bc5478dc1edd6c5c5bb107731a69a0",
+          "fetched_at": "2026-10-23T20:10:44+07:00"
+        }
+      ],
+      "storage": {
+        "durable": true,
+        "scope": "single_server",
+        "available": true,
+        "latest_report_persisted": true
+      },
+      "error": null,
+      "limitations": [
+        "Official reporting-period aggregates, not current traffic speeds or live terminal occupancy.",
+        "Only successfully parsed source reports are retained; past periods are not fabricated.",
+        "The source is checked at most every five minutes, with a bounded two-attempt fetch."
+      ]
+    }
+  }
+]

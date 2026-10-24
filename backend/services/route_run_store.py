@@ -24,6 +24,8 @@ TABLE_NAME = "crossflow_route_runs"
 # The leading slash is required: supabase_server validates against
 # ``^/rest/v1/...`` and rejects anything else as invalid_rest_path.
 REST_PATH = f"/rest/v1/{TABLE_NAME}"
+SAVE_RPC_PATH = "/rest/v1/rpc/crossflow_save_route_run"
+HISTORY_PATH = "/rest/v1/crossflow_route_run_history"
 # A route envelope carries full geometry, so one row is far larger than the
 # small-record defaults the other stores rely on.
 SINGLE_ROW_MAX_BYTES = 4 * 1024 * 1024
@@ -104,11 +106,11 @@ def save(
     vehicle_type: Optional[str] = None,
     created_by: Optional[str] = None,
 ) -> bool:
-    """Upsert one run. Returns whether the shared table accepted it.
+    """Atomically save the public route and this account's history association.
 
     A ``route_id`` is content-addressed, so replanning the same journey
-    resolves to the same row; the table's trigger preserves the original
-    ``created_at`` so history keeps first-seen ordering.
+    resolves to one public envelope. Separate account associations ensure a
+    later account or guest never steals another account's history entry.
     """
     row = {
         "route_id": route_id,
@@ -123,37 +125,47 @@ def save(
     }
     result = _request(
         method="POST",
-        rest_path=REST_PATH,
-        query={"on_conflict": "route_id"},
-        payload=[row],
-        prefer="resolution=merge-duplicates,return=minimal",
+        rest_path=SAVE_RPC_PATH,
+        payload={"p_run": row},
         max_response_bytes=SINGLE_ROW_MAX_BYTES,
     )
     return result is not _FAILED
 
 
-def get(route_key: str) -> Optional[Dict[str, Any]]:
-    """Return one stored response envelope by route_id or route_code."""
+def get_lookup_result(route_key: str) -> tuple[Optional[Dict[str, Any]], bool]:
+    """Return an envelope and this request's availability, without shared state.
+
+    A healthy miss is distinct from an unavailable/malformed store so callers
+    can return 404 only when the route was actually absent. Concurrent lookups
+    must not borrow the outcome recorded by a different request.
+    """
     if not isinstance(route_key, str):
-        return None
+        return None, True
     if len(route_key) == 64:
         column = "route_id"
     elif len(route_key) == 7:
         column = "route_code"
     else:
-        return None
+        return None, True
     rows = _request(
         method="GET",
         rest_path=REST_PATH,
         query={column: f"eq.{route_key}", "select": "response", "limit": "1"},
         max_response_bytes=SINGLE_ROW_MAX_BYTES,
     )
-    if rows is _FAILED or not isinstance(rows, list) or not rows:
-        return None
+    if rows is _FAILED or not isinstance(rows, list):
+        return None, False
+    if not rows:
+        return None, True
     if not isinstance(rows[0], dict):
-        return None
+        return None, False
     envelope = rows[0].get("response")
-    return envelope if isinstance(envelope, dict) else None
+    return (envelope, True) if isinstance(envelope, dict) else (None, False)
+
+
+def get(route_key: str) -> Optional[Dict[str, Any]]:
+    """Return one stored response envelope by route_id or route_code."""
+    return get_lookup_result(route_key)[0]
 
 
 def recent(
@@ -172,9 +184,11 @@ def recent(
         "order": "created_at.desc",
         "limit": str(bounded),
     }
-    if created_by:
+    if created_by is not None:
         query["created_by"] = f"eq.{created_by}"
-    rows = _request(method="GET", rest_path=REST_PATH, query=query)
+    else:
+        query["account_rank"] = "eq.1"
+    rows = _request(method="GET", rest_path=HISTORY_PATH, query=query)
     if rows is _FAILED or not isinstance(rows, list):
         return []
     return [row for row in rows if isinstance(row, dict)]
@@ -186,6 +200,7 @@ __all__ = [
     "configured",
     "failure_reason",
     "get",
+    "get_lookup_result",
     "recent",
     "save",
 ]

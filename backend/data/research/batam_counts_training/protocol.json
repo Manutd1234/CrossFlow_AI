@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-23T18:06:31.354888+00:00",
+  "client_date": "2026-10-24",
+  "sources": {
+    "sekupang_15min": {
+      "source_id": "BATAM-014",
+      "csv": "research/batam-traffic/datasets/paper_observations/round3/observations.csv",
+      "csv_sha256": "39a96d4fddba284b9106b84666589eb28ea8c65770e8305d779d1e4018b0d35c",
+      "pdf_sha256": "97fbbc1da8acafabbaea5589a75937e92ca78e6a0b87b5a104401162a8d053c9",
+      "rows": 216,
+      "metric": "vehicle_count",
+      "unit": "vehicles_in_15_minute_interval",
+      "minutes": 15,
+      "site_id": "batam-sekupang-four-approach-published-2023",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_evidence_url": "https://journal.uib.ac.id/index.php/jce/article/view/9076",
+      "attribution": "Uswatun Azizatul Syarqiah and Yusra Aulia Sari (2024), Optimizing Traffic Management at Batam City Intersections: Analysis of Congestion Causes and Mitigation Strategies, Journal of Civil Engineering and Planning 5(1), DOI 10.37253/jcep.v5i1.9076. Table 4.1 individually transcribed; time offsets, provenance and diagnostics added. No author endorsement.",
+      "features": [
+        "prior_same_series_count",
+        "approach",
+        "movement",
+        "vehicle_class"
+      ],
+      "fit_groups": [
+        "2023-12-17T06:45:00+07:00",
+        "2023-12-17T07:00:00+07:00",
+        "2023-12-17T07:15:00+07:00"
+      ],
+      "validation_groups": [
+        "2023-12-17T07:30:00+07:00"
+      ],
+      "test_groups": [
+        "2023-12-17T07:45:00+07:00"
+      ],
+      "presets": [
+        "persistence",
+        "series_mean",
+        "class_mean",
+        "shrink_25",
+        "shrink_50",
+        "shrink_75",
+        "global_ratio",
+        "ridge_residual_1",
+        "ridge_residual_10"
+      ]
+    },
+    "gajah_mada_uturn_hourly": {
+      "source_id": "BATAM-EXT-005",
+      "csv": "research/batam-traffic/datasets/paper_observations/observations.csv",
+      "csv_sha256": "3dd9ac0b72739cea9a605118e938a98c12d13e452027c55a3c174b88290051ed",
+      "pdf_sha256": "2e37e52e90ea8450359e3d5391e7a1626a304b85d3c8cf59808e1513d4eeb681",
+      "rows": 72,
+      "metric": "u_turn_vehicle_count",
+      "unit": "vehicles_in_1_hour_interval",
+      "minutes": 60,
+      "site_id": "batam-gajah-mada-kemilau-bangsa-uturn-published-2023",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "license_evidence_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642/0",
+      "attribution": "Harry Kurniawan and M. Khairi Anwar (2023), Pengaruh U-Turn terhadap Kinerja Lalu Lintas pada Ruas Jalan Gajah Mada Depan Simpang Sekolah Kemilau Bangsa Kota Batam, Sigma Teknika 6(2), 479–492. Table 12, p488, raw class count cells retained including subtotal inconsistencies. Time offsets, provenance and diagnostics added. No author endorsement. Derived count artifacts are distributed under CC BY-SA 4.0.",
+      "features": [
+        "prior_survey_day_same_clock_series_count",
+        "direction",
+        "vehicle_class",
+        "clock_slot"
+      ],
+      "fit_groups": [
+        "2023-02-16"
+      ],
+      "validation_groups": [
+        "2023-02-17"
+      ],
+      "test_groups": [
+        "2023-02-18"
+      ],
+      "presets": [
+        "persistence",
+        "series_mean",
+        "class_mean",
+        "shrink_25",
+        "shrink_50",
+        "shrink_75"
+      ]
+    }
+  },
+  "selection": "minimum validation MAE, then RMSE, then preset declaration order",
+  "test_used_for_tuning": false,
+  "refit": "frozen winner fit with fit + validation targets; test targets never fitted",
+  "temporal_observation_availability": "Retrospective idealized publication simulation: a count is assumed known at the end of its source interval. Original field or publication delivery latency is unavailable; no operational latency claim.",
+  "primary_metric": "MAE in vehicles per original published source interval",
+  "external_study_holdout": "Not pooled: intersection turning counts and U-turn hourly counts have different geometry, movements, classes and duration.",
+  "repeat_policy": "Existing protocol/results cannot be overwritten by this script. Reusing a holdout does not provide independent evidence.",
+  "production_eligible": false,
+  "no_accuracy_percent_or_google_comparison": true
+}

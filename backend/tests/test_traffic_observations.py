@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import os
+import math
+import sqlite3
 import sys
 import tempfile
 import unittest
@@ -63,6 +65,29 @@ def observation(
     )
 
 
+def install_legacy_spatial_table(store: HistoryStore, version: int = 2) -> None:
+    current_sql = store._conn.execute(
+        "SELECT sql FROM sqlite_master WHERE name='spatial_observations'"
+    ).fetchone()[0]
+    legacy_sql = current_sql.replace(
+        "CREATE TABLE spatial_observations", "CREATE TABLE legacy_spatial"
+    ).replace(
+        "actual_speed_kph >= 0 AND actual_speed_kph <= 250", "actual_speed_kph > 0"
+    )
+    if version == 1:
+        legacy_sql = legacy_sql.replace(
+            "local_timezone_offset_minutes INTEGER NOT NULL DEFAULT 420,", ""
+        )
+    with store._conn:
+        store._conn.execute(legacy_sql)
+        columns = ", ".join(row[1] for row in store._conn.execute("PRAGMA table_info(legacy_spatial)"))
+        store._conn.execute(f"INSERT INTO legacy_spatial ({columns}) SELECT {columns} FROM spatial_observations")
+        store._conn.execute("DROP TABLE spatial_observations")
+        store._conn.execute("ALTER TABLE legacy_spatial RENAME TO spatial_observations")
+        store._conn.execute("CREATE INDEX custom_spatial_source ON spatial_observations(source)")
+        store._set_metadata("history_schema_version", version)
+
+
 class ObservationValidationTests(unittest.TestCase):
     def test_batch_validation_bounds_generator_consumption(self) -> None:
         consumed = 0
@@ -91,7 +116,7 @@ class ObservationValidationTests(unittest.TestCase):
             ("latitude", replace(valid, latitude=float("nan"))),
             ("outside-batam", replace(valid, latitude=40.7128, longitude=-74.0060)),
             ("longitude", replace(valid, longitude=181.0)),
-            ("actual-speed", replace(valid, actual_speed_kph=0.0)),
+            ("actual-speed", replace(valid, actual_speed_kph=-0.01)),
             ("free-flow", replace(valid, free_flow_speed_kph=float("inf"))),
             ("timestamp", replace(valid, observed_at=FIXED_NOW.replace(tzinfo=None))),
             ("road-class", replace(valid, road_class="secret_alley")),
@@ -120,9 +145,28 @@ class ObservationValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ObservationValidationError, "timezone"):
             observation(FIXED_NOW.replace(tzinfo=None))
         with self.assertRaisesRegex(ObservationValidationError, "ratio"):
-            observation(FIXED_NOW, actual_speed_kph=2, free_flow_speed_kph=100)
+            observation(FIXED_NOW, actual_speed_kph=151, free_flow_speed_kph=100)
         with self.assertRaisesRegex(ObservationValidationError, "Unsupported"):
             observation(FIXED_NOW, source="scraped_blog_tip")
+
+    def test_stopped_and_near_stopped_measurements_preserve_actual_speed(self) -> None:
+        for actual in (0.0, 0.001, 2.0):
+            with self.subTest(actual=actual):
+                item = observation(FIXED_NOW, actual_speed_kph=actual)
+                self.assertEqual(item.actual_speed_kph, actual)
+                self.assertEqual(item.speed_ratio, actual / 60.0)
+                self.assertEqual(validate_observation_batch([item]), (item,))
+
+    def test_speed_bounds_reject_nonfinite_negative_and_impossible_ratios(self) -> None:
+        for actual, free_flow in (
+            (-0.001, 60), (float("nan"), 60), (float("inf"), 60),
+            (251, 200), (0, 0), (0, -1), (0, float("inf")),
+            (0, float("nan")), (0, 251), (150.001, 100),
+        ):
+            with self.subTest(actual=actual, free_flow=free_flow):
+                with self.assertRaises(ObservationValidationError):
+                    observation(FIXED_NOW, actual_speed_kph=actual,
+                                free_flow_speed_kph=free_flow)
 
     def test_reviewed_community_is_lower_trust_and_requires_review(self) -> None:
         with self.assertRaisesRegex(ObservationValidationError, "review"):
@@ -138,6 +182,66 @@ class ObservationValidationTests(unittest.TestCase):
 
 
 class SpatialHistoryStoreTests(unittest.TestCase):
+    def test_failed_v1_upgrade_rolls_back_ddl_and_rerun_preserves_civil_timezone(self) -> None:
+        store = HistoryStore(":memory:", now_provider=lambda: FIXED_NOW)
+        try:
+            prior = observation(FIXED_NOW, upstream_event_id="legacy-v1")
+            store.ingest_spatial_batch([prior], now=FIXED_NOW)
+            install_legacy_spatial_table(store, version=1)
+            store._conn.set_authorizer(lambda action, table, *_: (
+                sqlite3.SQLITE_DENY
+                if action == sqlite3.SQLITE_DROP_TABLE and table == "spatial_observations"
+                else sqlite3.SQLITE_OK
+            ))
+            with self.assertRaises(sqlite3.DatabaseError):
+                store._ensure_schema()
+            store._conn.set_authorizer(None)
+            self.assertEqual(store._metadata("history_schema_version"), "1")
+            self.assertNotIn("local_timezone_offset_minutes", {
+                row[1] for row in store._conn.execute("PRAGMA table_info(spatial_observations)")
+            })
+            self.assertIsNone(store._conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE name='spatial_observations_v3'"
+            ).fetchone())
+            store._ensure_schema()
+            self.assertEqual(store.get_spatial_training_dataset(now=FIXED_NOW), [prior])
+            self.assertEqual(store._metadata("history_schema_version"), "3")
+            stopped = observation(FIXED_NOW, actual_speed_kph=0, upstream_event_id="after-v1")
+            self.assertEqual(store.ingest_spatial_batch([stopped], now=FIXED_NOW).inserted, 1)
+        finally:
+            store._conn.set_authorizer(None)
+            store.close()
+
+    def test_v2_database_upgrade_preserves_history_and_accepts_zero_on_rerun(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "history.db")
+            first = observation(FIXED_NOW - timedelta(minutes=1), upstream_event_id="legacy")
+            store = HistoryStore(path, now_provider=lambda: FIXED_NOW)
+            store.ingest_spatial_batch([first], now=FIXED_NOW)
+            install_legacy_spatial_table(store)
+            store.close()
+            stopped = observation(FIXED_NOW, actual_speed_kph=0, upstream_event_id="stopped")
+            for run in range(2):
+                store = HistoryStore(path, now_provider=lambda: FIXED_NOW)
+                try:
+                    self.assertEqual(store.actual_path, path)
+                    self.assertEqual(store._metadata("history_schema_version"), "3")
+                    result = store.ingest_spatial_batch([stopped], now=FIXED_NOW)
+                    self.assertEqual(result.inserted, 1 if run == 0 else 0)
+                    self.assertEqual(store.get_spatial_training_dataset(now=FIXED_NOW), [first, stopped])
+                    self.assertIsNotNone(store._conn.execute(
+                        "SELECT 1 FROM sqlite_master WHERE name='custom_spatial_source'"
+                    ).fetchone())
+                    for speed, free_flow in ((-1, 60), (91, 60), (0, 0), (float("inf"), 60)):
+                        with self.assertRaises(sqlite3.IntegrityError):
+                            with store._conn:
+                                store._conn.execute(
+                                    "UPDATE spatial_observations SET actual_speed_kph=?, free_flow_speed_kph=?",
+                                    (speed, free_flow),
+                                )
+                finally:
+                    store.close()
+
     def test_store_rejects_direct_constructor_forgery_before_write(self) -> None:
         store = HistoryStore(":memory:", now_provider=lambda: FIXED_NOW)
         try:
@@ -229,6 +333,19 @@ class SpatialHistoryStoreTests(unittest.TestCase):
 
 
 class CongestionEstimatorTests(unittest.TestCase):
+    def test_stopped_traffic_retains_finite_model_and_router_cost_floor(self) -> None:
+        for speed in (0.0, 0.001):
+            current = observation(FIXED_NOW, actual_speed_kph=speed)
+            estimate = estimate_speed_ratio_congestion(current, [])
+            self.assertEqual(estimate.current_speed_ratio, 0.05)
+            self.assertEqual(estimate.expected_speed_ratio, 0.05)
+            self.assertEqual(estimate.congestion_score, 95.0)
+            payload = estimate.router_payload(free_flow_travel_seconds=600)
+            self.assertEqual(payload["expected_speed_ratio"], 0.05)
+            self.assertEqual(payload["p90_speed_ratio"], 0.05)
+            self.assertTrue(math.isfinite(payload["p90_delay_s"]))
+            self.assertEqual(payload["p90_delay_s"], 11400)
+
     def test_estimator_bounds_history_and_authenticates_every_record(self) -> None:
         current = observation(FIXED_NOW, upstream_event_id="estimate-current")
         consumed = 0

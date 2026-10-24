@@ -42,6 +42,25 @@ def observation_input() -> dict[str, object]:
 
 
 class RoutingIntelligenceApiTrustTests(unittest.TestCase):
+    def test_measured_zero_speed_is_valid_but_invalid_bounds_are_rejected(self) -> None:
+        for speed in (0, 0.001):
+            payload = {**observation_input(), "actual_speed_kph": speed}
+            item = api_main.SpatialTrafficObservationInput(**payload)
+            record = api_main._canonical_spatial_observation(item, NOW, "probe_gps")
+            self.assertEqual(record.actual_speed_kph, speed)
+        for field, value in (
+            ("actual_speed_kph", -0.001), ("actual_speed_kph", float("nan")),
+            ("actual_speed_kph", float("inf")), ("free_flow_speed_kph", 0),
+        ):
+            with self.subTest(field=field, value=value):
+                with self.assertRaises(ValidationError):
+                    api_main.SpatialTrafficObservationInput(**{**observation_input(), field: value})
+        impossible = api_main.SpatialTrafficObservationInput(
+            **{**observation_input(), "actual_speed_kph": 76}
+        )
+        with self.assertRaises(ValueError):
+            api_main._canonical_spatial_observation(impossible, NOW, "probe_gps")
+
     def test_observation_body_cannot_self_assign_verified_source(self) -> None:
         with self.assertRaises(ValidationError):
             api_main.SpatialTrafficObservationInput(
@@ -118,7 +137,8 @@ class RoutingIntelligenceApiTrustTests(unittest.TestCase):
             )
 
     def test_retrain_uses_explicit_spatial_snapshot_port(self) -> None:
-        metrics = {"is_trained": True, "total_samples": 123}
+        from services import observed_training
+        report = {"status": "insufficient_observations", "model_replaced": False}
         with patch.dict(os.environ, {"CROSSFLOW_ADMIN_TOKEN": "token"}), \
                 patch.object(
                     routing_intelligence_store,
@@ -129,14 +149,16 @@ class RoutingIntelligenceApiTrustTests(unittest.TestCase):
                     "get_spatial_training_dataset",
                     return_value=[],
                 ) as read_history, patch.object(
-                    api_main.forecaster,
-                    "retrain_from_observations",
-                    return_value=metrics,
+                    observed_training,
+                    "retrain_observed_model",
+                    return_value=report,
                 ) as retrain:
             result = api_main.api_retrain_model("token")
         read_history.assert_called_once_with(now=ANY)
-        retrain.assert_called_once_with([])
+        retrain.assert_called_once_with(api_main.forecaster, (), now=ANY)
         self.assertEqual(result["training_snapshot"]["durability"], "local_sqlite")
+        self.assertFalse(result["observed_training"]["model_replaced"])
+        self.assertEqual(result["training_snapshot"]["validation"], "observed_only_chronological_baseline_gated")
 
     def test_durable_shortcut_conflict_maps_to_409(self) -> None:
         request = api_main.ShortcutDocumentBatch(documents=[{

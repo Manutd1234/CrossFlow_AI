@@ -17,6 +17,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from services import ferry_local_freshness
+
 
 TABLE_NAME = "crossflow_ferry_freshness"
 TIMEOUT_SECONDS = 2
@@ -147,7 +149,7 @@ def load(snapshot_id: str) -> Optional[Dict[str, Any]]:
     """Return one stored freshness row, or ``None`` when unavailable."""
     config = _config()
     if config is None:
-        return None
+        return None if required() else ferry_local_freshness.load(snapshot_id)
     if time.monotonic() < _retry_after_monotonic:
         _remember_failure("request_backoff")
         return None
@@ -194,7 +196,7 @@ def save(
     """Upsert and return the database-monotonic freshness row."""
     config = _config()
     if config is None:
-        return None
+        return None if required() else ferry_local_freshness.save(snapshot_id, latest_checked_at, last_verified_at)
     url = (
         f"{config['url']}/rest/v1/{TABLE_NAME}"
         "?on_conflict=snapshot_id"

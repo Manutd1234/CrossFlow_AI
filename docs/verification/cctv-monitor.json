@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-23T19:25:37.852210+00:00",
+  "flow": "Actual CctvMonitor -> loopback Vite proxy -> actual FastAPI CCTV status handler -> actual registered-camera store",
+  "browser": "Chrome",
+  "frontend_fixture_url": "http://127.0.0.1:3007/.cctvcheck/",
+  "api_fixture_url": "http://127.0.0.1:8007/api/analytics/cctv-status",
+  "fixture_scope": "Temporary loopback-only frontend and backend; fixed QA operator identity replaces authentication only in the test process; no existing app account or session changed; normal backend startup jobs disabled.",
+  "camera_data_mocked": false,
+  "verified_summary": {
+    "listed": 28,
+    "configured": 0,
+    "live": 0,
+    "stale": 0,
+    "unavailable": 0,
+    "permission_pending": 28,
+    "calibration_pending": 0
+  },
+  "dom_checks": {
+    "camera_rows": 28,
+    "file_inputs": 0,
+    "image_or_video_elements": 0,
+    "current_traffic_measurement_lists": 0,
+    "visible_error_alerts": 0
+  },
+  "successful_window_console_warnings_or_errors": 0,
+  "interactions": [
+    "Refreshed cameras through the actual status endpoint.",
+    "Expanded camera coverage; confirmed official directory links and pending permission reasons.",
+    "Closed camera details for the saved overview."
+  ],
+  "camera_streams_opened": false,
+  "camera_frames_recorded": false,
+  "observed_result": "No live camera congestion is available; missing observations are withheld rather than displayed as zero vehicles or free traffic.",
+  "source_review": "CCTV segment provenance is explicitly typed cctv_camera; map watch areas remain labelled as modelled planning context. Operations speed samples and real-forecast speed references remain TomTom-only, so CCTV is not represented as measured km/h.",
+  "screenshot": {
+    "path": "docs/verification/cctv-monitor.png",
+    "bytes": 72843,
+    "sha256": "46668444c4b292d9cd3fa576c52f091ad6760f3f97688a2535deae9b498c0635"
+  },
+  "cleanup": "Temporary frontend fixture files, Chrome tab, Vite server and loopback API server were removed/stopped after verification; existing app sessions were preserved.",
+  "limitation": "This verifies the operator status flow. It does not establish working CCTV feeds, automated processing authorization or calibrated camera accuracy.",
+  "historical": true,
+  "superseded_by": "backend-cctv-live-checks.json"
+}

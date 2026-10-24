@@ -1,0 +1,68 @@
+{
+  "schema": "crossflow.yolo26_training_plan.v1",
+  "created_at": "2026-10-23T19:41:43.001122+00:00",
+  "protocol": "bounded_scale_resolution_and_accumulation_refinement",
+  "epochs": 20,
+  "batch": 3,
+  "nbs": 3,
+  "optimizer": "SGD",
+  "lr0": 0.001,
+  "freeze_backbone_layers": 10,
+  "training_imgsz": 640,
+  "device": "cpu",
+  "seed": 20261024,
+  "thresholds": [
+    0.25,
+    0.4,
+    0.55
+  ],
+  "pretrained_candidates": [
+    {
+      "architecture": "yolo26n",
+      "imgsz": 640,
+      "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+    },
+    {
+      "architecture": "yolo26s",
+      "imgsz": 960,
+      "sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+    },
+    {
+      "architecture": "yolo26s",
+      "imgsz": 1280,
+      "sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+    },
+    {
+      "architecture": "yolo26m",
+      "imgsz": 960,
+      "sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7"
+    },
+    {
+      "architecture": "yolo26m",
+      "imgsz": 1280,
+      "sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7"
+    }
+  ],
+  "fine_tuned_candidates": [
+    "nano_nbs3_best_val_map_640",
+    "nano_nbs3_last_640"
+  ],
+  "train_images": 9,
+  "train_boxes": 56,
+  "validation_images": 3,
+  "validation_boxes": 22,
+  "split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+  "annotation_manifest_sha256": "5efd0896bd61aa57b9d4a68668f03b94895445b71586349777604e3745edde90",
+  "adaptation_reason": "Nano640 validation misses distant vehicles; defaultnbs64 accumulated21microbatches. Newprotocolraisesresolution/modelscale andsetsnbs3foreverybatchweightupdates.",
+  "prior_validation_receipt_sha256": "1fdcfc96b4a3a393312e15a358308a7660a46f55478f299216da15c1c2826075",
+  "test_previously_consumed": true,
+  "fresh_test": false,
+  "test_not_used_for_selection": true,
+  "annotation_origin": "ai_visual_blind",
+  "human_certified": false,
+  "production_eligible": false,
+  "source_images_downloaded_this_run": 0,
+  "augmentation_exports_are_not_new_observations": true,
+  "license": "AGPL-3.0",
+  "license_url": "https://www.ultralytics.com/license"
+}

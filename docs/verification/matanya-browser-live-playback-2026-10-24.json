@@ -1,0 +1,109 @@
+{
+  "checked_at": "2026-10-24T11:59:20.690855+07:00",
+  "method": "Clicked official directory links, observed live players across time, read video currentTime/paused/readyState, and compared visible traffic and camera clocks.",
+  "directory_url": "https://matanya.batam.go.id/",
+  "listed_camera_locations": 28,
+  "camera_checks": [
+    {
+      "camera_id": "1",
+      "name": "Atap Kantor Walikota",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/1",
+      "playhead_seconds": [
+        116.85197,
+        131.251391
+      ],
+      "paused": [
+        false,
+        false
+      ],
+      "ready_state": [
+        4,
+        4
+      ],
+      "visible_clock_samples_wib": [
+        "11:54:14",
+        "11:54:39"
+      ],
+      "observation": "Advancing live video. Civic plaza dominates; roadway is distant. No road-specific congestion calculation validated."
+    },
+    {
+      "camera_id": "15",
+      "name": "Simpang BI",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/15",
+      "playhead_seconds": [
+        0.358184,
+        1.431693,
+        1.122185,
+        6.630579
+      ],
+      "paused": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "ready_state": [
+        4,
+        4,
+        4,
+        4
+      ],
+      "visible_clock_samples_wib": [
+        "11:56:49",
+        "11:56:59",
+        "11:57:34"
+      ],
+      "observation": "Observed queued cars followed by clearing of the queue and passing motorcycles. Playback paused intermittently and restarted after clicking. Not continuous-playback certification."
+    },
+    {
+      "camera_id": "5",
+      "name": "Depan SP Plaza Batu Aji",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/5",
+      "playhead_seconds": [
+        0,
+        0
+      ],
+      "ready_state": [
+        0,
+        0
+      ],
+      "observation": "Player remained black with no decoded video during this check. Current availability unverified; prior audit playback must not be treated as current availability."
+    },
+    {
+      "camera_id": "48",
+      "name": "Depan Stadion Temenggung Arah Batu Aji",
+      "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/48",
+      "playhead_seconds": [
+        7.35159,
+        24.255098
+      ],
+      "paused": [
+        false,
+        false
+      ],
+      "ready_state": [
+        4,
+        4
+      ],
+      "visible_clock_samples_wib": [
+        "11:58:09",
+        "11:58:26"
+      ],
+      "observation": "Advancing live video with cars and motorcycles moving on both visible carriageways. Potential additional traffic observation location; road mapping, counting regions and calibration not completed."
+    }
+  ],
+  "app_state": {
+    "measured_speed_points": 5,
+    "enabled_camera_pilots": [
+      "15"
+    ],
+    "camera_visible_count_is_vehicles_per_minute": false,
+    "new_camera_analysis_enabled_by_this_check": false
+  },
+  "limitations": [
+    "Directory listing is not proof every camera is online or suitable.",
+    "No camera footage or screenshots were saved to disk.",
+    "No training, emails, paid sampling expansion or authorization-flag changes were performed.",
+    "Watching a public player does not establish automated-reuse rights or calibrated road measurements."
+  ]
+}

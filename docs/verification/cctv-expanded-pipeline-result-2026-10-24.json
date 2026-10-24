@@ -1,0 +1,46 @@
+{
+  "scope": "Actual local Matanya five-source inference and existing frontend verification",
+  "enabled_source_ids": [
+    "1",
+    "13",
+    "51",
+    "15",
+    "19",
+    "48"
+  ],
+  "source_ids_with_live_numeric_estimates_after_activation": [
+    "1",
+    "13",
+    "19",
+    "48",
+    "51"
+  ],
+  "currently_ended_source_id": "15",
+  "fresh_count_policy": "Dynamic quality- and TTL-qualified count, not hardcoded to configured source count",
+  "current_live_camera_routing": "withheld; only camera15 has a provisional directed edge and its data is stale",
+  "pipeline": "Public HLS -> RAM decode -> YOLO26s -> ROI tracking/occupancy -> provisional numeric index -> eligible exact-edge route-search penalty",
+  "probe_vs_estimation": "Browser playback checked for at least5s; collection samples every1s and provisional evidence uses15-60s rolling windows",
+  "frontend_changed": false,
+  "emails_sent": false,
+  "camera_media_retained": false,
+  "independent_accuracy_validated": false,
+  "evidence_files": [
+    "cctv-six-camera-activation-2026-10-24.json",
+    "cctv-reviewed-six-route-live-2026-10-24.json",
+    "cctv-reviewed-six-route-historical-replay-2026-10-24.json",
+    "cctv-existing-route-ui-2026-10-24.json",
+    "cctv-existing-route-ui-2026-10-24.png"
+  ],
+  "tests": {
+    "actual_vision_runtime_targeted": 90,
+    "separate_analyzer_routing": 60,
+    "separate_subtests": 31,
+    "suites_overlap": true
+  },
+  "remaining": [
+    "Independent live-camera count/congestion validation",
+    "Georeferenced direction and visible segment for five active views",
+    "Camera13 directional road polygon before single-edge routing",
+    "Unavailable/historical-only official feeds"
+  ]
+}

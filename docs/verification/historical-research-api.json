@@ -1,0 +1,145 @@
+{
+  "url": "http://localhost:3000/api/analytics/research-history",
+  "http_status": 200,
+  "cache_control": "private, no-store",
+  "survey_rows": 48,
+  "survey_dates": [
+    "2023-02-16",
+    "2023-02-17",
+    "2023-02-18"
+  ],
+  "benchmark_observations": 397341,
+  "serving_model_replaced": false,
+  "reported_via": "Vite proxy to FastAPI",
+  "results": [
+    {
+      "horizon_minutes": 15,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.52892,
+        "rmse_band_units": 0.733561,
+        "rounded_band_accuracy": 0.584674,
+        "within_one_band": 0.953585
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.549156,
+        "rmse_band_units": 0.907907,
+        "rounded_band_accuracy": 0.551516,
+        "within_one_band": 0.925702
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.799146,
+      "calibration_radius_band_units": 0.849366,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.528852,
+          "rmse_band_units": 0.733539,
+          "rounded_band_accuracy": 0.58479,
+          "within_one_band": 0.953592
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.549106,
+          "rmse_band_units": 0.907926,
+          "rounded_band_accuracy": 0.551584,
+          "within_one_band": 0.925703
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.656544,
+          "rmse_band_units": 1.033128,
+          "rounded_band_accuracy": 0.48943,
+          "within_one_band": 0.896497
+        }
+      }
+    },
+    {
+      "horizon_minutes": 30,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.551534,
+        "rmse_band_units": 0.757287,
+        "rounded_band_accuracy": 0.570526,
+        "within_one_band": 0.950399
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.625221,
+        "rmse_band_units": 0.983472,
+        "rounded_band_accuracy": 0.500961,
+        "within_one_band": 0.90704
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.806175,
+      "calibration_radius_band_units": 0.872098,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.551516,
+          "rmse_band_units": 0.757322,
+          "rounded_band_accuracy": 0.570593,
+          "within_one_band": 0.950378
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.625377,
+          "rmse_band_units": 0.98367,
+          "rounded_band_accuracy": 0.50089,
+          "within_one_band": 0.906977
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.655757,
+          "rmse_band_units": 1.032897,
+          "rounded_band_accuracy": 0.490179,
+          "within_one_band": 0.896626
+        }
+      }
+    },
+    {
+      "horizon_minutes": 60,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.562846,
+        "rmse_band_units": 0.768228,
+        "rounded_band_accuracy": 0.558506,
+        "within_one_band": 0.946079
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.659475,
+        "rmse_band_units": 1.021247,
+        "rounded_band_accuracy": 0.481874,
+        "within_one_band": 0.896697
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.805788,
+      "calibration_radius_band_units": 0.886057,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.562811,
+          "rmse_band_units": 0.768244,
+          "rounded_band_accuracy": 0.558565,
+          "within_one_band": 0.946081
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.659526,
+          "rmse_band_units": 1.021325,
+          "rounded_band_accuracy": 0.481855,
+          "within_one_band": 0.896678
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.654776,
+          "rmse_band_units": 1.03241,
+          "rounded_band_accuracy": 0.491082,
+          "within_one_band": 0.896768
+        }
+      }
+    }
+  ]
+}

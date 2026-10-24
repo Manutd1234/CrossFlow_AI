@@ -1,0 +1,237 @@
+{
+  "schema": "crossflow.cctv.directed_mapping_review.v1",
+  "reviewed_at": "2026-10-24T07:27:00.626808+00:00",
+  "graph_file": "backend/data/batam_graph.json",
+  "graph_sha256": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+  "registry_sha256_before": "e398e20b283387f7fb4a6b460d3a2710985f157f36da346adb587f9b43bc5c20",
+  "registry_sha256_after": "c01bd38dc4d4fa4c3356676ff93ec7ccc986b0719dd6793320b4e0b254815aa7",
+  "method": "Manual current live browser scene review, visible traffic direction and asymmetric landmarks, checked against public OSM source geometry and the bundled directed graph. Select one explicit short directed road edge and a single-carriageway ROI; nearest-landmark search alone is insufficient.",
+  "media_retained": false,
+  "model_trained": false,
+  "permissions_changed": false,
+  "independent_detector_validation_added": false,
+  "bindings": [
+    {
+      "camera_id": "13",
+      "mapping_status": "reviewed_single_directed_road_view",
+      "road_segment_id": "osm-edge:5526812765:5526750754:618",
+      "road_name": "Jalan Engku Putri — eastbound at Dataran south gate",
+      "osm_source_way_id": "543398079",
+      "source_coordinate": [
+        1.127287,
+        104.054634
+      ],
+      "target_coordinate": [
+        1.127288,
+        104.054975
+      ],
+      "edge_length_m": 38.0,
+      "bearing_degrees": 89.83,
+      "expected_bearing_range": [
+        80,
+        100
+      ],
+      "direction": "eastbound; northern carriageway, right-to-left in the south-facing image",
+      "roi": [
+        [
+          0.035,
+          0.565
+        ],
+        [
+          0.7,
+          0.52
+        ],
+        [
+          0.7,
+          0.59
+        ],
+        [
+          0.035,
+          0.65
+        ]
+      ],
+      "counting_line": [
+        [
+          0.45,
+          0.54
+        ],
+        [
+          0.45,
+          0.62
+        ]
+      ],
+      "evidence": "The south-gate camera looks across Jalan Engku Putri toward the labelled DPRD gate and office, with Dataran behind the camera. Its driveway and marked pedestrian crossing occupy the lower foreground. The selected ROI is only the near/northern main-road carriageway, excluding the far/westbound lane, DPRD parking and the gate driveway. Moving near-lane vehicles travel right-to-left. DPRD is south of the street in the public OSM building footprint; the plaza south-gate pedestrian accesses terminate at graph nodes near 104.05449–104.05463. Select the immediately eastern 38m main-road edge visible across the gate frontage, rather than the square-centroid nearest edge.",
+      "primary_sources": [
+        "https://matanya.batam.go.id/index.php/Streaming/live/13",
+        "https://www.openstreetmap.org/way/543398079",
+        "https://dprd.batam.go.id/kontak/"
+      ],
+      "opposed_direction_excluded": "The southern/westbound carriageway is above the narrowed ROI; no opposite edge or radius mapping is configured.",
+      "accuracy_certified": false,
+      "physical_capture_clock_certified": false,
+      "camera_pole_surveyed": false
+    },
+    {
+      "camera_id": "51",
+      "mapping_status": "reviewed_single_directed_road_view",
+      "road_segment_id": "osm-edge:856986734:5291330620:618",
+      "road_name": "Jalan Engku Putri — westbound at DPRD frontage",
+      "osm_source_way_id": "576141912",
+      "source_coordinate": [
+        1.12726,
+        104.055609
+      ],
+      "target_coordinate": [
+        1.127233,
+        104.055198
+      ],
+      "edge_length_m": 45.8,
+      "bearing_degrees": 266.24,
+      "expected_bearing_range": [
+        255,
+        280
+      ],
+      "direction": "westbound; southern carriageway, away toward upper-left in the west-facing image",
+      "roi": [
+        [
+          0.29,
+          0.3
+        ],
+        [
+          0.38,
+          0.31
+        ],
+        [
+          0.93,
+          0.7
+        ],
+        [
+          0.86,
+          0.87
+        ],
+        [
+          0.37,
+          0.48
+        ]
+      ],
+      "counting_line": [
+        [
+          0.56,
+          0.5
+        ],
+        [
+          0.48,
+          0.62
+        ]
+      ],
+      "evidence": "The camera labelled Depan Kantor DPRD / PEMKO looks west along Jalan Engku Putri. The PEMKO frontage is across the road on the image right (north), while the DPRD-side gate/fence is in the near left foreground (south). The public OSM map places the PEMKO service entrance at 104.05556–104.05563 and DPRD frontage south of that junction. The selected 45.8m graph edge runs west from 104.055609 to 104.055198 immediately in front of this entrance. The narrowed ROI retains only the near/southern westbound carriageway and excludes the opposite eastbound lanes beyond the centre marking.",
+      "primary_sources": [
+        "https://matanya.batam.go.id/index.php/Streaming/live/51",
+        "https://www.openstreetmap.org/way/576141912",
+        "https://www.openstreetmap.org/way/576141862",
+        "https://dprd.batam.go.id/kontak/"
+      ],
+      "opposed_direction_excluded": "The far/northern eastbound carriageway is beyond the road centre marking and outside the narrowed ROI.",
+      "accuracy_certified": false,
+      "physical_capture_clock_certified": false,
+      "camera_pole_surveyed": false
+    },
+    {
+      "camera_id": "48",
+      "mapping_status": "reviewed_single_directed_road_view",
+      "road_segment_id": "osm-edge:5698748891:702710855:714",
+      "road_name": "Jalan Jenderal Ahmad Yani — southbound toward Batu Aji at Damkar",
+      "osm_source_way_id": "55951248",
+      "source_coordinate": [
+        1.088888,
+        104.034189
+      ],
+      "target_coordinate": [
+        1.088382,
+        104.034013
+      ],
+      "edge_length_m": 59.6,
+      "bearing_degrees": 199.18,
+      "expected_bearing_range": [
+        185,
+        215
+      ],
+      "direction": "south-southwest toward Batu Aji; right carriageway approaching the camera in its north-northeast-facing image",
+      "roi": [
+        [
+          0.47,
+          0.14
+        ],
+        [
+          0.51,
+          0.14
+        ],
+        [
+          0.98,
+          0.56
+        ],
+        [
+          0.98,
+          0.9
+        ],
+        [
+          0.72,
+          0.9
+        ]
+      ],
+      "counting_line": [
+        [
+          0.57,
+          0.48
+        ],
+        [
+          0.85,
+          0.48
+        ]
+      ],
+      "evidence": "The official stream is labelled Depan Stadion Temenggung Arah Batu Aji and its burned-in caption is POS DAMKAR STAJ 2. The RAM video shows the right carriageway vehicles approaching the camera, forest/fence on the image right (east), and open stadium/fire-station-side land on the left (west). Public OSM locates Fire Fighter Duriangkang at 1.08881,104.033 and Damkar A platform at 1.088879,104.0339579, west of this dual carriageway; forest/open reserve lies east. These asymmetric side features identify the optical view as north-northeast and the monitored right carriageway as south-southwest. The binding is the 59.6m east-side one-way way55951248 segment adjacent to Damkar. The Arah Batu Aji label alone was not used to infer optical direction. Existing ROI already contains only this carriageway.",
+      "primary_sources": [
+        "https://matanya.batam.go.id/index.php/Streaming/live/48",
+        "https://www.openstreetmap.org/way/55951248",
+        "https://www.openstreetmap.org/node/702710893",
+        "https://www.openstreetmap.org/node/12408548890"
+      ],
+      "opposed_direction_excluded": "Opposite north-northeast way582211533 is on the image left beyond the central planted median, outside the existing ROI.",
+      "accuracy_certified": false,
+      "physical_capture_clock_certified": false,
+      "camera_pole_surveyed": false
+    }
+  ],
+  "unresolved": [
+    {
+      "camera_id": "1",
+      "reason": "Current scene includes the civic star plaza and the Astaka/Museum Raja Ali Haji pavilion (independently confirmed against official Batam Media Center museum reporting), not a geographically verified mosque-front public road. Existing upper-left ROI contains plaza/access/parked-vehicle activity. Prior mosque-based Engku Putri Utara candidates cannot establish road coverage. Analysis, provisional congestion estimation and route influence are disabled; source remains registered in all-source metadata availability checks. No authorization fields changed.",
+      "primary_sources": [
+        "https://matanya.batam.go.id/index.php/Streaming/live/1",
+        "https://mediacenter.batam.go.id/2020/01/06/nama-museum-raja-ali-haji-akan-segera-terpasang/"
+      ]
+    },
+    {
+      "camera_id": "19",
+      "reason": "Existing left-sector ROI combines roundabout approach/exit views. West side of the bundled graph uses separate Jalan Raja Haji Fisabilillah approach/exit ways, while the roundabout way is an open arc; a fountain-centroid nearest-edge match is insufficient. Retain aggregate-only pending narrow single-road direction review.",
+      "independent_review": "A second live reviewer observed left-foreground traffic moving left-to-right. Grand Mercure official GPS1.13419,104.04442 places it east of the fountain, supporting a SSW camera viewpoint looking NNE and a likely NE incoming Jalan Raja Haji Fisabilillah sector. However the exact visible curb endpoints cannot be matched confidently to a single graph edge. Candidate31.3m approach7643417226→7645032186:907 remains unbound; nearest6.3m merge edge may be behind the monument.",
+      "primary_sources": [
+        "https://matanya.batam.go.id/index.php/Streaming/live/19",
+        "https://all.accor.com/hotel/B549/index.en.shtml",
+        "https://www.openstreetmap.org/#map=19/1.13410/104.04345"
+      ]
+    },
+    {
+      "camera_id": "15",
+      "reason": "Source playlist is ended and browser playback has no usable video. Legacy exact-edge ID retained as a draft, but allow_routing is disabled because its travel direction cannot be reviewed; recovery alone must not activate an unreviewed road binding."
+    }
+  ],
+  "source_inventory": "source-check.json",
+  "geographic_context": "geographic-context.json",
+  "limitations": [
+    "No surveyed camera-pole position or homography; these are road-view bindings, not physical-speed calibration.",
+    "Indices remain provisional image-space congestion and affect bounded route search preference only, not measured ETA.",
+    "Source playlists may stop and recover; two-round advancement is a timestamped observation rather than permanent availability.",
+    "The graph may be older than current OSM map extracts; binding identifies the bundled graph revision exactly."
+  ]
+}

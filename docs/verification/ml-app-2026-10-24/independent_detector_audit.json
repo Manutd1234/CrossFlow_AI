@@ -1,0 +1,11 @@
+{
+  "artifact_manifest_sha256": "5eb5ddd5d50f5789d85ce0c5b6fdf93afeecb5ba8056fd7f00f8578867a817d8",
+  "all_root_trial_files_checked": 53,
+  "bytes_hashed": 924420108,
+  "code_hashes_verified": 5,
+  "source_manifest_matches": true,
+  "license_evidence_links_valid": true,
+  "model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "issues": [],
+  "source_changed": false
+}

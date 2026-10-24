@@ -1,0 +1,55 @@
+{
+  "checked_at": "2026-10-23T11:13:26.064611+00:00",
+  "scope": "Free academic historical evidence, independent Singapore backtest, operator History and persisted driver dispatch regression",
+  "frontend": {
+    "test_files": 41,
+    "tests_passed": 412,
+    "lint": "passed",
+    "typescript_and_production_build": "passed"
+  },
+  "backend": {
+    "non_http_unittest_tests_passed": 335,
+    "http_contract_tests_passed": 32,
+    "authentication_tests_passed": 46,
+    "function_style_pytest_tests_passed": 16,
+    "initial_http_test_setup": "Sandbox blocked ephemeral loopback bind; all 32 HTTP tests passed after approved rerun with loopback access"
+  },
+  "operator_browser": {
+    "identity_role": "admin",
+    "history_evidence_rendered": true,
+    "date_filter_verified": "2023-02-16 to 2023-02-17",
+    "direction_filter_verified": "from_east to from_west",
+    "console_errors": 0
+  },
+  "driver_browser": {
+    "identity_role": "driver",
+    "reload_session_restored": true,
+    "dispatch_code": "AHMKAQM",
+    "assigned_route_loaded_after_backend_restart": true,
+    "map_itinerary": [
+      "ROAD",
+      "FERRY",
+      "ROAD"
+    ],
+    "console_errors": 0
+  },
+  "historical_sources": {
+    "batam": {
+      "published_interval_observations": 48,
+      "dates": [
+        "2023-02-16",
+        "2023-02-17",
+        "2023-02-18"
+      ],
+      "canonical_mapping_verified": false
+    },
+    "singapore": {
+      "speed_band_observations": 397341,
+      "roads": 53,
+      "calendar_days": 27,
+      "synthetic_training_rows": 0
+    }
+  },
+  "serving_batam_model_replaced": false,
+  "push_or_deployment_performed": false
+}

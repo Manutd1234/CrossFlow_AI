@@ -1,0 +1,80 @@
+/* Keep the journey heading and navigation steady; scroll the active content. */
+@media (min-width: 1001px) {
+  .route-planner-layout.route-planner-layout--saved {
+    grid-template-areas: "mode result" "history result";
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .route-planner-layout:not(.route-planner-layout--with-history):not(.route-planner-layout--driver) {
+    grid-template-areas: "mode result" "sidebar result";
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .route-planner-layout .route-result-panel { min-height: 0; overflow: hidden; }
+  .route-planner-layout .route-result-header,
+  .route-planner-layout .route-result-tabs > .workspace-subtabs__rail { flex: 0 0 auto; }
+  .route-planner-layout .route-result-tabs > #route-result-panel-1 {
+    overflow-y: auto;
+  }
+  .route-planner-layout #route-result-panel-1 .route-result-tab-content {
+    flex: 1 0 auto;
+    min-height: 100%;
+  }
+  .route-planner-layout #route-result-panel-1 .route-preview-shell {
+    flex: 1 0 180px;
+    height: auto;
+    min-height: 180px;
+  }
+  .route-planner-layout #route-result-panel-1 .route-overview-card { margin-top: auto; }
+}
+
+@media (max-width: 1000px) {
+  .route-planner-layout.route-planner-layout--saved {
+    grid-template-areas: "mode" "history" "result";
+    grid-template-rows: auto minmax(240px, 45dvh) auto;
+  }
+}
+
+.route-planner-layout .route-result-header { align-items: flex-start; gap: 20px; }
+.route-planner-layout .route-code-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 24px; padding: 20px; }
+.route-planner-layout .route-code-context { grid-column: 1 / -1; display: grid; gap: 6px; }
+.route-planner-layout .route-code-context:empty { display: none; }
+.route-planner-layout .route-code-context .route-section-note { margin: 0; }
+.route-planner-layout .route-metric-card { padding: 18px; }
+.route-planner-layout .route-options-grid { align-items: stretch; grid-auto-rows: 1fr; gap: 12px; }
+.route-planner-layout .route-option-button { align-self: stretch; height: 100%; min-height: 112px; display: flex; flex-direction: column; padding: 16px; }
+.route-planner-layout .route-option-header { width: 100%; }
+.route-planner-layout .route-option-metrics { width: 100%; min-height: 56px; margin-top: auto; padding-top: 12px; align-content: flex-start; }
+.route-planner-layout .route-overview-card { flex: 0 0 auto; padding: 18px 20px; }
+.route-planner-layout .route-overview-description { max-width: 85ch; margin-top: 8px; line-height: 1.6; }
+
+@media (max-width: 600px) {
+  .route-planner-layout .route-code-card { gap: 12px; padding: 16px; }
+  .route-planner-layout .route-code-card h3 { font-size: var(--text-sm); }
+}
+
+/* Short departure/arrival pairs keep ferry choices easy to compare. */
+.route-ferry-connections { display: grid; gap: 14px; padding: 18px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--surface-2); }
+.route-ferry-connections-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.route-ferry-connections-header .route-ferry-connections-heading { margin: 0; font-size: var(--text-card-title); }
+.route-ferry-connections-heading > svg { color: var(--accent-cyan); flex-shrink: 0; }
+.route-ferry-connections-caption { margin: 5px 0 0; font-size: var(--text-xs); color: var(--text-secondary); }
+.route-planner-layout .route-ferry-connections-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(225px, 100%), 1fr)); gap: 12px; }
+.route-planner-layout .route-ferry-connection-card { display: flex; flex-direction: column; min-width: 0; gap: 15px; padding: 16px; background: var(--warm-card); border-radius: 13px; }
+.route-ferry-times { display: grid; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr); align-items: center; gap: 9px; }
+.route-ferry-times > div { min-width: 0; display: grid; align-content: start; gap: 5px; }
+.route-ferry-times > svg { color: var(--text-muted); }
+.route-ferry-time-label { color: var(--text-muted); font-size: 10px; white-space: nowrap; }
+.route-planner-layout .route-ferry-departure, .route-ferry-arrival { display: block; margin: 0; color: var(--text-primary); font-size: 21px; font-weight: var(--weight-bold); line-height: 1.25; white-space: nowrap; }
+.route-planner-layout .route-ferry-departure { color: var(--accent-cyan); }
+.route-ferry-times small { color: var(--text-muted); font-size: 9px; font-weight: var(--weight-medium); }
+.route-ferry-port { color: var(--text-secondary); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.route-ferry-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 11px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 10px; }
+.route-ferry-card-footer a { display: inline-flex; align-items: center; gap: 5px; color: var(--accent-cyan); font-weight: var(--weight-semibold); }
+.route-ferry-checked { color: var(--text-muted); font-size: 9px; line-height: 1.4; }
+.route-ferry-connections-note { margin: 0; color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+.route-ferry-connection-details { padding-top: 10px; border-top: 1px solid var(--border-color); }
+.route-ferry-connection-details summary { font-size: var(--text-xs); color: var(--accent-cyan); }
+.route-ferry-connection-details p { margin: 8px 0 0; font-size: var(--text-xs); line-height: 1.6; color: var(--text-secondary); }
+
+@media (max-width: 600px) {
+  .route-ferry-connections { padding: 14px; }
+}

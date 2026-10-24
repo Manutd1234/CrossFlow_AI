@@ -150,20 +150,40 @@ class CredentialBoundaryTests(AuthTestCase):
         )
         # Token issuance and admin user management must not be callable from
         # the module that holds user tokens.
-        for path in (
-            "/auth/v1/admin/users",
-            "/auth/v1/token",
-            "/rest/v1/../auth/v1/token",
-            "/storage/v1/object",
-        ):
-            with self.subTest(path=path):
-                with self.assertRaises(transport.SupabaseUserError):
-                    transport.request_json(
-                        config,
-                        access_token=make_token(),
-                        method="GET",
-                        path=path,
-                    )
+        with patch.object(transport, "_execute") as execute:
+            for path in (
+                "/auth/v1/admin/users",
+                "/auth/v1/token",
+                "/auth/v1/logout",
+                "/auth/v1/user/identities",
+                "/rest/v1/../auth/v1/token",
+                "/storage/v1/object",
+            ):
+                with self.subTest(path=path):
+                    with self.assertRaises(transport.SupabaseUserError) as raised:
+                        transport.request_json(
+                            config,
+                            access_token=make_token(),
+                            method="GET",
+                            path=path,
+                        )
+                    self.assertEqual(raised.exception.code, "invalid_path")
+            execute.assert_not_called()
+
+    def test_user_endpoint_cannot_be_used_to_modify_the_account(self) -> None:
+        config = transport.SupabaseUserConfig(
+            "https://project-ref.supabase.co", "sb_publishable_browser_safe",
+        )
+        with patch.object(transport, "_execute") as execute:
+            for method in ("POST", "PATCH", "DELETE"):
+                with self.subTest(method=method):
+                    with self.assertRaises(transport.SupabaseUserError) as raised:
+                        transport.request_json(
+                            config, access_token=make_token(),
+                            method=method, path="/auth/v1/user",
+                        )
+                    self.assertEqual(raised.exception.code, "invalid_method")
+            execute.assert_not_called()
 
 
 class RoleResolutionTests(AuthTestCase):
@@ -223,6 +243,35 @@ class RoleResolutionTests(AuthTestCase):
             self.authenticate(fake, make_token())
         self.assertEqual(raised.exception.status_code, 403)
 
+    def test_profile_for_another_user_is_refused(self) -> None:
+        fake = FakeSupabase(profile_rows=[{
+            "id": ADMIN_ID, "role": "admin", "display_name": "Ops Admin",
+        }])
+        with self.assertRaises(HTTPException) as raised:
+            self.authenticate(fake, make_token())
+        self.assertEqual(raised.exception.status_code, 403)
+
+    def test_demotion_takes_effect_while_token_verification_is_cached(self) -> None:
+        token = make_token(subject=ADMIN_ID)
+        fake = FakeSupabase(user={"id": ADMIN_ID}, profile_rows=[{
+            "id": ADMIN_ID, "role": "admin", "display_name": "Ops Admin",
+        }])
+        with patch.object(identity.transport, "request_json", fake):
+            self.assertTrue(identity.require_admin_user(f"Bearer {token}").is_admin)
+            fake.profile_rows[0]["role"] = "driver"
+            with self.assertRaises(HTTPException) as raised:
+                identity.require_admin_user(f"Bearer {token}")
+        self.assertEqual(raised.exception.status_code, 403)
+
+    def test_deleted_profile_is_refused_while_verification_is_cached(self) -> None:
+        token = make_token()
+        fake = FakeSupabase()
+        self.authenticate(fake, token)
+        fake.profile_rows = []
+        with self.assertRaises(HTTPException) as raised:
+            self.authenticate(fake, token)
+        self.assertEqual(raised.exception.status_code, 403)
+
 
 class MechanismSeparationTests(AuthTestCase):
     """The machine secret and the human session must not authenticate each other."""
@@ -250,6 +299,25 @@ class MechanismSeparationTests(AuthTestCase):
 
 
 class TokenHandlingTests(AuthTestCase):
+    def test_signup_profile_and_claimed_email_verification_cannot_replace_a_session(self) -> None:
+        # Confirm-email signup can already have a profile but no session.
+        # Neither that profile nor locally asserted verification claims allow
+        # an API identity when Supabase refuses the access token.
+        fake = FakeSupabase(error="http_401")
+        with patch.object(identity.transport, "request_json", fake):
+            with self.assertRaises(HTTPException) as no_session:
+                identity.require_user(None)
+            self.assertEqual(no_session.exception.status_code, 401)
+            self.assertEqual(fake.calls, [])
+            forged = make_token(
+                email="unconfirmed@example.test", email_confirmed_at="2026-10-23T00:00:00Z",
+                user_metadata={"email_verified": True},
+            )
+            with self.assertRaises(HTTPException) as rejected:
+                identity.require_user(f"Bearer {forged}")
+        self.assertEqual(rejected.exception.status_code, 401)
+        self.assertEqual([call["path"] for call in fake.calls], ["/auth/v1/user"])
+
     def test_malformed_tokens_are_401_never_500(self) -> None:
         for header in (
             None,
@@ -289,24 +357,52 @@ class TokenHandlingTests(AuthTestCase):
         token = make_token()
         fake = FakeSupabase()
         self.authenticate(fake, token)
-        first_call_count = len(fake.calls)
         self.authenticate(fake, token)
-        self.assertEqual(len(fake.calls), first_call_count)
+        self.assertEqual(sum(call["path"] == "/auth/v1/user" for call in fake.calls), 1)
+        self.assertEqual(sum(call["path"].startswith("/rest/v1/") for call in fake.calls), 2)
+
+    def test_cache_does_not_cross_project_configuration(self) -> None:
+        token = make_token()
+        fake = FakeSupabase()
+        self.authenticate(fake, token)
+        with patch.dict(os.environ, {"SUPABASE_URL": "https://other.supabase.co"}):
+            self.authenticate(fake, token)
+        verification = [call for call in fake.calls if call["path"] == "/auth/v1/user"]
+        self.assertEqual(len(verification), 2)
+        self.assertEqual(verification[-1]["config"].origin, "https://other.supabase.co")
+
+    def test_direct_authentication_rejects_malformed_tokens_without_network(self) -> None:
+        fake = FakeSupabase()
+        with self.assertRaises(HTTPException) as raised:
+            self.authenticate(fake, "invalid-token")
+        self.assertEqual(raised.exception.status_code, 401)
+        self.assertEqual(fake.calls, [])
 
     def test_a_cache_entry_never_outlives_the_token(self) -> None:
         already_expired = make_token(expires_in=-10)
         fake = FakeSupabase()
         self.authenticate(fake, already_expired)
-        calls_after_first = len(fake.calls)
         self.authenticate(fake, already_expired)
-        self.assertGreater(len(fake.calls), calls_after_first)
+        self.assertEqual(sum(call["path"] == "/auth/v1/user" for call in fake.calls), 2)
+
+    def test_repeat_requests_do_not_extend_verification_cache_lifetime(self) -> None:
+        token = make_token()
+        fake = FakeSupabase()
+        with patch.object(identity, "VERIFICATION_TTL_SECONDS", 10), patch.object(
+            identity.time, "monotonic", return_value=100,
+        ) as clock:
+            self.authenticate(fake, token)
+            clock.return_value = 109
+            self.authenticate(fake, token)
+            clock.return_value = 111
+            self.authenticate(fake, token)
+        self.assertEqual(sum(call["path"] == "/auth/v1/user" for call in fake.calls), 2)
 
     def test_different_tokens_do_not_share_a_cache_entry(self) -> None:
         fake = FakeSupabase()
         self.authenticate(fake, make_token())
-        calls_after_first = len(fake.calls)
         self.authenticate(fake, make_token(expires_in=1_800))
-        self.assertGreater(len(fake.calls), calls_after_first)
+        self.assertEqual(sum(call["path"] == "/auth/v1/user" for call in fake.calls), 2)
 
 
 class DegradationTests(AuthTestCase):

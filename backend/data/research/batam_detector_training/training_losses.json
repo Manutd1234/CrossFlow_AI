@@ -1,0 +1,42 @@
+[
+  {
+    "epoch": 1,
+    "mean_roi_training_loss": 0.46777799129486086
+  },
+  {
+    "epoch": 2,
+    "mean_roi_training_loss": 0.41170199811458585
+  },
+  {
+    "epoch": 3,
+    "mean_roi_training_loss": 0.36421574354171754
+  },
+  {
+    "epoch": 4,
+    "mean_roi_training_loss": 0.308512008190155
+  },
+  {
+    "epoch": 5,
+    "mean_roi_training_loss": 0.29037044644355775
+  },
+  {
+    "epoch": 6,
+    "mean_roi_training_loss": 0.2549428194761276
+  },
+  {
+    "epoch": 7,
+    "mean_roi_training_loss": 0.28024732768535615
+  },
+  {
+    "epoch": 8,
+    "mean_roi_training_loss": 0.25243685245513914
+  },
+  {
+    "epoch": 9,
+    "mean_roi_training_loss": 0.25169546008110044
+  },
+  {
+    "epoch": 10,
+    "mean_roi_training_loss": 0.2277507483959198
+  }
+]

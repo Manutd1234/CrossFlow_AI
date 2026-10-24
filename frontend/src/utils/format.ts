@@ -66,6 +66,13 @@ export function formatTime(value: string): string {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
+/** Keep the terminal's clock and label the Singapore/Batam offset explicitly. */
+export function formatFerryTime(value: string): string {
+  const offset = value.match(/([+-]\d{2}:\d{2}|Z)$/)?.[1];
+  const zone = offset === '+07:00' ? 'WIB' : offset === '+08:00' ? 'SGT' : offset === 'Z' ? 'UTC' : offset ? `UTC${offset}` : '';
+  return `${formatTime(value)}${zone ? ` ${zone}` : ''}`;
+}
+
 /** ISO 8601 -> "14:32:05" in the timestamp's own offset, for "updated" readouts. */
 export function formatClock(value?: string): string {
   if (!value) return '--:--:--';
@@ -79,14 +86,13 @@ export function formatClock(value?: string): string {
 /** Published schedule verification timestamp, kept in Batam/WIB wall time. */
 export function formatScheduleVerifiedAt(value?: string): string {
   if (!value) return 'verification date unavailable';
-  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T/);
-  if (!match) return value;
-  const month = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ][Number(match[2]) - 1];
-  if (!month) return value;
-  return `${Number(match[3])} ${month} ${match[1]}, ${formatTime(value)} WIB`;
+  if (!/T.*(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return value;
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return value;
+  return `${new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).format(date)} WIB`;
 }
 
 /** "in 42 min" / "boarding now" / "departed". */
@@ -98,6 +104,14 @@ export function relativeDeparture(minutes?: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return m ? `in ${h}h ${m}m` : `in ${h}h`;
+}
+
+/** Persisted assignments retain absolute sailing times; their old countdowns expire. */
+export function relativeDepartureFromTime(value: string, nowMs = Date.now()): string {
+  const departureMs = Date.parse(value);
+  if (!Number.isFinite(departureMs) || !Number.isFinite(nowMs)) return '';
+  const remaining = departureMs - nowMs;
+  return relativeDeparture(remaining < 0 ? -1 : Math.ceil(remaining / 60_000));
 }
 
 /** "Mukakuning Industrial -> Batam Centre Terminal" -> "Mukakuning Industrial". */

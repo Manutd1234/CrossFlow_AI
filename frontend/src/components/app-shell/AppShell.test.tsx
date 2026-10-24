@@ -116,6 +116,8 @@ describe('application shell DOM', () => {
     expect(labels.join(' ')).toContain('Congestion');
     expect(labels.join(' ')).toContain('Route');
     expect(labels.join(' ')).not.toContain('Analytics');
+    expect(labels.join(' ')).toContain('Dispatch code lookup');
+    expect(labels.join(' ')).not.toContain('Plan a road journey');
   });
 
   it('renders a single semantic route form with labelled controls and an empty state', () => {
@@ -197,5 +199,12 @@ describe('application shell DOM', () => {
     expect(lookup?.querySelectorAll('fieldset')).toHaveLength(0);
     expect(lookup?.querySelector('button[type="submit"]')?.textContent).toContain('Load Route');
     expect(container.querySelector('.workspace-subtabs__rail')).toBeNull();
+    const result = container.querySelector('section[aria-label="Route result"]');
+    expect(result?.textContent).toContain('Your assigned route will appear here');
+    expect(result?.textContent).toContain('Enter the seven-character route code from dispatch');
+    expect(result?.textContent).toContain('Dispatch code');
+    expect(result?.textContent).toContain('Assigned journey');
+    expect(result?.textContent).not.toContain('Choose any two Singapore or Batam endpoints');
+    expect(result?.textContent).not.toContain('Departure advice');
   });
 });

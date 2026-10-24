@@ -73,6 +73,10 @@ begin
     left(
       coalesce(
         nullif(trim(new.raw_user_meta_data ->> 'display_name'), ''),
+        -- Supabase's Google provider supplies full_name/name. These fields
+        -- affect presentation only; the account role always stays driver.
+        nullif(trim(new.raw_user_meta_data ->> 'full_name'), ''),
+        nullif(trim(new.raw_user_meta_data ->> 'name'), ''),
         nullif(split_part(coalesce(new.email, ''), '@', 1), ''),
         'CrossFlow user'
       ),
@@ -90,15 +94,35 @@ create trigger crossflow_on_auth_user_created
 after insert on auth.users
 for each row execute function public.crossflow_handle_new_user();
 
+-- Applying authentication to an existing project must also admit accounts that
+-- were created before this trigger existed. Never overwrite an assigned role.
+insert into public.crossflow_profiles (id, role, display_name)
+select
+  account.id,
+  'driver',
+  left(
+    coalesce(
+      nullif(trim(account.raw_user_meta_data ->> 'display_name'), ''),
+      nullif(trim(account.raw_user_meta_data ->> 'full_name'), ''),
+      nullif(trim(account.raw_user_meta_data ->> 'name'), ''),
+      nullif(split_part(coalesce(account.email, ''), '@', 1), ''),
+      'CrossFlow user'
+    ),
+    120
+  )
+from auth.users as account
+on conflict (id) do nothing;
+
 -- Row-level security cannot protect a single column: an update policy that
 -- permits a user to edit their own row permits them to edit every column of it,
 -- role included. A row-level policy therefore cannot express "you may rename
 -- yourself but not promote yourself". This trigger is where that rule actually
--- lives.
+-- lives. It must run as the invoker: SECURITY DEFINER would make current_user
+-- the function owner (normally postgres), allowing every caller to bypass it.
 create or replace function public.crossflow_guard_profile_role()
 returns trigger
 language plpgsql
-security definer
+security invoker
 set search_path = ''
 as $$
 begin
@@ -191,7 +215,7 @@ set search_path = ''
 stable
 as $$
   select
-    1::integer,
+    2::integer,
     (
       select relrowsecurity
       from pg_catalog.pg_class

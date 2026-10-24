@@ -1,0 +1,6 @@
+{
+  "optimizer_steps": 60,
+  "minibatches": 60,
+  "nbs": 3,
+  "gradient_accumulation": 1
+}

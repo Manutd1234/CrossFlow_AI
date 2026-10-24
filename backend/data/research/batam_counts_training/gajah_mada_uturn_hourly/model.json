@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "format": "crossflow_batam_published_count_numeric_v1",
+  "experiment": "gajah_mada_uturn_hourly",
+  "scope": "retrospective_published_single_site_count_diagnostic_only",
+  "site_id": "batam-gajah-mada-kemilau-bangsa-uturn-published-2023",
+  "source_id": "BATAM-EXT-005",
+  "source_pdf_sha256": "2e37e52e90ea8450359e3d5391e7a1626a304b85d3c8cf59808e1513d4eeb681",
+  "source_csv_sha256": "3dd9ac0b72739cea9a605118e938a98c12d13e452027c55a3c174b88290051ed",
+  "protocol_sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217",
+  "unit": "vehicles_in_1_hour_interval",
+  "model_name": "persistence",
+  "model": {
+    "kind": "persistence",
+    "series_means": {
+      "[\"Dari Barat (from west)\",\"07:00\",\"KB (heavy vehicle)\"]": 0.0,
+      "[\"Dari Barat (from west)\",\"07:00\",\"KR (light vehicle)\"]": 268.5,
+      "[\"Dari Barat (from west)\",\"07:00\",\"SM (motorcycle)\"]": 636.5,
+      "[\"Dari Timur (from east)\",\"07:00\",\"KB (heavy vehicle)\"]": 0.0,
+      "[\"Dari Timur (from east)\",\"07:00\",\"KR (light vehicle)\"]": 251.0,
+      "[\"Dari Timur (from east)\",\"07:00\",\"SM (motorcycle)\"]": 456.0,
+      "[\"Dari Barat (from west)\",\"08:00\",\"KB (heavy vehicle)\"]": 0.0,
+      "[\"Dari Barat (from west)\",\"08:00\",\"KR (light vehicle)\"]": 202.0,
+      "[\"Dari Barat (from west)\",\"08:00\",\"SM (motorcycle)\"]": 453.5,
+      "[\"Dari Timur (from east)\",\"08:00\",\"KB (heavy vehicle)\"]": 0.0,
+      "[\"Dari Timur (from east)\",\"08:00\",\"KR (light vehicle)\"]": 191.5,
+      "[\"Dari Timur (from east)\",\"08:00\",\"SM (motorcycle)\"]": 329.5,
+      "[\"Dari Barat (from west)\",\"16:00\",\"KB (heavy vehicle)\"]": 0.5,
+      "[\"Dari Barat (from west)\",\"16:00\",\"KR (light vehicle)\"]": 279.0,
+      "[\"Dari Barat (from west)\",\"16:00\",\"SM (motorcycle)\"]": 422.5,
+      "[\"Dari Timur (from east)\",\"16:00\",\"KB (heavy vehicle)\"]": 0.0,
+      "[\"Dari Timur (from east)\",\"16:00\",\"KR (light vehicle)\"]": 216.5,
+      "[\"Dari Timur (from east)\",\"16:00\",\"SM (motorcycle)\"]": 408.5,
+      "[\"Dari Barat (from west)\",\"17:00\",\"KB (heavy vehicle)\"]": 2.0,
+      "[\"Dari Barat (from west)\",\"17:00\",\"KR (light vehicle)\"]": 311.0,
+      "[\"Dari Barat (from west)\",\"17:00\",\"SM (motorcycle)\"]": 595.5,
+      "[\"Dari Timur (from east)\",\"17:00\",\"KB (heavy vehicle)\"]": 0.5,
+      "[\"Dari Timur (from east)\",\"17:00\",\"KR (light vehicle)\"]": 251.0,
+      "[\"Dari Timur (from east)\",\"17:00\",\"SM (motorcycle)\"]": 553.0
+    },
+    "class_means": {
+      "KB (heavy vehicle)": 0.375,
+      "KR (light vehicle)": 246.3125,
+      "SM (motorcycle)": 481.875
+    }
+  },
+  "series_keys": [
+    [
+      "Dari Barat (from west)",
+      "07:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "07:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "07:00",
+      "SM (motorcycle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "08:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "08:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "08:00",
+      "SM (motorcycle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "16:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "16:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "16:00",
+      "SM (motorcycle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "17:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "17:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Barat (from west)",
+      "17:00",
+      "SM (motorcycle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "07:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "07:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "07:00",
+      "SM (motorcycle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "08:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "08:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "08:00",
+      "SM (motorcycle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "16:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "16:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "16:00",
+      "SM (motorcycle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "17:00",
+      "KB (heavy vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "17:00",
+      "KR (light vehicle)"
+    ],
+    [
+      "Dari Timur (from east)",
+      "17:00",
+      "SM (motorcycle)"
+    ]
+  ],
+  "allowed_test_intervals": [
+    "2023-02-18T07:00:00+07:00",
+    "2023-02-18T08:00:00+07:00",
+    "2023-02-18T16:00:00+07:00",
+    "2023-02-18T17:00:00+07:00"
+  ],
+  "expected_previous_intervals": [
+    {
+      "target_interval_start": "2023-02-18T07:00:00+07:00",
+      "previous_interval_end": "2023-02-17T08:00:00+07:00"
+    },
+    {
+      "target_interval_start": "2023-02-18T08:00:00+07:00",
+      "previous_interval_end": "2023-02-17T09:00:00+07:00"
+    },
+    {
+      "target_interval_start": "2023-02-18T16:00:00+07:00",
+      "previous_interval_end": "2023-02-17T17:00:00+07:00"
+    },
+    {
+      "target_interval_start": "2023-02-18T17:00:00+07:00",
+      "previous_interval_end": "2023-02-17T18:00:00+07:00"
+    }
+  ],
+  "training_rows": 48,
+  "training_target_rows": 48,
+  "source_license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "Harry Kurniawan and M. Khairi Anwar (2023), Pengaruh U-Turn terhadap Kinerja Lalu Lintas pada Ruas Jalan Gajah Mada Depan Simpang Sekolah Kemilau Bangsa Kota Batam, Sigma Teknika 6(2), 479–492. Table 12, p488, raw class count cells retained including subtotal inconsistencies. Time offsets, provenance and diagnostics added. No author endorsement. Derived count artifacts are distributed under CC BY-SA 4.0.",
+  "production_eligible": false
+}

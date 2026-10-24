@@ -1,0 +1,1698 @@
+{
+  "schema_version": 1,
+  "client_date": "2026-10-24",
+  "updated_at": "2026-10-23T18:24:19.606090+00:00",
+  "status": "passed",
+  "package_scope": "additive_experimental_ml_app_update",
+  "files": [
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/README.md",
+      "bytes": 7077,
+      "sha256": "566fcb380e5189f02092e2526e61ae9796e451cac8778e36f3f22e870354e7aa"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/gajah_mada_uturn_hourly/model.json",
+      "bytes": 6120,
+      "sha256": "37de92f5d212742f3afd823e2056af20b6c5d7c317a3975356cbb3e3f4bab8ff"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/gajah_mada_uturn_hourly/predictions.csv",
+      "bytes": 9010,
+      "sha256": "f9d3d68cd0d537c55865de39216e8116e18419e7d96aeba4c68881fa000a8ece"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/gajah_mada_uturn_hourly/report.json",
+      "bytes": 8269,
+      "sha256": "75fe2c7487bee09fe362c3381ec279bdff89c2fc844302b9dec3ab717f9c27e3"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/gajah_mada_uturn_hourly/selection.json",
+      "bytes": 2589,
+      "sha256": "0a292edf783d31180bae4c4786e226825cae21ffa858da16be71d6c5b79ba148"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/gajah_mada_uturn_hourly/source_cells.csv",
+      "bytes": 27793,
+      "sha256": "03468df2a65b3058a2881d93df6a72e0dc29a613d0e3b9ec703ff25d99ab510b"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/gajah_mada_uturn_hourly/validation.csv",
+      "bytes": 603,
+      "sha256": "3be5a7c50d4b99b5b18a2817703bb675de4791c3208a429d41b566502dae71d5"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/manifest.json",
+      "bytes": 3240,
+      "sha256": "2706a182ece28b7447771d59e422de7c42f439c65f58ce57127bd324eb6e9ee2"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/protocol.json",
+      "bytes": 4418,
+      "sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/qa.json",
+      "bytes": 2294,
+      "sha256": "ef8a81c351a9a6265f54923b8f184b297fff46a94334da6fb6d080af4b048b97"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/report.json",
+      "bytes": 20803,
+      "sha256": "dda454adb27d95336e39d36ffded73d2aa6b28af51451b50c15788305586f22d"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/sekupang_15min/model.json",
+      "bytes": 8625,
+      "sha256": "82788bab95fb68813c36880336c981cc756e44e658b15d19f403e8d420cc7539"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/sekupang_15min/predictions.csv",
+      "bytes": 11918,
+      "sha256": "e12762416aefd315c8823dcd4aaa464ea881fd6d6963b9aaab8ebbd1f37d64be"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/sekupang_15min/report.json",
+      "bytes": 9766,
+      "sha256": "29cf4fe5c625a670f4c35ec4e76cc1d66a194d2ecec8cd8d3fb9f835e8a5a20c"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/sekupang_15min/selection.json",
+      "bytes": 3949,
+      "sha256": "c75b8a1e27612dddaf0b8593cef4c66ee88423c5e9af0deca1c116b6843f3cf6"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/sekupang_15min/source_cells.csv",
+      "bytes": 74767,
+      "sha256": "05047a63aff18128d16f06088cfc6220e050529f7d87f18fd8f0e2f3f4c6429e"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/sekupang_15min/validation.csv",
+      "bytes": 1018,
+      "sha256": "0e9b26e4e4da708eb8fd790dce21edf9291a70444e6823bb77be927f2929ceb4"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/batam_counts_training/sources.json",
+      "bytes": 4760,
+      "sha256": "7963308b945f6be3bf24cd9c6b62df0df0a95d41a32b9e5e157cbdbc87e7f043"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/README.md",
+      "bytes": 6082,
+      "sha256": "03b763fcfe87344e9c205e4eacb87777a81839a634956790c032e36aecc0be4c"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/deployment_qa.json",
+      "bytes": 928,
+      "sha256": "8e3c908c4c6cbce0be6babf976bb6d014218cf33467916dfe8a3418a244a1e7c"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/development_frame_manifest.json",
+      "bytes": 64905,
+      "sha256": "940abaa455090ee28e6a6c7fe7a8cafc21c8cabb4681a989a673d4e7d629a243"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/diagnostic_detections.json",
+      "bytes": 105089,
+      "sha256": "348bedc23828f0a65dec480233518540dfade2a4fd9b5545f187478d4f56b16c"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/diagnostic_frame_manifest.json",
+      "bytes": 39841,
+      "sha256": "3a7ccc16e77a140f942579721558e697c4fd2eaf4be96adae6cb3a1ca2d74c44"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/diagnostic_predictions.csv",
+      "bytes": 1272,
+      "sha256": "3cf664eba658f99c597d5834a639ed1c2f1755e98cdffede543b1d909af57aa4"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/evidence/coco_termsofuse.htm",
+      "bytes": 2370,
+      "sha256": "bd019f88ee44c29b2f19c5b99888cf5bc2e7c16f57b6e52af8ed3a60462e8bdd"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/evidence/pytorch_LICENSE.txt",
+      "bytes": 3464,
+      "sha256": "bd018feef8825e88181c84eb7e3aa4eafb8f08a20d9fd6ef948569610c4a3e43"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/evidence/torchvision_LICENSE.txt",
+      "bytes": 1517,
+      "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/evidence/torchvision_README.md",
+      "bytes": 4844,
+      "sha256": "1957ded1ad27eb0d373b6421a431112dfeba1e85b486807181fccf5d0133e034"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/diagnostic_detections.json",
+      "bytes": 105089,
+      "sha256": "348bedc23828f0a65dec480233518540dfade2a4fd9b5545f187478d4f56b16c"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/diagnostic_predictions.csv",
+      "bytes": 1272,
+      "sha256": "3cf664eba658f99c597d5834a639ed1c2f1755e98cdffede543b1d909af57aa4"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/manifest.json",
+      "bytes": 2118,
+      "sha256": "3287d07ad5577da2d5f1acca8ea1aeb9a9ba172be2057fdd145e9c1cce0ec814"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/qa.json",
+      "bytes": 623,
+      "sha256": "c765abd222b38ea2fd3c2573385458a32df80319ad158bfd23fe32daed16eedd"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/report.json",
+      "bytes": 7778,
+      "sha256": "647107e60ea7b21c25a5726b5865d91b6ff2059d26f8db52d11e10b12d0c0727"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/selection_frozen_before_reused_diagnostic.json",
+      "bytes": 1549,
+      "sha256": "ab1e2c7b3b408eb48c042b0028bc12757d5459abd03e1956b7e8a505cf644195"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/training_losses.json",
+      "bytes": 371,
+      "sha256": "da98f6cd86751bf352f7c4d9968289e82d783d6ae019861cbacd3d1e20304e0f"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/training_plan.json",
+      "bytes": 1774,
+      "sha256": "7d9de87c5ab3f4dbdc403da6c1e189409f5c819ad542189cd964873c2348e14f"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/validation_grid.json",
+      "bytes": 20497,
+      "sha256": "233fe57e6f6a4967dc86e6e67363ab33cdbf3a5fe2f89a5693b8f106c9c82be3"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/finalization.json",
+      "bytes": 751,
+      "sha256": "7b170c19d9cd4a4e113b96ceb8f76160314e19d73387c1d18b79802a625c5034"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/licenses.json",
+      "bytes": 3535,
+      "sha256": "8a3425476207a205ce6c7b45d7b8f2a4cb52c41fecb40b15d5733f597294e3bb"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/manifest.json",
+      "bytes": 5213,
+      "sha256": "5eb5ddd5d50f5789d85ce0c5b6fdf93afeecb5ba8056fd7f00f8578867a817d8"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/model.pt",
+      "bytes": 175221657,
+      "sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/qa.json",
+      "bytes": 623,
+      "sha256": "c765abd222b38ea2fd3c2573385458a32df80319ad158bfd23fe32daed16eedd"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/report.json",
+      "bytes": 7778,
+      "sha256": "647107e60ea7b21c25a5726b5865d91b6ff2059d26f8db52d11e10b12d0c0727"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/selected_overlay_file_00001.jpg",
+      "bytes": 103681,
+      "sha256": "48f9acc9daa3c5374f2007232d9691292635ad49cabee2a6cffca9a4df240dbd"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/selected_overlay_file_00153.jpg",
+      "bytes": 145654,
+      "sha256": "0dc8f4807965d8793db491b152b4ac80009cafa93b59b9df27d2c77c9a7c274b"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/selection_frozen_before_reused_diagnostic.json",
+      "bytes": 1549,
+      "sha256": "ab1e2c7b3b408eb48c042b0028bc12757d5459abd03e1956b7e8a505cf644195"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/development_frame_manifest.json",
+      "bytes": 64905,
+      "sha256": "940abaa455090ee28e6a6c7fe7a8cafc21c8cabb4681a989a673d4e7d629a243"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/diagnostic_detections.json",
+      "bytes": 13844,
+      "sha256": "6bffc504b4c207951eb597eaf311dea3137b5f0cd156a9c66ad1aad3fc019b1d"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/diagnostic_frame_manifest.json",
+      "bytes": 39841,
+      "sha256": "3a7ccc16e77a140f942579721558e697c4fd2eaf4be96adae6cb3a1ca2d74c44"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/diagnostic_predictions.csv",
+      "bytes": 2209,
+      "sha256": "10848c56467b1436c4152529d5f530586f5de4e68f5c5ede7b9d72d43083d447"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/evidence/coco_termsofuse.htm",
+      "bytes": 2370,
+      "sha256": "bd019f88ee44c29b2f19c5b99888cf5bc2e7c16f57b6e52af8ed3a60462e8bdd"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/evidence/pytorch_LICENSE.txt",
+      "bytes": 3464,
+      "sha256": "bd018feef8825e88181c84eb7e3aa4eafb8f08a20d9fd6ef948569610c4a3e43"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/evidence/torchvision_LICENSE.txt",
+      "bytes": 1517,
+      "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/evidence/torchvision_README.md",
+      "bytes": 4844,
+      "sha256": "1957ded1ad27eb0d373b6421a431112dfeba1e85b486807181fccf5d0133e034"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/licenses.json",
+      "bytes": 1974,
+      "sha256": "6c030d6d62bf5f24f639592bb58f693ef3e178ee3fa0616f672f7752eb06961a"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/manifest.json",
+      "bytes": 3692,
+      "sha256": "d138b41eabd8079c9ffac141359c4ceb5f1cbd2bc335bf9eb6b426a507175cfd"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/qa.json",
+      "bytes": 676,
+      "sha256": "af21e5c41ea5fd43c60084b24e89596933dd5eb1b0c36eca92d89c07f7b587ad"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/report.json",
+      "bytes": 7478,
+      "sha256": "794b819e687b10ebf5373ba611cf4d65eb6515d027ea91dd1997b9a79500253e"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/selection_frozen_before_reused_diagnostic.json",
+      "bytes": 1483,
+      "sha256": "0f79ac0d9b2c68a2e1380f704b1e6499e95a21cee1ea84d442551c7d353d57e1"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/training_losses.json",
+      "bytes": 837,
+      "sha256": "6809a15e5fa83175d2cd11be5e1a29455048ab5e75a8e0dc090bd362d24ad041"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/training_plan.json",
+      "bytes": 1328,
+      "sha256": "426980a1fdea86b9423aa790979cb58d5c5fec1a8c2e9258a6183516ec1864fa"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/validation_grid.json",
+      "bytes": 20046,
+      "sha256": "65448ff2edca8003feb628235648e9dc5a4dec851095999a5ab545cf033c4493"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/training_losses.json",
+      "bytes": 371,
+      "sha256": "da98f6cd86751bf352f7c4d9968289e82d783d6ae019861cbacd3d1e20304e0f"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/training_plan.json",
+      "bytes": 1774,
+      "sha256": "7d9de87c5ab3f4dbdc403da6c1e189409f5c819ad542189cd964873c2348e14f"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/validation_grid.json",
+      "bytes": 20497,
+      "sha256": "233fe57e6f6a4967dc86e6e67363ab33cdbf3a5fe2f89a5693b8f106c9c82be3"
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/ml_app_readiness/status.json",
+      "bytes": 4467,
+      "sha256": "785a7469dd33199a9cae6d65d0784afb18396a0febb1836fc64fec61ad4930dd"
+    },
+    {
+      "path": "CrossFlow_AI/backend/services/vehicle_count_preview.py",
+      "bytes": 6379,
+      "sha256": "9d12a1091acccdad1ce900590d76766ba66670899d2e5e6751de3a822a01a0d9"
+    },
+    {
+      "path": "CrossFlow_AI/backend/services/vehicle_counter.py",
+      "bytes": 11647,
+      "sha256": "ff5a3934d085d96d3526d190aeb343873f3667d1abdd939bb022abccd777f4f7"
+    },
+    {
+      "path": "CrossFlow_AI/backend/tests/test_batam_count_training.py",
+      "bytes": 6550,
+      "sha256": "4b5e84ab8ceb22ee6ca0ebcc4cf1c4494478fe57f2cfb6b6157454750c0461f0"
+    },
+    {
+      "path": "CrossFlow_AI/backend/tests/test_vehicle_count_preview_api.py",
+      "bytes": 9047,
+      "sha256": "c5a42362c6bb141ff06bc8bc5d4f66f19abfeedfd83a2a783c265c9486853ad3"
+    },
+    {
+      "path": "CrossFlow_AI/backend/tests/test_vehicle_count_preview_bridge.py",
+      "bytes": 11281,
+      "sha256": "42af3cd3136a8b8b012824e3c1c8d97808062344869b1a19124943ff961b9268"
+    },
+    {
+      "path": "CrossFlow_AI/backend/tests/test_vehicle_counter.py",
+      "bytes": 5066,
+      "sha256": "9060c21078b2d5c311139c89859ac23a54eb0459a4eea03c27a0918414a1547f"
+    },
+    {
+      "path": "CrossFlow_AI/docs/ML_APP_READINESS_2026-10-24.md",
+      "bytes": 12248,
+      "sha256": "6f131f830e660fd70c883847831ed93ade922501b23bb114160ed6e7fba46acb"
+    },
+    {
+      "path": "CrossFlow_AI/docs/verification/ml-app-2026-10-24/independent_detector_audit.json",
+      "bytes": 401,
+      "sha256": "1432b384894ee01283d8ce13be8cc4c2371cbe59855d33e7d942fcfa0e3471fb"
+    },
+    {
+      "path": "CrossFlow_AI/docs/verification/ml-app-2026-10-24/preview_qa.json",
+      "bytes": 3991,
+      "sha256": "6333bd0961694986f11e24ae98e7f0599e379ed068f56004b1ea730b7d1d1b0a"
+    },
+    {
+      "path": "CrossFlow_AI/docs/verification/ml-app-2026-10-24/test_results.json",
+      "bytes": 777,
+      "sha256": "caa0c083c5504eeaeac6eeb205f8ea8c7e473800588fb1576c8a2b55559bb850"
+    },
+    {
+      "path": "CrossFlow_AI/docs/verification/ml-app-2026-10-24/vehicle-count-preview.png",
+      "bytes": 138340,
+      "sha256": "ec77b459856a296635b1efdea82142bb5e45a23b438438dcfb7cde317e2e75e4"
+    },
+    {
+      "path": "CrossFlow_AI/frontend/src/components/operations/VehicleCountPreview.css",
+      "bytes": 1699,
+      "sha256": "918c917b0817b61b89e591caa2f6c0ec5d4429fbb67e1727aaedd61a67084808"
+    },
+    {
+      "path": "CrossFlow_AI/frontend/src/components/operations/VehicleCountPreview.test.tsx",
+      "bytes": 12300,
+      "sha256": "fb28c353ec56123a6830b1dc261e5f8f49e022980020b8b5771cb0cda16ece39"
+    },
+    {
+      "path": "CrossFlow_AI/frontend/src/components/operations/VehicleCountPreview.tsx",
+      "bytes": 6366,
+      "sha256": "96a23575d749f91ca82c8fb48ee18c94fe3f0203f0a639ed0cde115b674f8ef6"
+    },
+    {
+      "path": "CrossFlow_AI/frontend/src/services/vehicleCounting.test.ts",
+      "bytes": 7043,
+      "sha256": "7a5e99b27d307f0a7b631fdec313668aa0202d3353da843c5fbf6f069a650bd1"
+    },
+    {
+      "path": "CrossFlow_AI/frontend/src/services/vehicleCounting.ts",
+      "bytes": 4515,
+      "sha256": "eaee51a3ee485fa43525b814c3d2e1e75088ad2cd6de1436bf2d0bf35711e63b"
+    },
+    {
+      "path": "CrossFlow_AI/scripts/package_ml_app_update.py",
+      "bytes": 18297,
+      "sha256": "4b2c97e57b0879d2176f2ba3f8dd3fcc9a8a10b75bdec3b45f2ef52c23b810c2"
+    },
+    {
+      "path": "CrossFlow_AI/scripts/requirements-detector-training.txt",
+      "bytes": 139,
+      "sha256": "1b4408d23aa732284ab9b45d9c8bf646d9bd8b6b6937d2df48d258f0fda52521"
+    },
+    {
+      "path": "CrossFlow_AI/scripts/train_batam_counts.py",
+      "bytes": 29743,
+      "sha256": "691f4886d0e900b5081742d33037d516ae7cf4eeea8ac502db2aa47ef94cc2f5"
+    },
+    {
+      "path": "CrossFlow_AI/scripts/train_vehicle_detector.py",
+      "bytes": 25291,
+      "sha256": "41c315d311b7bdcedc8dd18140398e6eaf1a9b9687f7d75cf1975f73119f8a8a"
+    },
+    {
+      "path": "CrossFlow_AI/scripts/train_vehicle_detector_strong.py",
+      "bytes": 15940,
+      "sha256": "34e11706df4baa30de481e70c27bd44043df555b311d829231a6ba0a431929d3"
+    },
+    {
+      "path": "CrossFlow_AI/scripts/vehicle_counter_worker.py",
+      "bytes": 1656,
+      "sha256": "980275e22fef18f55842abae9231a1c1c4bfa70433e45c136694e0537fbf4d80"
+    },
+    {
+      "path": "research/batam-traffic/ML_TRAINING_PROGRESS.md",
+      "bytes": 4581,
+      "sha256": "63e28f566e7efbf651e6c8ba79fd48b31d4bd313d69475202debcdad218f6435"
+    },
+    {
+      "path": "research/batam-traffic/collection_progress.json",
+      "bytes": 2126,
+      "sha256": "58e19384044a589bbb96df4e9dc49e7b06273dd8e5032de63889858739eb4a52"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/README.md",
+      "bytes": 5942,
+      "sha256": "2a2f412731f96fb1ba8b07634d0ea4d171b7e91667f281a5f78c3771d9778a82"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/TRANSSET_README.md",
+      "bytes": 3414,
+      "sha256": "016d0f7d6b7237d70f58f2a9f0f5f49b448fe233f3eced492c58d57b93c05f07"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/manifest.json",
+      "bytes": 13692,
+      "sha256": "b5732cfc37555426c25c1c9f56ad22b9b9e95afd1c25be31c092b3ad11d13bdd"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/files_manifest.json",
+      "bytes": 83898,
+      "sha256": "01b7dea68672c06c9e4992912797a5cefdd8e341f44c46a4b82312325508790c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/frame_counts.jsonl",
+      "bytes": 25276,
+      "sha256": "f1b99357c3a94765b7d857d63c5e15e6d484e4c891e9d99e0fdf848a95bb642f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_00001.jpg",
+      "bytes": 238146,
+      "sha256": "84eb3ea0b8a778a81971e6e634394e6525afc833eb55921882e6c287deec0a54"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_00153.jpg",
+      "bytes": 141620,
+      "sha256": "a40dd0841c92465c02800e837e8ccf4cd884583475d7e57d2772a6548246acee"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_00304.jpg",
+      "bytes": 335761,
+      "sha256": "74c8c2b65144880b83ad1e3b61cd63c9c5e60c6b6886dfa90acd3a1ea93c9407"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_00456.jpg",
+      "bytes": 261525,
+      "sha256": "1ea5e23174f2e73baeace8483befd8ea467e1e59ae2fc8b29afc162d57c66512"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_00608.jpg",
+      "bytes": 111684,
+      "sha256": "0e352e83fc5f1b215f92abb8db81a86efbd5f1c9ee854e7d7ddca47fa1b5e721"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_00760.jpg",
+      "bytes": 278149,
+      "sha256": "6633c6d4b352532b7bcd6c6c300a30a39386e80cbe04ca3f917cd79a16a81408"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_00911.jpg",
+      "bytes": 125089,
+      "sha256": "4d2c36b07548922233e66d60c292052938aa481b4eed75e4ac2156c2f5ce7e30"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_01063.jpg",
+      "bytes": 120810,
+      "sha256": "91252039f30399d43848bc728eee275e94c5c28edd737eb65932b0f57b0df31c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_01215.jpg",
+      "bytes": 138015,
+      "sha256": "81cceea99e4fd6a25fba21ef6053b2b1bbb907f0d903eb8b1fe8d32abb2115ab"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_01366.jpg",
+      "bytes": 129829,
+      "sha256": "874cb97e36c26fe776749aa3c68e86567f20b31b9d938e0623498dfcd904b49c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_01518.jpg",
+      "bytes": 209488,
+      "sha256": "908dd6271d8583e0fc4adc51e1da92138025202fc392f26515bb93ddbeee5573"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_01670.jpg",
+      "bytes": 141939,
+      "sha256": "a8a4dd1672b4cecd5cb58d602ae1efa4dc3bab649969d09b90c29ca4dea58912"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_01822.jpg",
+      "bytes": 102632,
+      "sha256": "9d8504bc4aa35913a4e0008332313573bce258bdd90897a170adaf4c1b23d0bd"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_01973.jpg",
+      "bytes": 224209,
+      "sha256": "2a401b42f417fbedf602a3888714d2f71c59360b586e452472702d1e12a6fe44"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_02125.jpg",
+      "bytes": 282278,
+      "sha256": "85f05bbd1a78e834ef159b1695337f7ba6dc2ff7a80040f27caee9ba698a5e01"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_02277.jpg",
+      "bytes": 123685,
+      "sha256": "940d99656ab95fcbd319febf2bd4945be68ffe29bafb36c98889d6b633d48f75"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_02428.jpg",
+      "bytes": 117054,
+      "sha256": "c06c15771cb1e15abac0744398bb218cd3a6ee3152cdd32d0d00c8f963cab48e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_02580.jpg",
+      "bytes": 115617,
+      "sha256": "f71060090619cd20acb74c01b31b89dc3d526adf3f997a6177c8870ad1fe156c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_02732.jpg",
+      "bytes": 205832,
+      "sha256": "3765787afc49a71db1f2ef14024bc096e5d5d414965d9736bb3cc8a55240388c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_02883.jpg",
+      "bytes": 126635,
+      "sha256": "14ee3cb4a98e056c9dfbbe8cbfb3716301bfa0e6a84723a78ea92f3f4e6d6eef"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_03035.jpg",
+      "bytes": 116327,
+      "sha256": "65835d18737409d18b85963daa24f312af7433b5de5c7389acd72b063a2e6073"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_03187.jpg",
+      "bytes": 237273,
+      "sha256": "80896bc3abb6f290083e0e2ea7f1c2ba60f5d644d3b671b40598aba431b5e584"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_03339.jpg",
+      "bytes": 259776,
+      "sha256": "f0cf36feb7f3dccf07527f6563b8277790bac1aab81bcb99fab00d6649ebe01e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_03490.jpg",
+      "bytes": 114532,
+      "sha256": "61db0b8ba33280340fcf66f17efa3ca8b311f1e8248dd78a96f70d0b71c2c635"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_03642.jpg",
+      "bytes": 261343,
+      "sha256": "9fc4e25e06e928c1384fbcafa9b8be04f20163f8bcbb063886759219ce94c150"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_03794.jpg",
+      "bytes": 271204,
+      "sha256": "0c9b35562e93936d7ced83a5097ff0fc94df056dab393c62c8d68c9995daf6b0"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_03945.jpg",
+      "bytes": 120250,
+      "sha256": "d678a69873dbc838d81927f96052d014bab9359b130d072570296193a985aab3"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_04097.jpg",
+      "bytes": 111283,
+      "sha256": "91dd089997cfa00b70c5c0f5a835e07ef353ce8a4ae49d9a765a159c1afad1be"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_04249.jpg",
+      "bytes": 135350,
+      "sha256": "45adf2b4c1d6b9e7ac297ec6d1ea01368c3b0d633e726d854a9339c9b726c9da"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_04401.jpg",
+      "bytes": 115820,
+      "sha256": "740e5487eaa92fb3c7468e4d98396bfe5a4744cb27c5ea64a40abc13d79c7954"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_04552.jpg",
+      "bytes": 134270,
+      "sha256": "08bf8673faf8c2590d1b381964fd1d0a3745177de24df6184d3110eb6d22788e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/images/file_04704.jpg",
+      "bytes": 196482,
+      "sha256": "a65af7d12af28dabddb8f30c1b727c5fce385574617c9ebe9c1d0a32b29fa85a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_00001.txt",
+      "bytes": 151,
+      "sha256": "94638b241684db819b4861392bc8ed0e5dc42564ea68fc02494b92e32b501e5a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_00153.txt",
+      "bytes": 75,
+      "sha256": "49577942cacfe2240180573f86bf904fb85bdab2a629c6fc26a04feb2a03724c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_00304.txt",
+      "bytes": 189,
+      "sha256": "a3993c271da6e97a1a49ad683f290c8b213e106122fc0e3dfeace9b921d2e0bc"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_00456.txt",
+      "bytes": 265,
+      "sha256": "5d51dffa2cb0bb7994b76270f14b5f5dd493a82b3436b463d9797809b75b4b6b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_00608.txt",
+      "bytes": 113,
+      "sha256": "f550892d28492fb3b2895049c9d89c4356fbca676e3174b5ab313a62650bc137"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_00760.txt",
+      "bytes": 379,
+      "sha256": "ebf5fbf109d1aa7d265ff873e69b1b62ec36911bfdd72cfa2a6c7725695215c6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_00911.txt",
+      "bytes": 265,
+      "sha256": "ac798f186524622390c698524fe67e39b402aa3ef5a73b238aed67482fce2fed"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_01063.txt",
+      "bytes": 113,
+      "sha256": "b4d4c4eec851f2847eb5e9e57ee41ad924e46f675611403910bd42541851992a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_01215.txt",
+      "bytes": 341,
+      "sha256": "d25702e9bbc7855e17208ef12da830e4cfceee59f33089472191efcc7d517466"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_01366.txt",
+      "bytes": 113,
+      "sha256": "d462d248ee3275a641486e033c95315e0eb391541fce43e4ebc68ffac44223bd"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_01518.txt",
+      "bytes": 303,
+      "sha256": "88a603477558d94d4b0265f66ba44eb398347bb6db684e6c2c6710a7647c7d00"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_01670.txt",
+      "bytes": 37,
+      "sha256": "b8f9c549754a36dff995241c0461a278f8b19fb0c0462a6ae0f5e0856868cb66"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_01822.txt",
+      "bytes": 75,
+      "sha256": "72acff6b29abb7db1bdce0eb11803a7ddc52aead15c5ace21ffd886ad876ed0e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_01973.txt",
+      "bytes": 151,
+      "sha256": "4efc5e8b0201d0332222fea3a956a1ff638d2a9b31f9ac8f901fa0b817d6e9ca"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_02125.txt",
+      "bytes": 379,
+      "sha256": "acaf3e9a1668640e01353fd457652cd5b641de7f9917338f4651f34e7b71f7d4"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_02277.txt",
+      "bytes": 75,
+      "sha256": "a3cc6dc2411ba434ad99e774dbb7eb9dd78342461ceba33c45cfd1450bc41b83"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_02428.txt",
+      "bytes": 37,
+      "sha256": "7b2bf36ee5480c374e8023947d9b9da59dea641c8f65706056fdf7dbeaad43e5"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_02580.txt",
+      "bytes": 303,
+      "sha256": "4f408c495695646264365c222a43d7ba81c2894e9ad61c0cf9b8a95685bc581a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_02732.txt",
+      "bytes": 113,
+      "sha256": "1ed5bb18eec105de290818043e5ebd8538ce3afc5e6a5544752d8982ddac4a62"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_02883.txt",
+      "bytes": 37,
+      "sha256": "b21cca1639d291e6326ff0909a709e0ad0e89a6a69b6f10b9b13bb035409dec2"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_03035.txt",
+      "bytes": 341,
+      "sha256": "77f88b1c9f9b14a3103e5f0fff3b4b974572103d5999ff484f41dad6b8c90967"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_03187.txt",
+      "bytes": 227,
+      "sha256": "3c98d26dfe95fb29bd312e61a487687d0a64c044ea3361b7f92b3adf9b3f0c8a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_03339.txt",
+      "bytes": 189,
+      "sha256": "b2d91fbc5d188bfeb98546c72dd5095cfd9fc3b04c36f66d1f75386569b1882a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_03490.txt",
+      "bytes": 265,
+      "sha256": "e6d703b713cdc2840dd7f968dc3f1e9ee60ef2a5ce896f620f7496d9810da081"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_03642.txt",
+      "bytes": 151,
+      "sha256": "154b9fc73fad30d4756658e56f91917e4c078434afb5869387b74ca8ab65d9ec"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_03794.txt",
+      "bytes": 455,
+      "sha256": "2341aaccd28da0d4b28079845957c8453e4780a20b0d2ade5fcb29e833604fa6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_03945.txt",
+      "bytes": 189,
+      "sha256": "72d178775bef71d89f9d38c913d21a725bddd8c6affca41dbcea4260cb51fa62"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_04097.txt",
+      "bytes": 151,
+      "sha256": "15694d0a236bd1cb76e91079c7c6ed2bb0768ee32d4da702ceb7b8260e2d517b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_04249.txt",
+      "bytes": 37,
+      "sha256": "450b237b7fbeee84711b19a8b421f870a47c8437963cbe5195278f710fd3a4a8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_04401.txt",
+      "bytes": 227,
+      "sha256": "8d6dedb3bcfaf1eaa5fc7b979d758d7686162b3c3dacf0b4113711b60856f51a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_04552.txt",
+      "bytes": 265,
+      "sha256": "342e291f209659a4442e20cc9ab1dc74e127a2fd52a8f7c6f3dcd85735fcd58f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/transset/label_txt/file_04704.txt",
+      "bytes": 151,
+      "sha256": "806e86db11ddce5c2d9b1adc5b76524077a0bb00a0184ae663de2721d59819df"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/README.md",
+      "bytes": 8936,
+      "sha256": "00c559789951bd6a5bdf6aa856e55e1221c5ab4f2c36d62c0502e6c3bf166ce6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/files_manifest.json",
+      "bytes": 140303,
+      "sha256": "b00c00760ffb9c1bb661f203776b8eddf75b84479c83b4fc91d437b0e493257b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/frame_counts.jsonl",
+      "bytes": 42678,
+      "sha256": "8e00f3ca18e69fb93d3f38c9470176f206781db73faf70be964f06c1ce0c7d8d"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=0.jpg",
+      "bytes": 69127,
+      "sha256": "6c3236655ae741c1c31872cd2e1186f6897e1516e841c777833e1ae954514116"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=114.933333.jpg",
+      "bytes": 73593,
+      "sha256": "7b65a50b99e016c2d444b8cd40e6276019a9a3ecb28dd8aec7c34afeb53d2724"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=14.8.jpg",
+      "bytes": 65307,
+      "sha256": "63aa4a9ddc376c6ea0e0a3f4211a250ad828ad67f46f1ce51135fe6b8c401f14"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=31.066667.jpg",
+      "bytes": 60444,
+      "sha256": "ece218bbf1f0b33fc0e5dd6b07f86b96c7dda80fc0eaebf02654f7388eb24dd9"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=46.533333.jpg",
+      "bytes": 71854,
+      "sha256": "15478d71db07b341c40116f52cebce5e4bb0c5fe1c326a397bbe48e11fb066cc"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=58.066667.jpg",
+      "bytes": 62064,
+      "sha256": "5bbf713b4ca9f4fcbac3b1f8562dfdb4c32b1331e83197e940c46b56fbafce2a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=76.666667.jpg",
+      "bytes": 69703,
+      "sha256": "8ebf147b5a057611c1704ad1fc0c59cfada3320081a190e08ad4ac12cff5a88d"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=94.666667.jpg",
+      "bytes": 67398,
+      "sha256": "89a3eec5da4aebd985cedab3f10c1644febdde4a521178e5b532194087879b85"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=0.jpg",
+      "bytes": 69730,
+      "sha256": "1a36664055b47d2bfba734692bbd74aa6333601a12dae612eed0e29dc9fba0af"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=117.466667.jpg",
+      "bytes": 92184,
+      "sha256": "e942840289030f4c9dfeeb5d5bb22798a5ea1d216d09107164755e539ab239a9"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=17.jpg",
+      "bytes": 80708,
+      "sha256": "6d192e77ff89aa2b075a0fa6f60f95d2101de45e9dad5320c78c0d95c49e7b47"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=38.866667.jpg",
+      "bytes": 60943,
+      "sha256": "aab4be1e8e229b75db731887629cba5bc14bbd49c8afe6507671a5bf960b9baf"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=57.8.jpg",
+      "bytes": 63593,
+      "sha256": "a66d3a56ed25567c69cabddd7cb9894a724caccd37a91f6b288d0f55dce9b94d"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=77.733333.jpg",
+      "bytes": 78736,
+      "sha256": "c6156e3c540a93da720a8573b0a4573a5d93f3916f3e2813de0279d85071afc0"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=88.866667.jpg",
+      "bytes": 91355,
+      "sha256": "f64008642a1e53b891c38fd591d2afda1994b04f32ac47954477faa3805691a5"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V003__V003_2022-08-16_16-15-34.mp4#t=99.466667.jpg",
+      "bytes": 84008,
+      "sha256": "e9e7e15c8041e90cba3896e6bcb0030cd50c3e2e94d56b47f9b034377f9a4681"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=1.333333.jpg",
+      "bytes": 94936,
+      "sha256": "2cec6e8f558f0d6722f729475ec383587883c8f8a2c0d9cb15396adce9a2e76c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=102.4.jpg",
+      "bytes": 92917,
+      "sha256": "a33bef6b8445af7f806e4a71194d4a2ca96250d89b7faea13d14cb41e0dd514d"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=117.jpg",
+      "bytes": 98657,
+      "sha256": "a3bdca15994c21ca8d4bee83c930b1f3d8768f4c7853cdf224cd5a060129b563"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=13.8.jpg",
+      "bytes": 98291,
+      "sha256": "c98b29ff9da71dd00e5ea105baf57f9347550b6a4458039363ad1cef2cc6b329"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=30.666667.jpg",
+      "bytes": 87885,
+      "sha256": "b4de1cf0baab0c24ba35f3a82b38d9cf13b6ccc93155ebf383d50d8c79fa4057"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=45.133333.jpg",
+      "bytes": 95269,
+      "sha256": "c8094a013eea6071e6fcf6fe76f3c1e6cab0f86b8e9a3028551dccab9b8084ff"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=58.933333.jpg",
+      "bytes": 97192,
+      "sha256": "a12f71f37da51923387f29da1c232d5cff3c4ec166a0eb713a873e0c7dc63be4"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V004__V004_2023-08-16_16-17-20.mp4#t=80.666667.jpg",
+      "bytes": 77606,
+      "sha256": "610c659ac73d6f4646cbcc582f4d63e66180d0c25f332eb21891ed2995c53118"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=1.333333.jpg",
+      "bytes": 77507,
+      "sha256": "2a64bc79b46605ca9bf21a8e781c2c091d644d5d900ce1499cdba80d54689abb"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=116.666667.jpg",
+      "bytes": 89098,
+      "sha256": "9d62bc22f4d18e08afc3759dd2256afbd16ff50ae4ddc6c911890882d428afbd"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=17.4.jpg",
+      "bytes": 101262,
+      "sha256": "0b90069dd34fa2a90c4b85a9c6fb3bcb70ec05b2e2761842132dc0723bd64081"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=33.133333.jpg",
+      "bytes": 84412,
+      "sha256": "ec3ebe9e39c6bf22b657796580bf1f60dfa2c2e77652906dae99558837b08fac"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=47.8.jpg",
+      "bytes": 96011,
+      "sha256": "557a7ebf3ee37600c2be84687a96acce846b836398349c3d378aa995b6b2aec6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=61.6.jpg",
+      "bytes": 90706,
+      "sha256": "a06182e734237962a82acd7cad65e66105171cc5aa5c5fd89a3957a33c5e8e2b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=78.066667.jpg",
+      "bytes": 88126,
+      "sha256": "35aa37e1fb169aea60f01561839b9459079d715a133cc9a1bf8b99ee5b8a3121"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/train/V005__V005_2023-08-16_16-19-22.mp4#t=97.133333.jpg",
+      "bytes": 99575,
+      "sha256": "3fa913e45c855dce94794a39808d62ff5685d06e468ac9ea3a61f24d76ac7894"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=1.933333.jpg",
+      "bytes": 70285,
+      "sha256": "818bc7b28e424dea3c073bff759aaacd2c49496bef1f68500a6eb356dc8c5247"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=100.933333.jpg",
+      "bytes": 67156,
+      "sha256": "deb85c22a7f1d2e29c106fb07748f11961df491e40102597ab68dcbc8e289a87"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=117.466667.jpg",
+      "bytes": 76308,
+      "sha256": "b41a3db506099a71fa680daf2ea71f63feb0cf78ba86662571f50ac7ffd891d6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=16.2.jpg",
+      "bytes": 73478,
+      "sha256": "dcf612c0fc274f456554415b307668926ece04911a5e242f3a1c0645aed79de0"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=35.466667.jpg",
+      "bytes": 76884,
+      "sha256": "7a12bd2d789007aa62c75f60f76b4a25465b58fad04ac38c86ec9e80fa35db0c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=51.266667.jpg",
+      "bytes": 71858,
+      "sha256": "17022a07254f55a1731c9be8047442a20788fe15ada6347cf349273f62972404"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=69.466667.jpg",
+      "bytes": 82044,
+      "sha256": "ce972de9f7c65d1711569ce2aa54ec0cea13295e2a1e95697f3f362cae68b75e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/V002__V002_2022-05-19_10-16-25.mp4#t=84.266667.jpg",
+      "bytes": 64157,
+      "sha256": "308d2a52108bd00fc29f1ff4cf2bc25e13ced964312ece2cb3bcc9a62f26138c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=0.jpg",
+      "bytes": 57229,
+      "sha256": "95c6a1e46d0906d33485125c641ad3c0fab0dfbf20463c8677f3d6a8e048dca5"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=20.533333.jpg",
+      "bytes": 72035,
+      "sha256": "e8bb13e4f1cbf10aa18a711ed49639c9dd9bf155abe65d70188af26fa56c97d6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=30.8.jpg",
+      "bytes": 75395,
+      "sha256": "195363e552c2511fd93486ab44865f514bbd552352c07fab1500c11747d1af98"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=44.933333.jpg",
+      "bytes": 73737,
+      "sha256": "802506b08ed8f6e8eba66dc5aad0a8d879f7e71ba21a08d29baf3eae65d8a7ac"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=50.733333.jpg",
+      "bytes": 61084,
+      "sha256": "30c7347eccf74e5402bcbaf75c21ee2eee09a599c9675ff2355f94f727616939"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=56.066667.jpg",
+      "bytes": 62747,
+      "sha256": "243ad0cec6075dbcb51db524c9bd759ef423347bcfe26fc9538676a3f4e5b5e0"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=62.333333.jpg",
+      "bytes": 72885,
+      "sha256": "cb3549ccf347de6c66de36d11aab387e49b7a77d19373f07c2d8930ceb1fcd16"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/images/val/VEHICLES__output_file.mp4#t=7.533333.jpg",
+      "bytes": 63534,
+      "sha256": "2cf9305c67a66d8ec9f1156b6ba72f3a21625e6c46383d1fccfcd7791ced7f79"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=0.txt",
+      "bytes": 228,
+      "sha256": "cd6cd8a96dc0fd223bdc7198727a470a89bca95988b6a33f48101ded71ec1f7a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=114.933333.txt",
+      "bytes": 418,
+      "sha256": "b79340eabc2c0039f92b5b509ad8962cf528257987b09d9008b0a24597195eed"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=14.8.txt",
+      "bytes": 190,
+      "sha256": "739a9280be27c281d7a85c08f8011545b4c8ee8eb88895979d8177990ee06032"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=31.066667.txt",
+      "bytes": 266,
+      "sha256": "98b6e6968869ed638dbff5454b20d9ed6c2b83c7abc4a605f185f2ff11963210"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=46.533333.txt",
+      "bytes": 190,
+      "sha256": "aa90fd7170f0efe93403fc4a5cd13eb3c3b84c9cf3c37f7574e070bb9dcb934f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=58.066667.txt",
+      "bytes": 190,
+      "sha256": "94ab4dfc7a70bf2cbcab90151754547b3464cd7504c7431d70919a47947fd4ef"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=76.666667.txt",
+      "bytes": 190,
+      "sha256": "1cf0b9e6a4fff4778fcecd27731cb918123eb9180f28d6084fa90551cf8088a0"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V001__V001_2022-05-19_10-14.mp4#t=94.666667.txt",
+      "bytes": 342,
+      "sha256": "cbbfd4c889d7ea9f1b061cc90cdd735a8dfc9ab2998a926b2cde1085cc183be4"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=0.txt",
+      "bytes": 266,
+      "sha256": "d6a04fc16649f9b3fe2f4171e9e66d781c585f26c0b02bd3cabfed19338ec3a8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=117.466667.txt",
+      "bytes": 190,
+      "sha256": "8d4fc31219e0ddf3bdbe4f3e5e24c2698b42a3dd188e2dc669386a25036991be"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=17.txt",
+      "bytes": 152,
+      "sha256": "32963a05be52685407782d6642f52aee693c05015ec6a893b73ace477be3af67"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=38.866667.txt",
+      "bytes": 190,
+      "sha256": "fbe005d895628178acf032560e95542d52658b0b860ff463d6c79a6f7c11bd2c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=57.8.txt",
+      "bytes": 228,
+      "sha256": "d0dfad98642a5f8c90f5914d8cba60cb6d685cba077bfebcb3b3adb2854d1d9c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=77.733333.txt",
+      "bytes": 152,
+      "sha256": "f7cd6407674f6bf18ef476d76228b8fd213e932c3fa61eaf926d5dd5a8780ff9"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=88.866667.txt",
+      "bytes": 304,
+      "sha256": "b688d8adbef0dd8832b9f7684eea49c6922fef713c654a64863c1cb65796d96f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V003__V003_2022-08-16_16-15-34.mp4#t=99.466667.txt",
+      "bytes": 152,
+      "sha256": "dd06785d78f3b943d2e7bcf8878afd4daffe02b6d5dc8ce5dd20fbb2347c01bf"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=1.333333.txt",
+      "bytes": 266,
+      "sha256": "4dd7e826506982f2460e637edd354d61df1bb07ff43a8e630d3cb44a2e2856f8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=102.4.txt",
+      "bytes": 76,
+      "sha256": "1b015bb26d5e378d1af0798027a2b63be67a1e941a521f025dc72236dfc72fe3"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=117.txt",
+      "bytes": 228,
+      "sha256": "285f6b61939a8d984fffa2acfc0bf5d968db37871dc7198a0d55a306683ae945"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=13.8.txt",
+      "bytes": 266,
+      "sha256": "792acc5ca449536bc558d33335836ab5e7a3fedef064dfd19b14aa278285ef3d"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=30.666667.txt",
+      "bytes": 304,
+      "sha256": "25ce381ed184c07576bb9aa7c61b8b0df7a924470018c328dcdd6485e7d39c03"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=45.133333.txt",
+      "bytes": 228,
+      "sha256": "40384f5afbc1485aa94f96469e4675384f3343805742dd13825a2409c8ce56b3"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=58.933333.txt",
+      "bytes": 114,
+      "sha256": "6d1424c1b7dcc3d52ab2d6704dd970821fe42540b3af278af7508ab5c078f1bb"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V004__V004_2023-08-16_16-17-20.mp4#t=80.666667.txt",
+      "bytes": 114,
+      "sha256": "f86bad013190a8bd7a4176f6101e8a26276ce786cfb3b6312fafeaefe005ab8e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=1.333333.txt",
+      "bytes": 152,
+      "sha256": "b2be04795ec1d0a5096192eea64b84d8553b8a681dd34c0e5797e8df1b9c5190"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=116.666667.txt",
+      "bytes": 114,
+      "sha256": "3051edb21129bcc367700296466e2d72f6b09467b761f57ab268a81a7302b183"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=17.4.txt",
+      "bytes": 342,
+      "sha256": "86cd1bad32a664a3df99f073d54e636275729a5105cbda7682c8866dbf8cbde5"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=33.133333.txt",
+      "bytes": 190,
+      "sha256": "f508e76b07e3e198fcef8da98a5bfe8c27b80a480014670949c35d9d9177da90"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=47.8.txt",
+      "bytes": 190,
+      "sha256": "c644d67614c45cf79638ab4f02f3c5b8983ec7ba010f5e8c2466f8e526aff5fd"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=61.6.txt",
+      "bytes": 228,
+      "sha256": "15110c3d203e652b9ff1cad53e69e161dc9c96263ae4f9e0b96e88571b3f6763"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=78.066667.txt",
+      "bytes": 266,
+      "sha256": "edeb6be7ae7eb585e9b5869f8e6420c12077209bafb0b55f426a943f38046d1f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/train/V005__V005_2023-08-16_16-19-22.mp4#t=97.133333.txt",
+      "bytes": 114,
+      "sha256": "9cda6c034ab93e2ea498783860752977622aae86d38e7149d8763b2e7fa13903"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=1.933333.txt",
+      "bytes": 190,
+      "sha256": "0547064b938416a8a8476971cb9c2821a7d1c78d1aa2d9d39299889bda18d5c9"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=100.933333.txt",
+      "bytes": 76,
+      "sha256": "694f0605b2709c0b8e293abf5c2cc80a027a28041fb2ee6ce349f8d98fd971fe"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=117.466667.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=16.2.txt",
+      "bytes": 228,
+      "sha256": "71eb698e30a0eed37ddf02383aa1201c76d1486161f9b306765e5627559f6741"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=35.466667.txt",
+      "bytes": 228,
+      "sha256": "a01a5718cd8704e9090fdf6d5e2eb7267c58a840990daa4f3014bc8f9d310063"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=51.266667.txt",
+      "bytes": 228,
+      "sha256": "f60217d2fefedc68f0b3768b4ce2c8fc30696ce2b659c25706797a7bd7959c43"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=69.466667.txt",
+      "bytes": 228,
+      "sha256": "c3fe32b411d9f76bd7b333b5060ca9ccc214ef845daf7e41dcfce54b9d17a0e8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/V002__V002_2022-05-19_10-16-25.mp4#t=84.266667.txt",
+      "bytes": 114,
+      "sha256": "ee52c5b2ff5fe42cc331a016c9b5b2df64699904bec8ec193c14d44367b132ce"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=0.txt",
+      "bytes": 76,
+      "sha256": "bcb7f386938682a55211897ec80bac319e19a81b41a3502c512e46f281e480ca"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=20.533333.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=30.8.txt",
+      "bytes": 114,
+      "sha256": "1892b23275f61b25a7f409f8dc7807de8af14223947ef8b9d59a57d8b1f8e701"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=44.933333.txt",
+      "bytes": 152,
+      "sha256": "49b8fd14f48dc7bff84997b212eed62e19786eafc99b1fa3c37be1229527cfd6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=50.733333.txt",
+      "bytes": 228,
+      "sha256": "752c4c8e4d49a65665fa40e8a0cb24c3dfa920351d4d0887fd3b560c30212ac2"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=56.066667.txt",
+      "bytes": 76,
+      "sha256": "8427f2fe7f09bce2240c32104eaf7574673733cc835a11f23323df300f275e53"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=62.333333.txt",
+      "bytes": 152,
+      "sha256": "2b094f9ddc0979725cb989d9ad6e346851c0306be9bd689a6f490ac0afea8d09"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round4_open/vision/visaitech_mixed_traffic/labels/val/VEHICLES__output_file.mp4#t=7.533333.txt",
+      "bytes": 38,
+      "sha256": "510a85128815ebd60c3a13f6e1f35fba12dda1b75cb72cec21ac906be2c97b9e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/README.md",
+      "bytes": 6270,
+      "sha256": "5e1380f7be3f667f83b78f94d87efe963467a101250ba1a968ba13c9a5c99900"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/acquire_metadata.py",
+      "bytes": 4233,
+      "sha256": "56fe087320f65925be994563eaa797a27a6ec6580a102f21f4124add05dafc38"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/acquisition_log.jsonl",
+      "bytes": 43248,
+      "sha256": "c3e430ba6493ae3ffb4ce959ba905f51a0dd672f46f99df40dbef2e8949c5fe6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/candidate_checks.json",
+      "bytes": 6520,
+      "sha256": "a802e964f7a4801125532c0582857ffff63524f1ca4858a2e291c8f449a04cf4"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/cashless_article.html",
+      "bytes": 76369,
+      "sha256": "0f4ea7341b8653aac0d819ac8f525e74ca59b4a12b9a596ca3bda4bc40234328"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/datacite_batam_new.json",
+      "bytes": 177270,
+      "sha256": "86678dfa5a50839155bb253d2797dd719309a6de64cf0f4b4aea931d52a941c0"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_avi_readme.json",
+      "bytes": 4260,
+      "sha256": "d631e74a77b5fca9f258b348847a4d7711b0d10b61e24646ab7ea22c9e3b5f60"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_batam_kendaraan.json",
+      "bytes": 212325,
+      "sha256": "5205d198e2fe675bb2c93d9334539c4219c7871707c99b7e981ddfee1082c19d"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_batam_vehicle.json",
+      "bytes": 222242,
+      "sha256": "e1009c4a257d6f62bc70612d1533240b5680f967b24e68f6136e96b3f0bfcce0"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_batam_yolo.json",
+      "bytes": 201173,
+      "sha256": "1046b1707011c88ddfb40bdf6dbdd9b3125892140b2b04937a4779beb1e9596b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_driving_assist_readme.json",
+      "bytes": 7116,
+      "sha256": "d2d307721bab6d71843a3b864132423f114390cb388bb8a5bd96c2c730288606"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_isti_metadata.json",
+      "bytes": 6289,
+      "sha256": "0b288c435f9571883299835f07cddf4cfe193e4177925c4f9120620ca9083fb2"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_isti_readme.md",
+      "bytes": 5040,
+      "sha256": "4efe292ca9d27ac23179a48f2f57e74b8a2c126d9946fa3776a65f8258e6970f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_isti_tree.json",
+      "bytes": 11018,
+      "sha256": "907d6d01b2357b98a757ad901910ccb78dd7f0e9f5fd8d74f780303577ab8adb"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_polibatam_ocr_mit2_readme.json",
+      "bytes": 3166,
+      "sha256": "c0aa9db889f3b8eca42b244b267d8c9995308d68069e842aaf8ce62d75681bce"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/github_polibatam_ocr_mit_readme.json",
+      "bytes": 4140,
+      "sha256": "d134fb16b1de8618ea43294ef16c4e1df5ed2f903b0ba45022931e033d6e1413"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/hf_batam.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_cctv_search.json",
+      "bytes": 86411,
+      "sha256": "aed76fea5b08e231caa611ddfd39e537b65f820049b2ffb09d665266d3c4cff9"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_mirror_yolo_bundles.json",
+      "bytes": 2337,
+      "sha256": "d6b8271e08c8157878d41ab15b67f5d47f9ee99caa686aa1273f878996034474"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_mirror_yolo_bundles_license_files.json",
+      "bytes": 2343,
+      "sha256": "6cd405392c6174bf7a3ade34b9530613f7ef47f65540cc3241070de67edeeb84"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_mirror_yolo_bundles_license_files.txt",
+      "bytes": 1748,
+      "sha256": "a8040d2e48c8d2ddfd12083c096d2b9bdc4c661147edc83bf308645401d48bb8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_mirror_yolo_bundles_original_files.json",
+      "bytes": 5824,
+      "sha256": "c269b56b1d66a054471266c46b994ce8fcead437ae2d7d6cb5c1cfffabae62ab"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_motorcycle_capacity_bundles.json",
+      "bytes": 2337,
+      "sha256": "01171c9151003fc0243655e36cc2847774a535e1f75eed5ec812e36e57c4ed3a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_motorcycle_capacity_bundles_license_files.json",
+      "bytes": 2343,
+      "sha256": "a2fe071900c33887dc0532bbc42a47929c2ba0f17fa24d6c2262c4ba7ba330b3"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_motorcycle_capacity_bundles_license_files.txt",
+      "bytes": 1748,
+      "sha256": "a8040d2e48c8d2ddfd12083c096d2b9bdc4c661147edc83bf308645401d48bb8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_motorcycle_capacity_bundles_original_files.json",
+      "bytes": 5815,
+      "sha256": "9a3404743ae7dc61740a2d65c1dada6d26357325146d94f4acf2add066fb6d93"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_smart_parking_bundles.json",
+      "bytes": 2337,
+      "sha256": "605948b59c2f815b377e8c98385e5c5a3b365067042d6be0eb1a9d8443f2e56f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_smart_parking_bundles_license_files.json",
+      "bytes": 2343,
+      "sha256": "283a6f7666a6af9ce69fdc2a1a3efcd77dbbebabf004b082967216efcd783b5b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_smart_parking_bundles_license_files.txt",
+      "bytes": 1748,
+      "sha256": "a8040d2e48c8d2ddfd12083c096d2b9bdc4c661147edc83bf308645401d48bb8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_smart_parking_bundles_original_files.json",
+      "bytes": 6082,
+      "sha256": "501c698009974dabc54fda36109f45d6740f316587529139c6ecaac2738ee87b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_tiban_gate_bundles.json",
+      "bytes": 2337,
+      "sha256": "f638e4dc688fe5b444538aace3e6fc204b4b6aec0352a699bfcd02ed96947e25"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_tiban_gate_bundles_license_files.json",
+      "bytes": 2343,
+      "sha256": "a02838202ea8ad057db5c181b9cfb81d8f14867ae3b933c98ad0ce2f884069c6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_tiban_gate_bundles_license_files.txt",
+      "bytes": 1748,
+      "sha256": "a8040d2e48c8d2ddfd12083c096d2b9bdc4c661147edc83bf308645401d48bb8"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_tiban_gate_bundles_original_files.json",
+      "bytes": 6383,
+      "sha256": "0993b99a7523aa2780361e38f38112c9547cbf81ccfb8b72cdad983b5141835e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_vehicle_page2.json",
+      "bytes": 305133,
+      "sha256": "d840b32800d32633fe8ceee3848f822f7fde8b8e3861969f178dc1f29263b816"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_vehicle_page3.json",
+      "bytes": 290522,
+      "sha256": "5dbfa0371396c2a972428d8825ba8c7bd03adcc7c340c0883101e42e207e5cb3"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_vehicle_page4.json",
+      "bytes": 40860,
+      "sha256": "1dc446525a8971f67731c09fffecd4d40eb48d135052e862d2f21bf07c48e967"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_vehicle_search.json",
+      "bytes": 289859,
+      "sha256": "1f8f51924727fd2a2095621cdbd5ef444cea16927928a18f9f464dcd1f1c153a"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/sandona_article.html",
+      "bytes": 76369,
+      "sha256": "0f4ea7341b8653aac0d819ac8f525e74ca59b4a12b9a596ca3bda4bc40234328"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_author_appendix.html",
+      "bytes": 382800,
+      "sha256": "702dabdc90d84b52f59d73f41e064c7c3c47c25dedf59fc8e2991b2cf74c2192"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_capture_folder.html",
+      "bytes": 354772,
+      "sha256": "2a981ba5cb6409f0597ccbaae4faa769f695b25f79fcebef1f93510b174a0653"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_folder.html",
+      "bytes": 358281,
+      "sha256": "4261cd0438e89f57fef32601f6f4c5f16e8462daa61c415fae82e2a5fb2dda18"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_readme_dataset.txt",
+      "bytes": 156,
+      "sha256": "a05ba20e8a70f08b225ed12a89f417f5bb6f3f9767fb8ecccd9baae88913a96f"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_readme_roboflow.txt",
+      "bytes": 1172,
+      "sha256": "2ae9d8c9c773ac01ba6badcaf39d0b5227609721ac27c6b3a35b2a644071443c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_roboflow_page.html",
+      "bytes": 112061,
+      "sha256": "62e97a10672ef1f5dfd91647ff5ddc6e1b6284b2999fa859b79c65d9c53cca5b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_test_split.html",
+      "bytes": 328828,
+      "sha256": "86fef8006729a2b1f9624da288d62dc082e886dda650034ae09d24c30aed436c"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_train_split.html",
+      "bytes": 328811,
+      "sha256": "4d6035ce12ce531adbfeacafed6188dea30e1167bff510fd98cfacaf59c2f942"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_valid_split.html",
+      "bytes": 328714,
+      "sha256": "7b1b0f2f3ee5e26a18ab4a967a7702f5395708431dc7f2b662e200799b732caf"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training1_yaml.txt",
+      "bytes": 276,
+      "sha256": "8c2b9f136578e2bae155ae4cadc7f6a1a50c184ce931b5b95db1d37d99f47b68"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_folder.html",
+      "bytes": 358163,
+      "sha256": "5f0ef8803b42c0617a3c969c155e51a12a385115dd10db56660b89c094b54177"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_readme_dataset.txt",
+      "bytes": 154,
+      "sha256": "8f8be32ef4d760c526ef49fef082a37886d3d5c9668bad7558b97fc7e49ace2b"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_readme_roboflow.txt",
+      "bytes": 1178,
+      "sha256": "35cb285402d40de8164b2c3407d0adcbb1e747d8b2f8550e47472086db4692fd"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_roboflow_page.html",
+      "bytes": 116256,
+      "sha256": "887df44e68e6444fb875c6c1de37809d690bbb62e9a33fbc56a217efb8729cd7"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_test_split.html",
+      "bytes": 328583,
+      "sha256": "5507147ef50cb14ff09c2bee628681b53ea557a5a46bfb382485f38cc5367936"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_train_split.html",
+      "bytes": 328614,
+      "sha256": "2adcadf2fbc3597e88465a0830d2d1a349929fbebcfaff27c67f99ca91296866"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_valid_split.html",
+      "bytes": 328491,
+      "sha256": "23e25d548f985d28ed4cddf7d491625b6d4996b0682b90d9562507ca84224f26"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/tiban_training2_yaml.txt",
+      "bytes": 268,
+      "sha256": "5e30187dd8845dc8d5e36cd5fbc21f711282fcad507a6ebb97dfcdc4ac045c22"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/finalize_audit.py",
+      "bytes": 12732,
+      "sha256": "07180b770bae7f31cc2abddbc4a565d4d4dc0853f58f73e4a83d2d69eb89215e"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/manifest.json",
+      "bytes": 32778,
+      "sha256": "e1e4960072b6bb40cc9d6a539bd929fa15ea058f150eff04247ebfae70af14c5"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/qa.json",
+      "bytes": 223,
+      "sha256": "544a5e219c6d8e68ef404cab944cf9ebbbe647fa8a43ab541b2428da30e87d82"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/receipt.json",
+      "bytes": 11561,
+      "sha256": "b50e45c1b62952c1ba192cbc97b5295c6888eed56e72a333937b81f0b7d36cea"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/request_plan.json",
+      "bytes": 18802,
+      "sha256": "c2356a1cea792389e86466f7bfde4ade7991ad063a51373911fdd12f87fab9d6"
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/search_result_inventory.json",
+      "bytes": 68796,
+      "sha256": "de3fd6b6744c5ad0f673f8ddc739f1ee0a79082970e0f18b706cee023e789d0c"
+    },
+    {
+      "path": "research/batam-traffic/ml_training_progress.json",
+      "bytes": 12120,
+      "sha256": "c469b9243055b65affce03ec826d122bb2857434d9b97b45965f175d8e34b203"
+    },
+    {
+      "path": "research/batam-traffic/papers/local_extension/BATAM-014_2024_Optimizing_Traffic_Management_at_Batam_City_Intersections_Analysis_of_Congestion_Causes_and_Mitigati.pdf",
+      "bytes": 486964,
+      "sha256": "97fbbc1da8acafabbaea5589a75937e92ca78e6a0b87b5a104401162a8d053c9"
+    },
+    {
+      "path": "research/batam-traffic/papers/local_extension/BATAM-EXT-005_2023_Pengaruh_U_Turn_terhadap_Kinerja_Lalu_Lintas_pada_Ruas_Jalan_Gajah_Mada_Depan_Simpang_Sekolah_Kemila.pdf",
+      "bytes": 977919,
+      "sha256": "2e37e52e90ea8450359e3d5391e7a1626a304b85d3c8cf59808e1513d4eeb681"
+    },
+    {
+      "path": "research/batam-traffic/training_readiness.json",
+      "bytes": 2338,
+      "sha256": "d9a9bd7f2d1f1c0e198e6f3854a9d419221645530165f1ba05f94d676be047a5"
+    }
+  ],
+  "intentionally_omitted_files": [
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/fasterrcnn_predictor_finetuned_epoch_2.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/fasterrcnn_predictor_finetuned_epoch_5.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/model.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/fasterrcnn_trial/pretrained_coco.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/diagnostic_overlay_file_00001.jpg",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/diagnostic_overlay_file_00153.jpg",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/head_finetuned_epoch_12.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/head_finetuned_epoch_4.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/head_finetuned_epoch_8.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/model.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "CrossFlow_AI/backend/data/research/detector_training/ssdlite_trial/pretrained_coco.pt",
+      "reason": "Historical trial checkpoint/image omitted; metadata retained and one stable selected checkpoint included."
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_tiban_gate_bundles_original_files_thesis.pdf",
+      "reason": "Inspection-only thesis is not a licensed training source; PDF and full extracted text omitted."
+    },
+    {
+      "path": "research/batam-traffic/datasets/round9_training_sources/evidence/polibatam_tiban_gate_bundles_original_files_thesis.txt",
+      "reason": "Inspection-only thesis is not a licensed training source; PDF and full extracted text omitted."
+    }
+  ],
+  "public_licensed_foreign_images": 80,
+  "public_batam_count_subset_cells": 288,
+  "new_batam_vehicle_annotations": 0,
+  "production_eligible": false,
+  "private_provider_rows_included": false,
+  "databases_or_credentials_included": false,
+  "trial_checkpoint_payloads_complete": false,
+  "source_check_evidence_complete": false,
+  "source_check_evidence_note": "Original audit manifests are preserved; inspection-only thesis PDF and full extracted text are excluded from this update.",
+  "old_frozen_training_reports_models_and_zips_overwritten": false
+}

@@ -1,0 +1,5 @@
+# Standalone environment used for the image-count transfer diagnostic.
+Pillow==12.3.0
+numpy==2.5.3
+scikit-learn==1.9.1
+joblib==1.6.0

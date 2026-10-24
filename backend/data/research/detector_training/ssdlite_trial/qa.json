@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "source_manifests_verified": true,
+  "selection_unchanged_after_diagnostic": true,
+  "service_parity": [
+    {
+      "image": "transset/images/file_00001.jpg",
+      "passed": true,
+      "count": 0,
+      "service_latency_ms": 146.60420800646534
+    },
+    {
+      "image": "transset/images/file_00153.jpg",
+      "passed": true,
+      "count": 0,
+      "service_latency_ms": 46.92370799602941
+    },
+    {
+      "image": "transset/images/file_00304.jpg",
+      "passed": true,
+      "count": 0,
+      "service_latency_ms": 42.81516600167379
+    }
+  ],
+  "all_losses_finite": true,
+  "batam_accuracy_validated": false,
+  "production_activated": false
+}

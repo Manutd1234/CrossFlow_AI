@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-10-23T13:08:02.460669+00:00",
+  "constraint": "free_or_academic_only",
+  "sources": [
+    {
+      "source": "UIB Ahmad Yani speed/volume/density thesis (Thie, 2018)",
+      "url": "https://repository.uib.ac.id/887/",
+      "status": "public_abstract_only",
+      "finding": "Three surveyed days and spot speeds described, but results chapter restricted to repository staff; public conclusion could not be fetched. No restricted content accessed.",
+      "new_eligible_speed_rows": 0
+    },
+    {
+      "source": "Gajah Mada diversion study",
+      "url": "https://ijoms.internationaljournallabs.com/index.php/ijoms/article/view/326",
+      "pdf_url": "https://ijoms.internationaljournallabs.com/index.php/ijoms/article/download/326/584",
+      "sha256": "9cef2e86fec344ed65577905666b30c251a943badb4bee1849688ceeba8e2bdf",
+      "finding": "Before/after aggregates without established calendar dates; before-speed result 29.16 in body conflicts with 26.16 in conclusion. No raw dated series.",
+      "new_eligible_speed_rows": 0
+    },
+    {
+      "source": "Gajah Mada U-turn closure study",
+      "url": "https://jurnal.narotama.ac.id/index.php/ijebd/article/view/2553",
+      "pdf_url": "https://jurnal.narotama.ac.id/index.php/ijebd/article/download/2553/1651/",
+      "sha256": "8ea7c3b26deeb76e02db172c4b003944ea49164734d95bb354cc318418f5d281",
+      "finding": "Table 6 gives Monday/Friday directional minimum/maximum and average speeds, observation results labelled 2022; exact calendar dates unestablished. Arithmetic mean of min/max is not a reconstructed speed time series.",
+      "new_eligible_speed_rows": 0
+    },
+    {
+      "source": "Tengku Sulung Botania performance study",
+      "url": "https://ijoms.internationaljournallabs.com/index.php/ijoms/article/view/377",
+      "pdf_url": "https://ijoms.internationaljournallabs.com/index.php/ijoms/article/download/377/609",
+      "sha256": "48258c9f64825265edae749331067f85698b74ba912c6305799c77e58b0e8d46",
+      "finding": "Volume survey dated 9 Nov 2022, 06:15-07:15. Table 6 reports 20 km/h for peak 06:45-07:00 but direct vehicle-speed samples/method and date linkage are not independently established. 32.12 km/h is a calculated free-flow reference. One aggregate cannot support chronological training.",
+      "new_eligible_speed_rows": 0
+    },
+    {
+      "source": "Universitas Batam Gajah Mada narrowing study (existing lead rechecked)",
+      "url": "https://ejurnal.univbatam.ac.id/index.php/Sipil/article/view/1568",
+      "pdf_url": "https://ejurnal.univbatam.ac.id/index.php/Sipil/article/download/1568/1266",
+      "finding": "Primary PDF indexed text confirms tables 3/4 contain 56 weekday/hour/road-state speed means; no exact calendar dates established. Direct PDF download returned 403 and web screenshot cache miss; no new visually verified transcription claimed.",
+      "new_eligible_speed_rows": 0
+    },
+    {
+      "source": "Ahmad Yani U-turn paper",
+      "url": "https://journal.uib.ac.id/index.php/leader/article/download/8101/3324",
+      "status": "http_403",
+      "new_eligible_speed_rows": 0
+    },
+    {
+      "source": "Sudirman road-widening paper",
+      "url": "https://jurnal.polsri.ac.id/index.php/pilar/article/download/7486/2842",
+      "status": "verified_tls_failed_local_issuer",
+      "finding": "No TLS validation bypass; source not acquired.",
+      "new_eligible_speed_rows": 0
+    },
+    {
+      "source": "Erasains search candidate",
+      "url": "https://jurnal.eraliterasi.com/index.php/erasains/article/download/62/66/607",
+      "status": "http_404",
+      "new_eligible_speed_rows": 0
+    }
+  ],
+  "new_eligible_speed_rows": 0,
+  "existing_dated_batam_survey_rows": 48,
+  "real_batam_site_benchmark": "batam-site-backtest.json",
+  "serving_model_replaced": false
+}

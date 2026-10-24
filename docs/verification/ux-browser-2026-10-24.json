@@ -1,0 +1,125 @@
+{
+  "checkedAt": "2026-10-23T16:44:46.569Z",
+  "reference": "https://cross-flow-ai.vercel.app/",
+  "checks": [
+    {
+      "name": "floating-menu-scroll",
+      "before": {
+        "anchorTop": 398,
+        "main": 0,
+        "popover": 0,
+        "sidebar": 0
+      },
+      "after": {
+        "anchorTop": 398,
+        "main": 0,
+        "parent": "BODY",
+        "popover": 158,
+        "rect": {
+          "bottom": 846,
+          "left": 62.4375,
+          "right": 672.5625,
+          "top": 450
+        },
+        "sidebar": 0,
+        "underPointer": true,
+        "viewport": {
+          "height": 858,
+          "width": 775
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "waypoint-menu-viewport-fit",
+      "anchor": {
+        "bottom": 606,
+        "top": 560
+      },
+      "menu": {
+        "bottom": 554,
+        "top": 154
+      },
+      "optionCount": 10,
+      "viewportHeight": 858,
+      "passed": true
+    },
+    {
+      "name": "typed-search-reopens-menu",
+      "passed": true,
+      "query": "Harbour",
+      "selected": "Harbour Bay Ferry Terminal"
+    },
+    {
+      "name": "operator-to-driver-route",
+      "code": "FQN37PQ",
+      "passed": true
+    },
+    {
+      "name": "freshness-spacing",
+      "copyGap": "8px 24px",
+      "detailsOpen": false,
+      "metricColumns": "356.062px 356.062px",
+      "pageWidth": 775,
+      "sectionGap": "12px",
+      "width": 775,
+      "passed": true
+    },
+    {
+      "name": "freshness-disclosure",
+      "paragraphGap": "12px",
+      "passed": true
+    },
+    {
+      "name": "ferry-provenance",
+      "detailTimes": [
+        "2026-10-23T23:31:54+07:00",
+        "2026-10-23T16:49:53.984Z"
+      ],
+      "expanded": true,
+      "headerBadges": 0,
+      "verifiedAt": "2026-10-23T23:31:54+07:00",
+      "passed": true
+    },
+    {
+      "name": "forecasts-and-model-tools",
+      "forecastGenerated": true,
+      "modelExpanded": true,
+      "modelHeading": "Random Forest Congestion Forecasting Engine",
+      "selectedTab": "Forecasts",
+      "simulationText": "24-hour congestion simulationComputed by the running Random Forest for the current server time and selected assumptions. This is a modelled forecast, not measured future traffic or a claimed improvement.Weather ClearRainStormCorridor All corridorsMukakuning Industrial -> Batam Centre TerminalBatu Ampar Freight Port -> Batam Centre FerryHa",
+      "passed": true
+    },
+    {
+      "name": "rain-forecast-recomputed",
+      "passed": true
+    },
+    {
+      "name": "history-retained",
+      "passed": true
+    }
+  ],
+  "newRouteCode": "FQN37PQ",
+  "operatorRouteSummary": "Scheduled departureForecast for the scheduled departure.Departure 2026-10-24 \u00b7 23:44 WIB 11.71 km37.8 min road timeDriver route IDUse this seven-character ID to retrieve the journeyFQN37PQSaved on this server only. The local file persists; other servers cannot retrieve this code. Road travel37.8 min Road distance11.71 km Total trip ETA64.3 min Estimated CO\u208212.63 kg Choose a road routeEvery option follows mapped roads. Select one to update the map, metrics, and directions.Showing RecommendedRecommended37.8 min11.71 km12.63 kg CO\u2082Alternative 142.1 min14.54 km15.61 kg CO\u208214% sharedAlternative 240.1 min11.46 km12.39 kg CO\u208233% shared",
+  "driverRouteSummary": "Scheduled departureForecast for the scheduled departure.Departure 2026-10-24 \u00b7 23:44 WIB 11.71 km37.8 min road timeDriver route IDUse this seven-character ID to retrieve the journeyFQN37PQSaved on this server only. The local file persists; other servers cannot retrieve this code. Road travel37.8 min Road distance11.71 km Total trip ETA64.3 min Estimated CO\u208212.63 kg Choose a road routeEvery option follows mapped roads. Select one to update the map, metrics, and directions.Showing RecommendedRecommended37.8 min11.71 km12.63 kg CO\u2082Alternative 142.1 min14.54 km15.61 kg CO\u208214% sharedAlternative 240.1 min11.46 km12.39 kg CO\u208233% shared",
+  "consoleErrors": {
+    "operator": [],
+    "driver": []
+  },
+  "finalCheckedAt": "2026-10-23T16:52:44.465Z",
+  "automated_verification": {
+    "command": "npm run check",
+    "tests_passed": 425,
+    "test_files_passed": 41,
+    "lint": "passed",
+    "typescript": "passed",
+    "production_build": "passed",
+    "log": "/tmp/crossflow-ux-final-check.log"
+  },
+  "screenshots": [
+    "ux-analytics-overview-2026-10-24.jpg",
+    "ux-location-menu-2026-10-24.jpg",
+    "ux-ferry-header-2026-10-24.jpg",
+    "ux-driver-route-2026-10-24.jpg"
+  ]
+}

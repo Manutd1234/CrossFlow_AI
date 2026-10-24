@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-23T19:52:47.831678+00:00",
+  "implementation": "Backend-only Matanya HLS -> YOLO26s1280 -> temporal ROI index -> exact-edge search cost -> existing route map",
+  "frontend": {
+    "camera_panels_mounted": false,
+    "camera_badges_or_copy": false,
+    "upload_controls": false,
+    "existing_departure_arrival_controls": true,
+    "browser_receipt": "backend-cctv-existing-ui.json",
+    "calculation_breakdowns_displayed": false,
+    "algorithm_weight_panels_displayed": false
+  },
+  "sources": {
+    "listed": 28,
+    "advancing_public_playlist_candidates": 7,
+    "enabled_local_pilots": 1,
+    "independently_validated_cameras": 0,
+    "emails_sent": 0
+  },
+  "actual_snapshot": {
+    "summary": {
+      "listed": 28,
+      "configured": 1,
+      "live": 0,
+      "estimated": 1,
+      "stale": 0,
+      "unavailable": 0,
+      "permission_pending": 27,
+      "calibration_pending": 0
+    },
+    "pilot": {
+      "camera_id": "15",
+      "status": "estimated",
+      "road_name": "Simpang BI \u2014 Jalan Engku Putri Timur approach",
+      "observed_at": "2026-10-23T19:52:38.330680Z",
+      "window_seconds": 53.826778,
+      "vehicle_count": 0,
+      "occupancy_ratio": 0.0,
+      "congestion_score": 0.0,
+      "validation_status": "estimated",
+      "timestamp_basis": "stream_observation",
+      "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+      "operational_eligible": false,
+      "routing_enabled": true,
+      "maximum_age_seconds": 30.0
+    }
+  },
+  "initial_actual_stream_run": {
+    "segments": 12,
+    "frames": 55,
+    "accepted_numeric_observations": 55,
+    "camera_media_retained": false,
+    "model": "YOLO26n initial integration; final model is YOLO26s1280"
+  },
+  "runtime": {
+    "local_api": "http://127.0.0.1:8000",
+    "api_left_running": true,
+    "frontend_existing_port": 3000,
+    "selected_python": ".venv-yolo26",
+    "supervised_camera_ids": [
+      "15"
+    ],
+    "rotation_seconds": 3600,
+    "temporary_network_retries_preserve_loaded_detector": true,
+    "sanitized_diagnostics_backend_only": true
+  },
+  "validation": [
+    {
+      "scope": "API, engine/store, provisional timing/routing and existing traffic regressions",
+      "runtime": ".venv pytest",
+      "passed": 126,
+      "subtests_passed": 106
+    },
+    {
+      "scope": "Temporal engine/store/worker/capture/live estimates and YOLO26 adapter/training protocol; overlaps previous suites",
+      "runtime": ".venv-yolo26 unittest",
+      "passed": 112
+    },
+    {
+      "scope": "Frontend existing overview, route request flow and alternatives",
+      "passed": 92,
+      "typescript": true,
+      "focused_lint": true,
+      "production_build": true
+    },
+    {
+      "scope": "Actual browser route uses fresh camera evidence, normal UI shows no CCTV controls",
+      "receipt": "backend-cctv-existing-ui.json"
+    },
+    {
+      "scope": "Final route/map no-calculation UI and preserved result regression checks",
+      "passed": 39,
+      "focused_lint": true
+    },
+    {
+      "scope": "Forecast results and overview without model-internals explanations",
+      "passed": 24,
+      "focused_lint": true
+    },
+    {
+      "scope": "Final shared TypeScript and production build after calculation-panel removal",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "Only one local inferred road/view binding is enabled; not citywide coverage.",
+    "Index and receiver-side timing remain provisional, not independently validated speed/delay or probability.",
+    "Camera reuse terms are unstated; no agency-issued recording/redistribution license is claimed.",
+    "Serving model selected using three validation photos; reused four-photo diagnostic does not establish live-camera accuracy.",
+    "Browser authentication used an isolated loopback operator identity; production sign-in not verified."
+  ],
+  "cleanup": "QA tabs, frontend fixture files and port3007 server removed; QA API8007 stopped; actual local API8000 and supervised collector intentionally left running."
+}

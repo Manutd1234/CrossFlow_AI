@@ -1,0 +1,69 @@
+{
+  "schema": "crossflow.batam_preview_readonly_review.v1",
+  "created_at_utc": "2026-10-23T18:49:03.533013+00:00",
+  "reviewer": "assistant /root/batam_annotation_review",
+  "source_code_changed_by_reviewer": false,
+  "model_artifacts_results_predictions_read": false,
+  "test_labels_read_for_this_review": false,
+  "status": "passed_no_material_findings_remaining_in_reviewed_scope",
+  "files": [
+    {
+      "path": "backend/services/batam_vehicle_counter.py",
+      "sha256": "6b674a8465619fb381325fae4a6c3288bd72c55a830add79c55f0849f1203702"
+    },
+    {
+      "path": "backend/services/vehicle_count_preview.py",
+      "sha256": "7f1cc17ca36910a8e27a3188a8ef3ac39ce56a696aa1c3b976d34030422fc799"
+    },
+    {
+      "path": "scripts/vehicle_counter_worker.py",
+      "sha256": "74bb8cde8f5c1432c0e2fba54259c7ec5df864958d719d99b0779c4a047d0060"
+    },
+    {
+      "path": "backend/tests/test_batam_vehicle_counter.py",
+      "sha256": "e2703fa42c7d9106610aa972806fa3d245b211e8064c277dba3ed18f9af40636"
+    },
+    {
+      "path": "backend/services/vehicle_counter.py",
+      "sha256": "ff5a3934d085d96d3526d190aeb343873f3667d1abdd939bb022abccd777f4f7"
+    }
+  ],
+  "original_frozen_base_service_unchanged_from_initial_review": true,
+  "preview_release_pointer_exists": false,
+  "resolved_findings": [
+    {
+      "id": "metadata_runtime_policy",
+      "status": "resolved",
+      "evidence": "Pilot metadata now requires finite non-boolean [0,1] threshold/NMS values, strict integer class count, lowercase 64-hex checkpoint hash and canonical COCO/generic-vehicle class-ID mapping before base model work. Adversarial subcases include NaN, infinity, boolean threshold, float class count, bad hash, and pedestrian mapping."
+    },
+    {
+      "id": "pilot_adapter_downgrade",
+      "status": "resolved",
+      "evidence": "Worker reads a bounded alias and selects the pilot adapter from reserved pilot directory name, canonical marker, native pilot schema or pilot min-size field. Missing marker in a custom-named pilot fixture stays Batam adapter and fails unavailable instead of generic fallback."
+    },
+    {
+      "id": "truncated_count_contract",
+      "status": "resolved",
+      "evidence": "Bridge validates and allowlists may_be_truncated/max_detections=100; existing response note now warns that reaching the 100-box limit may leave an incomplete count, even when post-cap size filtering leaves fewer boxes. Covered by count=1/truncated=true regression test."
+    }
+  ],
+  "positive_checks": [
+    "Reviewed bridge/worker/adapter perform no image persistence or traffic-provider requests.",
+    "Model and runtime paths originate in trusted server-local configuration; request bytes cannot choose executable/model path.",
+    "Bounded subprocess still has no shell; image/response/pixel bounds and sanitized responses remain.",
+    "Count policy remains original-image visible-box min-long12/min-short4 after generic NMS; supports no speed, queues or unique flow.",
+    "Human certification, production eligibility and Batam validation remain false.",
+    "No default promotion receipt was written by reviewer; default-old-model behavior is covered by release tests."
+  ],
+  "validation": {
+    "command": "../.venv/bin/python -m unittest discover -s tests -p test_batam_vehicle_counter.py -v",
+    "working_directory": "/Users/ian/Desktop/CS/Personal Stuff/Hackathons/Batam Singapore Hackathon 2026/CrossFlow_AI/backend",
+    "tests_passed": 14,
+    "tests_failed": 0,
+    "runtime": "Repository Python3.12 venv; mocked model work, no detector checkpoint deserialization."
+  },
+  "limitations": [
+    "This is a code/contract review under trusted local server configuration; it does not establish model accuracy, source label correctness or operational production readiness.",
+    "Checkpoint/hash verification remains lazy at count time in inherited base service; status metadata availability is not a full inference health check."
+  ]
+}

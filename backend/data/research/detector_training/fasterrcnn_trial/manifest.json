@@ -1,0 +1,66 @@
+{
+  "files": [
+    {
+      "path": "diagnostic_detections.json",
+      "bytes": 105089,
+      "sha256": "348bedc23828f0a65dec480233518540dfade2a4fd9b5545f187478d4f56b16c"
+    },
+    {
+      "path": "diagnostic_predictions.csv",
+      "bytes": 1272,
+      "sha256": "3cf664eba658f99c597d5834a639ed1c2f1755e98cdffede543b1d909af57aa4"
+    },
+    {
+      "path": "fasterrcnn_predictor_finetuned_epoch_2.pt",
+      "bytes": 173431805,
+      "sha256": "d65a8fe8c21618adaf2582c89234943ecf6b94317e92ad2ba633cbf3c70de802"
+    },
+    {
+      "path": "fasterrcnn_predictor_finetuned_epoch_5.pt",
+      "bytes": 173431805,
+      "sha256": "46b913f9e9f595217f48c56d17f6b206a8a3770b494235abe6b725ee7f79d5ec"
+    },
+    {
+      "path": "model.pt",
+      "bytes": 175221657,
+      "sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+    },
+    {
+      "path": "pretrained_coco.pt",
+      "bytes": 175221657,
+      "sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+    },
+    {
+      "path": "qa.json",
+      "bytes": 623,
+      "sha256": "c765abd222b38ea2fd3c2573385458a32df80319ad158bfd23fe32daed16eedd"
+    },
+    {
+      "path": "report.json",
+      "bytes": 7778,
+      "sha256": "647107e60ea7b21c25a5726b5865d91b6ff2059d26f8db52d11e10b12d0c0727"
+    },
+    {
+      "path": "selection_frozen_before_reused_diagnostic.json",
+      "bytes": 1549,
+      "sha256": "ab1e2c7b3b408eb48c042b0028bc12757d5459abd03e1956b7e8a505cf644195"
+    },
+    {
+      "path": "training_losses.json",
+      "bytes": 371,
+      "sha256": "da98f6cd86751bf352f7c4d9968289e82d783d6ae019861cbacd3d1e20304e0f"
+    },
+    {
+      "path": "training_plan.json",
+      "bytes": 1774,
+      "sha256": "7d9de87c5ab3f4dbdc403da6c1e189409f5c819ad542189cd964873c2348e14f"
+    },
+    {
+      "path": "validation_grid.json",
+      "bytes": 20497,
+      "sha256": "233fe57e6f6a4967dc86e6e67363ab33cdbf3a5fe2f89a5693b8f106c9c82be3"
+    }
+  ],
+  "script_sha256": "34e11706df4baa30de481e70c27bd44043df555b311d829231a6ba0a431929d3",
+  "service_sha256": "1d7527422c242d789c93d86b57458787450c9b9228f738a3ba100133fc8e5416"
+}

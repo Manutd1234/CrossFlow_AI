@@ -27,12 +27,6 @@ vi.mock('./RoutePreviewMap', () => ({
           <span data-testid="map-selected-source">{selected?.route_data_source}</span>
           <span>{selected?.distance_km} km</span>
           <span>{selected?.estimated_travel_time_mins} min</span>
-          {selected?.routing_cost_breakdown ? (
-            <details>
-              <summary>How this route was weighted</summary>
-              <span>{selected.routing_cost_breakdown.congestion_delay_mins} min</span>
-            </details>
-          ) : null}
         </aside>
         <button type="button" onClick={() => onSelectRoute?.('primary')}>
           Select recommended route on map
@@ -182,9 +176,106 @@ afterEach(() => {
   document.body.replaceChildren();
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
+  vi.restoreAllMocks();
 });
 
 describe('selectable road alternatives', () => {
+  it('keeps backend camera observations out of the existing route interface', () => {
+    const cameraResult: RouteOptimizationResult = { ...result, alternative_routes: [], routing_model: {
+      version: 6, cost_unit: 'seconds', objective: 'Balanced', network_congestion_score: 20,
+      weather: 0, spatial_zone_count: 0, distance_is_raw_edge_sum: true,
+      traffic_provenance: 'CCTV image estimate with modelled ETA', limitations: 'Unvalidated camera thresholds',
+      cctv: { source: 'cctv_camera', snapshot_at: '2026-10-24T01:00:00Z',
+        scope: 'exact directed edge', effect: 'bounded_search_cost_only', measured_speed_or_eta: false,
+        maximum_penalty: '2 times free-flow', limitations: 'Image estimate', applied_to_objective: true,
+        observations: [{camera_id:'camera-15',road_segment_id:'osm-edge:1:2:3',congestion_index:45,
+          observed_at:'2026-10-24T01:00:00Z',age_seconds:1,validation_status:'estimated',
+          timestamp_basis:'stream_observation',on_selected_path:true}],
+      },
+    } };
+    const container = renderIntoDom(<RouteOptimizer locations={ROUTE_LOCATIONS}
+      originId="mukakuning" destinationId="batam_centre" setOriginId={vi.fn()} setDestinationId={vi.fn()}
+      result={cameraResult} setResult={vi.fn()} resultSource="simulated" setResultSource={vi.fn()}
+      vehicleType="COMMUTER" setVehicleType={vi.fn()} weather={0} setWeather={vi.fn()} hour={14} setHour={vi.fn()}/>);
+    expect(container.textContent).not.toMatch(/CCTV|camera|surveillance/i);
+    expect(container.textContent).toContain('Simulated traffic');
+  });
+  it.each([true, false])('labels real-only traffic and discloses unsupported horizons (beyond: %s)', beyond => {
+    const container = renderIntoDom(<RouteOptimizer
+      locations={ROUTE_LOCATIONS} originId="mukakuning" destinationId="batam_centre"
+      setOriginId={vi.fn()} setDestinationId={vi.fn()}
+      result={{ ...result, congestion_prediction: { ...result.congestion_prediction,
+        model_id: 'crossflow_observed_short_horizon_v1', training_data_source: 'observed_traffic_archive',
+        spatial_source: beyond ? 'latest_observed_reference_only_forecast_beyond_60min_unavailable' : 'observed_persistence_provisional_interval_evidence_pending' } }}
+      setResult={vi.fn()} resultSource="simulated" setResultSource={vi.fn()}
+      vehicleType="COMMUTER" setVehicleType={vi.fn()} weather={0} setWeather={vi.fn()} hour={19} setHour={vi.fn()}
+    />);
+    expect(container.textContent).toContain('Observed reference · provisional');
+    expect(container.textContent).not.toContain('Simulated traffic');
+    expect(container.textContent?.includes('A forecast for that departure is unavailable.')).toBe(beyond);
+  });
+  it.each([true, false])('checks whether the assigned departure has passed (past: %s)', past => {
+    vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-10-23T12:00:00Z'));
+    const container = renderIntoDom(<RouteOptimizer
+      locations={ROUTE_LOCATIONS} originId="mukakuning" destinationId="batam_centre"
+      setOriginId={vi.fn()} setDestinationId={vi.fn()}
+      result={{ ...result, planned_departure: past ? '2026-10-23T18:00:00+07:00' : '2026-10-23T20:00:00+07:00' }}
+      setResult={vi.fn()} resultSource="simulated" setResultSource={vi.fn()}
+      vehicleType="COMMUTER" setVehicleType={vi.fn()} weather={0} setWeather={vi.fn()} hour={19} setHour={vi.fn()} driverAccess
+    />);
+    expect(container.textContent?.includes('Ask dispatch for an updated departure plan')).toBe(past);
+    expect(container.querySelector('.route-departure-recommendation-title')?.textContent).toBe(past ? 'The saved departure has passed.' : 'Route estimate for the scheduled departure.');
+    expect(container.textContent).toContain('2026-10-23');
+  });
+  it('labels a future operator plan with its date and never instructs an immediate departure', () => {
+    vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-10-23T12:00:00Z'));
+    const container = renderIntoDom(<RouteOptimizer
+      locations={ROUTE_LOCATIONS} originId="mukakuning" destinationId="batam_centre"
+      setOriginId={vi.fn()} setDestinationId={vi.fn()}
+      result={{ ...result, planned_departure: '2026-10-24T18:00:00+07:00' }}
+      setResult={vi.fn()} resultSource="simulated" setResultSource={vi.fn()}
+      vehicleType="COMMUTER" setVehicleType={vi.fn()} weather={0} setWeather={vi.fn()} hour={19} setHour={vi.fn()}
+    />);
+    const advice = container.querySelector('.route-departure-recommendation');
+    expect(advice?.textContent).toContain('Scheduled departure');
+    expect(advice?.textContent).toContain('2026-10-24 · 18:00 WIB');
+    expect(advice?.textContent).not.toContain('Depart now');
+  });
+  it.each(['unpersisted API response', 'offline preview'])('withholds dispatch handoff for an %s', (kind) => {
+    const container = renderIntoDom(<RouteOptimizer
+      locations={ROUTE_LOCATIONS} originId="mukakuning" destinationId="batam_centre"
+      setOriginId={vi.fn()} setDestinationId={vi.fn()}
+      result={{ ...result, route_code: kind === 'unpersisted API response' ? '4KF9X2P' : undefined,
+        dispatch_available: kind === 'unpersisted API response' ? false : undefined }}
+      setResult={vi.fn()} resultSource="offline" setResultSource={vi.fn()}
+      vehicleType="COMMUTER" setVehicleType={vi.fn()} weather={0} setWeather={vi.fn()} hour={14} setHour={vi.fn()}
+    />);
+    expect(container.textContent).toContain('Route preview — unavailable for dispatch');
+    expect(container.querySelector('.route-code-card')).toBeNull();
+  });
+
+  it.each([true, false])('keeps confirmed route IDs available without storage detail copy (durable: %s)', (durable) => {
+    const container = renderIntoDom(<RouteOptimizer
+      locations={ROUTE_LOCATIONS} originId="mukakuning" destinationId="batam_centre"
+      setOriginId={vi.fn()} setDestinationId={vi.fn()}
+      result={{ ...result, route_code: '4KF9X2P', dispatch_available: true,
+        route_storage: { source: 'local_sqlite', shared: false, durable,
+          durability: durable ? 'persistent_file' : 'process_memory', scope: 'single_host' } }}
+      setResult={vi.fn()} resultSource="simulated" setResultSource={vi.fn()}
+      vehicleType="COMMUTER" setVehicleType={vi.fn()} weather={0} setWeather={vi.fn()} hour={14} setHour={vi.fn()}
+      driverAccess
+    />);
+    expect(container.querySelector('.route-code-card')?.textContent).toContain('4KF9X2P');
+    expect(container.textContent).not.toContain('Saved on this server only');
+    expect(container.textContent).not.toContain('Temporary storage');
+    expect(container.textContent).not.toContain('This code opens Recommended');
+    const directions = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+      .find(tab => tab.textContent === 'Directions')!;
+    act(() => directions.click());
+    expect(container.querySelector('[role="tabpanel"] ol')?.textContent).toContain('Primary Road');
+    expect(container.querySelector('[role="tabpanel"] [aria-hidden="true"]')).not.toBeNull();
+  });
+
   it('updates the map, metrics, source, overview, and directions from a route card', () => {
     const container = renderIntoDom(
       <RouteOptimizer
@@ -265,14 +356,11 @@ describe('selectable road alternatives', () => {
     expect(container.querySelector('[data-testid="map-selected-source"]')?.textContent)
       .toBe('bundled_client_openstreetmap');
     expect(container.querySelector('.route-overview-card')?.textContent)
-      .toContain('Use the eastern corridor and rejoin near the terminal.');
-    const weightingDetails = container.querySelector<HTMLDetailsElement>('details');
-    expect(weightingDetails?.closest('.map-radar-card')).not.toBeNull();
-    expect(weightingDetails?.open).toBe(false);
-    expect(weightingDetails?.querySelector('summary')?.textContent)
-      .toContain('How this route was weighted');
-    expect(weightingDetails?.textContent).toContain('2.1 min');
-    expect(weightingDetails?.textContent).not.toContain('not added to ETA');
+      .toContain('mainly via Eastern Road.');
+    expect(container.querySelector('.route-overview-card')?.textContent)
+      .not.toContain('Use the eastern corridor and rejoin near the terminal.');
+    expect(container.querySelector('.map-radar-card details')).toBeNull();
+    expect(container.textContent).not.toMatch(/How this route was weighted|cost min|Road-suitability preference/i);
 
     act(() => directionsTab.click());
     expect(directionsTab.getAttribute('aria-selected')).toBe('true');
@@ -283,6 +371,8 @@ describe('selectable road alternatives', () => {
     const comparison = container.querySelector('[role="region"][aria-label="Vehicle profile comparison"]');
     expect(comparison?.querySelectorAll('tbody tr')).toHaveLength(8);
     expect(comparison?.querySelectorAll('tbody tr[aria-current="true"]')).toHaveLength(1);
+    expect(comparison?.querySelector('tbody tr[aria-current="true"]')?.textContent).toContain('2.40 kg');
+    expect(comparison?.querySelector('thead')?.textContent).toContain('Road + buffer');
 
     act(() => journeyTab.click());
     const mapSelectButton = container.querySelector<HTMLButtonElement>(
@@ -297,7 +387,7 @@ describe('selectable road alternatives', () => {
     expect(container.querySelector('.route-direction-icon .lucide-move-up')).not.toBeNull();
   });
 
-  it('labels exact-time planning when it uses the committed timetable simulation', () => {
+  it.each([true, false])('labels timetable simulation only on a ferry journey (has ferry: %s)', hasFerry => {
     const container = renderIntoDom(
       <RouteOptimizer
         locations={ROUTE_LOCATIONS}
@@ -307,6 +397,9 @@ describe('selectable road alternatives', () => {
         setDestinationId={vi.fn()}
         result={{
           ...result,
+          route_legs: hasFerry ? [{ mode: 'FERRY', from_name: 'Batam Centre', to_name: 'HarbourFront SG',
+            geometry: [[1.1318, 104.0554], [1.2644, 103.8206]], distance_km: 30, duration_mins: 55,
+            data_source: 'official_timetable_snapshot', is_estimate: true, limitations: 'Unit timetable fixture' }] : [],
           schedule_provenance: {
             source: 'committed_timetable_simulation',
             freshness_durability: 'supabase_table_unavailable',
@@ -326,8 +419,8 @@ describe('selectable road alternatives', () => {
       />,
     );
 
-    expect(container.textContent).toContain('committed timetable simulation');
-    expect(container.textContent).toContain('Verify the departure and book with the operator');
+    expect(container.textContent?.includes('committed timetable simulation')).toBe(hasFerry);
+    expect(container.textContent?.includes('Verify the departure and book with the operator')).toBe(hasFerry);
   });
 
   it('renders ferry connections as sourced schedule slots without live claims', () => {
@@ -353,22 +446,31 @@ describe('selectable road alternatives', () => {
       />,
     );
 
-    expect(container.textContent).toContain('Published ferry connections after arrival');
-    expect(container.textContent).toContain('SCHEDULED');
-    expect(container.textContent).toContain('not live operating status');
-    expect(container.textContent).toContain('verify with the operator before travel');
-    const ferryDetails = container.querySelector('.route-ferry-itinerary');
-    expect(Array.from(ferryDetails?.children ?? []).map(child => child.textContent)).toEqual([
-      `${publishedSailing.departure_port} → ${publishedSailing.arrival_port}`,
-      `Estimated arrival: ${formatTime(publishedSailing.arrival_time!)}`,
-    ]);
-    const scheduleDisclaimer = Array.from(container.querySelectorAll<HTMLParagraphElement>('p'))
-      .find(paragraph => paragraph.textContent?.includes('not live operating status'));
-    expect(scheduleDisclaimer?.classList.contains('route-section-note')).toBe(true);
-    expect(container.textContent).toContain('Last verified 13 Aug 2026, 00:30 WIB');
+    const connectionsTab = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+      .find(tab => tab.textContent === 'Comparison')!;
+    act(() => connectionsTab.click());
+    const connections = container.querySelector<HTMLElement>('section[aria-labelledby="connected-ferries-heading"]');
+    expect(connections).not.toBeNull();
+    expect(connections?.closest('[hidden]')).toBeNull();
+    expect(connections?.textContent).toContain('Ferry connections');
+    expect(connections?.textContent).toContain('Timetable');
+    expect(connections?.textContent).toContain('Published departures after your arrival.');
+    const times = connections?.querySelectorAll('time');
+    expect(times).toHaveLength(2);
+    expect(times?.[0].getAttribute('datetime')).toBe(publishedSailing.departure_time);
+    expect(times?.[0].textContent).toContain(formatTime(publishedSailing.departure_time));
+    expect(times?.[0].textContent).toContain('WIB');
+    expect(times?.[1].getAttribute('datetime')).toBe(publishedSailing.arrival_time);
+    expect(times?.[1].textContent).toContain(formatTime(publishedSailing.arrival_time!));
+    expect(times?.[1].textContent).toContain('SGT');
+    expect(connections?.textContent).toContain('Arrives · estimated');
+    expect(Array.from(connections?.querySelectorAll('.route-ferry-port') ?? []).map(port => port.textContent))
+      .toEqual([publishedSailing.departure_port, publishedSailing.arrival_port]);
+    expect(connections?.querySelector('[role="note"]')?.textContent)
+      .toBe('Times may change. Confirm with your operator before travel.');
+    expect(connections?.textContent).toContain('Checked 13 Aug 2026, 00:30 WIB');
     expect(container.textContent).not.toContain('seats open');
-    const sourceLink = Array.from(container.querySelectorAll<HTMLAnchorElement>('a'))
-      .find(link => link.textContent?.includes('Official operator timetable'));
+    const sourceLink = connections?.querySelector<HTMLAnchorElement>('a[aria-label$="operator timetable"]');
     expect(sourceLink?.href).toBe(publishedSailing.schedule_source_url);
     expect(sourceLink?.target).toBe('_blank');
   });
@@ -447,6 +549,14 @@ describe('selectable road alternatives', () => {
     expect(container.textContent).not.toContain(transferNote);
     expect(container.textContent).not.toContain('Cross-border traffic not modelled');
     expect(container.textContent).not.toContain('Indicative vehicle comparison');
+    const connectionsTab = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+      .find(tab => tab.textContent === 'Connections')!;
+    expect(connectionsTab).toBeDefined();
+    act(() => connectionsTab.click());
+    const connections = container.querySelector<HTMLElement>('section[aria-labelledby="connected-ferries-heading"]');
+    expect(connections?.closest('[hidden]')).toBeNull();
+    expect(connections?.textContent).toContain('Your ferry connection');
+    expect(connections?.textContent).toContain('No published sailing is available for this direction.');
   });
 
   it('shows exact mapped local-road sections without the audit disclaimer', () => {
@@ -599,6 +709,11 @@ describe('selectable road alternatives', () => {
     // those inputs change; a stale comparison read as current would be worse
     // than none. The redesigned panel no longer exposes a route-preference
     // control, so this drives the same invalidation through the swap action.
+    // Saved mode keeps its result; Search exposes the editable route inputs.
+    const searchButton = Array.from(container.querySelectorAll<HTMLButtonElement>('button'))
+      .find(button => button.textContent?.trim() === 'Search')!;
+    act(() => searchButton.click());
+    expect(container.querySelector('#route-online-benchmark')).not.toBeNull();
     const swapButton = container.querySelector<HTMLButtonElement>(
       '[aria-label="Swap origin and destination"]',
     ) ?? Array.from(container.querySelectorAll<HTMLButtonElement>('button'))

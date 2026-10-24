@@ -1,0 +1,29 @@
+{
+  "schema": "crossflow.visual_count_transfer.qa.v1",
+  "checked_at_utc": "2026-10-23T17:40:50.107917+00:00",
+  "passed": true,
+  "unit_tests_passed": 6,
+  "test_command": "python3 -m unittest backend.tests.test_visual_count_training -v",
+  "source_image_and_label_file_hashes_verified": 160,
+  "saved_prediction_rows": 32,
+  "saved_validation_rows": 48,
+  "aggregate_metrics_recomputed_from_predictions": 3,
+  "training_group_count": 6,
+  "folds_keep_entire_video_group_out": true,
+  "pixel_feature_shapes": {
+    "train": [
+      48,
+      352
+    ],
+    "test": [
+      32,
+      352
+    ]
+  },
+  "features_finite": true,
+  "artifact_reload_training_prediction_parity": true,
+  "production_eligible": false,
+  "model_beats_both_constant_baselines": false,
+  "holdout_tuning_performed": false,
+  "new_photos_or_augmentations_created": 0
+}

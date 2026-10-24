@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-10-23T18:15:10.453115+00:00",
+  "stable_app_candidate": "model.pt",
+  "selected_trial": "fasterrcnn_trial",
+  "selected_model": "fasterrcnn_pretrained_COCO",
+  "selected_by": "Visaitech whole-source-video validation only; stronger trial architecture was adaptive after earlier reused diagnostic",
+  "production_activated": false,
+  "batam_validated": false,
+  "prior_root_payload_snapshot": "ssdlite_trial",
+  "trial_manifests": {
+    "ssdlite_trial/manifest.json": "d138b41eabd8079c9ffac141359c4ceb5f1cbd2bc335bf9eb6b426a507175cfd",
+    "fasterrcnn_trial/manifest.json": "3287d07ad5577da2d5f1acca8ea1aeb9a9ba172be2057fdd145e9c1cce0ec814"
+  },
+  "sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+}

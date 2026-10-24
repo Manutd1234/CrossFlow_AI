@@ -1,0 +1,139 @@
+/* Self-hosted Plus Jakarta Sans. Source hashes and SIL OFL license accompany the assets. */
+@font-face {
+  font-family: 'CrossFlow Plus Jakarta Sans';
+  src: url('../assets/fonts/plus-jakarta-sans-variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'CrossFlow Plus Jakarta Sans';
+  src: url('../assets/fonts/plus-jakarta-sans-italic-variable.ttf') format('truetype');
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+:root {
+  --font-body: 'CrossFlow Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: var(--font-body);
+  --font-accent: var(--font-heading);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-body: 0.9375rem;
+  --text-card-title: 1.125rem;
+  --text-section-title: 1.25rem;
+  --text-title: 1.5rem;
+  --text-page-title: clamp(1.75rem, 2.3vw, 2.25rem);
+  --text-metric: 2rem;
+  --text-icon: 1.375rem;
+
+  --weight-heading: 750;
+  --weight-normal: 500;
+  --weight-medium: 600;
+  --weight-semibold: 650;
+  --weight-bold: 700;
+  --weight-heavy: 800;
+  --leading-body: 1.5;
+  --leading-heading: 1.2;
+  --leading-control: 1.25;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-normal);
+  font-optical-sizing: auto;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+/* The UI face covers every control, table, chart label and map overlay. */
+:root :is(button, input, select, textarea, label, legend, output, table, caption),
+:root .recharts-wrapper,
+:root .recharts-default-tooltip,
+:root .leaflet-container,
+:root .leaflet-tooltip,
+:root .leaflet-popup-content,
+:root .leaflet-container .leaflet-control-zoom-in,
+:root .leaflet-container .leaflet-control-zoom-out,
+:root .leaflet-container .leaflet-popup-close-button,
+:root .app-navigation-copy strong,
+:root .workspace-subtabs__label,
+:root .app-topbar-place-mark,
+:root .app-topbar-place strong,
+:root .app-topbar-scope strong {
+  font-family: var(--font-body);
+}
+
+svg text { font-family: var(--font-body); }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-heading);
+}
+
+h1 { font-size: var(--text-title); }
+h2 { font-size: var(--text-section-title); }
+h3 { font-size: var(--text-card-title); }
+h4, h5 { font-size: var(--text-body); }
+h6 { font-size: var(--text-sm); }
+
+/* Real italic accents use the same family and a fuller weight. */
+.font-accent,
+:is(h1, h2, h3, h4, h5, h6) :is(em, i) {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: var(--weight-bold);
+}
+
+details {
+  min-width: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+summary {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-body);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+summary::marker { color: var(--text-muted); font-size: 0.8em; }
+summary:focus-visible { outline: var(--focus-ring); outline-offset: 4px; border-radius: 4px; }
+details[open] > summary { margin-bottom: var(--space-3); }
+details :is(p, li) { overflow-wrap: anywhere; }
+
+table, time, meter, output, .route-metrics-grid, .operations-metric-card, .operations-model-metric,
+.route-code-lookup__field, .route-code-card, .recharts-wrapper {
+  font-variant-numeric: tabular-nums;
+}
+
+code, kbd, samp { font-family: var(--font-body); font-size: 0.95em; font-variant-numeric: tabular-nums; }
+
+.app-brand-name {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-heading);
+  letter-spacing: -0.025em;
+}
+.app-navigation-copy strong { font-size: 1rem; font-weight: var(--weight-semibold); letter-spacing: -0.015em; }
+.app-page-title { letter-spacing: -0.025em; }
+
+/* Keep numeric readouts consistent across the operational views. */
+:root .operations-model-metric__value,
+:root .operations-metric-card__value,
+:root .real-traffic-kpi strong,
+:root .model-forecast-check__stats strong,
+:root .real-model-scope > strong,
+:root .official-evidence-grid article > strong {
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+}

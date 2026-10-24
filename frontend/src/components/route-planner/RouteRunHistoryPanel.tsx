@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { History, RefreshCw, TriangleAlert } from 'lucide-react';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { ApiRequestError, fetchRouteRunHistory } from '../../services/api';
-import type { RouteRunSummary } from '../../types';
+import type { RouteRunHistory, RouteRunSummary } from '../../types';
 import './RouteRunHistoryPanel.css';
 
 interface RouteRunHistoryPanelProps {
@@ -43,27 +43,49 @@ export function RouteRunHistoryPanel({
   const [scope, setScope] = useState<'all_accounts' | 'own_account'>('own_account');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadedToken, setLoadedToken] = useState<string | null>(null);
+  const [storage, setStorage] = useState<RouteRunHistory['history_storage']>();
+  const requestRef = useRef(0);
 
   const load = useCallback(async () => {
+    const requestId = ++requestRef.current;
     setLoading(true);
     setError(null);
     try {
       const history = await fetchRouteRunHistory(accessToken, { limit: HISTORY_LIMIT });
+      if (requestId !== requestRef.current) return;
       setRuns(history.runs);
       setScope(history.scope);
+      setStorage(history.history_storage);
+      setLoadedToken(accessToken);
     } catch (caught) {
+      if (requestId !== requestRef.current) return;
       setRuns([]);
+      setLoadedToken(accessToken);
       // The 503 body explains which server setting is missing, so surface it
       // verbatim rather than replacing it with a generic failure.
       setError(caught instanceof ApiRequestError
         ? caught.message
         : 'Route history could not be loaded.');
     } finally {
-      setLoading(false);
+      if (requestId === requestRef.current) setLoading(false);
     }
   }, [accessToken]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.resolve().then(() => { if (!cancelled) return load(); });
+    return () => {
+      cancelled = true;
+      requestRef.current += 1;
+    };
+  }, [load, activeRouteCode]);
+
+  // Never show another account's rows while its replacement request resolves.
+  const currentRuns = loadedToken === accessToken ? runs : [];
+  const currentScope = loadedToken === accessToken ? scope : 'own_account';
+  const currentError = loadedToken === accessToken ? error : null;
+  const currentLoading = loading || loadedToken !== accessToken;
 
   return (
     <section className="glass-panel route-run-history" aria-label="Route solver history">
@@ -76,7 +98,7 @@ export function RouteRunHistoryPanel({
           type="button"
           className="route-run-history__refresh"
           onClick={() => void load()}
-          disabled={loading}
+          disabled={currentLoading}
           aria-label="Refresh route history"
         >
           <RefreshCw size={ICON_SIZE.medium} aria-hidden="true" />
@@ -84,24 +106,31 @@ export function RouteRunHistoryPanel({
       </header>
 
       <p className="route-run-history__scope">
-        {scope === 'all_accounts'
+        {currentScope === 'all_accounts'
           ? 'Every account’s runs, newest first.'
           : 'Your own runs, newest first.'}
       </p>
 
-      {error ? (
-        <p className="route-run-history__error" role="alert">
-          <TriangleAlert size={ICON_SIZE.medium} aria-hidden="true" /> {error}
+      {loadedToken === accessToken && storage ? (
+        <p className="route-run-history__scope">
+          {storage.shared ? 'Shared Supabase history.' : 'History is stored on this server only.'}
+          {!storage.durable ? ' Temporary storage may be cleared when the server restarts.' : ''}
         </p>
-      ) : loading && runs.length === 0 ? (
+      ) : null}
+
+      {currentError ? (
+        <p className="route-run-history__error" role="alert">
+          <TriangleAlert size={ICON_SIZE.medium} aria-hidden="true" /> {currentError}
+        </p>
+      ) : currentLoading && currentRuns.length === 0 ? (
         <p className="route-run-history__empty" role="status">Loading route history…</p>
-      ) : runs.length === 0 ? (
+      ) : currentRuns.length === 0 ? (
         <p className="route-run-history__empty" role="status">
           No runs recorded yet. Plan a journey and it will appear here.
         </p>
       ) : (
         <ul className="route-run-history__list">
-          {runs.map((run) => (
+          {currentRuns.map((run) => (
             <li key={run.route_id}>
               <button
                 type="button"

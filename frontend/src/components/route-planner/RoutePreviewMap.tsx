@@ -25,6 +25,7 @@ import type {
 } from '../../types';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
+import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from '../../theme/mapTiles';
 import { FERRY_SEA_ROUTE } from '../../data/mockData';
 
 interface RoutePreviewMapProps {
@@ -89,14 +90,9 @@ function trafficTooltip(zone: CongestionZone): HTMLSpanElement {
   const element = document.createElement('span');
   const heading = document.createElement('strong');
   heading.textContent = `${zone.level.replace(/_/g, ' ')} hotspot: `;
-  const pressure = zone.modeled_emissions_pressure;
   element.append(
     heading,
-    document.createTextNode(`${zone.name} (score ${zone.congestion_index})`),
-    document.createElement('br'),
-    document.createTextNode(`Modeled emissions pressure: ${pressure.level} (${pressure.index})`),
-    document.createElement('br'),
-    document.createTextNode('Relative queue proxy · not measured area CO₂'),
+    document.createTextNode(`${zone.name} · Estimated congestion ${zone.congestion_index}%`),
   );
   return element;
 }
@@ -128,9 +124,9 @@ function endpointPin(label: 'A' | 'B', color: string, endpoint: 'origin' | 'dest
   });
   applyStyles(text, {
     color: MAP_PALETTE.route.casing,
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '13px',
-    fontWeight: '800',
+    fontFamily: 'var(--font-body)',
+    fontSize: 'var(--text-sm)',
+    fontWeight: 'var(--weight-semibold)',
     lineHeight: '1',
     transform: 'rotate(45deg)',
   });
@@ -199,8 +195,8 @@ function routeSummaryBadge(durationMins: number, distanceKm?: number): HTMLDivEl
   duration.textContent = `${durationMins} min`;
   applyStyles(duration, {
     color: MAP_PALETTE.route.selected,
-    fontSize: '12px',
-    fontWeight: '700',
+    fontSize: 'var(--text-xs)',
+    fontWeight: 'var(--weight-semibold)',
     lineHeight: '1',
   });
   badge.append(duration);
@@ -210,8 +206,8 @@ function routeSummaryBadge(durationMins: number, distanceKm?: number): HTMLDivEl
     distance.textContent = `${distanceKm} km`;
     applyStyles(distance, {
       color: MAP_PALETTE.route.connector,
-      fontSize: '12px',
-      fontWeight: '700',
+      fontSize: 'var(--text-xs)',
+      fontWeight: 'var(--weight-semibold)',
       lineHeight: '1',
     });
     badge.append(distance);
@@ -225,7 +221,8 @@ function routeSummaryBadge(durationMins: number, distanceKm?: number): HTMLDivEl
     boxSizing: 'border-box',
     boxShadow: '0 4px 14px rgba(15, 23, 42, 0.22)',
     display: 'flex',
-    fontSize: '12px',
+    fontFamily: 'var(--font-body)',
+    fontSize: 'var(--text-xs)',
     gap: '7px',
     height: '32px',
     justifyContent: 'center',
@@ -286,6 +283,7 @@ export function RoutePreviewMap({
       smallWidthQuery?.matches || smallHeightQuery?.matches,
     );
     const map = L.map(containerRef.current, {
+      zoomAnimation: false,
       maxZoom: JOURNEY_MAP_MAX_ZOOM,
       minZoom: JOURNEY_MAP_MIN_ZOOM,
       zoomControl: false,
@@ -301,15 +299,21 @@ export function RoutePreviewMap({
     smallWidthQuery?.addEventListener('change', syncWheelZoom);
     smallHeightQuery?.addEventListener('change', syncWheelZoom);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    L.tileLayer(MAP_TILE_URL, {
+      attribution: MAP_TILE_ATTRIBUTION,
       maxZoom: JOURNEY_MAP_MAX_ZOOM,
     }).addTo(map);
 
     trafficLayersRef.current = L.layerGroup().addTo(map);
     routeLayersRef.current = L.layerGroup().addTo(map);
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => {
+      map.invalidateSize();
+      if (routeBoundsRef.current) map.fitBounds(routeBoundsRef.current.pad(0.14), { maxZoom: 14 });
+    });
+    resizeObserver?.observe(containerRef.current);
 
     return () => {
+      resizeObserver?.disconnect();
       smallWidthQuery?.removeEventListener('change', syncWheelZoom);
       smallHeightQuery?.removeEventListener('change', syncWheelZoom);
       map.remove();
@@ -595,7 +599,6 @@ export function RoutePreviewMap({
   ]);
 
   const routeLabel = `${selectedRoute?.name ?? 'Journey route'} from ${originName ?? 'origin'} to ${destinationName ?? 'destination'}`;
-  const selectedCostBreakdown = selectedRoute?.routing_cost_breakdown;
 
   return (
     <figure
@@ -631,25 +634,6 @@ export function RoutePreviewMap({
             </span>
           </div>
 
-          {selectedCostBreakdown ? (
-            <details className="route-map-radar-weighting">
-              <summary>How this route was weighted</summary>
-              <div>
-                <dl>
-                  <dt>Free-flow road time</dt>
-                  <dd>{selectedCostBreakdown.free_flow_mins} min</dd>
-                  <dt>Congestion delay</dt>
-                  <dd>+{selectedCostBreakdown.congestion_delay_mins} min</dd>
-                  <dt>Weather delay</dt>
-                  <dd>+{selectedCostBreakdown.weather_delay_mins} min</dd>
-                  <dt>Turns, short segments &amp; signals</dt>
-                  <dd>+{selectedCostBreakdown.maneuver_delay_mins} min</dd>
-                  <dt>Road-suitability preference</dt>
-                  <dd>+{selectedCostBreakdown.road_suitability_penalty_mins} cost min</dd>
-                </dl>
-              </div>
-            </details>
-          ) : null}
         </aside>
       ) : null}
 

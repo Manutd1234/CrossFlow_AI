@@ -26,7 +26,7 @@
   gap: 8px;
   margin: 0;
   font-family: var(--font-heading);
-  font-size: 1rem;
+  font-size: var(--text-card-title);
   color: var(--text-primary);
 }
 
@@ -60,7 +60,7 @@
 .route-run-history__empty,
 .route-run-history__error {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
 }
 
@@ -82,6 +82,17 @@
      instead of pushing the planner controls off-screen. */
   max-height: 320px;
   overflow-y: auto;
+}
+
+.route-planner-layout--saved .route-run-history {
+  height: 100%;
+  overflow: hidden;
+}
+
+.route-planner-layout--saved .route-run-history__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
 }
 
 .route-run-history__item {
@@ -108,8 +119,8 @@
 }
 
 .route-run-history__route {
-  font-weight: 600;
-  font-size: 0.86rem;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-body);
   color: var(--text-primary);
 }
 
@@ -118,7 +129,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  font-size: 0.76rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   text-transform: capitalize;
 }

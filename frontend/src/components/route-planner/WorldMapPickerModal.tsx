@@ -5,6 +5,7 @@ import { Check, Crosshair, LoaderCircle, MapPin, Search } from 'lucide-react';
 import { FreeLocation } from '../../types';
 import { geocodeQuery, reverseGeocode } from '../../services/api';
 import { ICON_SIZE } from '../../theme/iconSizes';
+import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from '../../theme/mapTiles';
 import {
   CORRIDOR_MAP_BOUNDS,
   isSupportedLocation,
@@ -45,7 +46,7 @@ function pickerPin(): HTMLDivElement {
     boxShadow: '0 5px 16px rgba(15, 23, 42, 0.36)',
     color: '#ffffff',
     display: 'flex',
-    fontSize: '16px',
+    fontSize: 'var(--text-card-title)',
     height: '36px',
     justifyContent: 'center',
     width: '36px',
@@ -193,6 +194,7 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
     setPickerReady(false);
 
     const map = L.map(containerRef.current, {
+      zoomAnimation: false,
       zoomControl: false,
       scrollWheelZoom: true,
       minZoom: 9,
@@ -201,8 +203,8 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
     }).setView([initialPoint.lat, initialPoint.lng], 12);
     L.control.zoom({ position: 'topright' }).addTo(map);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    L.tileLayer(MAP_TILE_URL, {
+      attribution: MAP_TILE_ATTRIBUTION,
       maxZoom: 19,
     }).addTo(map);
 
@@ -369,10 +371,10 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
               <MapPin size={ICON_SIZE.big} color="var(--accent-cyan)" />
             </span>
             <div style={{ minWidth: 0 }}>
-              <h3 id={titleId} style={{ fontSize: '1.05rem', fontWeight: 750, color: 'var(--text-primary)', margin: 0 }}>
+              <h3 id={titleId} style={{ fontSize: 'var(--text-card-title)', fontWeight: 'var(--weight-heading)', color: 'var(--text-primary)', margin: 0 }}>
                 {title}
               </h3>
-              <p id={descriptionId} style={{ color: 'var(--text-muted)', fontSize: '0.72rem', margin: '2px 0 0' }}>
+              <p id={descriptionId} style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: '2px 0 0' }}>
                 Search, click, or drag the pin anywhere in Singapore or near a routable Batam road.
               </p>
             </div>
@@ -413,7 +415,7 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
                   borderRadius: '8px',
                   border: '1px solid var(--border-color)',
                   color: 'var(--text-primary)',
-                  fontSize: '0.85rem',
+                  fontSize: 'var(--text-body)',
                   outline: 'none',
                 }}
               />
@@ -422,7 +424,7 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
               {isSearching ? 'Searching Singapore and Batam places' : ''}
             </span>
           {error && (
-            <p role="alert" style={{ margin: '8px 0 0', color: 'var(--accent-rose)', fontSize: '0.75rem' }}>
+            <p role="alert" style={{ margin: '8px 0 0', color: 'var(--accent-rose)', fontSize: 'var(--text-sm)' }}>
               {error}
             </p>
           )}
@@ -441,8 +443,8 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
             backdropFilter: 'blur(6px)',
             padding: '8px 11px',
             borderRadius: '10px',
-            fontSize: '0.78rem',
-            fontWeight: 600,
+            fontSize: 'var(--text-sm)',
+            fontWeight: 'var(--weight-semibold)',
             color: 'var(--text-primary)',
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
             display: 'flex',
@@ -462,13 +464,13 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
           gap: '12px',
         }}>
           <dl aria-live="polite" style={{ margin: 0, minWidth: 0 }}>
-            <dt style={{ fontSize: '0.68rem', fontWeight: 750, color: 'var(--text-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            <dt style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-xs)', fontWeight: 'var(--weight-semibold)', color: 'var(--text-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
               Selected route point
             </dt>
-            <dd style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)', margin: '2px 0 0', maxWidth: '520px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <dd style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-body)', fontWeight: 'var(--weight-semibold)', color: 'var(--text-primary)', margin: '2px 0 0', maxWidth: '520px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {loading ? 'Resolving the nearest road…' : placeName}
             </dd>
-            <dd style={{ fontFamily: 'monospace', fontSize: '0.7rem', color: 'var(--accent-cyan)', margin: '2px 0 0' }}>
+            <dd style={{ fontFamily: 'var(--font-body)', fontVariantNumeric: 'tabular-nums', fontSize: 'var(--text-xs)', color: 'var(--accent-cyan)', margin: '2px 0 0' }}>
               {selectedCoords.lat.toFixed(6)}, {selectedCoords.lng.toFixed(6)}
             </dd>
           </dl>
@@ -477,6 +479,7 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
             <button
               type="button"
               className="world-map-picker__cancel"
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 'var(--weight-semibold)' }}
               onClick={onClose}
             >
               Cancel
@@ -484,6 +487,7 @@ export const WorldMapPickerModal: React.FC<WorldMapPickerModalProps> = ({
             <button
               type="button"
               className="ui-button-primary world-map-picker__confirm"
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 'var(--weight-semibold)' }}
               onClick={handleConfirm}
               disabled={!pickerReady || loading || isSearching || !isRoutable}
             >

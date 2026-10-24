@@ -19,7 +19,22 @@ afterEach(() => {
 });
 
 describe('header Batam clock', () => {
-  it('renders the restored-session account control without opening the sign-in panel', () => {
+  it('keeps account details reachable for a signed-in account when new sign-in is unavailable', () => {
+    const container = document.createElement('div');
+    document.body.append(container);
+    root = createRoot(container);
+    const onOpenSignIn = vi.fn();
+    act(() => root!.render(<Header onOpenSignIn={onOpenSignIn}
+      identity={{ user_id: 'driver', display_name: 'Driver User', role: 'driver',
+        expires_at: null, role_source: 'crossflow_profiles' }}
+      signInAvailable={false} activeTab="map" setActiveTab={vi.fn()} dataSource="simulated" />));
+    const accountButton = container.querySelector<HTMLButtonElement>('.app-signin-button')!;
+    expect(accountButton.textContent).toContain('Account');
+    act(() => accountButton.click());
+    expect(onOpenSignIn).toHaveBeenCalledOnce();
+  });
+
+  it.each(['admin', 'driver'])('labels the restored %s account with its server-resolved role', (role) => {
     const container = document.createElement('div');
     document.body.append(container);
     root = createRoot(container);
@@ -29,7 +44,7 @@ describe('header Batam clock', () => {
         identity={{
           user_id: 'admin-1',
           display_name: 'Admin User',
-          role: 'admin',
+          role,
           expires_at: 1,
           role_source: 'crossflow_profiles',
         }}
@@ -42,7 +57,7 @@ describe('header Batam clock', () => {
 
     const accountButton = container.querySelector<HTMLButtonElement>('.app-signin-button');
     expect(accountButton).not.toBeNull();
-    expect(accountButton?.getAttribute('aria-label')).toContain('role Admin');
+    expect(accountButton?.getAttribute('aria-label')).toContain(`role ${role}`);
     expect(accountButton?.querySelector('svg')).not.toBeNull();
   });
 

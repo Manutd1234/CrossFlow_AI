@@ -1,0 +1,246 @@
+{
+  "schema": "crossflow.yolo26_artifacts.v1",
+  "files": [
+    {
+      "path": "development_dataset/dataset.yaml",
+      "bytes": 227,
+      "sha256": "c1789aacbf3921b0d3acc090acda49113252bef1388b789bc9fa02eee70c2cbe"
+    },
+    {
+      "path": "development_dataset/images/train/image_000.jpg",
+      "bytes": 431770,
+      "sha256": "79df599842981f654881979e24687ce3cfb12bd5239b44ab0f758079e5e50ed8"
+    },
+    {
+      "path": "development_dataset/images/train/image_001.jpg",
+      "bytes": 143139,
+      "sha256": "d21f63873c3c58a5c8c97b7baabf763af327c94afee2f7849279b78227280c81"
+    },
+    {
+      "path": "development_dataset/images/train/image_002.jpg",
+      "bytes": 138557,
+      "sha256": "5071e4cab334d6c39830d865a423893451085f4ac8ef8379fd41a2d1e5e83f44"
+    },
+    {
+      "path": "development_dataset/images/train/image_003.jpg",
+      "bytes": 83031,
+      "sha256": "656e18e0d35ab8dea7983b049dced6413add962f37b52b335a3dfc0fbb8552e4"
+    },
+    {
+      "path": "development_dataset/images/train/image_004.jpg",
+      "bytes": 83090,
+      "sha256": "fdbb13c989e0e67e4d3fe3b0eb2d59bff5e360baffb89562fb62f39a7ad30156"
+    },
+    {
+      "path": "development_dataset/images/train/image_005.jpg",
+      "bytes": 139068,
+      "sha256": "6fe315c31bad694216f2945a27620f7d19c0704ecef48c5aebbbf1ecaf54d6e8"
+    },
+    {
+      "path": "development_dataset/images/train/image_006.jpg",
+      "bytes": 114729,
+      "sha256": "b72aad6ca2b20400dee796dae750609be50be1c8993e0d0edcdf465d571becd9"
+    },
+    {
+      "path": "development_dataset/images/train/image_007.jpg",
+      "bytes": 737363,
+      "sha256": "2427425d79d5d8354c36e410babd4636b1eeaba40787204afa41d42fbbdc2f26"
+    },
+    {
+      "path": "development_dataset/images/train/image_008.jpg",
+      "bytes": 403037,
+      "sha256": "076f918bd072254a3e31c5813235c2a8c5adb34c9f8425f4cca36dd975f9765b"
+    },
+    {
+      "path": "development_dataset/images/validation/image_000.jpg",
+      "bytes": 150074,
+      "sha256": "3e565697e87195c80a09e4caa52fe797539bf91946fb9742823e38f170e6cf28"
+    },
+    {
+      "path": "development_dataset/images/validation/image_001.jpg",
+      "bytes": 187968,
+      "sha256": "264dce979d2be883074c3d332014c7645756c91571a7ed87eb890b55cbe8a60b"
+    },
+    {
+      "path": "development_dataset/images/validation/image_002.jpg",
+      "bytes": 108672,
+      "sha256": "5878971e0d68b56ef084d81a285aaa5d34748f51f9b69064e54301fdc8bbb39a"
+    },
+    {
+      "path": "development_dataset/labels/train/image_000.txt",
+      "bytes": 324,
+      "sha256": "7745882ed7fe72f350873c8cf8d1c8bb66841f5ed5f0f48fbd3344cc27ffa63c"
+    },
+    {
+      "path": "development_dataset/labels/train/image_001.txt",
+      "bytes": 270,
+      "sha256": "8fdb6d834cacd9bbb9badd26f50ea77985473036291911043f1e3c06ba580862"
+    },
+    {
+      "path": "development_dataset/labels/train/image_002.txt",
+      "bytes": 216,
+      "sha256": "0b94b98e79a8d42735d8c7187e6a1b45f3495dbc696975d7e5b04a3816c189f3"
+    },
+    {
+      "path": "development_dataset/labels/train/image_003.txt",
+      "bytes": 216,
+      "sha256": "56f00026c9ca9dd1c1e452cd5073858567ebfc72f8498aa303a904ecf805d4d6"
+    },
+    {
+      "path": "development_dataset/labels/train/image_004.txt",
+      "bytes": 540,
+      "sha256": "8693b6d8b1068ff0af9e8e534843be86e71340fd8a8fb29ae4c6f8668ba73c5a"
+    },
+    {
+      "path": "development_dataset/labels/train/image_005.txt",
+      "bytes": 594,
+      "sha256": "74bec75669ac6bf160192e0fe58be81d92ae174b0f6bb8ca46ff49a1a526fce7"
+    },
+    {
+      "path": "development_dataset/labels/train/image_006.txt",
+      "bytes": 486,
+      "sha256": "ce7019c8cf0eb7f9e39a73993c209953efa93e70a5b6b64aa4d328db47f6248f"
+    },
+    {
+      "path": "development_dataset/labels/train/image_007.txt",
+      "bytes": 216,
+      "sha256": "0e206bc52dfcef31353d62463ffff3c6566681508b57d3973098ed56aa011825"
+    },
+    {
+      "path": "development_dataset/labels/train/image_008.txt",
+      "bytes": 162,
+      "sha256": "9b0e2d8636d33c386f12524de1b07f6a10fcd7534ea530be32676d8fc8e3f061"
+    },
+    {
+      "path": "development_dataset/labels/train.cache",
+      "bytes": 4190,
+      "sha256": "03ce9d6089150902dbdaf083789f7281da306833d5691fce903348a273d41ec0"
+    },
+    {
+      "path": "development_dataset/labels/validation/image_000.txt",
+      "bytes": 324,
+      "sha256": "2dfcc0b69f9335fd5acf01c11393eac2adb7fa7835e8105f64c3be10cb6054aa"
+    },
+    {
+      "path": "development_dataset/labels/validation/image_001.txt",
+      "bytes": 270,
+      "sha256": "ed992db3e34de1d48d7885d8216c5e39895cfebde3c87c58924b16807504f207"
+    },
+    {
+      "path": "development_dataset/labels/validation/image_002.txt",
+      "bytes": 594,
+      "sha256": "a1993a252853950e0e9558ec57abaaa6b7eae43c94c2bf2b6bb6199cf9a95803"
+    },
+    {
+      "path": "development_dataset/labels/validation.cache",
+      "bytes": 1827,
+      "sha256": "2751ad8871b9f237c2ee19046f091215e7b1ca41fcc21c3b22c8858de507eeb4"
+    },
+    {
+      "path": "development_dataset_receipt.json",
+      "bytes": 8190,
+      "sha256": "5520d4b74a35912b435cd46259f504fbab6ded7ba59d804f6b161a88f66f0a81"
+    },
+    {
+      "path": "finetuned_best_val_map_validation_latency.json",
+      "bytes": 96,
+      "sha256": "63bfef49a1f6c05d976a8460717a8dbac823299d4da95602bca96d6208a6266e"
+    },
+    {
+      "path": "finetuned_last_validation_latency.json",
+      "bytes": 96,
+      "sha256": "55410c647a2da243363babff8cc2cf7f83948ce6ba32b72fec660f655924532d"
+    },
+    {
+      "path": "model.pt",
+      "bytes": 5544453,
+      "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+    },
+    {
+      "path": "pretrained_validation.json",
+      "bytes": 3482,
+      "sha256": "1fdcfc96b4a3a393312e15a358308a7660a46f55478f299216da15c1c2826075"
+    },
+    {
+      "path": "pretrained_yolo26n.pt",
+      "bytes": 5544453,
+      "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+    },
+    {
+      "path": "provenance/pip_install_receipt.json",
+      "bytes": 661482,
+      "sha256": "3b7624aec22ea49863aea679682a178f07aa18b09609dee7da9d087fdf606feb"
+    },
+    {
+      "path": "provenance/pretrained_weights.json",
+      "bytes": 578,
+      "sha256": "c95257ba3a0cb8606b485d533caff7870b78785c3b92ef2f5e16e9e9aa70772a"
+    },
+    {
+      "path": "provenance/ultralytics_LICENSE",
+      "bytes": 34523,
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+    },
+    {
+      "path": "provenance/ultralytics_license_page.html",
+      "bytes": 361133,
+      "sha256": "9531aa38b254168a8058204252329ace01b08a196f9a54b67f8568556c6fabcb"
+    },
+    {
+      "path": "provenance/yolo26_model_documentation.html",
+      "bytes": 472752,
+      "sha256": "a31a5fc63bd6e40bcfde10cf6e2fc2065d5db40630036979f6ea93d2e8f6c871"
+    },
+    {
+      "path": "report.json",
+      "bytes": 6269,
+      "sha256": "4b73446f2ea4bddae135a4ab8434daacda1ccc3360481fd9cf4b3de8e28860c9"
+    },
+    {
+      "path": "reused_batam_test_predictions.json",
+      "bytes": 8231,
+      "sha256": "19df3b34cdb60a5c3f8f3be8fb84edb55688e3367fac29cbd59f8fdb72769ca7"
+    },
+    {
+      "path": "selection_frozen_before_reused_batam_test.json",
+      "bytes": 2541,
+      "sha256": "bf055b8c6db236c1fe56cad1e7da7b0e0525e88fbfd610551d11ba05586e906c"
+    },
+    {
+      "path": "training/batam20/args.yaml",
+      "bytes": 2212,
+      "sha256": "1a79e3b4bcabadab1aeca3e89928445dab06a3a0d3503c1bfd4d95f88460a84f"
+    },
+    {
+      "path": "training/batam20/results.csv",
+      "bytes": 2419,
+      "sha256": "07430ffe160efd08fbc77fa72d70fcdfc0e94e373494c005c67a562f7dfb9516"
+    },
+    {
+      "path": "training/batam20/weights/best.pt",
+      "bytes": 5455493,
+      "sha256": "0daf259507e8b0d0c2e600c04e12294f412a1c2f9cd56993cc3833313353ce71"
+    },
+    {
+      "path": "training/batam20/weights/last.pt",
+      "bytes": 5455493,
+      "sha256": "fb9ecb7ddbc5a8e342d1b93e5714211e6ff33d9e1ae5a0490a6d77051992d216"
+    },
+    {
+      "path": "training_execution_audit.json",
+      "bytes": 454,
+      "sha256": "9799346750b9874e32b2221f03609670dc8823c472e24f0a244d3e0032bc2a09"
+    },
+    {
+      "path": "training_plan.json",
+      "bytes": 1303,
+      "sha256": "795b8046b0f4915876a85068cb545c651a68aa5267e96c9463bc53a8e0abc28d"
+    },
+    {
+      "path": "validation_grid.json",
+      "bytes": 9186,
+      "sha256": "96bde85f9158978235a3a041adb35a7790320606dabfb512901f51c57161e8df"
+    }
+  ],
+  "production_eligible": false
+}

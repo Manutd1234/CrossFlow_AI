@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-23T19:47:22.207130+00:00",
+  "pipeline": "Actual Matanya 15 HLS -> YOLO26s -> SQLite -> FastAPI -> production React components -> exact directed edge routing -> street-scale journey map",
+  "actual_camera_data": true,
+  "actual_route_calculation": true,
+  "authentication_scope": "Operator identity replaced in isolated loopback test process only; existing app user session unchanged",
+  "frontend_url": "http://127.0.0.1:3007/.cctvcheck/",
+  "api_url": "http://127.0.0.1:8007",
+  "summary_at_receipt": {
+    "listed": 28,
+    "configured": 1,
+    "live": 0,
+    "estimated": 1,
+    "stale": 0,
+    "unavailable": 0,
+    "permission_pending": 27,
+    "calibration_pending": 0
+  },
+  "camera_at_receipt": {
+    "camera_id": "15",
+    "name": "Simpang BI",
+    "road_name": "Simpang BI \u2014 Jalan Engku Putri Timur approach",
+    "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/15",
+    "status": "estimated",
+    "reason": "Live YOLO26 road-view estimate; independent camera accuracy and thresholds are unvalidated",
+    "observed_at": "2026-10-23T19:47:10.319715Z",
+    "window_seconds": 59.76724,
+    "vehicle_count": 0,
+    "moving_vehicles": 0,
+    "stopped_vehicles": 0,
+    "occupancy_ratio": 0.0,
+    "motion_score": null,
+    "queue_length_m": null,
+    "congestion_score": 0.0,
+    "severity": "low",
+    "operational_eligible": false,
+    "validation_status": "estimated",
+    "timestamp_basis": "stream_observation",
+    "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+    "routing_enabled": true
+  },
+  "route": {
+    "route_code": "3DNRYKH",
+    "route_id": "e4890590574bfa2fc4f3bc010d02cbe7a4356e39543af7de7f7292de6fbe3f6f",
+    "planned_departure": "2026-10-24T02:46:27+07:00",
+    "route_geometry": [
+      [
+        1.127626,
+        104.057335
+      ],
+      [
+        1.128982,
+        104.05698
+      ]
+    ],
+    "routing_model": {
+      "cctv": {
+        "applied_to_objective": true,
+        "effect": "bounded_search_cost_only",
+        "limitations": "Image congestion is an estimate over the camera's mapped view. The penalty expresses a routing preference, not measured delay; unobserved roads retain the existing planning model.",
+        "maximum_penalty": "2 times existing edge free-flow seconds before objective weighting",
+        "measured_speed_or_eta": false,
+        "observations": [
+          {
+            "age_seconds": 8.612,
+            "camera_id": "15",
+            "congestion_index": 0.0,
+            "observed_at": "2026-10-23T19:46:18.597919+00:00",
+            "on_selected_path": true,
+            "road_segment_id": "osm-edge:5253032156:5394956319:619",
+            "timestamp_basis": "stream_observation",
+            "validation_status": "estimated"
+          }
+        ],
+        "scope": "explicitly_mapped_directed_camera_edges_only",
+        "snapshot_at": "2026-10-23T19:46:27.209648+00:00",
+        "source": "cctv_camera"
+      },
+      "component_weights": {
+        "congestion_delay_s": 1.0,
+        "distance_proxy_s": 0.0,
+        "free_flow_s": 1.0,
+        "maneuver_delay_s": 1.0,
+        "road_suitability_penalty_s": 1.0,
+        "weather_delay_s": 1.0
+      },
+      "cost_unit": "seconds",
+      "default_congestion_estimate": {
+        "expected_speed_ratio": 0.871217,
+        "p90_delay_s": 0.0,
+        "p90_speed_ratio": 0.82656,
+        "scope": "corridor_default_applied_to_each_selected_edge",
+        "source": "crossflow_spatial_quantile_rf_v1:modelled_route_corridor_profile",
+        "speed_ratio_std": 0.031691
+      },
+      "distance_is_raw_edge_sum": true,
+      "learning": {
+        "gate": {
+          "eligible": true,
+          "local_threshold": 25.0,
+          "network_congestion_score": 12.9,
+          "network_threshold": 25.0,
+          "selected_path_max_local_congestion_score": 6.3,
+          "weather_clear": true
+        },
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "physical_floor": "edge_distance / vehicle_max_speed",
+        "provenance": "verified_actual_traversal",
+        "qualifying_edge_count": 0,
+        "revision": 0,
+        "selected_applied_edge_count": 0,
+        "selected_shortcut_segment_count": 0
+      },
+      "limitations": "Planning estimate from OSM road classes. Explicit edge access/clearance metadata is enforced when present; untagged clearance and OSM turn-restriction relations remain unverified.",
+      "network_congestion_score": 12.9,
+      "objective": "Balance modeled ETA and road suitability.",
+      "objective_cost_s": 17.378,
+      "objective_cost_unit": "weighted_seconds",
+      "road_scope": "STANDARD",
+      "selected_preference": "BALANCED",
+      "sourced_road_capacity_audit": {
+        "capacity_inference": null,
+        "distance_weighted_sourced_lanes": null,
+        "edge_count": 2,
+        "lane_tagged_distance_km": 0.0,
+        "lane_tagged_edge_count": 0,
+        "maxspeed_tagged_edge_count": 0,
+        "minimum_sourced_maxspeed_kph": null,
+        "note": "Sourced maxspeed caps the free-flow planning speed. Sourced lane counts are audit metadata only and do not create legal access or an unsourced vehicles-per-hour capacity."
+      },
+      "spatial_zone_count": 15,
+      "traffic_provenance": "Modelled travel times with fresh CCTV image estimates applied only to the route search objective.",
+      "vehicle_cost_function": {
+        "component_units": {
+          "congestion": "expected delay seconds",
+          "distance": "seconds proxy: metres / vehicle max speed",
+          "road_quality": "quality-loss seconds",
+          "time": "seconds",
+          "uncertainty": "risk-adjusted delay seconds"
+        },
+        "component_weights": {
+          "congestion": 1.0,
+          "distance": 0.05,
+          "road_quality": 1.0,
+          "time": 1.0
+        },
+        "expected_objective_cost_s": 16.797,
+        "formula": "C(e) = w_t*time + w_d*distance + w_c*congestion + w_r*road_quality_penalty",
+        "risk_aversion": 0.75,
+        "uncertainty_penalty_s": 0.58
+      },
+      "version": 6,
+      "weather": 0
+    },
+    "routing_cost_breakdown": {
+      "baseline_free_flow_mins": 0.21,
+      "cctv_search_penalty_mins": 0.0,
+      "congestion_delay_mins": 0.03,
+      "congestion_uncertainty_mins": 0.01,
+      "expected_objective_cost_mins": 0.28,
+      "free_flow_mins": 0.21,
+      "generalized_cost_mins": 0.29,
+      "learned_free_flow_adjustment_mins": 0.0,
+      "maneuver_delay_mins": 0.0,
+      "modeled_travel_time_mins": 0.24,
+      "road_quality_penalty_mins": 0.04,
+      "road_suitability_penalty_mins": 0.0,
+      "uncertainty_penalty_mins": 0.01,
+      "verified_learning_time_saved_mins": 0.0,
+      "weather_delay_mins": 0.0
+    },
+    "total_eta_mins": 0.2,
+    "distance_km": 0.16
+  },
+  "browser_evidence": {
+    "live_estimates": 1,
+    "validated_cameras": 0,
+    "vehicle_count": 0,
+    "image_congestion_percentage": 0,
+    "observed_at_during_capture": "2026-10-23T19:46:18Z",
+    "route_code": "3DNRYKH",
+    "route_distance_km": 0.16,
+    "route_eta_mins": 0.2,
+    "route_header": "CCTV + modelled traffic",
+    "mapped_camera_views_evaluated": 1,
+    "on_selected_path": true,
+    "file_inputs": 0,
+    "visible_error_alerts": 0,
+    "console_errors_or_warnings": 0,
+    "street_scale_map_verified": true,
+    "source_capture_clock_verified": false
+  },
+  "screenshots": [
+    "docs/verification/cctv-live-yolo26s.png",
+    "docs/verification/cctv-live-routing.png",
+    "docs/verification/cctv-live-routing-map.png"
+  ],
+  "limitations": [
+    "Camera accuracy and thresholds are independently unvalidated.",
+    "Night observation contained zero detections; no accuracy claim follows from an empty observed road.",
+    "Image occupancy is not a measurement of speed or travel time.",
+    "Other 27 cameras remain pending processing permission or setup."
+  ]
+}

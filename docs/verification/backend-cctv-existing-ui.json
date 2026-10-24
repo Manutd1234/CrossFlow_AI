@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-23T19:56:55.156664+00:00",
+  "final_user_requirement": "Keep surveillance and calculations in the backend. The existing frontend shows route results, ETA, distance and congestion estimates without camera panels or calculation explanations.",
+  "flow": "Existing route form -> actual FastAPI route handler -> fresh CCTV exact-edge cost when eligible -> existing route result and journey map",
+  "authentication_scope": "Isolated loopback test process replaces operator identity only. Real account/session untouched.",
+  "route_data_mocked": false,
+  "camera_data_mocked": false,
+  "frontend_url": "http://127.0.0.1:3007/.cctvcheck/",
+  "backend_url": "http://127.0.0.1:8007",
+  "browser_checks": {
+    "visible_camera_or_surveillance_text": false,
+    "camera_panels": 0,
+    "file_inputs": 0,
+    "time_controls": 2,
+    "visible_error_alerts": 0,
+    "console_warnings_or_errors": 0,
+    "current_minute_departure_stays_on_current_day": true,
+    "map_shows_actual_Batam_road_path": true,
+    "no_calculation_details": true,
+    "calculation_foldouts": 0,
+    "route_path_svg_count": 38
+  },
+  "screenshots": [
+    "docs/verification/backend-cctv-route-ui.png",
+    "docs/verification/backend-cctv-existing-map.png"
+  ],
+  "validation": {
+    "focused_route_map_tests_passed": 39,
+    "typecheck_passed": true,
+    "focused_eslint_passed": true,
+    "production_build_passed": true,
+    "operations_forecast_tests_passed": 24,
+    "operations_forecast_checks_owner": "root agent"
+  },
+  "limitations": [
+    "Camera image congestion remains provisional and does not establish physical speed or measured travel time.",
+    "Historical camera-panel screenshots document earlier engineering verification and do not describe the final frontend."
+  ],
+  "previous_backend_verification": {
+    "actual_route": {
+      "route_code": "STM74BH",
+      "route_id": "1c5c1a2e3332892fb7ef9e49196706375cd8ff11fd23d36e2ea6409d1b405220",
+      "planned_departure": "2026-10-24T02:50:30+07:00",
+      "total_eta_mins": 0.2,
+      "route_geometry": [
+        [
+          1.127626,
+          104.057335
+        ],
+        [
+          1.128982,
+          104.05698
+        ]
+      ]
+    },
+    "hidden_backend_camera_audit": {
+      "applied_to_objective": true,
+      "effect": "bounded_search_cost_only",
+      "limitations": "Image congestion is an estimate over the camera's mapped view. The penalty expresses a routing preference, not measured delay; unobserved roads retain the existing planning model.",
+      "maximum_penalty": "2 times existing edge free-flow seconds before objective weighting",
+      "measured_speed_or_eta": false,
+      "observations": [
+        {
+          "age_seconds": 10.45,
+          "camera_id": "15",
+          "congestion_index": 0.0,
+          "observed_at": "2026-10-23T19:50:20.475287+00:00",
+          "on_selected_path": true,
+          "road_segment_id": "osm-edge:5253032156:5394956319:619",
+          "timestamp_basis": "stream_observation",
+          "validation_status": "estimated"
+        }
+      ],
+      "scope": "explicitly_mapped_directed_camera_edges_only",
+      "snapshot_at": "2026-10-23T19:50:30.924838+00:00",
+      "source": "cctv_camera"
+    }
+  },
+  "browser_route_result": {
+    "route_code": "RQYFDNK",
+    "planned_departure_display": "2026-10-24 02:55 WIB",
+    "distance_km": 0.16,
+    "road_travel_mins": 0.2,
+    "total_eta_mins": 0.2,
+    "co2_estimate_kg": 0.03,
+    "actual_API_result_rendered": true
+  },
+  "removed_frontend_explanations": [
+    "How this route was weighted foldout and per-component cost minutes",
+    "Queue/emissions proxy calculation tooltip",
+    "Backend-weighted hotspot implementation wording",
+    "Vehicle profile calculation prose; indicative comparison results retained"
+  ],
+  "receipt_note": "The final browser route RQYFDNK was verified in the rendered UI. The temporary API was stopped before a second full JSON export; the earlier exported backend camera audit is preserved separately."
+}

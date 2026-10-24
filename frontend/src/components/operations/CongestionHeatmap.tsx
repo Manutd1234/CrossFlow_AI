@@ -7,7 +7,6 @@ import {
 } from '../../types';
 import { fetchHistoricalCongestion } from '../../services/api';
 import { batamParts } from '../../utils/batamTime';
-import { formatScheduleVerifiedAt } from '../../utils/format';
 
 interface CongestionHeatmapProps {
   corridors: Corridor[];
@@ -26,6 +25,7 @@ const HOURLY_MAX_BAR_HEIGHT_PX = 160;
 const TOOLTIP_CURSOR_OFFSET_PX = 10;
 const TOOLTIP_VIEWPORT_WIDTH_PX = 210;
 const TOOLTIP_VIEWPORT_HEIGHT_PX = 74;
+const HISTORY_POLL_MS = 60_000;
 
 interface HourlyTooltipState {
   bucket: HourlyBucket;
@@ -48,7 +48,7 @@ function scoreToHeight(score: number | null, maxScore: number, maxPx: number): n
 function isBrowserHistoryMetadata(
   metadata: HistoricalProfile['history_metadata'],
 ): metadata is BrowserHistoryMetadata {
-  return 'source' in metadata && metadata.source === 'browser_modelled_baseline';
+  return 'source' in metadata;
 }
 
 export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors }) => {
@@ -59,8 +59,10 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
   const [historyResult, setHistoryResult] = useState<Fetched<HistoricalProfile> | null>(null);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState(7);
+  const [includeModelled, setIncludeModelled] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hourlyTooltip, setHourlyTooltip] = useState<HourlyTooltipState | null>(null);
+  const [refreshRevision, setRefreshRevision] = useState(0);
 
   const updateHourlyTooltip = (
     event: React.MouseEvent<HTMLDivElement>,
@@ -85,25 +87,39 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
 
   useEffect(() => {
     let cancelled = false;
+    let inFlight = false;
     const loadProfile = async () => {
+      if (inFlight) return;
+      inFlight = true;
       setLoading(true);
       try {
-        const res = await fetchHistoricalCongestion(activeCorridorId, days);
+        const res = await fetchHistoricalCongestion(activeCorridorId, days, includeModelled);
         if (cancelled) return;
         setHistoryResult(res);
+        setHourlyTooltip(null);
         setError(null);
       } catch (err) {
         if (cancelled) return;
         setError(err instanceof Error ? err.message : 'Historical congestion could not be loaded.');
       } finally {
+        inFlight = false;
         if (!cancelled) setLoading(false);
       }
     };
+    const refreshWhenVisible = () => {
+      if (document.visibilityState !== 'hidden') void loadProfile();
+    };
     void loadProfile();
+    const timer = window.setInterval(refreshWhenVisible, HISTORY_POLL_MS);
+    window.addEventListener('focus', refreshWhenVisible);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
     return () => {
       cancelled = true;
+      window.clearInterval(timer);
+      window.removeEventListener('focus', refreshWhenVisible);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
     };
-  }, [activeCorridorId, days]);
+  }, [activeCorridorId, days, includeModelled, refreshRevision]);
 
   const profile = historyResult?.data ?? null;
   const displayedCorridorId = profile?.corridor_id ?? activeCorridorId;
@@ -146,6 +162,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
   const browserMetadata = historyMetadata && isBrowserHistoryMetadata(historyMetadata)
     ? historyMetadata
     : null;
+  const historyUnavailable = browserMetadata?.source === 'history_unavailable';
   const apiMetadata = historyMetadata && !isBrowserHistoryMetadata(historyMetadata)
     ? historyMetadata
     : null;
@@ -158,18 +175,21 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
       0,
     )
     : 0;
+  const emptyObservedHistory = apiMetadata?.selection_scope === 'observed_only' && apiSampleCount === 0;
   const historyBadge = !historyResult
     ? (loading ? 'LOADING HISTORY' : 'HISTORY UNAVAILABLE')
     : browserMetadata
-      ? 'BROWSER-MODELLED BASELINE'
-      : apiMetadata?.observed
+      ? historyUnavailable ? 'HISTORY UNAVAILABLE' : 'BROWSER-MODELLED BASELINE'
+      : apiMetadata?.selection_scope === 'legacy_modelled_preview'
+        ? apiMetadata.observed ? 'OBSERVED LEGACY ARCHIVE' : apiMetadata.contains_observed_samples ? 'MIXED ARCHIVE REPLAY' : 'SYNTHETIC REPLAY'
+        : emptyObservedHistory ? 'NO OBSERVED HISTORY' : apiMetadata?.observed
         ? 'OBSERVED HISTORY'
         : apiMetadata?.contains_observed_samples
           ? 'MIXED HISTORY'
           : 'API-MODELLED HISTORY';
   const dataSourceValue = browserMetadata
     ? 'Browser model'
-    : apiMetadata?.observed
+    : emptyObservedHistory ? 'No observations' : apiMetadata?.observed
       ? 'Observed'
       : apiMetadata?.contains_observed_samples
         ? 'Mixed'
@@ -178,7 +198,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
           : 'Loading';
   const sampleSummary = browserMetadata
     ? '0 observed samples'
-    : apiMetadata?.observed
+    : emptyObservedHistory ? '0 observed samples' : apiMetadata?.observed
       ? `${apiSampleCount} observed samples`
       : apiMetadata?.contains_observed_samples
         ? `${observedSampleCount} observed of ${apiSampleCount} stored samples`
@@ -197,6 +217,14 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
           </h3>
         </div>
         <div className="operations-history__status">
+          <button
+            type="button"
+            className="glass-button"
+            disabled={loading}
+            onClick={() => setRefreshRevision(value => value + 1)}
+          >
+            <RefreshCw aria-hidden="true" size={ICON_SIZE.small} /> Refresh history
+          </button>
           {loading ? <RefreshCw className="operations-spinner" aria-label="Loading history" size={ICON_SIZE.big} color="var(--text-muted)" /> : null}
           <span className="badge badge-neutral">
             {historyBadge}
@@ -204,6 +232,34 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         </div>
       </div>
 
+      <div className="operations-history__filters">
+        <div className="operations-history__window-controls" role="group" aria-label="Historical data source">
+          <button
+            type="button"
+            aria-pressed={!includeModelled}
+            className="ui-sand-interactive operations-history__window-button"
+            onClick={() => {
+              if (!includeModelled) return;
+              setLoading(true);
+              setHistoryResult(null);
+              setHourlyTooltip(null);
+              setIncludeModelled(false);
+            }}
+          >Measured history</button>
+          <button
+            type="button"
+            aria-pressed={includeModelled}
+            className="ui-sand-interactive operations-history__window-button"
+            onClick={() => {
+              if (includeModelled) return;
+              setLoading(true);
+              setHistoryResult(null);
+              setHourlyTooltip(null);
+              setIncludeModelled(true);
+            }}
+          >Synthetic replay</button>
+        </div>
+      </div>
       {error ? (
         <div role="alert" className="operations-inline-alert">
           <TriangleAlert aria-hidden="true" size={ICON_SIZE.big} /> {error}
@@ -287,46 +343,16 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         </div>
       ) : null}
 
-      {historyMetadata ? (
-        <div className="operations-history__provenance" role="note" aria-label="History provenance">
-          {browserMetadata ? (
-            <>
-              <strong>Browser continuity model — no observations.</strong>{' '}
-              {browserMetadata.methodology}{' '}
-              Reference time{' '}
-              <time dateTime={browserMetadata.reference_time}>
-                {formatScheduleVerifiedAt(browserMetadata.reference_time)}
-              </time>.
-              <ul className="operations-history__limitations">
-                {browserMetadata.limitations.map(limitation => (
-                  <li key={limitation}>{limitation}</li>
-                ))}
-              </ul>
-            </>
-          ) : apiMetadata ? (
-            <>
-              <strong>
-                {apiMetadata.observed
-                  ? 'Observed API history.'
-                  : apiMetadata.contains_observed_samples
-                    ? 'Mixed observed and modelled API history.'
-                    : 'API history contains modelled samples only.'}
-              </strong>{' '}
-              Freshness: {apiMetadata.freshness} ({apiMetadata.freshness_basis}).{' '}
-              {apiMetadata.latest_sample_at ? (
-                <>
-                  Latest stored sample{' '}
-                  <time dateTime={apiMetadata.latest_sample_at}>
-                    {formatScheduleVerifiedAt(apiMetadata.latest_sample_at)}
-                  </time>.{' '}
-                </>
-              ) : 'No stored sample timestamp is available. '}
-              Storage: {apiMetadata.storage.durability.split('_').join(' ')};
-              {apiMetadata.storage.durable ? ' durable on this API instance' : ' not durable across restarts'};
-              {' '}not shared across instances.
-            </>
-          ) : null}
-        </div>
+      {apiMetadata?.snapshot_may_be_truncated === true ? (
+        <p className="operations-history__provenance" role="note" aria-label="Partial history window">
+          <strong>Partial history window.</strong>{' '}
+          The API reached its snapshot limit
+          {typeof apiMetadata.snapshot_max_rows === 'number' && Number.isSafeInteger(apiMetadata.snapshot_max_rows) && apiMetadata.snapshot_max_rows > 0
+            ? ` of ${apiMetadata.snapshot_max_rows.toLocaleString()} rows` : ''}
+          {' '}before filtering this corridor and time window. The selected {displayedDays}-day window may be incomplete.
+          {' '}No missing samples were filled in.
+          {apiMetadata.window_basis ? ` Window basis: ${apiMetadata.window_basis}.` : ''}
+        </p>
       ) : null}
 
       <div className="operations-history__charts">

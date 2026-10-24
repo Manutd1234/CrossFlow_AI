@@ -1,0 +1,268 @@
+{
+  "schema": "crossflow.detached_api_restore.v1",
+  "launched_at": "2026-10-24T06:31:49.363562+00:00",
+  "backend_pid": 5526,
+  "detached_new_session": true,
+  "stdin_devnull": true,
+  "private_gitignored_log": "/Users/ian/Desktop/CS/Personal Stuff/Hackathons/Batam Singapore Hackathon 2026/CrossFlow_AI/.logs/crossflow-api.log",
+  "log_mode": "0600",
+  "old_backend_present": false,
+  "prior_dead_process_environment_recoverable": false,
+  "configuration_source": "existing_environment_then_env_tomtom_local_then_env_matching_dev_sh",
+  "local_config_or_registry_changed": false,
+  "new_credentials_or_auth_fixture_created": false,
+  "auth_enabled": true,
+  "auth_configured": true,
+  "frontend_project_matches_existing_backend_config": true,
+  "frontend_publishable_key_matches_backend": true,
+  "cctv_registered": 28,
+  "cctv_configured": 6,
+  "cctv_concurrency": 6,
+  "cctv_capture_enabled": true,
+  "background_training_enabled_by_existing_files_or_environment": true,
+  "exact_old_runtime_overlay_comparison_available": false,
+  "known_prior_runtime_training_flag_was_enabled": true,
+  "health_verified_after_launcher_exit": true,
+  "verified_at": "2026-10-24T06:33:22.962517+00:00",
+  "second_independent_health_check": true,
+  "process_detached_after_launcher_exit": true,
+  "operations_http": 200,
+  "camera_traffic_summary": {
+    "status": "active",
+    "configured_cameras": 6,
+    "fresh_cameras": 5,
+    "validated_cameras": 0,
+    "estimated_cameras": 5,
+    "mean_congestion_index": 7.2,
+    "vehicle_detections": 5,
+    "latest_observed_at": "2026-10-24T13:33:17+07:00",
+    "oldest_observed_at": "2026-10-24T13:33:11+07:00",
+    "valid_until": "2026-10-24T13:33:41+07:00",
+    "source": "registered_camera_aggregates",
+    "scope": "fresh_registered_camera_views_only",
+    "measured_road_speed": false,
+    "independently_validated": false
+  },
+  "road_network_coverage": {
+    "source": "OpenStreetMap",
+    "scope": "bundled_batam_routing_graph",
+    "mapped_nodes": 115320,
+    "mapped_source_ways": 27018,
+    "directed_edges": 249745,
+    "live_camera_edge_count": 0,
+    "live_camera_edge_coverage_percent": 0.0,
+    "complete_live_coverage": false
+  },
+  "archiver": {
+    "enabled": true,
+    "active": true,
+    "interval_seconds": 120,
+    "storage_scope": "local_sqlite",
+    "last_success_at": "2026-10-24T13:31:52+07:00",
+    "last_error_code": null
+  },
+  "observed_model_public_status": {
+    "http": 200,
+    "data_source": "observed_model_status",
+    "training_data_source": "observed_traffic_archive",
+    "is_trained": true,
+    "retraining_enabled": true,
+    "observed_training_rows": 210
+  },
+  "auth_upstream_public_settings": {
+    "http": 200,
+    "json_object": true,
+    "verified_tls": true,
+    "user_token_used": false
+  },
+  "anonymous_auth_session_http": 401,
+  "auth_session_response_codes_in_private_log": {
+    "200": 1,
+    "401": 1
+  },
+  "ferry_http": 200,
+  "ferry_top_level_metadata_keys": [],
+  "existing_dispatch_previous_independent_check_http": 200,
+  "local_numeric_storage_isolation": {
+    "history_is_memory": false,
+    "route_is_memory": false,
+    "forecast_is_memory": false
+  },
+  "private_log_file_mode": "0o600",
+  "collector_orphan_check": {
+    "checked_at": "2026-10-24T06:33:58.068608+00:00",
+    "current_backend_pid": 5526,
+    "known_old_worker_ids": [
+      2331,
+      2332,
+      2334,
+      2336
+    ],
+    "before": [
+      {
+        "pid": 5533,
+        "ppid": 5526,
+        "camera_id": "1",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5536,
+        "ppid": 5526,
+        "camera_id": "51",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5537,
+        "ppid": 5526,
+        "camera_id": "19",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5540,
+        "ppid": 5526,
+        "camera_id": "48",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5542,
+        "ppid": 5526,
+        "camera_id": "13",
+        "same_registry_and_database": true
+      }
+    ],
+    "terminated_positively_identified_stale_workers": [],
+    "after": [
+      {
+        "pid": 5533,
+        "ppid": 5526,
+        "camera_id": "1",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5536,
+        "ppid": 5526,
+        "camera_id": "51",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5537,
+        "ppid": 5526,
+        "camera_id": "19",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5540,
+        "ppid": 5526,
+        "camera_id": "48",
+        "same_registry_and_database": true
+      },
+      {
+        "pid": 5542,
+        "ppid": 5526,
+        "camera_id": "13",
+        "same_registry_and_database": true
+      }
+    ],
+    "current_worker_counts_by_source": {
+      "1": 1,
+      "51": 1,
+      "19": 1,
+      "48": 1,
+      "13": 1
+    },
+    "current_registry_duplicate_sessions_found": false,
+    "unrelated_processes_modified": false
+  },
+  "final_verified_at": "2026-10-24T06:35:01.868972+00:00",
+  "actual_numeric_camera_summary": {
+    "listed": 28,
+    "configured": 6,
+    "live": 0,
+    "estimated": 5,
+    "stale": 1,
+    "unavailable": 0,
+    "permission_pending": 22,
+    "calibration_pending": 0
+  },
+  "actual_numeric_cameras": [
+    {
+      "camera_id": "1",
+      "status": "estimated",
+      "observed_at": "2026-10-24T06:34:49.650332Z",
+      "vehicle_count": 0,
+      "congestion_score": 0.0,
+      "validation_status": "estimated",
+      "routing_enabled": false,
+      "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+    },
+    {
+      "camera_id": "13",
+      "status": "estimated",
+      "observed_at": "2026-10-24T06:34:51.441270Z",
+      "vehicle_count": 1,
+      "congestion_score": 2.307936060076344,
+      "validation_status": "estimated",
+      "routing_enabled": false,
+      "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+    },
+    {
+      "camera_id": "51",
+      "status": "estimated",
+      "observed_at": "2026-10-24T06:34:52.456795Z",
+      "vehicle_count": 1,
+      "congestion_score": 3.962669411606971,
+      "validation_status": "estimated",
+      "routing_enabled": false,
+      "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+    },
+    {
+      "camera_id": "15",
+      "status": "stale",
+      "observed_at": "2026-10-24T05:43:47.835697Z",
+      "vehicle_count": null,
+      "congestion_score": null,
+      "validation_status": "unavailable",
+      "routing_enabled": false,
+      "detector_id": null
+    },
+    {
+      "camera_id": "19",
+      "status": "estimated",
+      "observed_at": "2026-10-24T06:34:51.066888Z",
+      "vehicle_count": 4,
+      "congestion_score": 48.59898955356468,
+      "validation_status": "estimated",
+      "routing_enabled": false,
+      "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+    },
+    {
+      "camera_id": "48",
+      "status": "estimated",
+      "observed_at": "2026-10-24T06:34:52.535533Z",
+      "vehicle_count": 1,
+      "congestion_score": 7.255350991428139,
+      "validation_status": "estimated",
+      "routing_enabled": false,
+      "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+    }
+  ],
+  "normal_browser_authenticated_response_codes_in_private_log": {
+    "/api/auth/session": {
+      "200": 1,
+      "401": 1
+    },
+    "/api/analytics/real-model": {},
+    "/api/analytics/real-forecast": {}
+  },
+  "ferry_preserved_verification": {
+    "last_verified_at": "2026-10-24T13:12:05+07:00",
+    "latest_checked_at": "2026-10-24T13:12:05+07:00",
+    "freshness_durability": "local_sqlite"
+  },
+  "existing_forecast_ledger": {
+    "exists": true,
+    "read_only_probe_succeeded": true,
+    "issued_forecasts": 4890
+  },
+  "actual_authenticated_cctv_availability_http_read_performed": false
+}

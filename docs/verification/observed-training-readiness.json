@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-23T10:21:58.690394+00:00",
+  "status": "insufficient_observations",
+  "validation_scope": "observed_chronological_backtest",
+  "evaluation_subject": "private_observed_candidate_serving_pipeline",
+  "running_model_evaluated": false,
+  "model_replaced": false,
+  "model_specification": {
+    "algorithm": "RandomForestRegressor",
+    "n_estimators": 100,
+    "max_depth": 10,
+    "min_samples_leaf": 5,
+    "n_jobs": 1,
+    "random_state": 42
+  },
+  "selection": {
+    "input_rows": 110,
+    "unique_rows": 110,
+    "duplicate_rows": 0,
+    "eligible_rows": 110,
+    "observed_rows": 110,
+    "selected_rows": 20,
+    "excluded_non_observed_rows": 0,
+    "excluded_future_rows": 0,
+    "excluded_unsupported_corridor_rows": 0,
+    "source_counts": {
+      "tomtom_live": 110
+    },
+    "selected_source_counts": {
+      "tomtom_live": 20
+    },
+    "first_at": "2026-10-23T09:40:23+00:00",
+    "last_at": "2026-10-23T10:21:55+00:00",
+    "span_hours": 0.6922,
+    "distinct_timestamps": 22,
+    "distinct_local_dates": 1,
+    "observed_hour_bins": [
+      16,
+      17
+    ],
+    "sampling_policy": "first_original_per_location_15min_utc_bucket",
+    "selected_observation_sha256": "67ab23bbea7f497182c7e660649d4dbee8998eb50145804f08f2997bb098d3d0",
+    "location_matching": "corridor_and_coordinates_rounded_to_5_decimals_not_edge_map_matching"
+  },
+  "chronology": {
+    "fit": {
+      "rows": 0,
+      "start_at": null,
+      "end_at": null
+    },
+    "calibration": {
+      "rows": 0,
+      "start_at": null,
+      "end_at": null
+    },
+    "holdout": {
+      "rows": 0,
+      "start_at": null,
+      "end_at": null
+    },
+    "purge_minutes": 60,
+    "strict_timestamp_groups": true
+  },
+  "horizons": [],
+  "activation": {
+    "eligible": false,
+    "reasons": [
+      "observed_span_below_7_days",
+      "insufficient_distinct_observed_local_days",
+      "insufficient_observed_hour_of_day_coverage",
+      "insufficient_fit_rows",
+      "fit_does_not_cover_all_five_corridors",
+      "insufficient_calibration_rows",
+      "calibration_does_not_cover_all_five_corridors",
+      "insufficient_holdout_rows",
+      "holdout_does_not_cover_all_five_corridors"
+    ],
+    "policy": {
+      "min_span_days": 7,
+      "min_distinct_local_days": 7,
+      "min_hour_bins": 18,
+      "min_fit_rows": 100,
+      "min_calibration_rows": 50,
+      "min_holdout_rows": 100,
+      "min_horizon_samples": 30,
+      "min_corridor_horizon_samples": 5,
+      "min_mae_improvement_fraction": 0.05,
+      "max_corridor_mae_regression_fraction": 0.05,
+      "min_interval_coverage": 0.7,
+      "max_current_age_minutes": 30,
+      "purge_minutes": 60,
+      "sampling_minutes": 15,
+      "horizons_minutes": [
+        15,
+        30,
+        60
+      ],
+      "required_corridors": "all_five_supported_corridors",
+      "interval_target": 0.8,
+      "max_input_rows": 100000,
+      "purpose": "engineering_promotion_gate_not_field_accuracy_guarantee"
+    }
+  },
+  "assumptions": [
+    "Actual validated Batam speeds only; synthetic, simulated and modelled rows excluded.",
+    "No random split; fit and calibration end strictly before the next partition's earliest forecast origin.",
+    "Weather uses clear encoding because measurements do not record weather; weather response is not validated.",
+    "Ferry proximity is unknown; the external published-timetable adjustment is not validated by this backtest.",
+    "Observation times are assumed availability times; provider ingestion delays are unknown.",
+    "Tree intervals are widened using calibration-only residuals; temporal dependence prevents a coverage guarantee.",
+    "No observed field-accuracy claim follows merely from passing this engineering gate."
+  ]
+}

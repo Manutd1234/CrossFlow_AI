@@ -1,0 +1,41 @@
+.real-traffic-workspace { display: grid; gap: 20px; min-width: 0; }
+.real-traffic-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 24px; }
+.real-traffic-heading h3, .real-weather-card h3, .real-road-features h3, .real-training-evidence h3 { display: flex; align-items: center; gap: 10px; margin: 0; }
+.real-traffic-heading h3 { font-size: var(--text-section-title); }
+.real-traffic-heading p { margin: 8px 0 0; color: var(--text-secondary); }
+.real-traffic-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.real-traffic-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.real-traffic-kpi { display: grid; align-content: start; gap: 12px; padding: 22px; }
+.real-traffic-kpi > span { font-size: var(--text-sm); color: var(--text-secondary); }
+.real-traffic-kpi strong { font-family: var(--font-body); font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: var(--weight-semibold); color: var(--lagoon-text); font-variant-numeric: tabular-nums; }
+.real-traffic-kpi small { color: var(--text-muted); line-height: 1.5; }
+.real-weather-card { display: flex; align-items: center; gap: 20px; padding: 24px; background: linear-gradient(120deg, var(--tint-cyan), var(--surface-2)); }
+.real-weather-card > svg { color: var(--lagoon-text); flex-shrink: 0; }
+.real-weather-card p { margin: 10px 0 8px; }
+.real-weather-card small { color: var(--text-muted); line-height: 1.6; }
+.real-weather-card a { color: var(--lagoon-text); }
+.real-traffic-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.real-traffic-chart { padding: 24px; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.real-traffic-chart h3 { margin: 0 0 6px; }
+.real-traffic-chart figcaption > span, .real-traffic-chart > p { font-size: var(--text-sm); color: var(--text-muted); }
+.real-traffic-chart > svg { width: 100%; height: 225px; overflow: visible; }
+.real-traffic-chart svg text { fill: var(--text-muted); font-family: var(--font-body); font-size: 12px; }
+.real-traffic-chart > p { margin: auto 0 0; line-height: 1.6; }
+.real-road-bars { display: grid; gap: 16px; margin: 4px 0 10px; }
+.real-road-bars > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 14px; font-size: var(--text-sm); }
+.real-road-bars strong { grid-column: 1 / -1; font-weight: var(--weight-medium); }
+.real-road-bars__track { display: grid; height: 16px; gap: 3px; background: var(--surface-1); border-radius: 4px; }
+.real-road-bars__track span { display: block; background: var(--lagoon-text); min-width: 2px; border-radius: 4px; }
+.real-road-bars__track i { display: block; background: var(--sunset); min-width: 2px; border-radius: 4px; }
+.real-road-features, .real-training-evidence, .real-model-scope, .real-traffic-error { padding: 24px; }
+.real-road-features p, .real-training-evidence > p, .real-model-scope p, .real-model-scope li { color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.6; }
+.real-road-features table, .real-training-evidence table { margin-top: 20px; }
+.real-model-scope > strong { font-family: var(--font-body); font-size: var(--text-card-title); }
+.real-model-scope details { margin-top: 16px; }
+.real-feature-weights { display: grid; gap: 14px; margin-top: 20px; }
+.real-feature-weights > div { display: grid; grid-template-columns: minmax(140px, 1fr) 1fr 60px; align-items: center; gap: 16px; font-size: var(--text-sm); }
+.real-feature-weights meter { width: 100%; accent-color: var(--lagoon); }
+@media (max-width: 1000px) { .real-traffic-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .real-traffic-chart-grid { grid-template-columns: 1fr; } }
+@media (max-width: 540px) { .real-traffic-kpis { grid-template-columns: 1fr; } .real-weather-card { align-items: flex-start; padding: 18px; } .real-traffic-heading, .real-traffic-chart, .real-road-features, .real-training-evidence, .real-model-scope { padding: 18px; } }
+
+.real-traffic-timestamp { margin: 0; color: var(--text-secondary); font-size: var(--text-xs); line-height: 1.6; }

@@ -1,0 +1,1014 @@
+{
+  "schema": "crossflow.six_camera_activation_verification.v1",
+  "backend_pid": 93871,
+  "backend_session": 56917,
+  "configuration": {
+    "concurrency": 6,
+    "configured_camera_count": 6,
+    "all_maximum_age_seconds": [
+      30.0
+    ],
+    "all_frame_intervals_seconds": [
+      1.0
+    ],
+    "routing_allowed_camera_ids": [
+      "15"
+    ]
+  },
+  "snapshots": [
+    {
+      "checked_at": "2026-10-24T05:49:02.608452+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 5,
+        "stale": 1,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:48:50.170588Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:48:52.583413Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 4,
+          "congestion_score": 12.621909413117363,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:48:50.492015Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 6,
+          "congestion_score": 2.6194720321884315,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:48:48.655634Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 5,
+          "congestion_score": 38.08745472659363,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:48:54.835792Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 1,
+          "congestion_score": 1.3464443827077637,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T05:49:12.654238+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 5,
+        "stale": 1,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:48:58.770544Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:02.792819Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 5,
+          "congestion_score": 19.987756077798597,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:00.868613Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 9,
+          "congestion_score": 4.744397449833105,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:00.179181Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 4,
+          "congestion_score": 64.55683260687528,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:04.896418Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 50.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T05:49:22.699538+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 5,
+        "stale": 1,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:08.420729Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:12.558033Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 3,
+          "congestion_score": 13.524089610806788,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:10.715406Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 8,
+          "congestion_score": 31.27994857663857,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:08.363279Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 32.866809114769765,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:13.779766Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T05:49:32.744237+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 4,
+        "stale": 1,
+        "unavailable": 1,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:26.387440Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:22.759383Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 3,
+          "congestion_score": 10.268883585087977,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:21.536737Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 7,
+          "congestion_score": 17.5120433350578,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:20.294119Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "unavailable",
+          "observed_at": "2026-10-24T05:49:24.337754Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T05:49:42.787776+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 5,
+        "stale": 1,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:28.387451Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:32.593529Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 11.324741496771452,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:30.861343Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 5,
+          "congestion_score": 9.486159476754828,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:30.376967Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 26.108770650398256,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:34.940085Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 2.7459900663363355,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T05:49:52.832684+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 5,
+        "stale": 1,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:39.046810Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:42.678821Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 4,
+          "congestion_score": 24.68932526222797,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:41.075602Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 5,
+          "congestion_score": 10.116272552014985,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:39.695087Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 29.486626730428462,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:43.850074Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T05:50:02.874249+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 5,
+        "stale": 1,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:39.046810Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:42.678821Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 4,
+          "congestion_score": 24.68932526222797,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:41.075602Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 5,
+          "congestion_score": 10.116272552014985,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:49.677191Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 3,
+          "congestion_score": 31.8833470738689,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:54.626501Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T05:50:12.916898+00:00",
+      "workers": [
+        {
+          "pid": 93900,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93899,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93901,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93902,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 93896,
+          "camera_id": "51",
+          "capture_seconds": 3600
+        }
+      ],
+      "summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 4,
+        "stale": 1,
+        "unavailable": 1,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:50:06.451131Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:49:52.470743Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 15.77628770761173,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:50:07.144901Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 5,
+          "congestion_score": 4.820091861045558,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T05:50:03.133003Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 1,
+          "congestion_score": 22.962406407832624,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "unavailable",
+          "observed_at": "2026-10-24T05:50:05.006691Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        }
+      ]
+    }
+  ],
+  "numeric_store_check": [
+    {
+      "camera_id": "1",
+      "recent_numeric_records": 100,
+      "usable_recent_records": 95,
+      "evidence_schemas": [
+        "crossflow.cctv_evidence.v1"
+      ],
+      "media_fields_present": false,
+      "claims_image_retention": false,
+      "latest_observed_at": "2026-10-24T05:50:19.462699Z",
+      "latest_quality_reasons": [],
+      "records_after_first_activation_check": 70,
+      "quality_note": "Recent stored records can include pre-activation historical observations; current status/freshness is separately reported."
+    },
+    {
+      "camera_id": "13",
+      "recent_numeric_records": 100,
+      "usable_recent_records": 95,
+      "evidence_schemas": [
+        "crossflow.cctv_evidence.v1"
+      ],
+      "media_fields_present": false,
+      "claims_image_retention": false,
+      "latest_observed_at": "2026-10-24T05:50:15.821845Z",
+      "latest_quality_reasons": [],
+      "records_after_first_activation_check": 69,
+      "quality_note": "Recent stored records can include pre-activation historical observations; current status/freshness is separately reported."
+    },
+    {
+      "camera_id": "15",
+      "recent_numeric_records": 100,
+      "usable_recent_records": 42,
+      "evidence_schemas": [
+        "crossflow.cctv_evidence.v1"
+      ],
+      "media_fields_present": false,
+      "claims_image_retention": false,
+      "latest_observed_at": "2026-10-24T05:43:47.835697Z",
+      "latest_quality_reasons": [],
+      "records_after_first_activation_check": 0,
+      "quality_note": "Recent stored records can include pre-activation historical observations; current status/freshness is separately reported."
+    },
+    {
+      "camera_id": "19",
+      "recent_numeric_records": 100,
+      "usable_recent_records": 99,
+      "evidence_schemas": [
+        "crossflow.cctv_evidence.v1"
+      ],
+      "media_fields_present": false,
+      "claims_image_retention": false,
+      "latest_observed_at": "2026-10-24T05:50:13.684071Z",
+      "latest_quality_reasons": [],
+      "records_after_first_activation_check": 69,
+      "quality_note": "Recent stored records can include pre-activation historical observations; current status/freshness is separately reported."
+    },
+    {
+      "camera_id": "48",
+      "recent_numeric_records": 100,
+      "usable_recent_records": 81,
+      "evidence_schemas": [
+        "crossflow.cctv_evidence.v1"
+      ],
+      "media_fields_present": false,
+      "claims_image_retention": false,
+      "latest_observed_at": "2026-10-24T05:50:15.075125Z",
+      "latest_quality_reasons": [],
+      "records_after_first_activation_check": 71,
+      "quality_note": "Recent stored records can include pre-activation historical observations; current status/freshness is separately reported."
+    },
+    {
+      "camera_id": "51",
+      "recent_numeric_records": 100,
+      "usable_recent_records": 100,
+      "evidence_schemas": [
+        "crossflow.cctv_evidence.v1"
+      ],
+      "media_fields_present": false,
+      "claims_image_retention": false,
+      "latest_observed_at": "2026-10-24T05:50:13.526594Z",
+      "latest_quality_reasons": [],
+      "records_after_first_activation_check": 66,
+      "quality_note": "Recent stored records can include pre-activation historical observations; current status/freshness is separately reported."
+    }
+  ],
+  "operations_http": {
+    "status_code": 200,
+    "camera_traffic_summary": {
+      "status": "active",
+      "configured_cameras": 6,
+      "fresh_cameras": 4,
+      "validated_cameras": 0,
+      "estimated_cameras": 4,
+      "mean_congestion_index": 10.9,
+      "vehicle_detections": 8,
+      "latest_observed_at": "2026-10-24T12:50:07+07:00",
+      "oldest_observed_at": "2026-10-24T12:49:52+07:00",
+      "valid_until": "2026-10-24T12:50:22+07:00",
+      "source": "registered_camera_aggregates",
+      "scope": "fresh_registered_camera_views_only",
+      "measured_road_speed": false,
+      "independently_validated": false
+    },
+    "road_network_coverage": {
+      "source": "OpenStreetMap",
+      "scope": "bundled_batam_routing_graph",
+      "mapped_nodes": 115320,
+      "mapped_source_ways": 27018,
+      "directed_edges": 249745,
+      "live_camera_edge_count": 0,
+      "live_camera_edge_coverage_percent": 0.0,
+      "complete_live_coverage": false
+    },
+    "published_at": null
+  },
+  "no_media_saved_by_verification": true,
+  "model_accuracy_evaluated": false,
+  "camera15_playlist_diagnostic": {
+    "source": "currently_registered_public_playlist",
+    "checked_on": "2026-10-24",
+    "bytes": 150,
+    "starts_m3u8": true,
+    "has_endlist": true,
+    "has_source_clock": false,
+    "parser_refusal": "Recorded HLS playlists cannot establish current live observations",
+    "routing_old_evidence_withheld": true,
+    "playlist_or_media_saved": false
+  },
+  "numeric_store_check_updated_at": "2026-10-24T05:50:31.680580+00:00"
+}

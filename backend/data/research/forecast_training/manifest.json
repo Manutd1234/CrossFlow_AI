@@ -1,0 +1,49 @@
+{
+  "schema": "crossflow.research_forecasting.v1",
+  "scope": "Non-Batam offline transfer benchmark",
+  "production_eligible": false,
+  "source_sha256": "dc3db788c3937713d6d62c71a5f6cb9dcd3bc2b36724af74064f113b7e653583",
+  "training_script_sha256": "965dbbd9bab0e85692f2aedd155ea196e68128daedca20622f3a9b67eb36be70",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2809,
+      "sha256": "e8fb43153e24303cca9cda1e6bf0f0a6fb7a822f3425fa1cc588c1ad37865e22"
+    },
+    {
+      "path": "execution_state.json",
+      "bytes": 180,
+      "sha256": "b544f01c19da1fe3f37e37b7046bc1913fe8e4a01148608112844980e26a3238"
+    },
+    {
+      "path": "model.joblib",
+      "bytes": 194522,
+      "sha256": "4bdab925a69531b0e6706f246987c02bd9e1404d3f2c95080b3b4daad681bd74"
+    },
+    {
+      "path": "per_arc_metrics.csv",
+      "bytes": 19287,
+      "sha256": "288216ad647121ea922e186f4b8f6eadda797706ae26157dc8d96dc1603152b1"
+    },
+    {
+      "path": "qa.json",
+      "bytes": 824,
+      "sha256": "e21ddb00e5fffa234e189522a069558fbbd2d98f54ddee2a1436658c57c5cf97"
+    },
+    {
+      "path": "report.json",
+      "bytes": 23728,
+      "sha256": "809581e628525cf0248829da33c4f6f3e8fdf496202956bd19b392eee1c2777b"
+    },
+    {
+      "path": "selection_frozen_before_holdout.json",
+      "bytes": 788,
+      "sha256": "01aced3604e9abcc9c7c2af4e3b60d1877cf987a22e5546a1b477036fb9aefd7"
+    },
+    {
+      "path": "test_predictions.csv.gz",
+      "bytes": 199538,
+      "sha256": "a0b792829cc56ccf09c8e115a372db1dc8e691d3f3d8e1abc9ffa9ac06c82985"
+    }
+  ]
+}

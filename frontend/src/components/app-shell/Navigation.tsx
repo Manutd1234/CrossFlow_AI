@@ -41,6 +41,7 @@ export function Navigation({ activeTab, setActiveTab, allowedTabs }: NavigationP
   const visibleItems = allowedTabs
     ? NAV_ITEMS.filter((item) => allowedTabs.includes(item.id))
     : NAV_ITEMS;
+  const driverNavigation = allowedTabs !== undefined && !allowedTabs.includes('analytics');
 
   const handleTabKeyDown = (
     event: KeyboardEvent<HTMLButtonElement>,
@@ -108,7 +109,7 @@ export function Navigation({ activeTab, setActiveTab, allowedTabs }: NavigationP
                 </span>
                 <span className="app-navigation-copy">
                   <strong>{item.label}</strong>
-                  <span>{item.description}</span>
+                  <span>{driverNavigation && item.id === 'route' ? 'Dispatch code lookup' : item.description}</span>
                 </span>
               </button>
             </li>

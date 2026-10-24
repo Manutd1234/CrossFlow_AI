@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "target": "road_speed_kph",
+  "training_performed": true,
+  "selected_model": "extra_trees_depth_2",
+  "production_eligible": false,
+  "source": {
+    "site_id": "batam-gajah-mada-kemilau-bangsa-published-2023",
+    "location": "Jalan Gajah Mada in front of Kemilau Bangsa School intersection, Tiban, Batam",
+    "rows": 48,
+    "survey_days": 3,
+    "csv_sha256": "8dceaa2b73169ff33aded53fc9ca7a86274f3aa72cdd4ec60f4236b3cae68e44",
+    "pdf_sha256": "2e37e52e90ea8450359e3d5391e7a1626a304b85d3c8cf59808e1513d4eeb681",
+    "url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642",
+    "pdf_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/download/5642/3819",
+    "license": "CC BY-SA 4.0 as displayed on article page",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "attribution": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, decimal commas normalized, explicit interval offsets and quality diagnostics added. No author endorsement."
+  },
+  "license": {
+    "name": "CC BY-SA 4.0 as displayed on article page",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "attribution": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, decimal commas normalized, explicit interval offsets and quality diagnostics added. No author endorsement."
+  },
+  "reproduce": "CrossFlow_AI/.venv/bin/python CrossFlow_AI/scripts/train_batam_speed.py",
+  "files": [
+    {
+      "path": "model.json",
+      "bytes": 18327,
+      "sha256": "0592cdad28a47a82638361ac947e24e435af48a6d509fd71c2b16bf9f401d7bd"
+    },
+    {
+      "path": "predictions.csv",
+      "bytes": 2752,
+      "sha256": "0a3bb273072187e3cf42a7b1668f4e03368c530e98e594b0e89a88cb571a2c07"
+    },
+    {
+      "path": "report.json",
+      "bytes": 19361,
+      "sha256": "ffbfa94a787bfb9d65d7733c7f3c1526652075e58b53edc87fdfc122e87de888"
+    },
+    {
+      "path": "validation.csv",
+      "bytes": 553,
+      "sha256": "9549c6966f3d1e996878bfbb383da7d0eab8ff0fa5a4f0646c301fc5af12050e"
+    }
+  ]
+}

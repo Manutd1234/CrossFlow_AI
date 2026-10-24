@@ -1,0 +1,118 @@
+{
+  "sources": [
+    {
+      "source_id": "BATAM-014",
+      "csv": "research/batam-traffic/datasets/paper_observations/round3/observations.csv",
+      "csv_sha256": "39a96d4fddba284b9106b84666589eb28ea8c65770e8305d779d1e4018b0d35c",
+      "pdf_sha256": "97fbbc1da8acafabbaea5589a75937e92ca78e6a0b87b5a104401162a8d053c9",
+      "rows": 216,
+      "metric": "vehicle_count",
+      "unit": "vehicles_in_15_minute_interval",
+      "minutes": 15,
+      "site_id": "batam-sekupang-four-approach-published-2023",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_evidence_url": "https://journal.uib.ac.id/index.php/jce/article/view/9076",
+      "attribution": "Uswatun Azizatul Syarqiah and Yusra Aulia Sari (2024), Optimizing Traffic Management at Batam City Intersections: Analysis of Congestion Causes and Mitigation Strategies, Journal of Civil Engineering and Planning 5(1), DOI 10.37253/jcep.v5i1.9076. Table 4.1 individually transcribed; time offsets, provenance and diagnostics added. No author endorsement.",
+      "features": [
+        "prior_same_series_count",
+        "approach",
+        "movement",
+        "vehicle_class"
+      ],
+      "fit_groups": [
+        "2023-12-17T06:45:00+07:00",
+        "2023-12-17T07:00:00+07:00",
+        "2023-12-17T07:15:00+07:00"
+      ],
+      "validation_groups": [
+        "2023-12-17T07:30:00+07:00"
+      ],
+      "test_groups": [
+        "2023-12-17T07:45:00+07:00"
+      ],
+      "presets": [
+        "persistence",
+        "series_mean",
+        "class_mean",
+        "shrink_25",
+        "shrink_50",
+        "shrink_75",
+        "global_ratio",
+        "ridge_residual_1",
+        "ridge_residual_10"
+      ],
+      "new_observations_acquired": 0,
+      "new_to_this_count_experiment": 216,
+      "fitted_source_cells": 180,
+      "final_heldout_target_cells": 36
+    },
+    {
+      "source_id": "BATAM-EXT-005",
+      "csv": "research/batam-traffic/datasets/paper_observations/observations.csv",
+      "csv_sha256": "3dd9ac0b72739cea9a605118e938a98c12d13e452027c55a3c174b88290051ed",
+      "pdf_sha256": "2e37e52e90ea8450359e3d5391e7a1626a304b85d3c8cf59808e1513d4eeb681",
+      "rows": 72,
+      "metric": "u_turn_vehicle_count",
+      "unit": "vehicles_in_1_hour_interval",
+      "minutes": 60,
+      "site_id": "batam-gajah-mada-kemilau-bangsa-uturn-published-2023",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "license_evidence_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642/0",
+      "attribution": "Harry Kurniawan and M. Khairi Anwar (2023), Pengaruh U-Turn terhadap Kinerja Lalu Lintas pada Ruas Jalan Gajah Mada Depan Simpang Sekolah Kemilau Bangsa Kota Batam, Sigma Teknika 6(2), 479–492. Table 12, p488, raw class count cells retained including subtotal inconsistencies. Time offsets, provenance and diagnostics added. No author endorsement. Derived count artifacts are distributed under CC BY-SA 4.0.",
+      "features": [
+        "prior_survey_day_same_clock_series_count",
+        "direction",
+        "vehicle_class",
+        "clock_slot"
+      ],
+      "fit_groups": [
+        "2023-02-16"
+      ],
+      "validation_groups": [
+        "2023-02-17"
+      ],
+      "test_groups": [
+        "2023-02-18"
+      ],
+      "presets": [
+        "persistence",
+        "series_mean",
+        "class_mean",
+        "shrink_25",
+        "shrink_50",
+        "shrink_75"
+      ],
+      "new_observations_acquired": 0,
+      "new_to_this_count_experiment": 72,
+      "fitted_source_cells": 48,
+      "final_heldout_target_cells": 24
+    }
+  ],
+  "excluded_sources": [
+    {
+      "source_id": "BATAM-EXT-010/BATAM-EXT-016/BATAM-EXT-018",
+      "cells": 33,
+      "reason": "Source time/header/unit or peak-only issues; no compatible complete chronological series for this frozen experiment."
+    },
+    {
+      "source_id": "BATAM-013",
+      "cells": 24,
+      "reason": "Only four all-approach timestamps and a conflicting angkot total; not an equivalent approach/movement holdout."
+    },
+    {
+      "source_id": "BATAM-022",
+      "cells": 6,
+      "reason": "Only one hourly timestamp and direction percentage inconsistencies; no temporal transitions."
+    },
+    {
+      "source_id": "BATAM-EXT-001",
+      "cells": 108,
+      "reason": "Repository access does not establish an explicit open training/reuse license; narrative/date conflicts also remain."
+    }
+  ],
+  "license_checked_on_client_date": "2026-10-24",
+  "batam014_primary_license_rechecked": true,
+  "batam_ext005_license_basis": "Existing hash-verified research/speed_training source manifest and reviewed publisher page; separate CC BY-SA attribution retained."
+}

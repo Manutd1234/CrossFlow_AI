@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-23T10:17:24.798811+00:00",
+  "engine_source_sha256": "b98c2fe5c41c9f9415008d7f2169bf4d8f8064a17e3678a92ed6675c1cc565b1",
+  "stress": {
+    "status": "passed",
+    "requested_scenarios": 2000000,
+    "evaluated_scenarios": 2000000,
+    "seed": 20261023,
+    "batch_size": 4096,
+    "elapsed_seconds": 40.48,
+    "scenarios_per_second": 49406.9,
+    "paired_checks": {
+      "risk_monotonicity": 333334,
+      "surge_monotonicity": 333333,
+      "surge_decay": 333333
+    },
+    "failures": {},
+    "scope": "randomized production-forest inference and router-cost invariants, not end-to-end journey solves",
+    "coverage": {
+      "corridors": 5,
+      "road_classes": [
+        "ferry",
+        "living_street",
+        "motorway",
+        "primary",
+        "residential",
+        "road",
+        "secondary",
+        "service",
+        "tertiary",
+        "track",
+        "trunk",
+        "unclassified"
+      ],
+      "days": 7,
+      "weather_states": 3,
+      "capacity_vph_range": [
+        100,
+        8000
+      ],
+      "free_flow_kph_range": [
+        5,
+        130
+      ],
+      "terminal_distance_km_range": [
+        0,
+        30
+      ],
+      "properties": [
+        "finite outputs",
+        "ordered quantiles",
+        "bounded speed ratios",
+        "nonnegative delays",
+        "risk monotonicity",
+        "ferry surge cap and decay",
+        "P90 downside no faster than expected speed"
+      ]
+    },
+    "measured_traffic_accuracy_established": false
+  },
+  "local_observed_backtest": {
+    "schema_version": 1,
+    "generated_at": "2026-10-23T10:18:05.852122+00:00",
+    "status": "insufficient_observations",
+    "validation_scope": "observed_chronological_backtest",
+    "input_rows": 100,
+    "unique_rows": 100,
+    "eligible_rows": 100,
+    "observed_rows": 100,
+    "source_counts": {
+      "tomtom_live": 100
+    },
+    "requires_measured_data_for_accuracy_claim": true,
+    "model_replaced": false,
+    "assumptions": [
+      "weather=clear; ferry proximity unknown because observations do not persist these inputs",
+      "missing capacity and terminal distance use declared corridor defaults",
+      "speed-ratio congestion target is clipped to [0,95] points",
+      "observed timestamps are treated as availability timestamps; ingestion delays are unknown",
+      "current baselines require the same corridor and location rounded to 5 decimals (about 1m); this is not edge map matching"
+    ],
+    "horizons": [],
+    "readiness": {
+      "eligible_rows": 100,
+      "minimum_unique_observations": 150,
+      "minimum_prior_training_observations": 100,
+      "synthetic_fallback_allowed": false,
+      "promotion_evaluated": false
+    },
+    "reason": "At least 150 eligible unique observations are required."
+  }
+}

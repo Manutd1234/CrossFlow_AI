@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-23T19:44:50.763575+00:00",
+  "downloads": [
+    {
+      "name": "guangzhou-metadata.json",
+      "source_url": "https://zenodo.org/api/records/1205229",
+      "final_url": "https://zenodo.org/api/records/1205229",
+      "bytes": 6135,
+      "sha256": "43e5f5cb9b4220a5f49ff751fffc576cfa0ad6edc9010d86c7b0ba130a2863b3",
+      "status": "downloaded"
+    },
+    {
+      "name": "guangzhou-Data.zip",
+      "source_url": "https://zenodo.org/records/1205229/files/Data.zip?download=1",
+      "final_url": "https://zenodo.org/records/1205229/files/Data.zip?download=1",
+      "bytes": 17562786,
+      "sha256": "4bf27e535928df9abbbde7cdb26075f11b1d70ab2d5a4e71107272e1c4add299",
+      "status": "downloaded"
+    },
+    {
+      "name": "batam-grand-mall.pdf",
+      "source_url": "https://repository.unrika.ac.id/xmlui/bitstream/handle/123456789/1023/REPOSITORY%20JURNAL%20FELANY%20FRISCA%20ULANDARI%20.pdf?sequence=1&isAllowed=y",
+      "final_url": "https://repository.unrika.ac.id/xmlui/bitstream/handle/123456789/1023/REPOSITORY%20JURNAL%20FELANY%20FRISCA%20ULANDARI%20.pdf?sequence=1&isAllowed=y",
+      "bytes": 533121,
+      "sha256": "ff67266fb0e1cb94dbfa8cf904486bf6e8ada3699b47c7b0fa5c0d79550064b0",
+      "status": "downloaded"
+    }
+  ],
+  "publisher_zip_md5_verified": "9ea898ba4b03043ad5f60d9c7b881c44",
+  "tomtom_access": {
+    "current_flow_http_status": 200,
+    "historical_stats_http_status": 403,
+    "scope": "read-only existing credential check, no paid jobs"
+  },
+  "batam_survey": "66 records previously transcribed in the research workspace; original public PDF downloaded again and hash/table/date checked. No new citywide road-speed archive verified."
+}

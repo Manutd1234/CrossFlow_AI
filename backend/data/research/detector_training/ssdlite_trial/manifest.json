@@ -1,0 +1,111 @@
+{
+  "schema": "crossflow.vehicle_detector_artifacts.v1",
+  "files": [
+    {
+      "path": "development_frame_manifest.json",
+      "bytes": 64905,
+      "sha256": "940abaa455090ee28e6a6c7fe7a8cafc21c8cabb4681a989a673d4e7d629a243"
+    },
+    {
+      "path": "diagnostic_detections.json",
+      "bytes": 13844,
+      "sha256": "6bffc504b4c207951eb597eaf311dea3137b5f0cd156a9c66ad1aad3fc019b1d"
+    },
+    {
+      "path": "diagnostic_frame_manifest.json",
+      "bytes": 39841,
+      "sha256": "3a7ccc16e77a140f942579721558e697c4fd2eaf4be96adae6cb3a1ca2d74c44"
+    },
+    {
+      "path": "diagnostic_overlay_file_00001.jpg",
+      "bytes": 106854,
+      "sha256": "7c37190025cc446269e257afb7a5b03471ec8a3da6508a7db42358bc1427df6f"
+    },
+    {
+      "path": "diagnostic_overlay_file_00153.jpg",
+      "bytes": 145204,
+      "sha256": "d3184a11abdd5a490536c09a229c1dc95fb35dc40a3fe8b3db2ca535e6e4b797"
+    },
+    {
+      "path": "diagnostic_predictions.csv",
+      "bytes": 2209,
+      "sha256": "10848c56467b1436c4152529d5f530586f5de4e68f5c5ede7b9d72d43083d447"
+    },
+    {
+      "path": "evidence/torchvision_LICENSE.txt",
+      "bytes": 1517,
+      "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+    },
+    {
+      "path": "evidence/torchvision_README.md",
+      "bytes": 4844,
+      "sha256": "1957ded1ad27eb0d373b6421a431112dfeba1e85b486807181fccf5d0133e034"
+    },
+    {
+      "path": "head_finetuned_epoch_12.pt",
+      "bytes": 9188775,
+      "sha256": "37f3af7561539ae35e6cf030693a9456fe4c8658befdaddf28e508cd0e316a86"
+    },
+    {
+      "path": "head_finetuned_epoch_4.pt",
+      "bytes": 9188293,
+      "sha256": "4caf6bd0dd45e95d6e97885b51126f202daf2df5a319cdd95c56d05300e0f457"
+    },
+    {
+      "path": "head_finetuned_epoch_8.pt",
+      "bytes": 9188293,
+      "sha256": "d34fed09ff2e4a95e7fb56ac948a4561df84d0d71804a7b01d1b0d6f770eed81"
+    },
+    {
+      "path": "licenses.json",
+      "bytes": 1974,
+      "sha256": "6c030d6d62bf5f24f639592bb58f693ef3e178ee3fa0616f672f7752eb06961a"
+    },
+    {
+      "path": "model.pt",
+      "bytes": 9188293,
+      "sha256": "d34fed09ff2e4a95e7fb56ac948a4561df84d0d71804a7b01d1b0d6f770eed81"
+    },
+    {
+      "path": "pretrained_coco.pt",
+      "bytes": 14069355,
+      "sha256": "a79551df90c79834bcd3bb3845ef9d966b5449a3a9b2833ae8404778ca5d65d2"
+    },
+    {
+      "path": "qa.json",
+      "bytes": 676,
+      "sha256": "af21e5c41ea5fd43c60084b24e89596933dd5eb1b0c36eca92d89c07f7b587ad"
+    },
+    {
+      "path": "report.json",
+      "bytes": 7478,
+      "sha256": "794b819e687b10ebf5373ba611cf4d65eb6515d027ea91dd1997b9a79500253e"
+    },
+    {
+      "path": "selection_frozen_before_reused_diagnostic.json",
+      "bytes": 1483,
+      "sha256": "0f79ac0d9b2c68a2e1380f704b1e6499e95a21cee1ea84d442551c7d353d57e1"
+    },
+    {
+      "path": "training_losses.json",
+      "bytes": 837,
+      "sha256": "6809a15e5fa83175d2cd11be5e1a29455048ab5e75a8e0dc090bd362d24ad041"
+    },
+    {
+      "path": "training_plan.json",
+      "bytes": 1328,
+      "sha256": "426980a1fdea86b9423aa790979cb58d5c5fec1a8c2e9258a6183516ec1864fa"
+    },
+    {
+      "path": "validation_grid.json",
+      "bytes": 20046,
+      "sha256": "65448ff2edca8003feb628235648e9dc5a4dec851095999a5ab545cf033c4493"
+    }
+  ],
+  "source_manifest_sha256": "b5732cfc37555426c25c1c9f56ad22b9b9e95afd1c25be31c092b3ad11d13bdd",
+  "model_sha256": "d34fed09ff2e4a95e7fb56ac948a4561df84d0d71804a7b01d1b0d6f770eed81",
+  "script_sha256": "41c315d311b7bdcedc8dd18140398e6eaf1a9b9687f7d75cf1975f73119f8a8a",
+  "service_sha256": "91d3421d77b3910e37cc1264ace536e2e9c966c35f94d56d6931fede1ebfa3b2",
+  "production_eligible": false,
+  "batam_validated": false
+}

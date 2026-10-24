@@ -30,6 +30,9 @@ _OSRM_BASE_URL = os.environ.get(
     "CROSSFLOW_OSRM_BASE_URL", "https://router.project-osrm.org",
 ).strip().rstrip("/")
 _MAX_BATAM_GRAPH_SNAP_M = 1_000.0
+_MAX_OSRM_RESPONSE_BYTES = 2_000_000
+_MAX_OSRM_COORDINATES = 50_000
+_MAX_OSRM_STEPS = 10_000
 _BOARDING_BUFFER_MINS = ferry_schedule.BOARDING_CUTOFF_MINS
 _REGION_TIMEZONES = {
     "BATAM": ZoneInfo("Asia/Jakarta"),
@@ -232,42 +235,84 @@ def _osrm_route(
         with urllib.request.urlopen(
             request, timeout=4, context=tls.default_context(),
         ) as response:
-            payload = json.loads(response.read())
+            raw = response.read(_MAX_OSRM_RESPONSE_BYTES + 1)
+            if len(raw) > _MAX_OSRM_RESPONSE_BYTES:
+                return None
+            payload = json.loads(raw)
+        return _parse_osrm_route(payload)
     except Exception as error:  # noqa: BLE001 - provider failure is non-fatal
-        print(f"[multimodal] OSRM unavailable: {error}")
+        # Provider errors may include URLs; keep their contents out of logs.
+        print(f"[multimodal] OSRM unavailable: {type(error).__name__}")
         return None
+
+
+def _osrm_number(value: Any, *, positive: bool = False) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError("Invalid OSRM measurement")
+    number = float(value)
+    if not math.isfinite(number) or number < 0 or (positive and number == 0):
+        raise ValueError("Invalid OSRM measurement")
+    return number
+
+
+def _osrm_coordinate(value: Any) -> List[float]:
+    if not isinstance(value, list) or len(value) not in (2, 3):
+        raise ValueError("Invalid OSRM coordinate")
+    if any(isinstance(item, bool) or not isinstance(item, (int, float)) for item in value[:2]):
+        raise ValueError("Invalid OSRM coordinate")
+    lng, lat = float(value[0]), float(value[1])
+    if not math.isfinite(lat) or not math.isfinite(lng) or abs(lat) > 90 or abs(lng) > 180:
+        raise ValueError("Invalid OSRM coordinate")
+    return [lat, lng]
+
+
+def _parse_osrm_route(payload: Any) -> Optional[Dict[str, Any]]:
+    """Validate the entire provider leg before presenting it as mapped directions.
+
+    A missing or malformed step must use the existing labelled continuity
+    fallback, rather than presenting estimated directions as OSRM results.
+    Exceptions here are caught at the provider boundary in ``_osrm_route``.
+    """
     routes = payload.get("routes") if isinstance(payload, dict) else None
     if not isinstance(payload, dict) or payload.get("code") != "Ok" \
             or not isinstance(routes, list) or not routes:
         return None
     candidate = routes[0]
-    raw_coords = candidate.get("geometry", {}).get("coordinates", [])
-    geometry = [
-        [float(point[1]), float(point[0])]
-        for point in raw_coords
-        if isinstance(point, list) and len(point) >= 2
-    ]
-    if len(geometry) < 2:
+    if not isinstance(candidate, dict) or not isinstance(candidate.get("geometry"), dict):
         return None
-    raw_steps = [
-        step
-        for leg in candidate.get("legs", [])
-        for step in leg.get("steps", [])
-        if isinstance(step, dict)
-    ]
+    distance = _osrm_number(candidate.get("distance"), positive=True)
+    duration = _osrm_number(candidate.get("duration"), positive=True)
+    raw_coords = candidate["geometry"].get("coordinates")
+    if not isinstance(raw_coords, list) or not 2 <= len(raw_coords) <= _MAX_OSRM_COORDINATES:
+        return None
+    geometry = [_osrm_coordinate(point) for point in raw_coords]
+    legs = candidate.get("legs")
+    if not isinstance(legs, list) or not 1 <= len(legs) <= 100:
+        return None
+    raw_steps = []
+    for leg in legs:
+        if not isinstance(leg, dict) or not isinstance(leg.get("steps"), list):
+            return None
+        raw_steps.extend(leg["steps"])
+        if len(raw_steps) > _MAX_OSRM_STEPS:
+            return None
+    if len(raw_steps) < 2:
+        return None
     maneuvers: List[Dict[str, Any]] = []
     cumulative = 0.0
     for index, step in enumerate(raw_steps, start=1):
+        if not isinstance(step, dict) or not isinstance(step.get("maneuver"), dict):
+            return None
+        _osrm_coordinate(step["maneuver"].get("location"))
+        step_distance = _osrm_number(step.get("distance"))
         maneuvers.append(_decode_osrm_step(step, index, cumulative))
-        cumulative += max(0.0, float(step.get("distance", 0.0)))
-    if len(maneuvers) < 2:
-        maneuvers = _estimate_navigation(
-            origin, destination, "Destination",
-        )["maneuvers"]
+        cumulative += step_distance
+        if not math.isfinite(cumulative):
+            return None
     return {
         "geometry": geometry,
-        "distance_km": round(float(candidate.get("distance", 0.0)) / 1000.0, 2),
-        "duration_mins": round(max(1.0, float(candidate.get("duration", 0.0)) / 60.0), 1),
+        "distance_km": round(distance / 1000.0, 2),
+        "duration_mins": round(max(1.0, duration / 60.0), 1),
         "navigation": {
             "schema_version": 1,
             "data_source": "osrm_openstreetmap",

@@ -1,0 +1,299 @@
+{
+  "schema": "crossflow.actual_live_cctv_route_verification.v1",
+  "verified_at": "2026-10-24T05:52:15.111524+00:00",
+  "snapshot_evaluated_at": "2026-10-24T05:52:15.105546+00:00",
+  "finished_at": "2026-10-24T05:52:15.111528+00:00",
+  "evidence_kind": "actual_readonly_local_store_and_real_graph_no_fixture_rows",
+  "historical_replay": false,
+  "current_freshness_claimed": false,
+  "verification_state": "camera15_unavailable_or_stale",
+  "camera_id": "15",
+  "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+  "registry_sha256": "e398e20b283387f7fb4a6b460d3a2710985f157f36da346adb587f9b43bc5c20",
+  "road_segment_id": "osm-edge:5253032156:5394956319:619",
+  "edge_distance_m": 107.5,
+  "route_learning": {
+    "source": "actual_default_database_readonly_backup_to_memory",
+    "production_database_written": false,
+    "revision": 0,
+    "qualifying_edges": 0
+  },
+  "status_summary": {
+    "listed": 28,
+    "configured": 6,
+    "live": 0,
+    "estimated": 5,
+    "stale": 1,
+    "unavailable": 0,
+    "permission_pending": 22,
+    "calibration_pending": 0
+  },
+  "camera_status": {
+    "camera_id": "15",
+    "status": "stale",
+    "observed_at": "2026-10-24T05:43:47.835697Z",
+    "maximum_age_seconds": 30.0,
+    "window_seconds": null,
+    "vehicle_count": null,
+    "moving_vehicles": null,
+    "stopped_vehicles": null,
+    "occupancy_ratio": null,
+    "congestion_score": null,
+    "severity": null,
+    "validation_status": "unavailable",
+    "timestamp_basis": null,
+    "routing_enabled": false,
+    "operational_eligible": false,
+    "detector_id": null
+  },
+  "status_at_snapshot_evaluation_time": {
+    "camera_id": "15",
+    "status": "stale",
+    "observed_at": "2026-10-24T05:43:47.835697Z",
+    "maximum_age_seconds": 30.0,
+    "window_seconds": null,
+    "vehicle_count": null,
+    "moving_vehicles": null,
+    "stopped_vehicles": null,
+    "occupancy_ratio": null,
+    "congestion_score": null,
+    "severity": null,
+    "validation_status": "unavailable",
+    "timestamp_basis": null,
+    "routing_enabled": false,
+    "operational_eligible": false,
+    "detector_id": null,
+    "reason": "Camera observations are older than the configured freshness limit"
+  },
+  "stored_evidence_matches_current_registry_fingerprint": false,
+  "status_read_at": "2026-10-24T05:52:15.108085+00:00",
+  "latest_evidence_read_at": "2026-10-24T05:52:15.111002+00:00",
+  "latest_numeric_evidence": {
+    "captured_at": "2026-10-24T05:43:47.835697Z",
+    "window_start": "2026-10-24T05:42:49.191899Z",
+    "window_seconds": 58.643798,
+    "frame_count": 31,
+    "vehicle_count": 1,
+    "tracked_vehicle_count": 1,
+    "moving_vehicle_count": 0,
+    "stationary_vehicle_count": 0,
+    "unknown_vehicle_count": 1,
+    "uncertain_vehicle_count": 0,
+    "uncertain_detection_fraction": 0.0,
+    "image_occupancy_ratio": 0.058853224467576085,
+    "normalized_motion_proxy": 0.0003570920768958178,
+    "stationary_fraction": 0.0,
+    "line_crossings": null,
+    "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+    "timestamp_basis": "stream_observation",
+    "operational_eligible": false,
+    "quality": {
+      "usable": true,
+      "reasons": [],
+      "tracking": {
+        "current_motion_observations": 1,
+        "motion_observations": 70,
+        "scope": "rolling_detection_observations_v1",
+        "vehicle_observations": 87
+      }
+    },
+    "age_seconds_at_read": 507.275305
+  },
+  "status_and_evidence_timestamp_match": true,
+  "snapshot_observation_count": 0,
+  "snapshot_camera_ids": [],
+  "camera15_snapshot_index": null,
+  "camera15_snapshot_age_seconds": null,
+  "camera15_snapshot_observed_at": null,
+  "snapshot_wait_seconds": 0.003,
+  "exact_edge_cost_seconds": {
+    "free_flow": 8.6,
+    "without_camera_penalty": 0.0,
+    "with_actual_snapshot_penalty": 0.0,
+    "maximum_camera_penalty": 17.2
+  },
+  "baseline_without_cctv": {
+    "route_found": true,
+    "nodes": [
+      5253032156,
+      5394956319
+    ],
+    "directed_edges": [
+      [
+        5253032156,
+        5394956319,
+        619
+      ]
+    ],
+    "distance_m": 107.5,
+    "search_cost_s": 10.303875,
+    "objective_cost_s": 10.304,
+    "modeled_travel_time_mins": 0.14,
+    "raw_cost_breakdown_seconds": {
+      "baseline_free_flow_s": 8.6,
+      "free_flow_s": 8.6,
+      "learned_free_flow_adjustment_s": 0.0,
+      "congestion_delay_s": 0.0,
+      "weather_delay_s": 0.0,
+      "maneuver_delay_s": 0.0,
+      "suitability_penalty_s": 0.0,
+      "road_quality_penalty_s": 1.462,
+      "congestion_uncertainty_s": 0.0,
+      "uncertainty_penalty_s": 0.0,
+      "cctv_search_penalty_s": 0.0,
+      "distance_proxy_s": 4.838,
+      "objective_time_s": 8.6,
+      "expected_objective_cost_s": 10.304,
+      "modeled_travel_s": 8.6,
+      "generalized_cost_s": 10.304
+    },
+    "public_cost_breakdown": {
+      "baseline_free_flow_mins": 0.14,
+      "free_flow_mins": 0.14,
+      "learned_free_flow_adjustment_mins": 0.0,
+      "verified_learning_time_saved_mins": 0.0,
+      "congestion_delay_mins": 0.0,
+      "weather_delay_mins": 0.0,
+      "maneuver_delay_mins": 0.0,
+      "road_suitability_penalty_mins": 0.0,
+      "road_quality_penalty_mins": 0.02,
+      "expected_objective_cost_mins": 0.17,
+      "congestion_uncertainty_mins": 0.0,
+      "uncertainty_penalty_mins": 0.0,
+      "cctv_search_penalty_mins": 0.0,
+      "modeled_travel_time_mins": 0.14,
+      "generalized_cost_mins": 0.17
+    },
+    "cctv_audit": null
+  },
+  "with_actual_cctv_snapshot": {
+    "route_found": true,
+    "nodes": [
+      5253032156,
+      5394956319
+    ],
+    "directed_edges": [
+      [
+        5253032156,
+        5394956319,
+        619
+      ]
+    ],
+    "distance_m": 107.5,
+    "search_cost_s": 10.303875,
+    "objective_cost_s": 10.304,
+    "modeled_travel_time_mins": 0.14,
+    "raw_cost_breakdown_seconds": {
+      "baseline_free_flow_s": 8.6,
+      "free_flow_s": 8.6,
+      "learned_free_flow_adjustment_s": 0.0,
+      "congestion_delay_s": 0.0,
+      "weather_delay_s": 0.0,
+      "maneuver_delay_s": 0.0,
+      "suitability_penalty_s": 0.0,
+      "road_quality_penalty_s": 1.462,
+      "congestion_uncertainty_s": 0.0,
+      "uncertainty_penalty_s": 0.0,
+      "cctv_search_penalty_s": 0.0,
+      "distance_proxy_s": 4.838,
+      "objective_time_s": 8.6,
+      "expected_objective_cost_s": 10.304,
+      "modeled_travel_s": 8.6,
+      "generalized_cost_s": 10.304
+    },
+    "public_cost_breakdown": {
+      "baseline_free_flow_mins": 0.14,
+      "free_flow_mins": 0.14,
+      "learned_free_flow_adjustment_mins": 0.0,
+      "verified_learning_time_saved_mins": 0.0,
+      "congestion_delay_mins": 0.0,
+      "weather_delay_mins": 0.0,
+      "maneuver_delay_mins": 0.0,
+      "road_suitability_penalty_mins": 0.0,
+      "road_quality_penalty_mins": 0.02,
+      "expected_objective_cost_mins": 0.17,
+      "congestion_uncertainty_mins": 0.0,
+      "uncertainty_penalty_mins": 0.0,
+      "cctv_search_penalty_mins": 0.0,
+      "modeled_travel_time_mins": 0.14,
+      "generalized_cost_mins": 0.17
+    },
+    "cctv_audit": null
+  },
+  "after_snapshot_context": {
+    "route_found": true,
+    "nodes": [
+      5253032156,
+      5394956319
+    ],
+    "directed_edges": [
+      [
+        5253032156,
+        5394956319,
+        619
+      ]
+    ],
+    "distance_m": 107.5,
+    "search_cost_s": 10.303875,
+    "objective_cost_s": 10.304,
+    "modeled_travel_time_mins": 0.14,
+    "raw_cost_breakdown_seconds": {
+      "baseline_free_flow_s": 8.6,
+      "free_flow_s": 8.6,
+      "learned_free_flow_adjustment_s": 0.0,
+      "congestion_delay_s": 0.0,
+      "weather_delay_s": 0.0,
+      "maneuver_delay_s": 0.0,
+      "suitability_penalty_s": 0.0,
+      "road_quality_penalty_s": 1.462,
+      "congestion_uncertainty_s": 0.0,
+      "uncertainty_penalty_s": 0.0,
+      "cctv_search_penalty_s": 0.0,
+      "distance_proxy_s": 4.838,
+      "objective_time_s": 8.6,
+      "expected_objective_cost_s": 10.304,
+      "modeled_travel_s": 8.6,
+      "generalized_cost_s": 10.304
+    },
+    "public_cost_breakdown": {
+      "baseline_free_flow_mins": 0.14,
+      "free_flow_mins": 0.14,
+      "learned_free_flow_adjustment_mins": 0.0,
+      "verified_learning_time_saved_mins": 0.0,
+      "congestion_delay_mins": 0.0,
+      "weather_delay_mins": 0.0,
+      "maneuver_delay_mins": 0.0,
+      "road_suitability_penalty_mins": 0.0,
+      "road_quality_penalty_mins": 0.02,
+      "expected_objective_cost_mins": 0.17,
+      "congestion_uncertainty_mins": 0.0,
+      "uncertainty_penalty_mins": 0.0,
+      "cctv_search_penalty_mins": 0.0,
+      "modeled_travel_time_mins": 0.14,
+      "generalized_cost_mins": 0.17
+    },
+    "cctv_audit": null
+  },
+  "selected_path_changed": false,
+  "checks": {
+    "camera15_has_current_qualified_snapshot_observation": false,
+    "all_three_routes_found": true,
+    "baseline_has_no_cctv_audit": true,
+    "after_context_has_no_cctv_audit": true,
+    "baseline_restored_after_context": true,
+    "camera_edge_penalty_within_bound": true,
+    "same_path_physical_eta_unchanged": true
+  },
+  "no_authentication_or_http_requests": true,
+  "production_database_or_registry_written": false,
+  "camera_rows_injected": false,
+  "camera_media_read_or_retained": false,
+  "limits": [
+    "Current mode uses the actual current clock; stale evidence stays excluded.",
+    "This verifies local engine consumption of real stored numeric evidence, not an authenticated HTTP/frontend route request.",
+    "Scores remain provisional image-space estimates; no independently measured road speed or delay is inferred.",
+    "An unchanged selected path is valid when the bounded penalty does not make a detour preferable.",
+    "The status/latest-evidence reads may advance independently of the frozen routing snapshot while collectors run.",
+    "Separate synthetic graph regression tests establish behavior under controlled busy/stale/revoked cases; this artifact contains no fixture camera rows."
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "checked_at": "2026-10-23T13:44:44.816561+00:00",
+  "scope": "local frontend typography and backend/database/ML artifact hardening",
+  "deployed": false,
+  "checks": {
+    "frontend_tests": {
+      "passed": 422,
+      "files": 41,
+      "log": "/tmp/crossflow-hardening-frontend-final.log",
+      "scope": "Vitest stage passed; subsequent mock type cast checked in final build"
+    },
+    "frontend_lint_typescript_production_build": {
+      "passed": true,
+      "log": "/tmp/crossflow-hardening-build-final.log"
+    },
+    "backend_auth_pytest": {
+      "passed": 471,
+      "subtests_passed": 412,
+      "seconds": 123.12,
+      "log": "/tmp/crossflow-hardening-backend.log"
+    },
+    "standalone_backend": {
+      "passed": 153,
+      "failed": 0,
+      "log": "/tmp/crossflow-hardening-standalone.log"
+    },
+    "local_postgres_schema_migration_policies": {
+      "passed": 26,
+      "failed": 0,
+      "log": "/tmp/crossflow-hardening-sql.log"
+    },
+    "existing_local_sqlite": {
+      "databases_checked": 7,
+      "all_quick_checks_ok": true,
+      "foreign_key_violations": 0,
+      "evidence": "hardening-database-checks.json"
+    },
+    "git_diff_check": {
+      "passed": true
+    }
+  },
+  "browser": {
+    "evidence": "hardening-browser.json",
+    "operator_role": "admin",
+    "driver_role": "driver",
+    "all_analytics_panels_rendered": true,
+    "new_operator_dispatch_retrieved_by_driver": "9JL6N52",
+    "retained_ferry_demo_dispatch": "3B55FVN",
+    "console_errors": {
+      "operator": 0,
+      "driver": 0
+    },
+    "password_otp_google_consent_repeated": false
+  },
+  "typography": {
+    "font": "CrossFlow Inter",
+    "bundled": true,
+    "history_body_and_summary_px": 14,
+    "history_body_and_summary_line_height_px": 21,
+    "report_heading_px": 16,
+    "evidence": "hardening-typography.json"
+  },
+  "material_limits": [
+    "Serving Batam network forest remains the explicitly labelled synthetic baseline.",
+    "Real Batam site research benchmark is sparse and has not replaced the serving model.",
+    "Saved routes/history are persistent on this local server, not shared across servers.",
+    "No remote Supabase schema changes or exhaustive penetration test in this pass."
+  ]
+}

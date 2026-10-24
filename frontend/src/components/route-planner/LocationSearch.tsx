@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Globe, Loader, MapPin, Search, X } from 'lucide-react';
 import { FreeLocation, GeocodedLocation, RouteLocation } from '../../types';
 import { geocodeQuery } from '../../services/api';
 import { isSupportedLocation, locationRegion } from '../../services/crossBorderRouting';
 import { ICON_SIZE } from '../../theme/iconSizes';
+import './LocationSearch.css';
 
 interface LocationSearchProps {
   /** Label shown above the field (e.g. "FROM" / "TO") */
@@ -61,6 +63,10 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
   const [error, setError] = useState<string | null>(null);
   const searchRequestRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const keyboardNavigation = useRef(false);
+  const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({ visibility: 'hidden' });
   const generatedId = useId();
   const inputId = id ?? `location-${generatedId}`;
   const listboxId = `${inputId}-options`;
@@ -79,13 +85,70 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
   // Close dropdown when clicking outside.
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (!containerRef.current?.contains(e.target as Node)
+          && !popoverRef.current?.contains(e.target as Node)) {
         closeSuggestions();
       }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [closeSuggestions]);
+
+  // Float outside the scrolling sidebar so suggestions cannot be clipped by
+  // it. Follow the input on parent scroll and fit above/below the viewport.
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    const position = (event?: Event) => {
+      if (event?.target instanceof Node && popoverRef.current?.contains(event.target)) return;
+      const anchor = inputRef.current?.getBoundingClientRect();
+      if (!anchor) return;
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
+      let visibleTop = viewportTop;
+      let visibleBottom = viewportBottom;
+      for (let parent = inputRef.current?.parentElement; parent && parent !== document.body; parent = parent.parentElement) {
+        if (/^(auto|scroll|hidden|clip)$/.test(getComputedStyle(parent).overflowY)) {
+          const bounds = parent.getBoundingClientRect();
+          if (bounds.height > 0) {
+            visibleTop = Math.max(visibleTop, bounds.top);
+            visibleBottom = Math.min(visibleBottom, bounds.bottom);
+          }
+        }
+      }
+      if (anchor.bottom < visibleTop || anchor.top > visibleBottom) {
+        closeSuggestions();
+        return;
+      }
+      const inset = 12;
+      const gap = 6;
+      const below = viewportBottom - anchor.bottom - gap - inset;
+      const above = anchor.top - viewportTop - gap - inset;
+      const opensAbove = below < 240 && above > below;
+      const width = Math.min(anchor.width, Math.max(0, document.documentElement.clientWidth || window.innerWidth) - inset * 2);
+      setPopoverStyle({
+        left: Math.max(inset, Math.min(anchor.left, window.innerWidth - width - inset)),
+        width,
+        top: opensAbove ? anchor.top - gap : anchor.bottom + gap,
+        transform: opensAbove ? 'translateY(-100%)' : undefined,
+        maxHeight: Math.max(0, Math.min(400, opensAbove ? above : below)),
+      });
+    };
+    position();
+    window.addEventListener('resize', position);
+    window.addEventListener('scroll', position, true);
+    window.visualViewport?.addEventListener('resize', position);
+    window.visualViewport?.addEventListener('scroll', position);
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => position());
+    if (inputRef.current) observer?.observe(inputRef.current);
+    return () => {
+      window.removeEventListener('resize', position);
+      window.removeEventListener('scroll', position, true);
+      window.visualViewport?.removeEventListener('resize', position);
+      window.visualViewport?.removeEventListener('scroll', position);
+      observer?.disconnect();
+    };
+  }, [isOpen, closeSuggestions]);
 
   const inputValue = draftValue ?? displayOf(value);
 
@@ -131,6 +194,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value;
+    setIsOpen(true);
     setDraftValue(q);
     setQuery(q);
     setError(null);
@@ -375,7 +439,13 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
     option => option.id === activeOptionId && !option.disabled,
   ) ? activeOptionId : null;
 
+  const highlightHoveredOption = (optionId: string) => {
+    keyboardNavigation.current = false;
+    setActiveOptionId(optionId);
+  };
+
   const moveActiveOption = (direction: 1 | -1) => {
+    keyboardNavigation.current = true;
     const enabledOptions = keyboardOptions.filter(option => !option.disabled);
     if (enabledOptions.length === 0) {
       setActiveOptionId(null);
@@ -403,11 +473,14 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
   };
 
   useEffect(() => {
-    if (!visibleActiveOptionId || !isOpen) return;
+    if (!visibleActiveOptionId || !isOpen || !keyboardNavigation.current) return;
     const activeElement = document.getElementById(visibleActiveOptionId);
-    if (typeof activeElement?.scrollIntoView === 'function') {
-      activeElement.scrollIntoView({ block: 'nearest' });
-    }
+    const popover = popoverRef.current;
+    if (!activeElement || !popover) return;
+    const item = activeElement.getBoundingClientRect();
+    const list = popover.getBoundingClientRect();
+    if (item.bottom > list.bottom) popover.scrollTop += item.bottom - list.bottom;
+    else if (item.top < list.top) popover.scrollTop -= list.top - item.top;
   }, [isOpen, visibleActiveOptionId]);
 
   return (
@@ -423,8 +496,8 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
           id={labelId}
           htmlFor={inputId}
           style={{
-            fontSize: '0.72rem',
-            fontWeight: 700,
+            fontSize: 'var(--text-xs)',
+            fontWeight: 'var(--weight-bold)',
             color: 'var(--text-muted)',
             letterSpacing: '0.06em',
             display: 'block',
@@ -444,8 +517,8 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
               borderRadius: '12px',
               minHeight: '32px',
               padding: '5px 9px',
-              fontSize: '0.7rem',
-              fontWeight: 700,
+              fontSize: 'var(--text-xs)',
+              fontWeight: 'var(--weight-bold)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -479,6 +552,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
           />
 
           <input
+          ref={inputRef}
           id={inputId}
           type="text"
           role="combobox"
@@ -498,6 +572,10 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
           }}
           onChange={handleInputChange}
           onKeyDown={(event) => {
+            if (event.key === 'Tab') {
+              closeSuggestions();
+              return;
+            }
             if (event.key === 'Escape') {
               event.preventDefault();
               closeSuggestions();
@@ -535,7 +613,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
             border: `1px solid ${isOpen ? accentColor : 'var(--border-color)'}`,
             borderRadius: '10px',
             color: 'var(--text-primary)',
-            fontSize: '0.88rem',
+            fontSize: 'var(--text-body)',
             outline: 'none',
             transition: 'border-color 0.2s',
           }}
@@ -559,7 +637,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
             aria-label="Search Singapore or Batam places"
             style={{
               minHeight: '46px', minWidth: '86px', padding: '0 12px', borderRadius: '10px',
-              fontSize: '0.75rem', fontWeight: 700,
+              fontSize: 'var(--text-sm)', fontWeight: 700,
               cursor: isLoading || inputValue.trim().length === 0 ? 'not-allowed' : 'pointer',
               opacity: isLoading || inputValue.trim().length === 0 ? 0.55 : 1,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
@@ -571,12 +649,12 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
       )}
     </div>
 
-    <p id={helpId} hidden={!showHelpText} style={{ color: 'var(--text-muted)', fontSize: '0.68rem', margin: '5px 0 0' }}>
+    <p id={helpId} hidden={!showHelpText} style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: '5px 0 0' }}>
       Singapore + Batam · road access and ferry transfer are composed automatically.
     </p>
 
     {error && (
-      <p id={statusId} role="alert" style={{ margin: '5px 0 0', color: 'var(--accent-rose)', fontSize: '0.72rem', fontWeight: 600 }}>
+      <p id={statusId} role="alert" style={{ margin: '5px 0 0', color: 'var(--accent-rose)', fontSize: 'var(--text-xs)', fontWeight: 600 }}>
         {error}
       </p>
     )}
@@ -588,27 +666,19 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
 
 
     {/* Google Maps style Autocomplete Dropdown */}
-    {isOpen && (
+    {isOpen && createPortal(
       <div
+        ref={popoverRef}
+        className="location-search-popover"
         id={listboxId}
         role="listbox"
         aria-label={`${label} suggestions`}
         aria-busy={isLoading}
-        style={{
-          position: 'absolute',
-          top: 'calc(100% + 6px)',
-          left: 0,
-          right: 0,
-          background: '#ffffff',
-          border: '1px solid var(--border-color)',
-          borderRadius: '12px',
-          boxShadow: '0 10px 25px -5px rgba(0,0,0,0.12), 0 8px 10px -6px rgba(0,0,0,0.08)',
-          zIndex: 200,
-          overflow: 'hidden',
-        }}
+        style={popoverStyle}
+        onMouseMove={() => { keyboardNavigation.current = false; }}
       >
           {isLoading && (
-            <div role="status" style={{ alignItems: 'center', color: 'var(--text-secondary)', display: 'flex', fontSize: '0.78rem', gap: '8px', minHeight: '44px', padding: '9px 14px' }}>
+            <div role="status" style={{ alignItems: 'center', color: 'var(--text-secondary)', display: 'flex', fontSize: 'var(--text-sm)', gap: '8px', minHeight: '44px', padding: '9px 14px' }}>
               <Loader size={ICON_SIZE.big} aria-hidden="true" style={{ animation: 'spin 1s linear infinite' }} />
               Searching Singapore and Batam…
             </div>
@@ -624,7 +694,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
               aria-selected={activeOptionId === mapPickerOptionId}
               tabIndex={-1}
               onClick={handleMapPickerSelect}
-              onMouseEnter={() => setActiveOptionId(mapPickerOptionId)}
+              onMouseEnter={() => highlightHoveredOption(mapPickerOptionId)}
               style={{
                 width: '100%',
                 minHeight: '44px',
@@ -637,8 +707,8 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
                 alignItems: 'center',
                 gap: '10px',
                 color: 'var(--accent-indigo)',
-                fontSize: '0.82rem',
-                fontWeight: 700,
+                fontSize: 'var(--text-sm)',
+                fontWeight: 'var(--weight-bold)',
                 textAlign: 'left',
               }}
             >
@@ -655,7 +725,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
             tabIndex={-1}
             onClick={handleUseCurrentLocation}
             onMouseEnter={() => {
-              if (!isLoading) setActiveOptionId(currentLocationOptionId);
+              if (!isLoading) highlightHoveredOption(currentLocationOptionId);
             }}
             disabled={isLoading}
             style={{
@@ -670,8 +740,8 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
               alignItems: 'center',
               gap: '10px',
               color: 'var(--accent-cyan)',
-              fontSize: '0.82rem',
-              fontWeight: 600,
+              fontSize: 'var(--text-sm)',
+              fontWeight: 'var(--weight-semibold)',
               textAlign: 'left',
             }}
           >
@@ -681,7 +751,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
           {/* Live Geocoded Results */}
           {results.length > 0 && (
             <div role="group" aria-label="Matching addresses and places">
-              <div style={{ padding: '6px 14px', fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.06em', background: '#f8fafc' }}>
+              <div style={{ padding: '6px 14px', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.06em', background: '#f8fafc' }}>
                 MATCHING ADDRESSES & PLACES
               </div>
               <div className="location-search-option-list" role="presentation">
@@ -694,7 +764,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
                     aria-selected={activeOptionId === geocodedOptionId(i)}
                     tabIndex={-1}
                     onClick={() => handleSelect(loc)}
-                    onMouseEnter={() => setActiveOptionId(geocodedOptionId(i))}
+                    onMouseEnter={() => highlightHoveredOption(geocodedOptionId(i))}
                     style={{
                       width: '100%',
                       minHeight: '48px',
@@ -710,10 +780,10 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
                     }}
                   >
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                      <div style={{ fontSize: 'var(--text-body)', color: 'var(--text-primary)', fontWeight: 600 }}>
                         {shorten(loc.display_name, 2)}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                      <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', marginTop: '2px' }}>
                         {shorten(loc.display_name, 5).replace(shorten(loc.display_name, 2), '').replace(/^,\s*/, '')}
                       </div>
                     </div>
@@ -726,7 +796,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
           {/* Named corridor locations */}
           {visibleNamed.length > 0 && (
             <div role="group" aria-label={savedPlacesOnly ? 'Saved places' : 'Popular Singapore and Batam places'}>
-              <div style={{ padding: '6px 14px', fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.06em', background: '#f8fafc' }}>
+              <div style={{ padding: '6px 14px', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.06em', background: '#f8fafc' }}>
                 {savedPlacesOnly ? 'SAVED PLACES' : 'POPULAR SINGAPORE + BATAM PLACES'}
               </div>
               <div className="location-search-option-list" role="presentation">
@@ -740,7 +810,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
                     aria-selected={activeOptionId === namedOptionId(i)}
                     tabIndex={-1}
                     onClick={() => handleNamedSelect(loc)}
-                    onMouseEnter={() => setActiveOptionId(namedOptionId(i))}
+                    onMouseEnter={() => highlightHoveredOption(namedOptionId(i))}
                     style={{
                       width: '100%',
                       minHeight: '48px',
@@ -767,17 +837,18 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
           )}
 
           {!isLoading && qLower && results.length === 0 && visibleNamed.length === 0 && (
-            <div role="status" style={{ color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.5, padding: '18px 14px', textAlign: 'center' }}>
+            <div role="status" style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', lineHeight: 1.5, padding: '18px 14px', textAlign: 'center' }}>
               No local suggestion matches “{query.trim()}”. Try a broader Singapore or Batam district, or use the map picker.
             </div>
           )}
 
           {!savedPlacesOnly && filteredNamed.length > visibleNamed.length && (
-            <div style={{ background: '#f8fafc', borderTop: '1px solid #f1f5f9', color: 'var(--text-muted)', fontSize: '0.68rem', padding: '8px 14px', textAlign: 'center' }}>
+            <div style={{ background: '#f8fafc', borderTop: '1px solid #f1f5f9', color: 'var(--text-muted)', fontSize: 'var(--text-xs)', padding: '8px 14px', textAlign: 'center' }}>
               Showing {visibleNamed.length} of {filteredNamed.length} local suggestions · type more to narrow the list
             </div>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
 
 

@@ -1,0 +1,303 @@
+{
+  "scope": "Exploratory Grand Batam Mall three-road survey, not the app five-corridor model or citywide validation",
+  "source_url": "https://repository.unrika.ac.id/xmlui/bitstream/handle/123456789/1023/REPOSITORY%20JURNAL%20FELANY%20FRISCA%20ULANDARI%20.pdf?sequence=1&isAllowed=y",
+  "source_pdf_sha256": "ff67266fb0e1cb94dbfa8cf904486bf6e8ada3699b47c7b0fa5c0d79550064b0",
+  "source_rows": 66,
+  "source_dates": [
+    "2023-06-20",
+    "2023-06-22",
+    "2023-06-24",
+    "2023-06-25"
+  ],
+  "synthetic_rows": 0,
+  "unit": "km/h",
+  "horizon_minutes": 60,
+  "target": "Next source-published hourly mean speed; forecast at interval start",
+  "availability_assumption": "A published interval mean is assumed available at its end; original release latency unknown",
+  "train_pairs": 12,
+  "validation_pairs": 15,
+  "refit_pairs": 27,
+  "final_test_pairs": 15,
+  "test_date": "2023-06-25",
+  "selected_candidate": {
+    "candidate": "residual_025",
+    "target_transform": "shifted_residual",
+    "residual_weight": 0.25,
+    "parameters": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "criterion": "squared_error",
+      "max_depth": 10,
+      "max_features": 1.0,
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 20,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 100,
+      "n_jobs": 1,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    }
+  },
+  "validation_candidates": [
+    {
+      "candidate": "absolute_original",
+      "validation_mae": 4.2494035264550245
+    },
+    {
+      "candidate": "absolute_regularized",
+      "validation_mae": 6.233893333333333
+    },
+    {
+      "candidate": "residual_025",
+      "validation_mae": 2.413097500000002
+    },
+    {
+      "candidate": "residual_050",
+      "validation_mae": 2.5379183333333413
+    },
+    {
+      "candidate": "residual_100",
+      "validation_mae": 2.880730000000032
+    }
+  ],
+  "candidate": {
+    "samples": 15,
+    "mae_kph": 2.3345088888888883,
+    "rmse_kph": 2.973275490240383,
+    "within_5_kph": 0.8666666666666667,
+    "r2": 0.8450322377449826
+  },
+  "persistence": {
+    "samples": 15,
+    "mae_kph": 2.495999999999999,
+    "rmse_kph": 3.2350991741624644,
+    "within_5_kph": 0.8666666666666667,
+    "r2": 0.8165379433286564
+  },
+  "mae_improvement_percent": 6.4699964387464295,
+  "per_road": [
+    {
+      "road": "Jalan Baloi Garden1, Batam",
+      "candidate": {
+        "samples": 5,
+        "mae_kph": 2.0078422222222203,
+        "rmse_kph": 2.1611511541848616,
+        "within_5_kph": 1.0,
+        "r2": -0.1919108833945542
+      },
+      "persistence": {
+        "samples": 5,
+        "mae_kph": 2.107999999999999,
+        "rmse_kph": 2.413710836036495,
+        "within_5_kph": 1.0,
+        "r2": -0.48677065044302026
+      }
+    },
+    {
+      "road": "Jalan Pembangunan, Batam",
+      "candidate": {
+        "samples": 5,
+        "mae_kph": 4.263526666666666,
+        "rmse_kph": 4.589350406721957,
+        "within_5_kph": 0.6,
+        "r2": 0.4091320082940082
+      },
+      "persistence": {
+        "samples": 5,
+        "mae_kph": 4.563999999999998,
+        "rmse_kph": 4.965219028401464,
+        "within_5_kph": 0.6,
+        "r2": 0.3083842898251755
+      }
+    },
+    {
+      "road": "Jalan Utama Happy Garden, Batam",
+      "candidate": {
+        "samples": 5,
+        "mae_kph": 0.7321577777777772,
+        "rmse_kph": 0.8879132590962986,
+        "within_5_kph": 1.0,
+        "r2": 0.9479600147964018
+      },
+      "persistence": {
+        "samples": 5,
+        "mae_kph": 0.8159999999999993,
+        "rmse_kph": 0.9582275303913982,
+        "within_5_kph": 1.0,
+        "r2": 0.9393915231038301
+      }
+    }
+  ],
+  "test_predictions": [
+    {
+      "origin": "2023-06-25T08:00:00+07:00",
+      "target_end": "2023-06-25T09:00:00+07:00",
+      "road": "Jalan Baloi Garden1, Batam",
+      "y": 31.26,
+      "persistence": 33.7,
+      "prior_survey": 31.35,
+      "prediction": 33.19921111111111
+    },
+    {
+      "origin": "2023-06-25T08:00:00+07:00",
+      "target_end": "2023-06-25T09:00:00+07:00",
+      "road": "Jalan Pembangunan, Batam",
+      "y": 41.56,
+      "persistence": 47.66,
+      "prior_survey": 38.83,
+      "prediction": 47.159211111111105
+    },
+    {
+      "origin": "2023-06-25T08:00:00+07:00",
+      "target_end": "2023-06-25T09:00:00+07:00",
+      "road": "Jalan Utama Happy Garden, Batam",
+      "y": 25.42,
+      "persistence": 27.2,
+      "prior_survey": 31.69,
+      "prediction": 26.69921111111111
+    },
+    {
+      "origin": "2023-06-25T17:00:00+07:00",
+      "target_end": "2023-06-25T18:00:00+07:00",
+      "road": "Jalan Baloi Garden1, Batam",
+      "y": 33.33,
+      "persistence": 31.77,
+      "prior_survey": 32.99,
+      "prediction": 31.26921111111111
+    },
+    {
+      "origin": "2023-06-25T17:00:00+07:00",
+      "target_end": "2023-06-25T18:00:00+07:00",
+      "road": "Jalan Pembangunan, Batam",
+      "y": 33.62,
+      "persistence": 38.41,
+      "prior_survey": 27.58,
+      "prediction": 37.909211111111105
+    },
+    {
+      "origin": "2023-06-25T17:00:00+07:00",
+      "target_end": "2023-06-25T18:00:00+07:00",
+      "road": "Jalan Utama Happy Garden, Batam",
+      "y": 16.06,
+      "persistence": 15.35,
+      "prior_survey": 15.65,
+      "prediction": 14.849211111111112
+    },
+    {
+      "origin": "2023-06-25T18:00:00+07:00",
+      "target_end": "2023-06-25T19:00:00+07:00",
+      "road": "Jalan Baloi Garden1, Batam",
+      "y": 30.71,
+      "persistence": 33.33,
+      "prior_survey": 26.75,
+      "prediction": 32.82921111111111
+    },
+    {
+      "origin": "2023-06-25T18:00:00+07:00",
+      "target_end": "2023-06-25T19:00:00+07:00",
+      "road": "Jalan Pembangunan, Batam",
+      "y": 26.48,
+      "persistence": 33.62,
+      "prior_survey": 27.52,
+      "prediction": 33.11921111111111
+    },
+    {
+      "origin": "2023-06-25T18:00:00+07:00",
+      "target_end": "2023-06-25T19:00:00+07:00",
+      "road": "Jalan Utama Happy Garden, Batam",
+      "y": 15.6,
+      "persistence": 16.06,
+      "prior_survey": 15.51,
+      "prediction": 15.55921111111111
+    },
+    {
+      "origin": "2023-06-25T19:00:00+07:00",
+      "target_end": "2023-06-25T20:00:00+07:00",
+      "road": "Jalan Baloi Garden1, Batam",
+      "y": 30.91,
+      "persistence": 30.71,
+      "prior_survey": 28.91,
+      "prediction": 30.209211111111113
+    },
+    {
+      "origin": "2023-06-25T19:00:00+07:00",
+      "target_end": "2023-06-25T20:00:00+07:00",
+      "road": "Jalan Pembangunan, Batam",
+      "y": 28.3,
+      "persistence": 26.48,
+      "prior_survey": 23.03,
+      "prediction": 25.979211111111113
+    },
+    {
+      "origin": "2023-06-25T19:00:00+07:00",
+      "target_end": "2023-06-25T20:00:00+07:00",
+      "road": "Jalan Utama Happy Garden, Batam",
+      "y": 15.98,
+      "persistence": 15.6,
+      "prior_survey": 14.77,
+      "prediction": 15.099211111111112
+    },
+    {
+      "origin": "2023-06-25T20:00:00+07:00",
+      "target_end": "2023-06-25T21:00:00+07:00",
+      "road": "Jalan Baloi Garden1, Batam",
+      "y": 27.19,
+      "persistence": 30.91,
+      "prior_survey": 27.98,
+      "prediction": 30.409211111111112
+    },
+    {
+      "origin": "2023-06-25T20:00:00+07:00",
+      "target_end": "2023-06-25T21:00:00+07:00",
+      "road": "Jalan Pembangunan, Batam",
+      "y": 25.33,
+      "persistence": 28.3,
+      "prior_survey": 20.08,
+      "prediction": 27.799211111111113
+    },
+    {
+      "origin": "2023-06-25T20:00:00+07:00",
+      "target_end": "2023-06-25T21:00:00+07:00",
+      "road": "Jalan Utama Happy Garden, Batam",
+      "y": 15.23,
+      "persistence": 15.98,
+      "prior_survey": 17.0,
+      "prediction": 15.479211111111113
+    }
+  ],
+  "limitations": [
+    "Only four dated survey days and one final test day; no confidence interval or production promotion.",
+    "Source aggregates derive from measured segment travel time; sample sizes and direction breakdown are unreleased.",
+    "Adjacent intervals and road observations are dependent.",
+    "No invented free-flow speeds, coordinates or canonical corridor mapping."
+  ],
+  "prior_survey_day_common": {
+    "baseline": {
+      "samples": 15,
+      "mae_kph": 2.4839999999999995,
+      "rmse_kph": 3.315287820587126,
+      "within_5_kph": 0.7333333333333333,
+      "r2": 0.8073302488264426
+    },
+    "candidate": {
+      "samples": 15,
+      "mae_kph": 2.3345088888888883,
+      "rmse_kph": 2.973275490240383,
+      "within_5_kph": 0.8666666666666667,
+      "r2": 0.8450322377449826
+    },
+    "persistence": {
+      "samples": 15,
+      "mae_kph": 2.495999999999999,
+      "rmse_kph": 3.2350991741624644,
+      "within_5_kph": 0.8666666666666667,
+      "r2": 0.8165379433286564
+    }
+  }
+}

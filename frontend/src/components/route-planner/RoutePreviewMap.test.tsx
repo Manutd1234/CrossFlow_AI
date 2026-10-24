@@ -270,9 +270,8 @@ describe('route preview alternatives', () => {
     expect(radarCard?.textContent).toContain('8.2 km');
     expect(radarCard?.textContent).toContain('17 min');
     expect(radarCard?.textContent).not.toContain('Follow the recommended corridor');
-    expect(radarCard?.querySelector('summary')?.textContent)
-      .toContain('How this route was weighted');
-    expect(radarCard?.querySelector('details')?.open).toBe(false);
+    expect(radarCard?.querySelector('details')).toBeNull();
+    expect(radarCard?.textContent).not.toMatch(/weighted|free.flow|weather delay|suitability|cost min|formula/i);
 
     const drawnPaths = leafletSpies.polyline.mock.calls.map(call => call[0]);
     expect(drawnPaths.filter(path => path === primaryGeometry)).toHaveLength(2);
@@ -340,8 +339,8 @@ describe('route preview alternatives', () => {
     expect(summaryBadgeOptions?.html.style.width).toBe('max-content');
     expect(summaryBadgeOptions?.html.style.transform).toBe('translate(-50%, -50%)');
     expect(Array.from(summaryBadgeOptions?.html.children ?? []).map(child => (
-      (child as HTMLElement).style.fontSize
-    ))).toEqual(['12px', '12px']);
+      (child as HTMLElement).textContent
+    ))).toEqual(['17 min', '8.2 km']);
     const summaryMarkerCall = leafletSpies.marker.mock.calls.find(call => (
       call[1]?.icon?.className === 'gmaps-floating-badge'
     ));

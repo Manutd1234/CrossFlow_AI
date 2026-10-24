@@ -1,0 +1,47 @@
+{
+  "schema": "crossflow.vehicle_detector_plan.v1",
+  "generated_at": "2026-10-23T18:06:50.101869+00:00",
+  "architecture": "ssdlite320_mobilenet_v3_large",
+  "seed": 20261024,
+  "device": "cpu",
+  "threads": 2,
+  "pretrained_sha256": "a79551df90c79834bcd3bb3845ef9d966b5449a3a9b2833ae8404778ca5d65d2",
+  "train_groups": [
+    "V001",
+    "V003",
+    "V004",
+    "V005"
+  ],
+  "validation_groups": [
+    "V002",
+    "VEHICLES"
+  ],
+  "train_images": 32,
+  "validation_images": 16,
+  "train_vehicle_boxes": 175,
+  "validation_vehicle_boxes": 55,
+  "epochs_to_compare": [
+    4,
+    8,
+    12
+  ],
+  "threshold_grid": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7
+  ],
+  "batch_size": 4,
+  "optimizer": "AdamW",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "trainable": "classification and regression detection heads; backbone and all BatchNorm statistics frozen",
+  "augmentation": "deterministic seeded random horizontal flip on training only",
+  "selection": "lowest macro source-video count MAE, then highest detection F1 at IoU .5; candidate/threshold fixed before reused TRANSSET",
+  "previous_consumption": "Both local datasets were used in an earlier pixel-count experiment. This is not a fresh blind holdout or Batam benchmark.",
+  "geography_is_batam": false,
+  "production_eligible": false
+}

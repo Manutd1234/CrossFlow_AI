@@ -1,0 +1,147 @@
+{
+  "checked_at": "2026-10-24T11:42:16+07:00",
+  "http_status": 200,
+  "source_summary": {
+    "verified": 6,
+    "failed": 0,
+    "permission_gated": 0
+  },
+  "schedule_verified": true,
+  "timetable": {
+    "last_verified_at": "2026-10-24T11:42:16+07:00",
+    "snapshot_verified_at": "2026-08-13T00:30:50+07:00",
+    "freshness_durability": "local_sqlite"
+  },
+  "source_checks": [
+    {
+      "authority": "BatamFast",
+      "url": "https://www.batamfast.com/tripschedule/index.ashx",
+      "status": "verified_structure",
+      "validated_service_ids": [
+        "batamfast-bct-hf",
+        "batamfast-hf-bct",
+        "batamfast-npt-tm",
+        "batamfast-tm-npt"
+      ],
+      "matched_departure_slot_count": 40,
+      "matched_board_row_count": null,
+      "matched_terminal_count": null,
+      "board_date": null,
+      "board_scope": null,
+      "schedule_validation_scope": "complete_route_calendar_match"
+    },
+    {
+      "authority": "Sindo Ferry",
+      "url": "https://app.sindoferry.com.sg/schedule/",
+      "status": "verified_structure",
+      "validated_service_ids": [
+        "sindo-bct-hf",
+        "sindo-bct-tm",
+        "sindo-hf-bct",
+        "sindo-hf-skp",
+        "sindo-skp-hf",
+        "sindo-tm-bct"
+      ],
+      "matched_departure_slot_count": 51,
+      "matched_board_row_count": null,
+      "matched_terminal_count": null,
+      "board_date": null,
+      "board_scope": null,
+      "schedule_validation_scope": "complete_route_calendar_match"
+    },
+    {
+      "authority": "Majestic Fast Ferry",
+      "url": "https://www.majesticfastferry.com.sg/",
+      "status": "verified_structure",
+      "validated_service_ids": [
+        "majestic-bct-hf",
+        "majestic-bct-tm",
+        "majestic-hf-bct",
+        "majestic-hf-skp",
+        "majestic-skp-hf",
+        "majestic-tm-bct"
+      ],
+      "matched_departure_slot_count": 58,
+      "matched_board_row_count": null,
+      "matched_terminal_count": null,
+      "board_date": null,
+      "board_scope": null,
+      "schedule_validation_scope": "complete_route_calendar_match"
+    },
+    {
+      "authority": "BP Batam",
+      "url": "https://batamport.bpbatam.go.id/pelabuhan-penumpang/",
+      "status": "verified_structure",
+      "validated_service_ids": null,
+      "matched_departure_slot_count": 0,
+      "matched_board_row_count": null,
+      "matched_terminal_count": 5,
+      "board_date": null,
+      "board_scope": null,
+      "schedule_validation_scope": null
+    },
+    {
+      "authority": "Horizon Fast Ferry",
+      "url": "https://horizonfastferry.com.sg/",
+      "status": "verified_structure",
+      "validated_service_ids": [
+        "horizon-hb-hf",
+        "horizon-hf-hb"
+      ],
+      "matched_departure_slot_count": 26,
+      "matched_board_row_count": null,
+      "matched_terminal_count": null,
+      "board_date": null,
+      "board_scope": null,
+      "schedule_validation_scope": "complete_route_calendar_match"
+    },
+    {
+      "authority": "Singapore Cruise Centre",
+      "url": "https://singaporecruise.com.sg/schedule/ferries/",
+      "status": "verified_structure",
+      "validated_service_ids": null,
+      "matched_departure_slot_count": 0,
+      "matched_board_row_count": 20,
+      "matched_terminal_count": null,
+      "board_date": "2026-10-24",
+      "board_scope": "first_page_arrivals_only",
+      "schedule_validation_scope": null
+    }
+  ],
+  "camera_summary_after_restart": {
+    "status": "degraded",
+    "configured_cameras": 1,
+    "fresh_cameras": 0,
+    "validated_cameras": 0,
+    "estimated_cameras": 0,
+    "mean_congestion_index": null,
+    "vehicle_detections": null,
+    "latest_observed_at": null,
+    "oldest_observed_at": null,
+    "valid_until": null,
+    "source": "registered_camera_aggregates",
+    "scope": "fresh_registered_camera_views_only",
+    "measured_road_speed": false,
+    "independently_validated": false
+  },
+  "camera_mapped_edge_count_after_restart": 0,
+  "fresh_process_persistence_verified": true,
+  "verification_command": "pytest backend/tests/test_ferry_local_freshness.py backend/tests/test_sindo_reviewed_sailing.py backend/tests/test_published_port_status.py backend/test_backend.py -k 'ferry or sindo or scc or failed_semantic or published_port'",
+  "test_result": {
+    "passed": 44,
+    "subtests_passed": 11
+  },
+  "cctv_verified_live_sample": {
+    "api_generated_at": "2026-10-24T11:44:08+07:00",
+    "fresh_cameras": 1,
+    "estimated_cameras": 1,
+    "validated_cameras": 0,
+    "mean_congestion_index": 9.7,
+    "vehicle_detections": 1,
+    "latest_observed_at": "2026-10-24T11:43:58+07:00",
+    "valid_until": "2026-10-24T11:44:28+07:00",
+    "mapped_camera_edge_count": 1,
+    "detector_family": "YOLO26s",
+    "api_and_worker_db_registry_configuration_match": true
+  }
+}

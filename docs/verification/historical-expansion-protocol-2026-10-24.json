@@ -1,0 +1,70 @@
+{
+  "frozen_at": "2026-10-23T19:37:25.821287+00:00",
+  "purpose": "Compare a fixed candidate set before reading the new benchmark test outcomes",
+  "candidates": [
+    "absolute_original",
+    "absolute_regularized",
+    "residual_025",
+    "residual_050",
+    "residual_100"
+  ],
+  "selection": "Validation MAE only; persistence is always retained as a baseline; test results do not choose or retune a candidate",
+  "guangzhou": {
+    "source": "https://zenodo.org/records/1205229",
+    "geography": "Guangzhou, China, never Batam",
+    "days": 61,
+    "train_days": 33,
+    "validation_days": 7,
+    "calibration_days": 7,
+    "final_test_days": 14,
+    "purge_minutes": 60,
+    "horizons_minutes": [
+      10,
+      30,
+      60
+    ],
+    "fit_row_cap_per_horizon": 40000,
+    "target": "Source-published average speed km/h, window-end availability assumption",
+    "missing": "Missing observations are not zeros; no future interpolation",
+    "comparisons": [
+      "persistence",
+      "previous_day",
+      "previous_week"
+    ],
+    "metrics": [
+      "MAE km/h",
+      "RMSE km/h",
+      "R2",
+      "within 5 km/h",
+      "paired day-block bootstrap 95% CI"
+    ],
+    "bootstrap_replicates": 2000,
+    "target_scale_note": "Original speeds above100 km/h retained; targets scaled by2 only for shared bounded decoder and converted back for every reported metric."
+  },
+  "grand_batam": {
+    "source_rows": 66,
+    "dates": [
+      "2023-06-20",
+      "2023-06-22",
+      "2023-06-24",
+      "2023-06-25"
+    ],
+    "development": "First two dates fit, third date validation, fourth date final test",
+    "target": "One-hour published interval speed",
+    "availability": "Preceding interval available at its end; publisher delay unknown",
+    "no_network_promotion": true
+  },
+  "local_batam": {
+    "scope": "Existing ten-hour TomTom archive; old test has already been inspected in prior development",
+    "evaluation_label": "Retrospective development evidence, not a newly untouched confirmation test",
+    "future_confirmation": "Record predictions before target observations arrive, retain frozen model version, and score later observations without changing the issued prediction"
+  },
+  "no_guaranteed_win": true,
+  "no_synthetic_training_rows": true,
+  "candidate_code_sha256": "dfcd552c111b6435e4235456201cd9f6c1c00b6b17a3f6309f9c74e720e0ddc9",
+  "benchmark_code_sha256": "40b82284234a510910b2c30c4f00c398b996c3e0cac880f8a6cf4aa33fc92005",
+  "implementation_corrections_before_first_successful_fit": [
+    "Original CSV contains measured speeds above100 km/h (maximum119.27); loader bound changed to200 and targets scaled by2, with every reported metric converted back to km/h. No test outcome selected this correction."
+  ],
+  "benchmark_executed_code_sha256": "7b52ce03fac43854638d8a487bf47b9a959732d0eff4f585eae74991e2ddb4c5"
+}

@@ -1,0 +1,665 @@
+{
+  "checked_at": "2026-10-24T03:20:00+08:00",
+  "report": {
+    "availability": "explicit_traffic_ingestion_and_weather_capture_times",
+    "dataset_sha256": "a9b9a77b5d33cc74a60555c557e65d02cd8a6adbd2fd3e8ae3925512b357781e",
+    "distinct_local_days": 2,
+    "excluded_non_observed_rows": 0,
+    "feature_names": [
+      "current_index",
+      "current_age_minutes",
+      "lag_15",
+      "lag_15_missing",
+      "lag_30",
+      "lag_30_missing",
+      "lag_60",
+      "lag_60_missing",
+      "prior_30min_mean",
+      "prior_30min_std",
+      "prior_120min_mean",
+      "prior_120min_std",
+      "target_hour_sin",
+      "target_hour_cos",
+      "target_weekday_sin",
+      "target_weekday_cos",
+      "horizon_minutes",
+      "measured_free_flow_kph",
+      "is_corridor-1",
+      "is_corridor-2",
+      "is_corridor-3",
+      "is_corridor-4",
+      "is_corridor-5",
+      "mapped_segment_length_m",
+      "mapped_lanes",
+      "lanes_missing",
+      "posted_speed_limit_kph",
+      "speed_limit_missing",
+      "road_match_missing",
+      "nearest_mapped_terminal_km",
+      "road_primary",
+      "road_secondary",
+      "road_tertiary",
+      "road_residential",
+      "road_other",
+      "available_weather_class",
+      "available_precipitation_mm",
+      "available_temperature_c",
+      "available_wind_kph",
+      "weather_missing",
+      "weather_fetch_age_minutes",
+      "weather_forecast_lead_minutes",
+      "weather_forecast_missing"
+    ],
+    "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+    "history_feature_sampling": "all_original_available_measurements_targets_sampled_at_15min",
+    "horizons": [
+      {
+        "feature_importances": {
+          "available_precipitation_mm": 0.0,
+          "available_temperature_c": 0.0,
+          "available_weather_class": 0.0,
+          "available_wind_kph": 0.0,
+          "current_age_minutes": 0.02004371486492961,
+          "current_index": 0.11723690729204037,
+          "horizon_minutes": 0.0,
+          "is_corridor-1": 0.0,
+          "is_corridor-2": 0.00010050219459550779,
+          "is_corridor-3": 0.00013766577285398134,
+          "is_corridor-4": 0.0,
+          "is_corridor-5": 0.0,
+          "lag_15": 0.12305575525678328,
+          "lag_15_missing": 0.0,
+          "lag_30": 0.0125660608651176,
+          "lag_30_missing": 9.323534684400542e-05,
+          "lag_60": 0.012341907168277442,
+          "lag_60_missing": 0.0013961732477126474,
+          "lanes_missing": 0.001637364742959006,
+          "mapped_lanes": 0.003680427853777116,
+          "mapped_segment_length_m": 0.0025821031838885516,
+          "measured_free_flow_kph": 0.09317029332491754,
+          "nearest_mapped_terminal_km": 0.010656542350048875,
+          "posted_speed_limit_kph": 0.0,
+          "prior_120min_mean": 0.0746461557946199,
+          "prior_120min_std": 0.00502813789373173,
+          "prior_30min_mean": 0.42456834062459764,
+          "prior_30min_std": 0.07610357718175183,
+          "road_match_missing": 0.0,
+          "road_other": 0.00024349847170577094,
+          "road_primary": 0.0009850402544601317,
+          "road_residential": 0.0,
+          "road_secondary": 0.0,
+          "road_tertiary": 0.0,
+          "speed_limit_missing": 0.0,
+          "target_hour_cos": 0.005537531382967987,
+          "target_hour_sin": 0.014189064931419713,
+          "target_weekday_cos": 0.0,
+          "target_weekday_sin": 0.0,
+          "weather_fetch_age_minutes": 0.0,
+          "weather_forecast_lead_minutes": 0.0,
+          "weather_forecast_missing": 0.0,
+          "weather_missing": 0.0
+        },
+        "forest_test": {
+          "mae_points": 1.2938699763389772,
+          "r2": -7.037558314557359,
+          "rmse_points": 2.074433257336649,
+          "samples": 10
+        },
+        "horizon_minutes": 15,
+        "interval": {
+          "calibration_pairs": 5,
+          "coverage_guaranteed": false,
+          "method": "calibration_only_absolute_error_order_statistic",
+          "network_calibration_groups": 1,
+          "network_mean_radius_points": 0.0,
+          "network_test_coverage": 0.5,
+          "network_test_groups": 2,
+          "radius_points": 0.0,
+          "target": 0.8,
+          "test_coverage": 0.9
+        },
+        "pairs": {
+          "calibration": 5,
+          "fit": 45,
+          "holdout": 10,
+          "validation": 5
+        },
+        "per_corridor": {
+          "corridor-1": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-2": {
+            "mae_points": 1.2195121951219523,
+            "r2": -1.0,
+            "rmse_points": 1.7246506858208492,
+            "samples": 2
+          },
+          "corridor-3": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-4": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-5": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          }
+        },
+        "persistence_test": {
+          "mae_points": 0.24390243902439046,
+          "r2": -0.11111111111111094,
+          "rmse_points": 0.7712872341874103,
+          "samples": 10
+        },
+        "selected_strategy": "persistence",
+        "speed_mae_kph": 0.1,
+        "test": {
+          "mae_points": 0.24390243902439046,
+          "r2": -0.11111111111111094,
+          "rmse_points": 0.7712872341874103,
+          "samples": 10
+        },
+        "validation": {
+          "forest_mae": 3.007322772610819,
+          "persistence_mae": 0.41463414634146395
+        }
+      },
+      {
+        "feature_importances": {
+          "available_precipitation_mm": 0.0,
+          "available_temperature_c": 0.0,
+          "available_weather_class": 0.0,
+          "available_wind_kph": 0.0,
+          "current_age_minutes": 0.005934926792332647,
+          "current_index": 0.25702607575333863,
+          "horizon_minutes": 0.0,
+          "is_corridor-1": 0.00021732161618461017,
+          "is_corridor-2": 0.00038600188722262904,
+          "is_corridor-3": 0.0005955432093362634,
+          "is_corridor-4": 2.720204697108263e-19,
+          "is_corridor-5": 2.9621786635876555e-19,
+          "lag_15": 0.001870099011396527,
+          "lag_15_missing": 0.0,
+          "lag_30": 0.0,
+          "lag_30_missing": 0.004545302374878395,
+          "lag_60": 0.014516114952112826,
+          "lag_60_missing": 0.0014438813721273525,
+          "lanes_missing": 0.005487225084468919,
+          "mapped_lanes": 0.00477419692641762,
+          "mapped_segment_length_m": 0.0008667841756407411,
+          "measured_free_flow_kph": 0.0649328993572116,
+          "nearest_mapped_terminal_km": 0.009452768334285527,
+          "posted_speed_limit_kph": 0.0,
+          "prior_120min_mean": 0.07189503412893748,
+          "prior_120min_std": 0.0037019251394310145,
+          "prior_30min_mean": 0.3511626453397285,
+          "prior_30min_std": 0.15553666311022252,
+          "road_match_missing": 0.0,
+          "road_other": 0.00010325262350270131,
+          "road_primary": 0.000166560594487063,
+          "road_residential": 0.0,
+          "road_secondary": 0.0,
+          "road_tertiary": 0.0,
+          "speed_limit_missing": 0.0,
+          "target_hour_cos": 0.020515534822175538,
+          "target_hour_sin": 0.02486924339456086,
+          "target_weekday_cos": 0.0,
+          "target_weekday_sin": 0.0,
+          "weather_fetch_age_minutes": 0.0,
+          "weather_forecast_lead_minutes": 0.0,
+          "weather_forecast_missing": 0.0,
+          "weather_missing": 0.0
+        },
+        "forest_test": {
+          "mae_points": 1.4208384101931244,
+          "r2": -6.7735270890031085,
+          "rmse_points": 2.0400765140762323,
+          "samples": 10
+        },
+        "horizon_minutes": 30,
+        "interval": {
+          "calibration_pairs": 5,
+          "coverage_guaranteed": false,
+          "method": "calibration_only_absolute_error_order_statistic",
+          "network_calibration_groups": 1,
+          "network_mean_radius_points": 0.0,
+          "network_test_coverage": 0.0,
+          "network_test_groups": 2,
+          "radius_points": 0.0,
+          "target": 0.8,
+          "test_coverage": 0.8
+        },
+        "pairs": {
+          "calibration": 5,
+          "fit": 40,
+          "holdout": 10,
+          "validation": 5
+        },
+        "per_corridor": {
+          "corridor-1": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-2": {
+            "mae_points": 2.4390243902439046,
+            "r2": -3.0,
+            "rmse_points": 2.4390243902439046,
+            "samples": 2
+          },
+          "corridor-3": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-4": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-5": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          }
+        },
+        "persistence_test": {
+          "mae_points": 0.4878048780487809,
+          "r2": -1.2222222222222219,
+          "rmse_points": 1.0907648670730692,
+          "samples": 10
+        },
+        "selected_strategy": "persistence",
+        "speed_mae_kph": 0.1,
+        "test": {
+          "mae_points": 0.4878048780487809,
+          "r2": -1.2222222222222219,
+          "rmse_points": 1.0907648670730692,
+          "samples": 10
+        },
+        "validation": {
+          "forest_mae": 1.8027363635181093,
+          "persistence_mae": 0.9756097560975618
+        }
+      },
+      {
+        "feature_importances": {
+          "available_precipitation_mm": 0.0,
+          "available_temperature_c": 0.0,
+          "available_weather_class": 0.0,
+          "available_wind_kph": 0.0,
+          "current_age_minutes": 0.00478437379438486,
+          "current_index": 0.014216783796001968,
+          "horizon_minutes": 0.0,
+          "is_corridor-1": 0.0019223477545355944,
+          "is_corridor-2": 0.0,
+          "is_corridor-3": 0.0016595955236107507,
+          "is_corridor-4": 0.0,
+          "is_corridor-5": 0.0,
+          "lag_15": 0.00861106072198137,
+          "lag_15_missing": 0.0,
+          "lag_30": 0.007413269260445007,
+          "lag_30_missing": 0.0018387038970353318,
+          "lag_60": 0.013188067951905382,
+          "lag_60_missing": 0.009784093319195598,
+          "lanes_missing": 0.0013306643404364122,
+          "mapped_lanes": 0.00565956257876994,
+          "mapped_segment_length_m": 0.0008523587626472223,
+          "measured_free_flow_kph": 0.3376683461943834,
+          "nearest_mapped_terminal_km": 0.04646498888451694,
+          "posted_speed_limit_kph": 0.0,
+          "prior_120min_mean": 0.3431263543825241,
+          "prior_120min_std": 0.0016832244783338954,
+          "prior_30min_mean": 0.15296208872577668,
+          "prior_30min_std": 0.008485203838668359,
+          "road_match_missing": 0.0,
+          "road_other": 0.02058134636924107,
+          "road_primary": 0.0,
+          "road_residential": 0.0,
+          "road_secondary": 0.0,
+          "road_tertiary": 0.0,
+          "speed_limit_missing": 0.0,
+          "target_hour_cos": 0.005000939491166974,
+          "target_hour_sin": 0.01276662593443916,
+          "target_weekday_cos": 0.0,
+          "target_weekday_sin": 0.0,
+          "weather_fetch_age_minutes": 0.0,
+          "weather_forecast_lead_minutes": 0.0,
+          "weather_forecast_missing": 0.0,
+          "weather_missing": 0.0
+        },
+        "forest_test": {
+          "mae_points": 3.33455155642162,
+          "r2": -45.80559526021754,
+          "rmse_points": 5.005947428555691,
+          "samples": 10
+        },
+        "horizon_minutes": 60,
+        "interval": {
+          "calibration_pairs": 5,
+          "coverage_guaranteed": false,
+          "method": "calibration_only_absolute_error_order_statistic",
+          "network_calibration_groups": 1,
+          "network_mean_radius_points": 0.0,
+          "network_test_coverage": 0.0,
+          "network_test_groups": 2,
+          "radius_points": 0.0,
+          "target": 0.8,
+          "test_coverage": 0.8
+        },
+        "pairs": {
+          "calibration": 5,
+          "fit": 30,
+          "holdout": 10,
+          "validation": 5
+        },
+        "per_corridor": {
+          "corridor-1": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-2": {
+            "mae_points": 2.469512195121953,
+            "r2": -3.1012500000000003,
+            "rmse_points": 2.4697003842778846,
+            "samples": 2
+          },
+          "corridor-3": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-4": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          },
+          "corridor-5": {
+            "mae_points": 0.0,
+            "r2": null,
+            "rmse_points": 0.0,
+            "samples": 2
+          }
+        },
+        "persistence_test": {
+          "mae_points": 0.4939024390243906,
+          "r2": -1.2784722222222222,
+          "rmse_points": 1.1044835886605406,
+          "samples": 10
+        },
+        "selected_strategy": "persistence",
+        "speed_mae_kph": 0.1,
+        "test": {
+          "mae_points": 0.4939024390243906,
+          "r2": -1.2784722222222222,
+          "rmse_points": 1.1044835886605406,
+          "samples": 10
+        },
+        "validation": {
+          "forest_mae": 4.984981438027248,
+          "persistence_mae": 0.0
+        }
+      }
+    ],
+    "hour_bins": [
+      0,
+      1,
+      2,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      23
+    ],
+    "input_rows": 1064,
+    "partitions": {
+      "calibration": {
+        "corridors": [
+          "corridor-1",
+          "corridor-2",
+          "corridor-3",
+          "corridor-4",
+          "corridor-5"
+        ],
+        "end_at": "2026-10-23T17:46:07+00:00",
+        "rows": 5,
+        "start_at": "2026-10-23T17:46:07+00:00"
+      },
+      "fit": {
+        "corridors": [
+          "corridor-1",
+          "corridor-2",
+          "corridor-3",
+          "corridor-4",
+          "corridor-5"
+        ],
+        "end_at": "2026-10-23T13:15:51+00:00",
+        "rows": 65,
+        "start_at": "2026-10-23T09:40:23+00:00"
+      },
+      "holdout": {
+        "corridors": [
+          "corridor-1",
+          "corridor-2",
+          "corridor-3",
+          "corridor-4",
+          "corridor-5"
+        ],
+        "end_at": "2026-10-23T19:16:28+00:00",
+        "rows": 10,
+        "start_at": "2026-10-23T19:01:49+00:00"
+      },
+      "validation": {
+        "corridors": [
+          "corridor-1",
+          "corridor-2",
+          "corridor-3",
+          "corridor-4",
+          "corridor-5"
+        ],
+        "end_at": "2026-10-23T14:31:57+00:00",
+        "rows": 5,
+        "start_at": "2026-10-23T14:30:39+00:00"
+      }
+    },
+    "purge_minutes": 60,
+    "quality_gate": {
+      "eligible": false,
+      "reasons": [
+        "Needs at least seven days and broad hour-of-day coverage.",
+        "Needs more weather snapshots captured before forecast origins.",
+        "15 min: validation still prefers the persistence baseline.",
+        "15 min: needs larger fit, validation and calibration windows.",
+        "15 min: insufficient independent test coverage.",
+        "15 min: forest has not beaten persistence by 5% on final test.",
+        "30 min: validation still prefers the persistence baseline.",
+        "30 min: needs larger fit, validation and calibration windows.",
+        "30 min: insufficient independent test coverage.",
+        "30 min: forest has not beaten persistence by 5% on final test.",
+        "60 min: validation still prefers the persistence baseline.",
+        "60 min: needs larger fit, validation and calibration windows.",
+        "60 min: insufficient independent test coverage.",
+        "60 min: forest has not beaten persistence by 5% on final test."
+      ]
+    },
+    "raw_observed_rows": 1064,
+    "road_features": [
+      {
+        "capacity_vph": null,
+        "corridor_id": "corridor-1",
+        "graph_generated_at": "2026-08-13T03:32:24+00:00",
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "lanes": 5.0,
+        "license": "ODbL 1.0",
+        "match_distance_m": 0.0,
+        "matched": true,
+        "method": "nearest_segment_undirected_not_provider_direction_map_match",
+        "nearest_mapped_terminal_km": 3.5524,
+        "osm_edge": [
+          702694256,
+          5254621191,
+          706
+        ],
+        "posted_maxspeed_kph": 72.0,
+        "road_class": "trunk",
+        "road_name": "Jalan Jenderal Ahmad Yani",
+        "segment_length_m": 10.41,
+        "source": "OpenStreetMap",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "capacity_vph": null,
+        "corridor_id": "corridor-2",
+        "graph_generated_at": "2026-08-13T03:32:24+00:00",
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "lanes": null,
+        "license": "ODbL 1.0",
+        "match_distance_m": 0.0,
+        "matched": true,
+        "method": "nearest_segment_undirected_not_provider_direction_map_match",
+        "nearest_mapped_terminal_km": 2.9527,
+        "osm_edge": [
+          902959823,
+          7589075179,
+          1046
+        ],
+        "posted_maxspeed_kph": 72.0,
+        "road_class": "primary",
+        "road_name": "Jalan Yos Sudarso",
+        "segment_length_m": 27.11,
+        "source": "OpenStreetMap",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "capacity_vph": null,
+        "corridor_id": "corridor-3",
+        "graph_generated_at": "2026-08-13T03:32:24+00:00",
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "lanes": 3.0,
+        "license": "ODbL 1.0",
+        "match_distance_m": 0.0,
+        "matched": true,
+        "method": "nearest_segment_undirected_not_provider_direction_map_match",
+        "nearest_mapped_terminal_km": 4.1293,
+        "osm_edge": [
+          6503483028,
+          6542344454,
+          709
+        ],
+        "posted_maxspeed_kph": 90.0,
+        "road_class": "trunk",
+        "road_name": "Jalan Jenderal Sudirman",
+        "segment_length_m": 30.5,
+        "source": "OpenStreetMap",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "capacity_vph": null,
+        "corridor_id": "corridor-4",
+        "graph_generated_at": "2026-08-13T03:32:24+00:00",
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "lanes": null,
+        "license": "ODbL 1.0",
+        "match_distance_m": 0.0,
+        "matched": true,
+        "method": "nearest_segment_undirected_not_provider_direction_map_match",
+        "nearest_mapped_terminal_km": 4.0435,
+        "osm_edge": [
+          702339775,
+          5254303726,
+          899
+        ],
+        "posted_maxspeed_kph": 72.0,
+        "road_class": "trunk",
+        "road_name": "Jalan R.E. Martadinata",
+        "segment_length_m": 16.38,
+        "source": "OpenStreetMap",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "capacity_vph": null,
+        "corridor_id": "corridor-5",
+        "graph_generated_at": "2026-08-13T03:32:24+00:00",
+        "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+        "lanes": null,
+        "license": "ODbL 1.0",
+        "match_distance_m": 0.0,
+        "matched": true,
+        "method": "nearest_segment_undirected_not_provider_direction_map_match",
+        "nearest_mapped_terminal_km": 5.0745,
+        "osm_edge": [
+          703895342,
+          703895389,
+          1223
+        ],
+        "posted_maxspeed_kph": 90.0,
+        "road_class": "service",
+        "road_name": "U Turn",
+        "segment_length_m": 19.94,
+        "source": "OpenStreetMap",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      }
+    ],
+    "schema": "crossflow.observed_short_horizon.v1",
+    "selected_rows": 160,
+    "selection_method": "validation_only_then_frozen_before_calibration_and_final_test",
+    "source_counts": {
+      "tomtom_live": 160
+    },
+    "span_hours": 9.60138888888889,
+    "split_policy": "timestamp_and_availability_only_complete_15min_groups_60min_purges",
+    "status": "provisional_observed_model",
+    "synthetic_rows": 0,
+    "trained_at": "2026-10-23T19:18:32.610016+00:00",
+    "training_pairs": 45,
+    "training_source": "observed_traffic_archive",
+    "weather_archive_sha256": "62212408587b3771d6d7a8d832d0ac124dc6857981184ff50972bcf39b04e7cf",
+    "weather_training_rows": 0
+  },
+  "engine": {
+    "algorithm": "RandomForestRegressor",
+    "trees_per_horizon": {
+      "15": 100,
+      "30": 100,
+      "60": 100
+    },
+    "feature_count": 43
+  },
+  "checks": {
+    "frontend_tests": 548,
+    "frontend_files": 51,
+    "targeted_backend_tests": 92,
+    "lint": "passed",
+    "typescript": "passed",
+    "production_build": "passed",
+    "backend_evidence": "91-test targeted suite plus the newly added zero-floor/drift regression; the 12-test real pipeline module also passed after that addition.",
+    "browser": {
+      "model": "Actual saved report rendered after restart",
+      "trends": "Real forecast rendered at all three horizons",
+      "route": "POST /api/optimize-free-route returned 200; 9.11 km, 19.6 min road time; observed-reference badge and unsupported-horizon message rendered",
+      "console_errors": 0
+    }
+  },
+  "scope": "Local runtime only; not a field-accuracy certification."
+}

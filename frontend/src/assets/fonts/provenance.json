@@ -1,0 +1,61 @@
+{
+  "fonts": [
+    {
+      "filename": "plus-jakarta-sans-variable.ttf",
+      "family": "Plus Jakarta Sans",
+      "css_family": "CrossFlow Plus Jakarta Sans",
+      "style": "normal",
+      "weight_range": [
+        200,
+        800
+      ],
+      "axes": [
+        {
+          "tag": "wght",
+          "min": 200.0,
+          "default": 400.0,
+          "max": 800.0
+        }
+      ],
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/PlusJakartaSans%5Bwght%5D.ttf",
+      "sha256": "89b3fb38aa0d275d7a731d0d817a4f1622b316b4d7fbdedcf02ee9099ff68bc8",
+      "bytes": 176288,
+      "license": "SIL Open Font License 1.1",
+      "license_file": "plus-jakarta-sans-OFL.txt",
+      "downloaded_on": "2026-10-24"
+    },
+    {
+      "filename": "plus-jakarta-sans-italic-variable.ttf",
+      "family": "Plus Jakarta Sans",
+      "css_family": "CrossFlow Plus Jakarta Sans",
+      "style": "italic",
+      "weight_range": [
+        200,
+        800
+      ],
+      "axes": [
+        {
+          "tag": "wght",
+          "min": 200.0,
+          "default": 400.0,
+          "max": 800.0
+        }
+      ],
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/PlusJakartaSans-Italic%5Bwght%5D.ttf",
+      "sha256": "9529eb888668b6a3c6dd75b6341a2fc5263fb6c9e788822e6117c29dd9e8b115",
+      "bytes": 183188,
+      "license": "SIL Open Font License 1.1",
+      "license_file": "plus-jakarta-sans-OFL.txt",
+      "downloaded_on": "2026-10-24"
+    }
+  ],
+  "license": {
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/OFL.txt",
+    "sha256": "995c7199cab65954f545996326755daee7b63cc6b42b06c13da1f9502ab08a99"
+  },
+  "metadata": {
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/METADATA.pb",
+    "sha256": "e7953d66e52a1e09235d75fc7aef7139c2733c0b5507afcf6e9afbe0fcef1de6"
+  },
+  "repository": "https://github.com/google/fonts/tree/main/ofl/plusjakartasans"
+}

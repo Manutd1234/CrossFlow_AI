@@ -392,8 +392,11 @@ describe('MapView traffic overlay controls', () => {
     );
     const card = container.querySelector('#hotspot-card-zone-simpang-jam');
 
-    expect(card?.querySelector('.hotspot-card__score')?.textContent).toBe('71.3');
-    expect(card?.querySelector('.hotspot-card__priority')?.textContent).toContain('HEAVY');
+    expect(card?.querySelector('.hotspot-card__score')?.getAttribute('aria-label'))
+      .toBe('Watch score 71.3 out of 100');
+    expect(card?.querySelector('.hotspot-card__priority')?.textContent).toContain('Heavy');
+    expect(container.textContent).not.toMatch(/weighted|backend-weighted|formula/i);
+    expect(card?.querySelector('.hotspot-card__score')?.textContent).not.toContain('63.4');
     expect(card?.querySelector('img')?.getAttribute('src')).toContain('wikimedia.org');
     expect(container.querySelectorAll('.hotspot-card')).toHaveLength(30);
 
@@ -406,8 +409,8 @@ describe('MapView traffic overlay controls', () => {
       />,
     ));
 
-    expect(container.querySelector('#hotspot-card-zone-simpang-jam .hotspot-card__score')?.textContent)
-      .toBe('77.8');
+    expect(container.querySelector('#hotspot-card-zone-simpang-jam .hotspot-card__score')?.getAttribute('aria-label'))
+      .toBe('Watch score 77.8 out of 100');
     expect(leafletTestState.map).toHaveBeenCalledTimes(1);
   });
 });

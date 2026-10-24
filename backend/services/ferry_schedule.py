@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
 
-from services import clock, ferry_freshness_store
+from services import clock, ferry_freshness_store, ferry_local_freshness
 
 BOARDING_CUTOFF_MINS = 15
 
@@ -77,7 +77,7 @@ def _load_routes() -> List[FerryRoute]:
             schedule_url=source["schedule_url"],
             booking_url=source["booking_url"],
             effective_from=source["effective_from"],
-            source_last_verified_at=source["last_verified_at"],
+            source_last_verified_at=service.get("last_verified_at", source["last_verified_at"]),
             calendar_note=source["calendar_note"],
         ))
     return routes
@@ -463,6 +463,8 @@ def timetable_metadata(*, load_durable: bool = True) -> Dict[str, Any]:
         metadata["freshness_durability"] = "shared_supabase"
     elif ferry_freshness_store.configured():
         metadata["freshness_durability"] = "supabase_table_unavailable"
+    elif ferry_local_freshness.available():
+        metadata["freshness_durability"] = "local_sqlite"
     else:
         metadata["freshness_durability"] = (
             "process_memory_with_committed_snapshot_fallback"
@@ -470,10 +472,11 @@ def timetable_metadata(*, load_durable: bool = True) -> Dict[str, Any]:
     for source in metadata["sources"]:
         source_snapshot_verified_at = source["last_verified_at"]
         source["snapshot_verified_at"] = source_snapshot_verified_at
-        source["last_verified_at"] = verified_at
+        source["last_verified_at"] = _newer_timestamp(source_snapshot_verified_at, verified_at)
         source["latest_successful_validation_at"] = (
             verified_at
             if verified_at != source_snapshot_verified_at
+            and _newer_timestamp(source_snapshot_verified_at, verified_at) == verified_at
             else None
         )
     return metadata
@@ -502,12 +505,14 @@ def committed_timetable_metadata() -> Dict[str, Any]:
     return metadata
 
 
-def _reset_runtime_verification_for_tests() -> None:
+def _reset_runtime_verification_for_tests(*, clear_local: bool = True) -> None:
     """Restore committed freshness; intentionally private to verification code."""
     global _runtime_last_verified_at, _runtime_latest_checked_at
     with _verification_lock:
         _runtime_last_verified_at = None
         _runtime_latest_checked_at = None
+    if clear_local:
+        ferry_local_freshness._reset_for_tests(_TIMETABLE["snapshot_id"])
 
 
 def generate_sailings(now: Optional[datetime] = None, horizon_hours: int = 24,
@@ -579,6 +584,36 @@ def ferry_surge_for_port(port: Optional[str], now: Optional[datetime] = None,
         if sailing["minutes_until_departure"] <= window_mins:
             return 1, sailing
     return 0, None
+
+
+def get_published_port_status(now: Optional[datetime] = None) -> List[Dict[str, Any]]:
+    """Terminal references and next scheduled departure, without invented actuals."""
+    now = now or clock.now()
+    out = []
+    for port_name, meta in PORT_METADATA.items():
+        upcoming = generate_sailings(now, horizon_hours=2, ports=[port_name])
+        next_sailing = upcoming[0] if upcoming else None
+        out.append({
+            "port_name": port_name,
+            "terminal_code": meta["code"],
+            "passenger_queue_mins": None,
+            "customs_processing_mins": None,
+            "freight_clearance_mins": None,
+            "active_berths": None,
+            "total_berths": None,
+            "status": None,
+            "next_sailing_in_mins": next_sailing["minutes_until_departure"] if next_sailing else None,
+            "next_vessel": next_sailing["ferry_name"] if next_sailing else None,
+            "next_operator": next_sailing["operator"] if next_sailing else None,
+            "data_source": "published_schedule",
+            "observed": False,
+            "official_reference_url": meta["official_reference_url"],
+            "limitations": (
+                "Terminal identity and published sailing times only. Live passenger "
+                "queues, processing, freight clearance and berth occupancy are unavailable."
+            ),
+        })
+    return out
 
 
 def get_port_intelligence(now: Optional[datetime] = None) -> List[Dict[str, Any]]:

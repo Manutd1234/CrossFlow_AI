@@ -1,0 +1,500 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-23T18:07:05.471477+00:00",
+  "client_date": "2026-10-24",
+  "training_performed": true,
+  "source_count": 2,
+  "published_count_cells": 288,
+  "newly_downloaded_count_observations": 0,
+  "experiments": [
+    {
+      "schema_version": 1,
+      "experiment": "sekupang_15min",
+      "source_id": "BATAM-014",
+      "site_id": "batam-sekupang-four-approach-published-2023",
+      "target": "vehicle_count",
+      "unit": "vehicles_in_15_minute_interval",
+      "training_performed": true,
+      "selected_model": "ridge_residual_10",
+      "source_cells": 216,
+      "unique_survey_dates": 1,
+      "test_metrics": {
+        "cells": 36,
+        "mae_vehicles_per_source_interval": 1.4934687840167784,
+        "rmse_vehicles_per_source_interval": 2.0631205461471556,
+        "wape_percent": 8.000725628661312,
+        "actual_vehicles_in_evaluated_cells": 672.0,
+        "bias_vehicles_per_source_interval": -0.328530323761244
+      },
+      "baseline_metrics": {
+        "persistence": {
+          "cells": 36,
+          "mae_vehicles_per_source_interval": 1.8888888888888888,
+          "rmse_vehicles_per_source_interval": 2.438123139721299,
+          "wape_percent": 10.119047619047619,
+          "actual_vehicles_in_evaluated_cells": 672.0,
+          "bias_vehicles_per_source_interval": -1.0555555555555556
+        },
+        "series_mean": {
+          "cells": 36,
+          "mae_vehicles_per_source_interval": 3.1777777777777776,
+          "rmse_vehicles_per_source_interval": 3.9791121287711073,
+          "wape_percent": 17.023809523809526,
+          "actual_vehicles_in_evaluated_cells": 672.0,
+          "bias_vehicles_per_source_interval": -2.733333333333333
+        },
+        "class_mean": {
+          "cells": 36,
+          "mae_vehicles_per_source_interval": 3.572222222222222,
+          "rmse_vehicles_per_source_interval": 4.645427859734774,
+          "wape_percent": 19.136904761904763,
+          "actual_vehicles_in_evaluated_cells": 672.0,
+          "bias_vehicles_per_source_interval": -2.7333333333333334
+        }
+      },
+      "per_class_test_metrics": {
+        "HV": {
+          "cells": 12,
+          "mae_vehicles_per_source_interval": 0.8642489323469755,
+          "rmse_vehicles_per_source_interval": 0.95498270890172,
+          "wape_percent": 49.385653276970025,
+          "actual_vehicles_in_evaluated_cells": 21.0,
+          "bias_vehicles_per_source_interval": -0.07512498360106151
+        },
+        "LV": {
+          "cells": 12,
+          "mae_vehicles_per_source_interval": 1.8065338597967822,
+          "rmse_vehicles_per_source_interval": 2.5627758905120714,
+          "wape_percent": 7.0156654749389595,
+          "actual_vehicles_in_evaluated_cells": 309.0,
+          "bias_vehicles_per_source_interval": -0.5144136791062636
+        },
+        "MC": {
+          "cells": 12,
+          "mae_vehicles_per_source_interval": 1.8096235599065775,
+          "rmse_vehicles_per_source_interval": 2.2999101992278743,
+          "wape_percent": 6.349556350549395,
+          "actual_vehicles_in_evaluated_cells": 342.0,
+          "bias_vehicles_per_source_interval": -0.3960523085764069
+        }
+      },
+      "improvement_over_persistence_mae_percent": 20.934005552052902,
+      "selection": {
+        "winner": "ridge_residual_10",
+        "protocol_sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217",
+        "validation_scores": [
+          {
+            "model": "persistence",
+            "declaration_order": 0,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 1.5,
+              "rmse_vehicles_per_source_interval": 1.8257418583505538,
+              "wape_percent": 8.517350157728707,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": -0.6666666666666666
+            }
+          },
+          {
+            "model": "series_mean",
+            "declaration_order": 1,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 2.388888888888889,
+              "rmse_vehicles_per_source_interval": 3.0333791205335494,
+              "wape_percent": 13.564668769716087,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": -2.0972222222222223
+            }
+          },
+          {
+            "model": "class_mean",
+            "declaration_order": 2,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 3.090277777777778,
+              "rmse_vehicles_per_source_interval": 4.004012744179963,
+              "wape_percent": 17.547318611987386,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": -2.097222222222223
+            }
+          },
+          {
+            "model": "shrink_25",
+            "declaration_order": 3,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 1.6319444444444444,
+              "rmse_vehicles_per_source_interval": 1.9881375637068532,
+              "wape_percent": 9.266561514195583,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": -1.0243055555555556
+            }
+          },
+          {
+            "model": "shrink_50",
+            "declaration_order": 4,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 1.875,
+              "rmse_vehicles_per_source_interval": 2.2665287948265247,
+              "wape_percent": 10.646687697160884,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": -1.3819444444444444
+            }
+          },
+          {
+            "model": "shrink_75",
+            "declaration_order": 5,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 2.1180555555555554,
+              "rmse_vehicles_per_source_interval": 2.624255846902127,
+              "wape_percent": 12.026813880126182,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": -1.7395833333333333
+            }
+          },
+          {
+            "model": "global_ratio",
+            "declaration_order": 6,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 1.321770662287904,
+              "rmse_vehicles_per_source_interval": 1.601320698715217,
+              "wape_percent": 7.505322372612703,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": 0.5645183360700605
+            }
+          },
+          {
+            "model": "ridge_residual_1",
+            "declaration_order": 7,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 1.4257169720771818,
+              "rmse_vehicles_per_source_interval": 1.7205819003487166,
+              "wape_percent": 8.095553784665386,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": -0.4177515505381165
+            }
+          },
+          {
+            "model": "ridge_residual_10",
+            "declaration_order": 8,
+            "metrics": {
+              "cells": 36,
+              "mae_vehicles_per_source_interval": 1.2754817759081367,
+              "rmse_vehicles_per_source_interval": 1.5255663380814317,
+              "wape_percent": 7.2424832701408395,
+              "actual_vehicles_in_evaluated_cells": 634.0,
+              "bias_vehicles_per_source_interval": 0.13092391065404899
+            }
+          }
+        ],
+        "final_model_sha256": "89bb31f99e32d1a31d1317b3f771ff2e9136397c6eeb58ee0cdf1be187583a6c",
+        "frozen_before_test": true
+      },
+      "splits": {
+        "candidate_fit": {
+          "groups": [
+            "2023-12-17T06:45:00+07:00",
+            "2023-12-17T07:00:00+07:00",
+            "2023-12-17T07:15:00+07:00"
+          ],
+          "raw_history_cells": 144,
+          "labeled_transitions": 108
+        },
+        "validation": {
+          "groups": [
+            "2023-12-17T07:30:00+07:00"
+          ],
+          "target_cells": 36
+        },
+        "final_refit": {
+          "raw_history_cells": 180,
+          "labeled_transitions": 144
+        },
+        "test": {
+          "groups": [
+            "2023-12-17T07:45:00+07:00"
+          ],
+          "target_cells": 36
+        },
+        "whole_source_timestamp_groups": true,
+        "random_row_split": false
+      },
+      "feature_contract": {
+        "allowed": [
+          "prior_same_series_count",
+          "approach",
+          "movement",
+          "vehicle_class"
+        ],
+        "availability": "all count features from completed strictly prior source intervals, assumed available at interval end",
+        "excluded": [
+          "target_count",
+          "target_interval_other_class_counts",
+          "target_PCU",
+          "saturation",
+          "density",
+          "target_speed",
+          "queue",
+          "target_travel_time"
+        ]
+      },
+      "source_quality_flags": {
+        "downstream_source_hourly_summary_and_percentages_inconsistent": 216
+      },
+      "license": {
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "license_evidence_url": "https://journal.uib.ac.id/index.php/jce/article/view/9076",
+        "attribution": "Uswatun Azizatul Syarqiah and Yusra Aulia Sari (2024), Optimizing Traffic Management at Batam City Intersections: Analysis of Congestion Causes and Mitigation Strategies, Journal of Civil Engineering and Planning 5(1), DOI 10.37253/jcep.v5i1.9076. Table 4.1 individually transcribed; time offsets, provenance and diagnostics added. No author endorsement."
+      },
+      "production_eligible": false,
+      "serving_model_replaced": false,
+      "application_history_modified": false,
+      "synthetic_training_rows": 0,
+      "fresh_prospective_evaluation": false,
+      "limitations": [
+        "Published aggregate cells were already collected and audited. The test is a retrospective diagnostic, not new prospective independent evidence.",
+        "Only one intersection/day (Sekupang) or one U-turn/three days (Gajah Mada); related class and movement cells share source timestamps.",
+        "Published individual cells are retained despite inconsistent later summaries. Original count sheets and arrival latencies are unavailable.",
+        "Counts are interval flows, not image vehicle counts, camera annotations, physical queues, road speeds or severity labels.",
+        "No cross-site, present-day, rainy-night, event or citywide validation; no operational 99–100% accuracy or comparison with Google is supported.",
+        "Test targets remain excluded from final refit; production eligibility remains false regardless of baseline performance."
+      ]
+    },
+    {
+      "schema_version": 1,
+      "experiment": "gajah_mada_uturn_hourly",
+      "source_id": "BATAM-EXT-005",
+      "site_id": "batam-gajah-mada-kemilau-bangsa-uturn-published-2023",
+      "target": "u_turn_vehicle_count",
+      "unit": "vehicles_in_1_hour_interval",
+      "training_performed": true,
+      "selected_model": "persistence",
+      "source_cells": 72,
+      "unique_survey_dates": 3,
+      "test_metrics": {
+        "cells": 24,
+        "mae_vehicles_per_source_interval": 32.0,
+        "rmse_vehicles_per_source_interval": 51.08979023901612,
+        "wape_percent": 14.903939452745973,
+        "actual_vehicles_in_evaluated_cells": 5153.0,
+        "bias_vehicles_per_source_interval": 28.083333333333332
+      },
+      "baseline_metrics": {
+        "persistence": {
+          "cells": 24,
+          "mae_vehicles_per_source_interval": 32.0,
+          "rmse_vehicles_per_source_interval": 51.08979023901612,
+          "wape_percent": 14.903939452745973,
+          "actual_vehicles_in_evaluated_cells": 5153.0,
+          "bias_vehicles_per_source_interval": 28.083333333333332
+        },
+        "series_mean": {
+          "cells": 24,
+          "mae_vehicles_per_source_interval": 34.979166666666664,
+          "rmse_vehicles_per_source_interval": 52.925950629157335,
+          "wape_percent": 16.291480690859693,
+          "actual_vehicles_in_evaluated_cells": 5153.0,
+          "bias_vehicles_per_source_interval": 28.145833333333332
+        },
+        "class_mean": {
+          "cells": 24,
+          "mae_vehicles_per_source_interval": 37.505208333333336,
+          "rmse_vehicles_per_source_interval": 60.25169646643432,
+          "wape_percent": 17.46797981758199,
+          "actual_vehicles_in_evaluated_cells": 5153.0,
+          "bias_vehicles_per_source_interval": 28.145833333333332
+        }
+      },
+      "per_class_test_metrics": {
+        "KB (heavy vehicle)": {
+          "cells": 8,
+          "mae_vehicles_per_source_interval": 0.75,
+          "rmse_vehicles_per_source_interval": 1.0,
+          "wape_percent": 85.71428571428571,
+          "actual_vehicles_in_evaluated_cells": 7.0,
+          "bias_vehicles_per_source_interval": -0.5
+        },
+        "KR (light vehicle)": {
+          "cells": 8,
+          "mae_vehicles_per_source_interval": 23.875,
+          "rmse_vehicles_per_source_interval": 26.830486391416763,
+          "wape_percent": 10.511832691249312,
+          "actual_vehicles_in_evaluated_cells": 1817.0,
+          "bias_vehicles_per_source_interval": 13.375
+        },
+        "SM (motorcycle)": {
+          "cells": 8,
+          "mae_vehicles_per_source_interval": 71.375,
+          "rmse_vehicles_per_source_interval": 84.31859225580085,
+          "wape_percent": 17.152297987383598,
+          "actual_vehicles_in_evaluated_cells": 3329.0,
+          "bias_vehicles_per_source_interval": 71.375
+        }
+      },
+      "improvement_over_persistence_mae_percent": 0.0,
+      "selection": {
+        "winner": "persistence",
+        "protocol_sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217",
+        "validation_scores": [
+          {
+            "model": "persistence",
+            "declaration_order": 0,
+            "metrics": {
+              "cells": 24,
+              "mae_vehicles_per_source_interval": 24.875,
+              "rmse_vehicles_per_source_interval": 41.07868465924065,
+              "wape_percent": 10.245409301527372,
+              "actual_vehicles_in_evaluated_cells": 5827.0,
+              "bias_vehicles_per_source_interval": 0.125
+            }
+          },
+          {
+            "model": "series_mean",
+            "declaration_order": 1,
+            "metrics": {
+              "cells": 24,
+              "mae_vehicles_per_source_interval": 24.875,
+              "rmse_vehicles_per_source_interval": 41.07868465924065,
+              "wape_percent": 10.245409301527372,
+              "actual_vehicles_in_evaluated_cells": 5827.0,
+              "bias_vehicles_per_source_interval": 0.125
+            }
+          },
+          {
+            "model": "class_mean",
+            "declaration_order": 2,
+            "metrics": {
+              "cells": 24,
+              "mae_vehicles_per_source_interval": 34.208333333333336,
+              "rmse_vehicles_per_source_interval": 58.71168963673248,
+              "wape_percent": 14.0895829758023,
+              "actual_vehicles_in_evaluated_cells": 5827.0,
+              "bias_vehicles_per_source_interval": 0.125
+            }
+          },
+          {
+            "model": "shrink_25",
+            "declaration_order": 3,
+            "metrics": {
+              "cells": 24,
+              "mae_vehicles_per_source_interval": 24.875,
+              "rmse_vehicles_per_source_interval": 41.07868465924065,
+              "wape_percent": 10.245409301527372,
+              "actual_vehicles_in_evaluated_cells": 5827.0,
+              "bias_vehicles_per_source_interval": 0.125
+            }
+          },
+          {
+            "model": "shrink_50",
+            "declaration_order": 4,
+            "metrics": {
+              "cells": 24,
+              "mae_vehicles_per_source_interval": 24.875,
+              "rmse_vehicles_per_source_interval": 41.07868465924065,
+              "wape_percent": 10.245409301527372,
+              "actual_vehicles_in_evaluated_cells": 5827.0,
+              "bias_vehicles_per_source_interval": 0.125
+            }
+          },
+          {
+            "model": "shrink_75",
+            "declaration_order": 5,
+            "metrics": {
+              "cells": 24,
+              "mae_vehicles_per_source_interval": 24.875,
+              "rmse_vehicles_per_source_interval": 41.07868465924065,
+              "wape_percent": 10.245409301527372,
+              "actual_vehicles_in_evaluated_cells": 5827.0,
+              "bias_vehicles_per_source_interval": 0.125
+            }
+          }
+        ],
+        "final_model_sha256": "a2e591903f2c83651ad1129db67daa7b916797dce72f04bb2d76a42e72ad09d0",
+        "frozen_before_test": true
+      },
+      "splits": {
+        "candidate_fit": {
+          "groups": [
+            "2023-02-16"
+          ],
+          "raw_history_cells": 24,
+          "labeled_transitions": 0
+        },
+        "validation": {
+          "groups": [
+            "2023-02-17"
+          ],
+          "target_cells": 24
+        },
+        "final_refit": {
+          "raw_history_cells": 48,
+          "labeled_transitions": 24
+        },
+        "test": {
+          "groups": [
+            "2023-02-18"
+          ],
+          "target_cells": 24
+        },
+        "whole_source_timestamp_groups": true,
+        "random_row_split": false
+      },
+      "feature_contract": {
+        "allowed": [
+          "prior_survey_day_same_clock_series_count",
+          "direction",
+          "vehicle_class",
+          "clock_slot"
+        ],
+        "availability": "all count features from completed strictly prior source intervals, assumed available at interval end",
+        "excluded": [
+          "target_count",
+          "target_interval_other_class_counts",
+          "target_PCU",
+          "saturation",
+          "density",
+          "target_speed",
+          "queue",
+          "target_travel_time"
+        ]
+      },
+      "source_quality_flags": {
+        "source_count_subtotals_inconsistent;caption_lists_only_first_day_but_table_contains_three_dates": 72
+      },
+      "license": {
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "license_evidence_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642/0",
+        "attribution": "Harry Kurniawan and M. Khairi Anwar (2023), Pengaruh U-Turn terhadap Kinerja Lalu Lintas pada Ruas Jalan Gajah Mada Depan Simpang Sekolah Kemilau Bangsa Kota Batam, Sigma Teknika 6(2), 479–492. Table 12, p488, raw class count cells retained including subtotal inconsistencies. Time offsets, provenance and diagnostics added. No author endorsement. Derived count artifacts are distributed under CC BY-SA 4.0."
+      },
+      "production_eligible": false,
+      "serving_model_replaced": false,
+      "application_history_modified": false,
+      "synthetic_training_rows": 0,
+      "fresh_prospective_evaluation": false,
+      "limitations": [
+        "Published aggregate cells were already collected and audited. The test is a retrospective diagnostic, not new prospective independent evidence.",
+        "Only one intersection/day (Sekupang) or one U-turn/three days (Gajah Mada); related class and movement cells share source timestamps.",
+        "Published individual cells are retained despite inconsistent later summaries. Original count sheets and arrival latencies are unavailable.",
+        "Counts are interval flows, not image vehicle counts, camera annotations, physical queues, road speeds or severity labels.",
+        "No cross-site, present-day, rainy-night, event or citywide validation; no operational 99–100% accuracy or comparison with Google is supported.",
+        "Test targets remain excluded from final refit; production eligibility remains false regardless of baseline performance."
+      ]
+    }
+  ],
+  "production_eligible": false,
+  "serving_model_replaced": false,
+  "unified_accuracy_percent": null,
+  "google_comparison_performed": false,
+  "reason_no_unified_metric": "Different source interval durations, source scopes, movement geometries and count classes are not pooled.",
+  "newly_used_for_count_experiments": 288,
+  "fitted_source_cells": 228,
+  "final_heldout_target_cells": 60,
+  "reporting_correction": "Reporting-only naming clarification: 288 published cells allocate 228 to final fitting/history and 60 to final holdout; models, selection and predictions unchanged."
+}

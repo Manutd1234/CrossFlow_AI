@@ -1,0 +1,75 @@
+{
+  "schema": "crossflow.yolo26_vehicle_selection.v1",
+  "generated_at": "2026-10-23T19:42:42.416363+00:00",
+  "architecture": "yolo26s",
+  "ultralytics_version": "8.4.184",
+  "selected_model": "pretrained_yolo26s_1280",
+  "model_id": "yolo26s-batam-646f8bc3fe0a6568-1280",
+  "model_sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+  "score_threshold": 0.25,
+  "imgsz": 1280,
+  "num_classes": 80,
+  "vehicle_classes": {
+    "1": "bicycle",
+    "2": "car",
+    "3": "motorcycle",
+    "5": "bus",
+    "7": "truck"
+  },
+  "min_vehicle_long_side_px": 12,
+  "min_vehicle_short_side_px": 4,
+  "generic_vehicle_nms_iou": 0.5,
+  "validation": {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26s_1280",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 1.3333333333333333,
+        "macro_source_group_mae": 1,
+        "rmse_vehicles_per_frame": 1.632993161855452,
+        "bias_vehicles_per_frame": -1.3333333333333333,
+        "exact_count_pct": 33.33333333333333,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 18
+      },
+      "detection_iou_50": {
+        "precision": 0.9444444444444444,
+        "recall": 0.7727272727272727,
+        "f1": 0.85,
+        "true_positive": 17,
+        "false_positive": 1,
+        "false_negative": 5
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  "selection_rule": "Validation macro source-group count MAE, detection IoU50 F1, higher threshold, lexical candidate name",
+  "split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+  "annotation_manifest_sha256": "5efd0896bd61aa57b9d4a68668f03b94895445b71586349777604e3745edde90",
+  "training_plan_sha256": "e6519bfd1ba49f7a04f15eeef48d26cbf1ba910cd6527f48bc9243039c37ebd3",
+  "validation_grid_sha256": "c445fc03deea36ca1d3e0857cd2c1cacd20174403f468c43a5af5e165f1e8169",
+  "test_labels_read_before_selection_this_run": false,
+  "test_previously_consumed": true,
+  "fresh_test": false,
+  "license": "AGPL-3.0",
+  "license_url": "https://www.ultralytics.com/license",
+  "production_eligible": false,
+  "batam_validated": false,
+  "human_certified": false,
+  "annotation_origin": "ai_visual_blind"
+}

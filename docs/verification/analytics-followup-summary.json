@@ -1,0 +1,32 @@
+{
+  "checked_at": "2026-10-23T12:33:07.570486+00:00",
+  "frontend": {
+    "tests": 418,
+    "files": 41,
+    "lint": "passed",
+    "typescript_and_build": "passed"
+  },
+  "focused_backend_tests": 102,
+  "additional_batam_evidence": {
+    "dated_saturation_ratios": 28,
+    "survey_dates": [
+      "2023-06-12",
+      "2023-06-18"
+    ],
+    "area_speed_ranges_without_exact_dates": 6,
+    "eligible_new_speed_labels": 0
+  },
+  "serving_model_replaced": false,
+  "driver_route_code": "AHMKAQM",
+  "passed_departure_notice_verified": true,
+  "browser_console_errors": 0,
+  "all_six_analytics_tabs_checked": true,
+  "official_ferry_sources_checked": 6,
+  "official_sources_needing_review": 0,
+  "remaining_gaps": [
+    "Adequate dated Batam speed archive for supported corridors",
+    "Live cargo/terminal operations feed",
+    "Measured emissions validation feed"
+  ],
+  "local_only": true
+}

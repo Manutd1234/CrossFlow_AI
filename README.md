@@ -1,5 +1,14 @@
 # ⚡ CrossFlow AI — Smart Mobility & Cross-Border Logistics Platform
 
+CCTV is processed in the backend: a local Matanya pilot runs **YOLO26s → congestion estimates → mapped-road route costs**, feeding the existing route planner and map. Camera panels and manual image uploads are absent from the frontend. One of 28 listed camera candidates is enabled as an explicitly unvalidated local estimate. See [backend CCTV integration and current coverage](docs/CCTV_CONGESTION.md).
+
+<!-- ML_TRAINING_2026_10_24 -->
+**Historical testing expanded:** a source-specific Batam survey test reduces one-hour MAE by 6.47%; a new 61-day Guangzhou speed benchmark evaluates the methodology separately. The local collector now saves prospective Batam forecasts before their targets arrive. See [actual metrics, confidence intervals and geography limits](docs/OBSERVED_ML_TRAINING.md).
+
+**The local runtime now trains on observed traffic only**, with live weather, mapped road context and independent chronological evaluation. It currently selects persistence while the real forests remain provisional; see [current runtime and evidence](docs/OBSERVED_ML_TRAINING.md).
+
+Real-data ML experiments are now available: [training results, engine changes and limits](docs/ML_ENGINE_TRAINING_2026-10-24.md). Batam single-site speed and foreign traffic-count results are separate from the serving demo model.
+
 > **Batam-Singapore Hackathon 2026 Submission**  
 > **Track 2: Ease of Living & Sustainability — Smart Mobility Flow**
 
@@ -23,9 +32,9 @@ observation.
 3. **Singapore ↔ Batam Door-to-Door Journey Solver**
    - Free-text or map-picked endpoints can be anywhere in the supported Singapore and Batam bounds. A cross-border plan is composed as **Singapore road access → published ferry terminal corridor → Batam road access**, or the reverse. Candidate crossings are restricted to published terminal pairs through HarbourFront or Tanah Merah and Batam Centre, Harbour Bay, Sekupang or Nongsa Pura; the solver does not invent informal small-channel crossings. Every leg carries its own provider, geometry and limitation. Ferry lines are channel-aware planning geometry, not an observed vessel track, while the selected departure is asserted only when the bundled operator snapshot contains a matching sailing. Same-island Batam journeys retain the full local A\* objectives and alternatives.
 4. **Ferry & Port Intelligence**
-   - Source-dated operator timetable snapshots cover published Batam-Singapore sailings, alongside official BP Batam terminal reference information. Passenger-queue and processing values are **schedule-informed planning estimates** derived from departure density and a Batam time-of-day profile. They are always marked non-observed because no documented public live Batam terminal queue API is connected. The UI retains the operator or terminal link and asks travellers to verify and book before departure.
+   - Source-dated operator timetable snapshots cover published Batam-Singapore sailings, alongside official BP Batam terminal references. Upcoming published departures are computed at request time. Live queues, processing, occupancy and operating status remain unavailable without an observed source; verify conditions with the terminal or operator before travel.
 5. **Operations & Carbon Analytics Dashboard**
-   - Bottleneck detection and dispatch alerts grounded in modelled corridor state, plus a modelled avoidable-emissions opportunity with published illustrative assumptions. These are scenario outputs, not observed or measured operational performance.
+   - Current congestion and bottlenecks derive from fresh validated TomTom representative-point speeds, with actual sample timestamps and coverage counts. Missing measurements stay unavailable. Observed history stays empty until validated measurements are stored; unsupported fleet, emissions and historical-performance figures are not invented.
 
 ---
 
@@ -44,44 +53,97 @@ successful request must be live.
 | Vehicle, route-objective, congestion and weather weights | Published planning assumptions over OSM edges | Modelled |
 | Route-learning observation store | Admin-authorized, map-matched first-party traversals keyed to the exact committed OSM graph | Optional; empty until verified telemetry is ingested |
 | Landmark coordinates | Verified against OSM features | **Real** |
-| Point traffic observations | TomTom Traffic Flow only when a server-side key returns a fresh response | Optional commercial observation; not Batam-government telemetry |
+| Point traffic observations | Fresh validated TomTom responses through a server-side key or the configured project relay | Commercial point observation; not Batam-government telemetry |
+| CCTV route-search inputs | Local public Matanya Simpang BI view, YOLO26s and an explicitly provisional exact-road mapping | One local estimate pilot; 28 listed candidates; independent camera validation pending; no inferred physical speed |
 | 30 Batam planning hotspots (20 critical / 10 heavy) | Representative locations, local-area profiles and synthetic Random Forest inputs | Modelled watch-list priorities; not official severity labels |
-| Legacy congestion charts | Rolling, versioned 14-day Batam-time synthetic seed plus five-minute snapshots of modelled corridor telemetry | Non-observed; API reports source counts, freshness and storage durability |
+| Observed congestion history | Bounded validated spatial observations from the configured local/shared store | Empty until measured records exist; synthetic seeds excluded by default |
+| Legacy engineering history preview | Rolling synthetic seed and modelled telemetry snapshots, available only with explicit `include_modelled=true` | Non-observed; excluded from the default dashboard history |
 | Typed spatial speed history | Numeric, geocoded, timezone-aware `V_actual` and `V_free_flow` records with fixed source policy | Optional; idempotent and provenance-labelled, stored in local SQLite or the server-only Supabase adapter when explicitly configured |
-| Operations bottlenecks and emissions opportunity | Synthetic corridor scenario, deterministic emissions assumptions and published ferry timetable snapshot | Modelled/illustrative; not observed, live or measured |
+| Operations congestion and bottlenecks | Fresh measured representative-point speed/free-flow ratios | Timestamped point-derived index with explicit coverage; unavailable on provider failure |
+| Operational emissions savings and fleet composition | No measured fleet or emissions feed | Unavailable; scenario curves/splits are not dashboard evidence |
 | Ferry departure slots | Source-dated published timetables from BatamFast, Sindo, Majestic and Horizon; official source links retained | Last-known-good schedule snapshot, not live operations |
-| Passenger queue and processing time | Published departure density × Batam time-of-day planning profile | Schedule-informed estimate; not observed and not an official wait time |
+| Passenger queue, processing time and berth occupancy | No connected observed terminal-operations feed | Unavailable |
 | Terminal identity, location and facilities | BP Batam official passenger-port and terminal pages | Official reference information; not live occupancy |
 | Ferry vessels, seats, gates, berths, cancellations | No licensed public machine feed is connected | Unavailable; never fabricated |
-| Cargo consignments | Illustrative demo dataset | Simulated |
+| Cargo consignments | No connected live tracking feed | Unavailable in the operational workspace; engineering fixtures are not actual shipments |
 
 The traffic score models network demand and queue conditions, while the
 separately reported weather term models safe-speed loss on wet roads. They are
 kept separate in each route's cost breakdown so the estimate can be audited.
-Historical metadata sets `observed` only when every sample in the requested
-window is observed; `contains_observed_samples` identifies mixed windows.
+Default historical metadata reports only validated observed rows for the
+requested Batam calendar-day window. Empty buckets remain null, not zero or a
+synthetic profile. Model validation metrics describe the trained model and its
+declared evaluation scope; they should change only after a real training run.
 
-**On the model:** the bundled `RandomForestRegressor` remains a reproducible
-synthetic cold-start model. The richer typed path can retrain it only from
-validated spatial speed observations, using server-owned source-confidence
-weights and a chronological holdout. Tree dispersion supplies empirical mean,
-standard deviation, P10 and P90 outputs. Calibration metadata publishes the
-P10–P90 coverage target and observed coverage, mean interval width, and an
-empirical ensemble CRPS approximation. These are random-forest ensemble
-statistics—not Bayesian intervals, a GNN, or evidence of learned road
-topology.
+The operator's `POST /api/analytics/simulation` endpoint computes a useful
+24-hour model forecast with P10/mean/P90 and weather counterfactuals. It accepts
+`weather` (0–2) and optional unique `corridor_ids` (up to five); the server owns
+the clock and fixed work bound of 135 ensemble predictions. This is explicitly
+a simulation, never measured traffic history. Use `include_modelled=true` on
+the history endpoint only for its labelled engineering preview.
 
-The bundled R², MAE, RMSE, coverage and CRPS values measure how well the model
-reproduces its synthetic generator; they are not real-world Batam accuracy.
-Every retrain publishes source counts, source-weight totals, observed-row
-counts, defaults used and validation scope. An imminent published sailing is a
-separate, capped 15-point post-model adjustment with 45-minute exponential
-decay because ferry proximity is not persisted as an observed traffic feature.
-A commercial TomTom adapter can provide a current point speed when configured,
-but it does not turn the hotspot catalogue or other forecasts into observed
-ground truth.
+For an actual local traffic archive, opt in with
+`CROSSFLOW_ARCHIVE_LIVE_TRAFFIC=1` and a persistent `CROSSFLOW_HISTORY_DB`.
+The lifecycle collector polls validated current TomTom samples every 120
+seconds, preserves original timestamps and deduplicates identical snapshots.
+Collection starts now; it cannot reconstruct earlier observed conditions.
+Traffic dashboard reads do not create observation rows, and serverless/shared-store collection is
+disabled. Collector state is exposed in operations/history metadata.
 
-Likewise, the queue cards deliberately remain estimates. Public official pages
+### Local architecture and trust boundaries
+
+```mermaid
+flowchart LR
+  UI[React operator and driver workspaces] -->|password, OTP, Google PKCE| Auth[Supabase Auth]
+  UI -->|access token| API[FastAPI: verify token and server-owned role]
+  API --> Routes[OSM road routing and published ferry connections]
+  API --> ML[Random Forest: bounded forecasts and scenarios]
+  API --> DB[(Local SQLite: routes and measured traffic)]
+  API --> Scrapers[Allowlisted official-source scrapers]
+  Scrapers --> Reports[(Parsed reporting-period snapshots)]
+  Traffic[Validated current TomTom points] --> Worker[Opt-in local collector]
+  Worker -->|original timestamps, idempotent ingest| DB
+  API -->|persisted dispatch code and geometry| UI
+  API -. configured and migrated only .-> Shared[(Optional shared Supabase adapters)]
+```
+
+Passwords, OTPs and OAuth credentials stay with Supabase's authentication flow;
+application roles are resolved by the API from the protected profile. Planning
+and ML scenario requests require operator permission. Drivers retrieve persisted
+journeys by dispatch code, while account history is scoped separately. A route
+code is issued only after a storage write succeeds.
+
+Provider integrations have bounded requests, validated payloads and explicit
+freshness. The traffic collector writes measured observations; the simulation
+engine does not. The official-report scraper retains only successfully parsed
+published records and marks a failed refresh stale. Local files survive a local
+restart but do not provide shared cloud storage. Hosted adapters and migrations
+need their own deployment verification before a production rollout.
+
+**On the model:** this workspace enables `CROSSFLOW_REAL_TRAFFIC_TRAINING=1`.
+Its real-only runtime fits three 100-tree forests for 15/30/60 minutes using
+43 features from actual traffic history, available weather and nearby mapped
+road context. It uses chronological fit/validation/calibration/test partitions,
+60-minute purges, explicit ingestion/capture times and zero synthetic labels.
+Validation currently selects persistence at all horizons; the fitted forests are
+reported honestly beside that stronger baseline. Hourly retraining runs while
+the local backend is up and keeps the previous complete JSON model on failure.
+
+The initial 1,064-record archive spans only 9.6 hours. Weather capture has started,
+but eligible historical weather-training pairs are initially zero. Release
+checks remain provisional and sparse prediction intervals are withheld. OSM
+tags are mapped context, not verified lane/direction/capacity measurements;
+Open-Meteo is a regional weather model grid, not a roadside sensor. Forecasts
+cover five monitored points and at most one hour. Later route contexts carry a
+labelled latest-observed reference, with no assumed synthetic/ferry adjustment.
+See [actual results and reproducible commands](docs/OBSERVED_ML_TRAINING.md).
+
+The older synthetic cold-start/research implementation remains explicitly
+available only when observed-only mode is disabled. Its R², MAE, RMSE, tree
+quantiles and scenario tests are not field-accuracy evidence. The default
+history continues to exclude synthetic seeds and modelled observations.
+
+Queue/processing/berth measurements remain unavailable. Public official pages
 provide terminal descriptions, aggregate passenger volumes, schedules and
 process guidance, but no documented public feed of Batam passenger wait,
 immigration processing, berth occupancy, gates, seats or cancellations was
@@ -119,7 +181,7 @@ uses a dedicated server-only Google Routes v2 key and sends coordinates to
 Google only when the explicit enable flag is set. The field mask permits only
 duration, distance and route labels—never geometry, polylines or steps—and the
 response is `private, no-store`, cannot be persisted or used for training, and
-cannot be drawn over the OpenStreetMap/CARTO map. Shortest-distance reference
+cannot be drawn over the OpenStreetMap map. Shortest-distance reference
 routes are clearly labelled experimental. The frontend action is separately
 opted in only when `VITE_ENABLE_GOOGLE_BENCHMARK=true`; it renders attributed
 distance/duration text in its own card and never sends provider content to the
@@ -149,6 +211,26 @@ durability is available through
 See [Routing Intelligence Architecture](docs/ROUTING_INTELLIGENCE_ARCHITECTURE.md)
 for the cost units, vehicle constraints, source-policy schema, retention,
 review/promotion flow, RLS boundary, cache, and fallback behavior.
+
+### Congestion calculation and validation
+
+Current/30/60-minute forecasts share a bounded batch engine. Measured speeds,
+training labels and historical estimates use one congestion-score definition;
+stopped measurements are retained while routing costs remain finite. Shared
+route history now keeps independent account associations, and local storage
+failure no longer blocks a healthy shared lookup.
+
+The local demo can reuse the existing public Vercel traffic feed without
+copying production keys: set `CROSSFLOW_TRAFFIC_UPSTREAM_URL` to
+`https://cross-flow-ai.vercel.app/api/live-traffic` in the gitignored root
+`.env`. This relay is local-only, validates source/freshness and retains only a
+short in-memory snapshot. Thirty hotspot areas remain modelled estimates.
+
+A reproducible 2,000,000-scenario inference run passed numerical invariants.
+Chronological backtesting compares the forest with latest-speed and history
+baselines, excludes future measurements, and reports insufficient observed
+history honestly. See [engine validation](docs/CONGESTION_ENGINE_VALIDATION.md)
+for results, the protected backtest endpoint, migration order and limitations.
 
 ### Authentication and the credential boundary
 
@@ -193,13 +275,13 @@ See [Auth Backend Roadmap](docs/AUTH_BACKEND_ROADMAP.md).
 | Component | Technology | Purpose |
 |---|---|---|
 | **Frontend UI** | React 18, Vite, TypeScript | Modern responsive dashboard |
-| **Styling & Design** | Vanilla CSS Glassmorphism, Outfit & Inter Fonts | Bright light-mode aesthetic, micro-animations |
-| **Interactive Maps** | Leaflet JS + CartoDB Voyager Tiles | Singapore-road, ferry-corridor and Batam-road leg visualization |
+| **Styling & Design** | Vanilla CSS Glassmorphism, Outfit & Manrope Fonts | Bright light-mode aesthetic, micro-animations |
+| **Interactive Maps** | Leaflet JS + OpenStreetMap Tiles | Singapore-road, ferry-corridor and Batam-road leg visualization |
 | **Road Graph & Routing** | Committed OpenStreetMap Batam graph + stateful A\*; OSRM/OSM for online access legs | Per-leg road geometry with source-labelled continuity fallback |
 | **Multimodal Composition** | FastAPI journey composer + source-dated operator timetable snapshot | Legal terminal-pair selection, transfer timing and per-leg provenance |
 | **Data Visualization** | Recharts | Congestion trend charts & emissions reduction bars |
 | **Backend & AI Engine** | Python 3.12 baseline, FastAPI, uvicorn | High-performance REST API |
-| **Machine Learning** | scikit-learn Random Forest, NumPy | Synthetic cold start plus optional typed spatial retraining, empirical tree quantiles and calibration metadata |
+| **Machine Learning** | scikit-learn Random Forest, NumPy | Real-only 15/30/60-minute forests, validation-selected persistence, causal weather and chronological calibration; explicit legacy research mode |
 
 ---
 
@@ -220,7 +302,7 @@ See [Auth Backend Roadmap](docs/AUTH_BACKEND_ROADMAP.md).
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js v20.19+ (or v22.12+)
+- Node.js v22.12+
 - Python 3.12+
 
 ### One command
@@ -247,6 +329,11 @@ and `--force-restart`.
 
 The interactive API is available at `http://localhost:8000` (OpenAPI UI at
 `/docs`). Route planning has three POST endpoints:
+
+With `CROSSFLOW_AUTH_MODE=supabase`, each planning request requires the verified
+operator/admin session's `Authorization: Bearer …` header. Missing credentials
+return 401 and driver accounts return 403 before route computation. Explicit
+auth-disabled development mode retains guest planning.
 
 | Endpoint | Request shape |
 |---|---|
@@ -302,8 +389,16 @@ Successful responses are flat envelopes: `generated_at`, `data_source`, and
 are:
 
 - `route_id`: the full 64-character lowercase SHA-256 content hash.
-- `route_code`: a deterministic, driver-friendly 7-character code. It is an
-  identifier only; it is not an access credential.
+- `route_code`: a deterministic, driver-friendly 7-character dispatch code.
+  It is issued only after local or shared storage confirms a write. Public
+  lookup accepts it as a shareable route capability.
+- `dispatch_available`: whether a store confirmed the route can be retrieved.
+  If both writes fail, the calculated journey remains a preview with
+  `dispatch_available: false` and `route_code: null`; its internal `route_id`
+  must not be presented as an assignable code.
+- `route_storage`: confirmed source, shared/local scope and durability. A
+  local SQLite code is scoped to the current host; an ephemeral or memory
+  store does not provide durable cross-worker dispatch.
 
 The route result includes `route_type`, `planned_departure`,
 `estimated_arrival`, `estimated_travel_time_mins`, `total_eta_mins`,
@@ -340,15 +435,14 @@ normal `legs`, ferry, stop, and navigation fields. Use the actual
 
 ```http
 GET /api/routes/7KQ4MNP
-X-CrossFlow-Route-Token: <CROSSFLOW_ROUTE_READ_TOKEN>
 ```
 
 The equivalent `/routes/{route_id}` path is also available. Retrieval accepts
-either the 64-character hash or 7-character code and authorizes a valid
-configured `X-CrossFlow-Route-Token`; deployments may also use the existing
-`X-CrossFlow-Admin-Token` compatibility path (and the admin path is used when
-no route-read token is configured). Route IDs/codes alone do not authorize
-access. Responses are marked `Cache-Control: private, no-store`.
+either the 64-character hash or 7-character code without a login. Anyone with
+the code can retrieve that route; do not attach sensitive passenger or cargo
+details to these public responses. Route history listing (`GET /api/routes`)
+requires a verified account and scopes drivers to their own runs. Responses
+are marked `Cache-Control: private, no-store`.
 
 ---
 
@@ -402,6 +496,9 @@ cd ..
 .venv/bin/pip install pytest
 (cd backend && ../.venv/bin/python -m pytest tests -q)
 .venv/bin/python -m unittest discover -s backend/auth/tests -t . -p 'test_*.py'
+# Execute the signup triggers and RLS policies against local PostgreSQL (PGlite)
+npm ci --prefix backend/auth
+npm test --prefix backend/auth
 bash -n scripts/dev.sh
 ```
 
@@ -429,7 +526,7 @@ secrets are configured. Set only the integrations you use:
 | `VITE_API_ENABLED` | Set to `false` for emergency demo mode: skip unavailable application API calls and use bundled simulations. Supabase browser authentication is unaffected. |
 | `VITE_SUPABASE_URL` | Supabase project URL used by the React sign-in flow. It must identify the same project as the server-side `SUPABASE_URL`. |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` (or legacy `VITE_SUPABASE_ANON_KEY`) | Browser-safe Supabase key for direct sign-in and token refresh. Never put `SUPABASE_SECRET_KEY` or `SUPABASE_SERVICE_ROLE_KEY` in a `VITE_` variable. |
-| `VITE_TEST_ADMIN_EMAIL` + `VITE_TEST_ADMIN_PASSWORD` | Optional shared test administrator shown as a one-click sign-in. These values are embedded in the public browser bundle by design. Use them only with a disposable demo Supabase project containing no production data; leave either blank to hide the button. The account must already exist and have `role = 'admin'` in `crossflow_profiles`. |
+| `VITE_TEST_ADMIN_EMAIL` + `VITE_TEST_ADMIN_PASSWORD` | Optional disposable **local-development** test administrator shown as a one-click sign-in. The Vite dev server exposes these values to browser clients; production builds ignore them and remove the shortcut. Use only a disposable Supabase project containing no real data/users, and leave either blank for normal use. The account must already have `role = 'admin'` in `crossflow_profiles`. Never configure these on a hosted deployment; credentials embedded by an earlier build must be rotated separately. |
 | `VITE_ENABLE_GOOGLE_BENCHMARK` | Must equal `true` to show the optional text-only “Compare online” action. This is a UI gate, never an API key; the server gate and dedicated server key below are also required. |
 | `CROSSFLOW_AUTH_MODE` | `disabled` by default locally; set to `supabase` after applying `backend/auth/schema.sql` to enable the per-route auth checks. Vercel pins this to `supabase`. |
 | `TOMTOM_API_KEY` | Optional TomTom flow-segment layer used by `/api/live-traffic`. |
@@ -449,7 +546,8 @@ secrets are configured. Set only the integrations you use:
 | `CROSSFLOW_ROUTE_LEARNING_DB` | Writable SQLite path for verified traversal observations. A configured persistent volume is durable; serverless `/tmp` is explicitly reported as ephemeral. |
 | `CROSSFLOW_ADMIN_TOKEN` | Server-only token for protected ingestion, review/promotion, persistence status and retraining operations through the `X-CrossFlow-Admin-Token` header. An unset token denies access; do not reuse a Supabase credential. |
 | `CROSSFLOW_ROUTE_DB` | SQLite path for persisted, content-addressed route responses. Configure a durable volume when drivers must retrieve routes across restarts. |
-| `CROSSFLOW_ROUTE_READ_TOKEN` | Optional deployment-scoped token accepted by `X-CrossFlow-Route-Token` for driver route retrieval. Route IDs are identifiers, not credentials. |
+| `CROSSFLOW_LOCAL_ROUTE_HISTORY` | Set to `1` for authenticated history on a local, non-serverless host using `CROSSFLOW_ROUTE_DB`. Drivers see only their own runs. Responses report the storage source and actual durability. Shared hosted history uses `backend/data/route_runs.sql` and a server-only Supabase key. |
+| `CROSSFLOW_ROUTE_READ_TOKEN` | Legacy setting; the current public dispatch-code lookup does not require it. |
 | `CROSSFLOW_ENABLE_GOOGLE_BENCHMARK` | Must equal `true` to expose the optional, text-only `/api/route-benchmark` comparison. Disabled by default. |
 | `CROSSFLOW_GOOGLE_ROUTES_API_KEY` | Dedicated server-only Google Routes v2 key for the opt-in benchmark. Browser-prefixed and legacy Google keys are never read. |
 | `SUPABASE_DB_URL` | Optional PostgreSQL URL used only by ingestion/training scripts. Never expose it to the frontend. |
@@ -459,6 +557,83 @@ When using `scripts/dev.sh`, non-empty server variables are read from a root
 must be placed in `frontend/.env.local` or configured in the frontend deploy
 environment; restart Vite after changing them. Keep the browser publishable key
 and the server `SUPABASE_URL` pointed at the same Supabase project.
+
+For local Supabase sign-in, copy `frontend/.env.example` to
+`frontend/.env.local`, fill its URL/publishable key, and set the same
+`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` plus
+`CROSSFLOW_AUTH_MODE=supabase` in the root `.env`. Existing accounts need a
+`crossflow_profiles` row. Schema v2 in `backend/auth/schema.sql` safely backfills
+missing profiles as drivers and fixes the profile role-change trigger. An
+existing v1 project can instead use the tested minimal
+[`002_harden_auth_role_guard.sql`](backend/auth/migrations/002_harden_auth_role_guard.sql)
+upgrade, which preserves its existing rows and policies without running the
+full backfill. The configured project's minimal upgrade was applied and its
+v2 health/invoker guard independently checked; see the
+[local verification report](docs/LOCAL_VERIFICATION_REPORT.md). Local development
+does not require a service-role secret for sign-in. Use
+`CROSSFLOW_LOCAL_ROUTE_HISTORY=1` and a writable `CROSSFLOW_ROUTE_DB` for local
+history. Start both servers with `./scripts/dev.sh`.
+
+The sign-in screen accepts a Gmail address (or another email) with its
+CrossFlow/Supabase account password, and also offers **Continue with Google**.
+Google uses the official Supabase SDK's PKCE flow in the same tab; the backend
+resolves its role exactly as for password sign-in. Configure Google's client
+credentials in Supabase, never in a `VITE_` variable. Follow the exact project
+callback and localhost instructions in [Google Auth Setup](docs/GOOGLE_AUTH_SETUP.md).
+
+Current local verification: a fresh Google OAuth login succeeded as Ian Wangsa,
+with the backend resolving the approved **admin** role. Saved custom SMTP also
+delivered a numeric confirmation email to the EJC demo inbox after one `/otp`
+request returned 200 without a session. The first-class **Email me a sign-in
+code** UI then completed EJC code verification, and the backend resolved
+CrossFlow OTP Demo as **driver**, without an agent-set password, and the session
+survived reload. Repeat confirmed-account email-code sign-in also succeeded as
+driver, with zero console errors. The owner submitted NUS password signup at
+16:26. Its 16:49 email was found in `e1525902@u.nus.edu` Outlook with header/body
+addressed to `ian1234@comp.nus.edu.sg`. Signup OTP verification succeeded as
+**CrossFlow Driver Demo / driver**, and the session survived reload with
+`crossflow_profiles` as role source. The original CrossFlow email is unchanged;
+no accounts were merged. The [historical delivery trace](docs/SUPABASE_SIGNUP_EMAIL_SETUP.md#nus-delivery-trace-and-handoff)
+is resolved, and no support contact is needed. The precise institutional routing
+rule was not inspected. A separate localhost password sign-in using the
+owner-entered password also passed, followed by reload restoration and the
+server-resolved DRIVER modal, with zero console errors.
+[NUS password-login evidence](docs/verification/nus-password-login-restored.png).
+The UI now names the verification/resend address,
+with email-isolation and cross-account regressions. The full frontend check
+passed **403 tests / 39 files**, lint, TypeScript and build.
+The measured-training backend/auth run passed **418 tests and 397 subtests**;
+after the approved holdout metadata correction, **22 focused tests and 11
+subtests** passed. The standalone run had **152/153 passes**, followed by the
+corrected source-date case passing separately (1 passed / 152 deselected);
+this is not a fresh 153/153 full command. PostgreSQL passed **26 cases**. After all six official ferry-source checks passed,
+the Google operator issued **`AHMKAQM`** and the NUS driver loaded its assigned
+ROAD → FERRY → ROAD journey, 12 directions and map. Public retrieval by code
+and full ID matched, with confirmed local SQLite persistence and single-host
+scope. [Final dispatch proof](docs/verification/final-operator-driver-dispatch.json),
+[official-source check](docs/verification/final-official-source-checks.json).
+Google secret replacement/revocation and the exact
+saved Brevo key label remain unverified. See the [verification report](docs/LOCAL_VERIFICATION_REPORT.md)
+and [email-code setup](docs/SUPABASE_SIGNUP_EMAIL_SETUP.md) for the separate
+Google, passwordless EJC and verified NUS signup/session states.
+
+The original 23 October readiness snapshot contained 110 TomTom rows over
+0.6922 hours. It is historical: the enabled local 24 October runtime now uses
+the real-only provisional pipeline documented above. Historical-provider
+entitlement remains a separate data-acquisition issue. Current Flow access
+returned 200, while historical Traffic Stats returned 403. MyTomTom account
+setup succeeded, but MOVE still reports **Failed to fetch**. The owner-approved
+alternative HERE Traffic Analytics trial registration succeeded. The owner
+requested `e1525902@u.nus.edu` after the first message did not arrive; the new
+submission succeeded and emailed credentials are pending delivery verification. Batam coverage, export and ML reuse rights
+remain unverified; no provider Batam historical key/export is verified.
+**Free academic historical data has now been acquired:** 48 published Batam direction/interval speeds from 16–18 February 2023, plus a separate Singapore LTA archive of 397,341 ordinal speed-band values over 53 links and 27 dates in March–April 2021. The Singapore chronological Random Forest benchmark uses zero synthetic training rows and beats persistence at 15/30/60 minutes. Its error is measured in band units, not km/h; it is not Batam field validation. The small Batam survey lacks a verified canonical corridor mapping and cannot support network-model promotion. Neither research dataset is used to pad the local real-traffic training archive. Inspect the source-linked survey filters and benchmark in **Analytics → History**. The renewed search adds 28 dated Batam intersection saturation ratios from 12–18 June 2023, visible in History with their own date filter, and six separately transcribed 2024 regional speed ranges. Saturation ratios are not speeds; regional ranges have no exact observation dates. Neither contributes fabricated speed-training labels.
+See the [historical-source review](docs/HISTORICAL_TRAFFIC_SOURCES.md) and [full academic backtest](docs/verification/singapore-academic-backtest.json).
+The latest two-million-scenario check passed with zero
+invariant failures on the **synthetic baseline**, not field-accuracy evidence.
+See [observed ML training](docs/OBSERVED_ML_TRAINING.md) for actual data requirements,
+CSV/manifest import commands, read-only operator backtesting and safe numeric
+model artifacts.
 
 ### 5. Optional training tooling
 
@@ -514,5 +689,13 @@ border requirements.
 - **Problem Understanding & Relevance**: Covers 30 representative Batam mobility pressure points, including Simpang Kabil, Mukakuning Industrial and Batu Ampar Port, while connecting Singapore origins and destinations through the ferry interface. The priority labels are planning outputs, not claims of current official severity.
 - **Technical Execution & Engineering Quality**: TypeScript React frontend + FastAPI service, stateful vehicle- and preference-aware A\* over a committed Batam OSM graph, per-leg SG–ferry–Batam journey composition, and a browser fallback that preserves source and limitation labels when online routing is unavailable.
 - **Innovation & Creativity**: Cross-modal departure planning couples road access with a matching published ferry window while keeping schedule evidence distinct from live operating status.
-- **Impact & Feasibility**: Models roughly **540 kg CO2 per day** of avoidable idle emissions across five corridors, under assumptions published in the API response (40 advised trips/corridor/hour, 35% of queue delay avoidable, 1.8 kg/h idle burn). These are modelled projections from a simulated traffic layer, not measured outcomes.
+- **Impact & Feasibility**: The 23 October 2026 local audit returned a **405.3 kg CO2/day** avoidable-idling projection across five corridors, under assumptions published in the API response (40 advised trips/corridor/hour, 35% of queue delay avoidable, 1.8 kg/h idle burn). The result is recomputed from the modelled day profile; it is not a fixed 540 kg/day or a measured outcome. See the [local verification report](docs/LOCAL_VERIFICATION_REPORT.md).
 - **Presentation & Demo**: Responsive light-theme UI and honest data-provenance labelling throughout; the stage pitch remains documented as an outline in [`docs/PITCH_DECK_OUTLINE.md`](docs/PITCH_DECK_OUTLINE.md).
+
+### Latest local website audit
+
+See the [23 October full website audit](docs/WEBSITE_AUDIT_2026-10-23.md) for local driver/operator verification, routing/authentication fixes, measured-data limitations and test evidence. The new [Batam site benchmark](scripts/backtest_batam_survey.py) trains on 48 real published speed aggregates with chronological day holdouts and no synthetic labels; results appear in Analytics → History. This sparse research diagnostic remains separate from the local real-traffic pipeline.
+
+The [frontend and hardening follow-up](docs/FRONTEND_AND_HARDENING_2026-10-23.md) records the bundled font and shared typography, bounded provider JSON, saved-route integrity guards, numeric-model validation, seven local database integrity checks and the latest driver/operator regression results.
+
+The [24 October UX follow-up](docs/UX_REFINEMENTS_2026-10-24.md) records the typography refresh, aligned route panels, data-driven charts and the real-traffic Model/Trends panels. All 548 frontend tests and 92 targeted backend tests passed, together with lint, TypeScript and the production build. Local browser proof shows actual fitted models, live weather, mapped context and explicit provisional evaluation limits.

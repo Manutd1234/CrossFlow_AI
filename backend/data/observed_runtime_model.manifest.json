@@ -1,0 +1,21 @@
+{
+  "schema": "crossflow.observed_runtime_snapshot.v1",
+  "artifact": "observed_runtime_model.json",
+  "sha256": "77ff2a65dca698c88a4ffa863075360b5f1bc18c414768e57316ddddb8773126",
+  "bytes": 120498,
+  "snapshot_date": "2026-10-24",
+  "trained_at": "2026-10-24T06:31:52.042227+00:00",
+  "graph_revision": "d6407fe44e1c708fc3029cb3c57e0ec54c024f87e3e10eac27170a133eede54b",
+  "synthetic_rows": 0,
+  "quality_gate_eligible": false,
+  "training_source": "observed_traffic_archive",
+  "contents": [
+    "numeric tree arrays",
+    "feature schema",
+    "aggregate chronological evaluation/provenance report"
+  ],
+  "raw_history_included": false,
+  "media_included": false,
+  "deployment_serving_policy": "fresh TomTom point persistence only; forest candidate remains unpromoted; no serverless training",
+  "scope": "Pinned development artifact; reports describe the original reviewed development windows, not independent field accuracy or current cloud history."
+}

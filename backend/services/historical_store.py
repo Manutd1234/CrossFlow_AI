@@ -46,7 +46,7 @@ CORRIDOR_IDS = tuple(CORRIDOR_INDEX)
 SYNTHETIC_SOURCE = "synthetic"
 SYNTHETIC_SEED_VERSION = 2
 SYNTHETIC_SEED_DAYS = 14
-HISTORY_SCHEMA_VERSION = 2
+HISTORY_SCHEMA_VERSION = 3
 
 SPATIAL_HISTORY_RETENTION_DAYS = 5 * 365
 MAX_SPATIAL_QUERY_ROWS = 10_000
@@ -196,6 +196,9 @@ class HistoryStore:
 
     def _ensure_schema(self) -> None:
         with self._conn:
+            # sqlite3 does not begin transactions for DDL automatically. The
+            # table rebuild below must preserve the old table on any failure.
+            self._conn.execute("BEGIN IMMEDIATE")
             self._conn.execute("""
                 CREATE TABLE IF NOT EXISTS observations (
                     id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -209,7 +212,7 @@ class HistoryStore:
                 "CREATE INDEX IF NOT EXISTS idx_corridor_ts "
                 "ON observations(corridor, ts)"
             )
-            self._conn.execute("""
+            spatial_table_sql = """
                 CREATE TABLE IF NOT EXISTS spatial_observations (
                     observation_key     TEXT PRIMARY KEY,
                     observed_at_us      INTEGER NOT NULL,
@@ -229,13 +232,15 @@ class HistoryStore:
                     local_timezone_offset_minutes INTEGER NOT NULL DEFAULT 420,
                     upstream_event_id   TEXT,
                     ingested_at_us      INTEGER NOT NULL,
-                    CHECK (actual_speed_kph > 0),
-                    CHECK (free_flow_speed_kph > 0),
+                    CHECK (actual_speed_kph >= 0 AND actual_speed_kph <= 250),
+                    CHECK (free_flow_speed_kph > 0 AND free_flow_speed_kph <= 250),
+                    CHECK (actual_speed_kph / free_flow_speed_kph BETWEEN 0 AND 1.5),
                     CHECK (confidence > 0 AND confidence <= 1),
                     CHECK (observed IN (0, 1)),
                     CHECK (reviewed IN (0, 1))
                 )
-            """)
+            """
+            self._conn.execute(spatial_table_sql)
             spatial_columns = {
                 str(row[1])
                 for row in self._conn.execute(
@@ -250,6 +255,34 @@ class HistoryStore:
                     "ALTER TABLE spatial_observations ADD COLUMN "
                     "local_timezone_offset_minutes INTEGER NOT NULL DEFAULT 420"
                 )
+            existing_sql = self._conn.execute(
+                "SELECT sql FROM sqlite_master WHERE type='table' "
+                "AND name='spatial_observations'"
+            ).fetchone()[0]
+            if "actual_speed_kph>0" in "".join(existing_sql.lower().split()):
+                # SQLite cannot loosen a CHECK in place. Rebuild v1/v2 tables
+                # atomically, preserving rows, keys, indexes and triggers.
+                dependent_sql = [row[0] for row in self._conn.execute(
+                    "SELECT sql FROM sqlite_master WHERE tbl_name='spatial_observations' "
+                    "AND type IN ('index', 'trigger') AND sql IS NOT NULL"
+                )]
+                self._conn.execute(spatial_table_sql.replace(
+                    "IF NOT EXISTS spatial_observations", "spatial_observations_v3", 1,
+                ))
+                columns = [str(row[1]) for row in self._conn.execute(
+                    "PRAGMA table_info(spatial_observations_v3)"
+                )]
+                column_list = ", ".join(columns)
+                self._conn.execute(
+                    f"INSERT INTO spatial_observations_v3 ({column_list}) "
+                    f"SELECT {column_list} FROM spatial_observations"
+                )
+                self._conn.execute("DROP TABLE spatial_observations")
+                self._conn.execute(
+                    "ALTER TABLE spatial_observations_v3 RENAME TO spatial_observations"
+                )
+                for statement in dependent_sql:
+                    self._conn.execute(statement)
             self._conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_spatial_corridor_time "
                 "ON spatial_observations(corridor, observed_at_us)"

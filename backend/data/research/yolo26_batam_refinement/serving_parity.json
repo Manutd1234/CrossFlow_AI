@@ -1,0 +1,65 @@
+{
+  "schema": "crossflow.yolo26_serving_parity.v1",
+  "model_sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+  "status": {
+    "status": "experimental_available",
+    "enabled": true,
+    "artifacts_available": true,
+    "architecture": "yolo26s",
+    "imgsz": 1280,
+    "model_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+    "weights_selection_id": "yolo26s-batam-646f8bc3fe0a6568-1280",
+    "inference_policy_sha256": "9cceb5b6b9869bbfa4ef61e9f59542546eb0151ffb36668fc687126082c916c3",
+    "model_sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+    "production_eligible": false,
+    "batam_validated": false,
+    "human_certified": false,
+    "supports_speed": false,
+    "supports_queue_length": false,
+    "supports_unique_vehicle_flow": false,
+    "license": "AGPL-3.0",
+    "license_url": "https://www.ultralytics.com/license",
+    "scope": "Local YOLO26 counter; small assistant-labeled Batam pilot, camera validation pending"
+  },
+  "reused_diagnostic_only": true,
+  "cases": [
+    {
+      "image_id": "commons:22923130",
+      "count": 6,
+      "offline_count": 6,
+      "boxes_scores_match_with_tolerance": true,
+      "latency_ms": 1358.172915999603,
+      "model_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+      "production_eligible": false
+    },
+    {
+      "image_id": "commons:49047298",
+      "count": 5,
+      "offline_count": 5,
+      "boxes_scores_match_with_tolerance": true,
+      "latency_ms": 131.3359580017277,
+      "model_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+      "production_eligible": false
+    },
+    {
+      "image_id": "commons:169779650",
+      "count": 7,
+      "offline_count": 7,
+      "boxes_scores_match_with_tolerance": true,
+      "latency_ms": 178.1642090063542,
+      "model_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+      "production_eligible": false
+    },
+    {
+      "image_id": "commons:200047096",
+      "count": 0,
+      "offline_count": 0,
+      "boxes_scores_match_with_tolerance": true,
+      "latency_ms": 232.40233399701538,
+      "model_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+      "production_eligible": false
+    }
+  ],
+  "all_passed": true,
+  "image_bytes_retained_by_service": false
+}

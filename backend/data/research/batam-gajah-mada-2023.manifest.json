@@ -1,0 +1,40 @@
+{
+  "dataset_name": "Published Batam Gajah Mada 16-18 February 2023 road-speed survey",
+  "authors": [
+    "Harry Kurniawan",
+    "M. Khairi Anwar"
+  ],
+  "title": "Pengaruh U-Turn terhadap Kinerja Lalu Lintas pada Ruas Jalan Gajah Mada Depan Simpang Sekolah Kemilau Bangsa Kota Batam",
+  "doi": "10.33373/sigmateknika.v6i2.5642",
+  "source_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642",
+  "source_pdf_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/download/5642/3819",
+  "source_pdf_sha256": "2e37e52e90ea8450359e3d5391e7a1626a304b85d3c8cf59808e1513d4eeb681",
+  "license": "CC BY-SA 4.0 as displayed on article page",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, decimal commas normalized, explicit interval offsets and quality diagnostics added. No author endorsement.",
+  "transcription_rows": 48,
+  "directions": 2,
+  "distinct_calendar_days": 3,
+  "aggregation_minutes": 30,
+  "source_method": "100m segment; authors report sampling3vehicles every15minutes; published table groups30minute intervals. Raw vehicle-level values and per-interval counts unavailable.",
+  "location": "Jalan Gajah Mada in front of Kemilau Bangsa School intersection, Tiban, Batam",
+  "exact_survey_coordinates": null,
+  "crossflow_corridor_mapping": null,
+  "csv_sha256": "8dceaa2b73169ff33aded53fc9ca7a86274f3aa72cdd4ec60f4236b3cae68e44",
+  "quality_flags": [
+    {
+      "interval_start": "2023-02-16T17:30:00+07:00",
+      "direction": "from_west",
+      "flag": "speed_time_difference_over_0.5kph"
+    }
+  ],
+  "scope_limitations": [
+    "One surveyed site, two directions and three days, peak windows only.",
+    "Reference speed is calculated using PKJI, not measured free flow.",
+    "Published means need not equal inverse mean travel times; discrepancies are flagged, not silently corrected.",
+    "Not imported into canonical Batam speed history: exact geocoding and corridor/direction mapping remain unverified.",
+    "Insufficient coverage to promote a network forecasting model."
+  ],
+  "extracted_at": "2026-10-23T11:01:42.077906+00:00",
+  "serving_model_replaced": false
+}

@@ -16,14 +16,15 @@ import {
   requestFreeRouteOptimization,
   requestMultiStopRouteOptimization,
   requestRouteBenchmark,
-  requestRouteOptimization,
 } from '../../services/api';
-import { Anchor, ArrowDownUp, Bike, BusFront, Car, ChevronDown, CircleCheck, CircleDot, CircleSmall, Clock, CloudRain, CloudSun, Coffee, CornerUpLeft, CornerUpRight, Flag, Fuel, Globe, Info, KeyRound, Leaf, Lightbulb, LoaderCircle, MapPin, MoveUp, Navigation, Package, Plus, Redo, RotateCw, Route, ShieldCheck, Ship, Sparkles, TriangleAlert, Truck, Users, X, Zap, type LucideIcon } from 'lucide-react';
+import { Anchor, ArrowDownUp, ArrowRight, Bike, BusFront, Car, ChevronDown, CircleCheck, CircleDot, CircleSmall, Clock, CloudRain, CloudSun, Coffee, CornerUpLeft, CornerUpRight, Flag, ExternalLink, Fuel, Globe, Info, KeyRound, Leaf, Lightbulb, LoaderCircle, MapPin, MoveUp, Navigation, Package, Plus, Redo, RotateCw, Route, ShieldCheck, Ship, Sparkles, TriangleAlert, Truck, Users, X, Zap, type LucideIcon } from 'lucide-react';
 import { ICON_SIZE } from '../../theme/iconSizes';
+import { routeOverviewSummary } from '../../utils/routeOverview';
+import './RoutePresentation.css';
 
 import {
-  ferryBadgeClass, formatScheduleVerifiedAt, formatTime, prettyStatus,
-  relativeDeparture,
+  formatScheduleVerifiedAt, formatTime,
+  relativeDepartureFromTime,
 } from '../../utils/format';
 import { RoutePreviewMap } from './RoutePreviewMap';
 import { RouteRunHistoryPanel } from './RouteRunHistoryPanel';
@@ -71,12 +72,23 @@ function twentyFourHourValue(hour: number, period: 'AM' | 'PM'): number {
   return (hour % 12) + (period === 'PM' ? 12 : 0);
 }
 
-function nextSelectedTimeIso(hour: number, minute: number): string {
+function nextSelectedTimeIso(hour: number, minute: number, allowCurrentDeparture = false): string {
   const now = new Date();
+  // The existing time picker represents an immediate departure when its
+  // selected minute is the current minute. Keep seconds for transport-time
+  // validation instead of rounding down and accidentally selecting tomorrow.
+  if (allowCurrentDeparture && hour === now.getHours() && minute === now.getMinutes()) return now.toISOString();
   const selected = new Date(now);
   selected.setHours(hour, minute, 0, 0);
   if (selected.getTime() < now.getTime()) selected.setDate(selected.getDate() + 1);
   return selected.toISOString();
+}
+
+function routeTimezoneLabel(value: string): string {
+  if (/\+07:00$/.test(value)) return 'WIB';
+  if (/\+08:00$/.test(value)) return 'SGT';
+  if (/Z$/.test(value)) return 'UTC';
+  return '';
 }
 
 const VEHICLE_ICONS: Record<VehicleIconKey, LucideIcon> = {
@@ -186,6 +198,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
   const [arrivalHour, setArrivalHour] = useState(() => (new Date().getHours() + 1) % 24);
   const [arrivalMinute, setArrivalMinute] = useState(() => new Date().getMinutes());
   const [routeCode, setRouteCode] = useState('');
+  const [requestedSavedCode, setRequestedSavedCode] = useState<string | null>(null);
   const optimizationRequestRef = useRef(0);
   const benchmarkRequestRef = useRef(0);
   const vehicleSelectorRef = useRef<HTMLDivElement>(null);
@@ -197,6 +210,13 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
   const routePreference: RoutePreference = 'BALANCED';
   const selectedVehicleProfile = vehicleProfile(vehicleType);
   const SelectedVehicleIcon = VEHICLE_ICONS[selectedVehicleProfile.icon];
+
+  // Responses belong to this mounted workspace and account. A completed
+  // lookup must not restore a prior user's route after sign-out or tab changes.
+  useEffect(() => () => {
+    optimizationRequestRef.current += 1;
+    benchmarkRequestRef.current += 1;
+  }, []);
 
   useEffect(() => {
     if (!vehicleMenuOpen) return;
@@ -227,7 +247,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
     }
   }, [vehicleMenuOpen, vehicleType]);
 
-  // Mode: 'named' uses the 13-location whitelist; 'free' uses geocode search.
+  // Search owns the planning form; Saved opens previously calculated runs.
   const resultIsFreeRoute = result?.corridor.id.startsWith('free:') ?? false;
   const [mode, setMode] = useState<'named' | 'free'>(
     result ? (resultIsFreeRoute ? 'free' : 'named') : 'free',
@@ -262,10 +282,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
   );
   const canOptimizeFree = !!(freeOrigin && freeDest && !sameLocationFree);
   const isNamedMode = mode === 'named';
-  const canOptimizeEndpoints = isNamedMode
-    ? !sameLocationNamed
-    : canOptimizeFree;
-  const canOptimize = canOptimizeEndpoints
+  const canOptimize = canOptimizeFree
     && waypoints.every((waypoint) => waypoint !== null);
 
   const clearRouteBenchmark = useCallback(() => {
@@ -279,6 +296,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
     optimizationRequestRef.current += 1;
     setLoading(false);
     setRouteError(null);
+    setRequestedSavedCode(null);
     setSelectedRouteId(PRIMARY_ROUTE_ID);
     clearRouteBenchmark();
     setActiveResultTab('summary');
@@ -309,6 +327,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
 
   const handleOptimize = async () => {
     if (!canOptimize) return;
+    setRequestedSavedCode(null);
     clearRouteBenchmark();
     setActiveResultTab('summary');
     const requestId = ++optimizationRequestRef.current;
@@ -317,7 +336,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
     setRouteError(null);
     try {
       const schedule = timeMode === 'departure'
-        ? { departure_at: nextSelectedTimeIso(hour, departureMinute) }
+        ? { departure_at: nextSelectedTimeIso(hour, departureMinute, true) }
         : { arrive_by: nextSelectedTimeIso(arrivalHour, arrivalMinute) };
       const selectedRequestHour = timeMode === 'departure'
         ? hour
@@ -326,13 +345,9 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
       let requestedOrigin: FreeLocation;
       let requestedDestination: FreeLocation;
       if (waypoints.length > 0) {
-        if ((!isNamedMode && (!freeOrigin || !freeDest)) || waypoints.some((point) => !point)) return;
-        requestedOrigin = isNamedMode
-          ? { lat: originNamed.lat, lng: originNamed.lng, display_name: originNamed.name }
-          : freeOrigin!;
-        requestedDestination = isNamedMode
-          ? { lat: destNamed.lat, lng: destNamed.lng, display_name: destNamed.name }
-          : freeDest!;
+        if (!freeOrigin || !freeDest || waypoints.some((point) => !point)) return;
+        requestedOrigin = freeOrigin;
+        requestedDestination = freeDest;
         res = await requestMultiStopRouteOptimization(
           [requestedOrigin, ...waypoints.filter((point): point is FreeLocation => point !== null), requestedDestination],
           vehicleType,
@@ -341,26 +356,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
             : { arriveBy: schedule.arrive_by },
           weather,
           routePreference,
-        );
-      } else if (isNamedMode) {
-        requestedOrigin = {
-          lat: originNamed.lat,
-          lng: originNamed.lng,
-          display_name: originNamed.name,
-        };
-        requestedDestination = {
-          lat: destNamed.lat,
-          lng: destNamed.lng,
-          display_name: destNamed.name,
-        };
-        res = await requestRouteOptimization(
-          originId,
-          destinationId,
-          vehicleType,
-          selectedRequestHour,
-          weather,
-          routePreference,
-          schedule,
+          accessToken,
         );
       } else {
         if (!freeOrigin || !freeDest) return;
@@ -374,6 +370,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
           weather,
           routePreference,
           schedule,
+          accessToken,
         );
       }
       if (requestId !== optimizationRequestRef.current) return;
@@ -413,25 +410,42 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
   // either path lands in the result pane the same way.
   const handleAssignedRouteLookup = () => loadRouteByCode(routeCode);
 
+  const handleRouteCodeChange = (value: string) => {
+    const normalizedCode = value.toUpperCase().replace(/[^23456789ABCDEFGHJKLMNPQRSTUVWXYZ]/g, '').slice(0, 7);
+    if (normalizedCode === routeCode) return;
+    // An edited code is a different assignment, even before it is submitted.
+    // Never leave the previous code's journey or late response under this input.
+    optimizationRequestRef.current += 1;
+    setRouteCode(normalizedCode);
+    setLoading(false);
+    setRouteError(null);
+    clearRouteBenchmark();
+    setResult(null);
+  };
+
   const loadRouteByCode = async (code: string) => {
     const normalizedCode = code.trim().toUpperCase();
     if (!/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.test(normalizedCode)) return;
+    setRequestedSavedCode(normalizedCode);
     clearRouteBenchmark();
+    const requestId = ++optimizationRequestRef.current;
     setActiveResultTab('summary');
     setSelectedRouteId(PRIMARY_ROUTE_ID);
     setLoading(true);
     setRouteError(null);
     try {
       const response = await requestPersistedRoute(normalizedCode, accessToken);
+      if (requestId !== optimizationRequestRef.current) return;
       setResult(response.data);
       setResultSource(response.source);
     } catch (error) {
+      if (requestId !== optimizationRequestRef.current) return;
       setResult(null);
       setRouteError(error instanceof ApiRequestError
         ? error.message
         : 'The assigned route could not be loaded.');
     } finally {
-      setLoading(false);
+      if (requestId === optimizationRequestRef.current) setLoading(false);
     }
   };
 
@@ -448,6 +462,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
         benchmarkOrigin,
         benchmarkDestination,
         routePreference,
+        accessToken,
       );
       if (requestId !== benchmarkRequestRef.current) return;
       setRouteBenchmark(benchmark);
@@ -476,6 +491,8 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
   const selectedLegs = selectedRoute?.route_legs ?? [];
   const isMultimodal = selectedLegs.some(leg => leg.mode === 'FERRY');
   const trafficNotModelled = result?.congestion_prediction.status === 'NOT_MODELLED';
+  const observedTrafficReference = result?.congestion_prediction.model_id === 'crossflow_observed_short_horizon_v1';
+  const beyondObservedHorizon = observedTrafficReference && result?.congestion_prediction.spatial_source?.includes('beyond_60min_unavailable');
   const selectedNavigation = selectedRoute?.navigation;
   const selectedDistanceKm = selectedRoute?.distance_km ?? result?.corridor.distance_km ?? 0;
   const selectedTravelMins = selectedRoute?.estimated_travel_time_mins
@@ -512,9 +529,23 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
   const handleSelectRoute = useCallback((routeId: string) => {
     setSelectedRouteId(routeId);
   }, []);
+  const [departureCheckAt, setDepartureCheckAt] = useState(() => Date.now());
+  useEffect(() => {
+    const refreshDepartureClock = () => setDepartureCheckAt(Date.now());
+    const timer = window.setInterval(refreshDepartureClock, 30_000);
+    window.addEventListener('focus', refreshDepartureClock);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('focus', refreshDepartureClock);
+    };
+  }, []);
+  const assignedDeparturePassed = driverAccess && Boolean(result?.planned_departure)
+    && Date.parse(result!.planned_departure!) < departureCheckAt - 60_000;
+  const scheduledDepartureAhead = Boolean(result?.planned_departure)
+    && Date.parse(result!.planned_departure!) > departureCheckAt + 60_000;
 
   return (
-    <div className={`app-screen-layout route-planner-layout${driverAccess ? ' route-planner-layout--driver' : ''}`}>
+    <div className={`app-screen-layout route-planner-layout${driverAccess ? ' route-planner-layout--driver' : ''}${!driverAccess && isNamedMode ? ' route-planner-layout--with-history route-planner-layout--saved' : ''}`}>
       {!driverAccess ? <div className="workspace-subtabs__rail">
         <div role="group" aria-label="Location selection mode" className="workspace-subtabs__tablist route-location-mode-tabs">
           <button
@@ -525,7 +556,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
               if (mode === 'free') return;
               setMode('free');
               setPickerTarget(null);
-              invalidateResult();
+              setVehicleMenuOpen(false);
             }}
           >
             <span className="workspace-subtabs__label route-location-mode-label">
@@ -540,7 +571,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
               if (mode === 'named') return;
               setMode('named');
               setPickerTarget(null);
-              invalidateResult();
+              setVehicleMenuOpen(false);
             }}
           >
             <span className="workspace-subtabs__label route-location-mode-label">
@@ -550,7 +581,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
         </div>
       </div> : null}
 
-      <form
+      {driverAccess || !isNamedMode ? <form
         className="glass-panel route-planner-sidebar"
         aria-label={driverAccess ? 'Assigned route lookup' : 'Route planning controls'}
         onSubmit={(event) => {
@@ -574,13 +605,10 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
                 type="text"
                 inputMode="text"
                 autoComplete="off"
-                maxLength={7}
                 pattern="[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}"
                 placeholder="e.g. 4KF9X2P"
                 value={routeCode}
-                onChange={(event) => setRouteCode(
-                  event.target.value.toUpperCase().replace(/[^23456789ABCDEFGHJKLMNPQRSTUVWXYZ]/g, '').slice(0, 7),
-                )}
+                onChange={(event) => handleRouteCodeChange(event.target.value)}
               />
             </label>
           </div>
@@ -1006,6 +1034,9 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
             );
           })}
         </div>
+        <p className="route-section-note">
+          Times use {Intl.DateTimeFormat().resolvedOptions().timeZone}. A past clock time selects tomorrow.
+        </p>
         </div>
         )}
 
@@ -1021,17 +1052,25 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
           {loading ? <LoaderCircle size={ICON_SIZE.large} aria-hidden="true" className="route-loading-spinner" /> : <Route size={ICON_SIZE.large} aria-hidden="true" />}
           {loading ? (driverAccess ? 'Loading Route…' : 'Composing Journey…') : (driverAccess ? 'Load Route' : 'Plan Journey')}
         </button>
-      </form>
+      </form> : null}
 
       {/* Lives under Saved rather than beside the search controls, which it
           crowded. Signed-in operators only: the server refuses history without
           a token, and the driver view is deliberately one assigned journey. */}
-      {accessToken && !driverAccess && isNamedMode ? (
+      {!driverAccess && isNamedMode ? accessToken ? (
         <RouteRunHistoryPanel
           accessToken={accessToken}
           onSelectRun={(code) => void loadRouteByCode(code)}
           activeRouteCode={result?.route_code ?? null}
         />
+      ) : (
+        <section className="glass-panel route-run-history" aria-label="Route solver history">
+          <header className="route-run-history__header">
+            <h3 className="route-run-history__title"><Clock size={ICON_SIZE.large} aria-hidden="true" />Recent runs</h3>
+          </header>
+          <p className="route-run-history__empty" role="status">Sign in to view recent runs.</p>
+          <p className="route-run-history__scope">Open Sign in at the top of the page to access your saved journeys.</p>
+        </section>
       ) : null}
 
       <section
@@ -1044,9 +1083,10 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
             <span aria-hidden="true" className="route-loading-icon">
               <LoaderCircle size={ICON_SIZE.massive} color="var(--accent-cyan)" className="route-loading-spinner" />
             </span>
-            <h3 className="route-result-state-heading">Composing your journey</h3>
+            <h3 className="route-result-state-heading">{driverAccess ? 'Loading your assigned route' : 'Composing your journey'}</h3>
             <p className="route-loading-description">
-              Matching local roads, viable ferry terminals, and the selected departure window.
+              {driverAccess ? 'Retrieving the saved journey supplied by dispatch.'
+                : 'Matching local roads, viable ferry terminals, and the selected departure window.'}
             </p>
           </div>
         ) : routeError ? (
@@ -1056,23 +1096,30 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
             </span>
             <h3 className="route-result-state-heading">Route unavailable</h3>
             <p className="route-error-message">{routeError}</p>
-            <button type="button" className="glass-button route-retry-button" onClick={() => void handleOptimize()} disabled={!canOptimize} >
+            <button type="button" className="glass-button route-retry-button"
+              onClick={() => void (driverAccess ? handleAssignedRouteLookup()
+                : requestedSavedCode ? loadRouteByCode(requestedSavedCode) : handleOptimize())}
+              disabled={driverAccess ? !/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.test(routeCode) : !requestedSavedCode && !canOptimize} >
               Try again
             </button>
           </div>
         ) : !result ? (
           <div className="route-result-placeholder">
             <span aria-hidden="true" className="route-empty-state-icon">
-              <Route size={ICON_SIZE.massive} color="var(--accent-cyan)" />
+              {driverAccess ? <KeyRound size={ICON_SIZE.massive} color="var(--accent-cyan)" />
+                : <Route size={ICON_SIZE.massive} color="var(--accent-cyan)" />}
             </span>
-            <h3 className="route-empty-state-heading">Your route will appear here</h3>
+            <h3 className="route-empty-state-heading">{driverAccess ? 'Your assigned route will appear here' : 'Your route will appear here'}</h3>
             <p className="route-empty-state-description">
-              {isNamedMode
-                ? 'Choose two saved Batam places and the conditions for this trip.'
+              {driverAccess
+                ? 'Enter the seven-character route code from dispatch and select Load Route.'
+                : isNamedMode
+                ? 'Choose a recent run to view its journey.'
                 : 'Choose any two Singapore or Batam endpoints'}
             </p>
             <div className="route-empty-state-features">
-              {['Road access', 'Ferry transfer', 'Departure advice'].map((label) => (
+              {(driverAccess ? ['Dispatch code', 'Assigned journey', 'Route directions']
+                : ['Road access', 'Ferry transfer', 'Departure advice']).map((label) => (
                 <span key={label} className="route-empty-state-feature">{label}</span>
               ))}
             </div>
@@ -1110,6 +1157,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
                   <span className={`badge ${resultSource === 'offline' ? 'badge-heavy' : 'badge-smooth'}`}>
                     {resultSource === 'offline'
                       ? 'Offline fallback'
+                      : observedTrafficReference ? 'Observed reference · provisional'
                       : resultSource === 'live' ? 'Live API response' : 'Simulated traffic'}
                   </span>
                 )}
@@ -1133,15 +1181,17 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
               className={`route-departure-recommendation route-departure-recommendation-${result.optimal_departure.recommended === 'DEFER_30_MINS' ? 'defer' : 'depart'}`}>
               <div className="route-departure-recommendation-copy">
                 <span className={`badge ${result.optimal_departure.recommended === 'DEFER_30_MINS' ? 'badge-heavy' : 'badge-smooth'}`}>
-                  {result.optimal_departure.recommended === 'DEFER_30_MINS'
+                  {assignedDeparturePassed ? 'Saved journey' : scheduledDepartureAhead ? 'Scheduled departure' : result.optimal_departure.recommended === 'DEFER_30_MINS'
                     ? 'Leave 30 minutes later'
                     : trafficNotModelled ? 'Journey plan' : 'Depart now'}
                 </span>
                 <h3 id="departure-recommendation-heading" className="route-departure-recommendation-title">
-                  {result.optimal_departure.reason}
+                  {assignedDeparturePassed ? 'The saved departure has passed.' : scheduledDepartureAhead
+                    ? 'Route estimate for the scheduled departure.' : result.optimal_departure.reason}
                 </h3>
+                {beyondObservedHorizon ? <p>Traffic beyond one hour uses the latest measured reference. A forecast for that departure is unavailable.</p> : null}
                 <div className="route-departure-recommendation-metadata">
-                  {result.planned_departure ? <span>Departure {formatTime(result.planned_departure)}</span> : null}
+                  {result.planned_departure ? <span>Departure {result.planned_departure.slice(0, 10)} · {formatTime(result.planned_departure)} {routeTimezoneLabel(result.planned_departure)}</span> : null}
                   <span className="route-departure-recommendation-distance"><Route size={ICON_SIZE.medium} aria-hidden="true" /> {selectedDistanceKm} km</span>
                   <span>{selectedTravelMins} min {isMultimodal ? 'movement time' : 'road time'}</span>
                 </div>
@@ -1154,7 +1204,12 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
               ) : null}
             </section>
 
-            {result.schedule_provenance?.source === 'committed_timetable_simulation' ? (
+            {assignedDeparturePassed ? <p role="status" className="route-alternatives-note">
+              <TriangleAlert size={ICON_SIZE.medium} aria-hidden="true" className="route-note-icon" />
+              <span>Ask dispatch for an updated departure plan before travelling. This map and timetable belong to the saved journey.</span>
+            </p> : null}
+
+            {isMultimodal && result.schedule_provenance?.source === 'committed_timetable_simulation' ? (
               <p role="note" className="route-alternatives-note">
                 <TriangleAlert
                   size={ICON_SIZE.medium}
@@ -1168,7 +1223,13 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
               </p>
             ) : null}
 
-            {result.route_code ? (
+            {result.dispatch_available === false || (!result.route_code && resultSource === 'offline') ? (
+              <p role="note" className="route-alternatives-note">
+                <TriangleAlert size={ICON_SIZE.medium} aria-hidden="true" className="route-note-icon" />
+                <span>Route preview — unavailable for dispatch. This journey has no saved, retrievable code.
+                  {' '}Plan again when route storage is available to issue a driver code.</span>
+              </p>
+            ) : typeof result.route_code === 'string' && /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.test(result.route_code) ? (
               <section className="route-code-card" aria-labelledby="route-code-card-heading">
                 <div>
                   <span className="route-code-card-eyebrow">Driver route ID</span>
@@ -1404,13 +1465,13 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
               </div>
             ))}
 
-            {selectedNavigation?.route_narrative_words && (
+            {selectedRoute && (
               <section aria-labelledby="route-overview-heading" className="route-overview-card">
                 <h3 id="route-overview-heading" className="route-overview-heading">
                   <Sparkles size={ICON_SIZE.medium} aria-hidden="true" /> Route Overview
                 </h3>
                 <p className="route-overview-description">
-                  {selectedNavigation.route_narrative_words}
+                  {routeOverviewSummary(resultOriginName, resultDestinationName, selectedDistanceKm, selectedNavigation, selectedLegs)}
                 </p>
               </section>
             )}
@@ -1586,7 +1647,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
                 },
                 {
                   id: 'connections',
-                  label: 'Comparison',
+                  label: isMultimodal ? 'Connections' : 'Comparison',
                   content: (
                     <div className="route-result-tab-content">
             {/* All-Vehicle Mode Comparison Grid */}
@@ -1597,7 +1658,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
                 <Route size={ICON_SIZE.medium} aria-hidden="true" color="var(--accent-cyan)" /> Indicative vehicle comparison
               </h3>
               <p className="route-section-note">
-                Same-path planning estimates from the shared vehicle profiles. Re-plan after changing vehicle to optimize the road path itself.
+                Indicative travel times and emissions. Re-plan after changing vehicle to update your route.
               </p>
 
               <div
@@ -1611,7 +1672,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
                       <th scope="col" className="route-vehicle-comparison-edge-heading">Vehicle</th>
                       <th scope="col" className="route-vehicle-comparison-metric-heading">Road time</th>
                       <th scope="col" className="route-vehicle-comparison-metric-heading">Terminal buffer</th>
-                      <th scope="col" className="route-vehicle-comparison-metric-heading">Total</th>
+                      <th scope="col" className="route-vehicle-comparison-metric-heading">Road + buffer</th>
                       <th scope="col" className="route-vehicle-comparison-edge-heading">CO₂ estimate</th>
                     </tr>
                   </thead>
@@ -1630,16 +1691,16 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
                         + profile.signalDelaySeconds;
                       const maneuverMins = comparisonManeuverMins
                         * profileManeuverWeight / comparisonManeuverWeight;
-                      const roadTime = Math.round(
+                      const roadTime = isActive ? selectedTravelMins : Math.round(
                         (baseMins + congestionMins + weatherMins + maneuverMins) * 10,
                       ) / 10;
                       const totalEta = Math.round(
                         (roadTime + profile.terminalBufferMins) * 10,
                       ) / 10;
-                      const co2Kg = (
+                      const co2Kg = (isActive ? selectedCo2EmissionsKg : (
                         selectedDistanceKm * profile.co2KgPerKm
                           + (Math.max(0, congestionMins) / 60) * profile.idleCo2KgPerHour
-                      ).toFixed(2);
+                      )).toFixed(2);
 
                       return (
                         <tr
@@ -1666,68 +1727,62 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
             )}
 
 
-            <section aria-labelledby="connected-ferries-heading" hidden>
-              <h3 id="connected-ferries-heading" className="route-ferry-connections-heading">
-                <Anchor size={ICON_SIZE.medium} aria-hidden="true" color="var(--accent-cyan)" /> {isMultimodal ? 'Ferry schedule evidence' : 'Published ferry connections after arrival'}
-              </h3>
-              {result.ferry_connection_note && (
-                <p className="route-ferry-connection-note">
-                  {result.ferry_connection_note}
-                </p>
-              )}
-              <p
-                role="note"
-                className="route-section-note">
-                Published operator departure slots, not live operating status. Schedules may change; verify with the operator before travel.
-              </p>
+            <section className="route-ferry-connections" aria-labelledby="connected-ferries-heading">
+              <div className="route-ferry-connections-header">
+                <div>
+                  <h3 id="connected-ferries-heading" className="route-ferry-connections-heading">
+                    <Anchor size={ICON_SIZE.medium} aria-hidden="true" /> {isMultimodal ? 'Your ferry connection' : 'Ferry connections'}
+                  </h3>
+                  <p className="route-ferry-connections-caption">Published departures after your arrival.</p>
+                </div>
+                <span className="badge badge-neutral">Timetable</span>
+              </div>
               {selectedFerries.length > 0 ? (
-              <ul className="ferry-results-grid route-ferry-connections-list">
+              <ul className="route-ferry-connections-list">
                 {selectedFerries.map((f, i) => (
                   <li key={f.sailing_id ?? `${f.ferry_name}-${f.departure_time}-${i}`} className="route-ferry-connection-card">
-                    <div className="route-ferry-connection-header">
-                      <strong className="route-ferry-operator">{f.operator ?? f.ferry_name}</strong>
-                      <span className={`badge ${ferryBadgeClass('SCHEDULED')} route-ferry-status`}>
-                        {prettyStatus('SCHEDULED')}
-                      </span>
+                    <strong className="route-ferry-operator">{f.operator ?? f.ferry_name}</strong>
+                    <div className="route-ferry-times">
+                      <div>
+                        <span className="route-ferry-time-label">Departs</span>
+                        <time className="route-ferry-departure" dateTime={f.departure_time}>
+                          {formatTime(f.departure_time)} <small>{routeTimezoneLabel(f.departure_time)}</small>
+                        </time>
+                        <span className="route-ferry-port">{f.departure_port}</span>
+                      </div>
+                      <ArrowRight size={16} aria-hidden="true" />
+                      <div>
+                        <span className="route-ferry-time-label">Arrives · estimated</span>
+                        {f.arrival_time ? <time className="route-ferry-arrival" dateTime={f.arrival_time}>
+                          {formatTime(f.arrival_time)} <small>{routeTimezoneLabel(f.arrival_time)}</small>
+                        </time> : <span className="route-ferry-arrival">—</span>}
+                        <span className="route-ferry-port">{f.arrival_port}</span>
+                      </div>
                     </div>
-                    <div className="route-ferry-departure">
-                      {formatTime(f.departure_time)}
-                      <span className="route-ferry-departure-relative">
-                        {relativeDeparture(f.minutes_until_departure)}
-                      </span>
+                    <div className="route-ferry-card-footer">
+                      <span>{relativeDepartureFromTime(f.departure_time)}</span>
+                      {f.schedule_source_url ? <a href={f.schedule_source_url} target="_blank" rel="noreferrer"
+                        aria-label={`${f.operator ?? f.ferry_name} operator timetable`}>
+                        Timetable <ExternalLink size={12} aria-hidden="true" />
+                      </a> : null}
                     </div>
-                    <div className="route-ferry-itinerary">
-                      <span>{f.departure_port} → {f.arrival_port}</span>
-                      {f.arrival_time ? (
-                        <span>Estimated arrival: {formatTime(f.arrival_time)}</span>
-                      ) : null}
-                    </div>
-                    <div className="route-ferry-source-meta">
-                      {f.schedule_source_url ? (
-                        <a
-                          href={f.schedule_source_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="route-ferry-source-link">
-                          Official operator timetable
-                        </a>
-                      ) : null}
-                      {f.schedule_last_verified_at ? (
-                        <span className="route-ferry-verification-time">
-                          Last verified {formatScheduleVerifiedAt(f.schedule_last_verified_at)}
-                        </span>
-                      ) : null}
-                    </div>
+                    {f.schedule_last_verified_at ? <span className="route-ferry-checked">
+                      Checked {formatScheduleVerifiedAt(f.schedule_last_verified_at)}
+                    </span> : null}
                   </li>
                 ))}
               </ul>
               ) : (
                 <p className="route-ferry-empty-state">
                   {isMultimodal
-                    ? 'No departure is asserted for this direction in the bundled official snapshot. The route remains usable as a corridor plan; verify and book the actual sailing with the operator.'
-                    : 'No matching ferry sailing was returned for this arrival window.'}
+                    ? 'No published sailing is available for this direction. Check the operator’s timetable.'
+                    : 'No published sailing matches this arrival window.'}
                 </p>
               )}
+              <p role="note" className="route-ferry-connections-note">Times may change. Confirm with your operator before travel.</p>
+              {result.ferry_connection_note ? <details className="route-ferry-connection-details">
+                <summary>Connection details</summary><p>{result.ferry_connection_note}</p>
+              </details> : null}
             </section>
                     </div>
                   ),

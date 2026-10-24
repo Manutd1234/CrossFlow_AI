@@ -21,6 +21,8 @@ from itertools import islice
 from types import MappingProxyType
 from typing import Dict, Iterable, Mapping, Optional, Tuple
 
+from services.congestion_math import speed_ratio_congestion_score
+
 
 MAX_INGEST_BATCH_SIZE = 2_000
 MAX_ESTIMATOR_HISTORY_SIZE = 100_000
@@ -199,18 +201,18 @@ class SpatialTrafficObservation:
 
         actual = _finite("actual_speed_kph", actual_speed_kph)
         free_flow = _finite("free_flow_speed_kph", free_flow_speed_kph)
-        if not 0.0 < actual <= 250.0:
+        if not 0.0 <= actual <= 250.0:
             raise ObservationValidationError(
-                "actual_speed_kph must be greater than 0 and at most 250."
+                "actual_speed_kph must be between 0 and 250."
             )
         if not 0.0 < free_flow <= 250.0:
             raise ObservationValidationError(
                 "free_flow_speed_kph must be greater than 0 and at most 250."
             )
         ratio = actual / free_flow
-        if not 0.05 <= ratio <= 1.50:
+        if not 0.0 <= ratio <= 1.50:
             raise ObservationValidationError(
-                "actual/free-flow speed ratio must be between 0.05 and 1.50."
+                "actual/free-flow speed ratio must be between 0 and 1.50."
             )
 
         normalized_source = str(source).strip()
@@ -605,7 +607,7 @@ def estimate_speed_ratio_congestion(
             round(historical_ratio, 6) if historical_ratio is not None else None
         ),
         speed_ratio_std=round(speed_ratio_std, 6),
-        congestion_score=round(100.0 * (1.0 - expected_ratio), 2),
+        congestion_score=round(speed_ratio_congestion_score(expected_ratio), 2),
         history_sample_count=len(weighted),
         observed_history_count=observed_count,
         source_counts=MappingProxyType(dict(sorted(source_counts.items()))),

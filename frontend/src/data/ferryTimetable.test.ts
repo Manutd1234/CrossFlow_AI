@@ -65,7 +65,7 @@ describe('published ferry timetable browser snapshot', () => {
     const sailings = offlineFerries(after, after, 12);
 
     expect(PUBLISHED_FERRY_TIMETABLE_METADATA).toMatchObject({
-      snapshot_id: 'published-batam-singapore-timetables-calendar-audited-2026-08-13',
+      snapshot_id: 'published-batam-singapore-timetables-calendar-audited-2026-08-13-sindo-reviewed-2026-10-23',
       status: 'published_schedule_snapshot',
       last_verified_at: '2026-08-13T00:30:50+07:00',
     });

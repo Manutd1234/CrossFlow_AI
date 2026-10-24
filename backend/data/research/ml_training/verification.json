@@ -1,0 +1,57 @@
+{
+  "verified_at_utc": "2026-10-23T17:47:08.984863+00:00",
+  "status": "passed",
+  "recorded_tests_passed": 91,
+  "test_groups": {
+    "survey_speed": 15,
+    "hourly_forecast": 7,
+    "visual_counts": 6,
+    "causal_forecast": 17,
+    "snapshot_integrity": 4,
+    "results_api_including_ASGI": 4,
+    "existing_observed_pipeline": 38
+  },
+  "test_evidence": "Test groups executed during the training session; this verifier rechecks saved artifacts/metrics and does not rerun training or the test suite.",
+  "optional_vision_runtime_without_Pillow": "clean_module_skip",
+  "saved_prediction_metrics": {
+    "speed_training": {
+      "rows": 16,
+      "recomputed_mae": 3.234259982638889,
+      "metric_unit": "mae_kph"
+    },
+    "forecast_training": {
+      "rows": 7454,
+      "recomputed_mae": 56.331350821201276,
+      "metric_unit": "mae_vehicles_per_hour"
+    },
+    "vision_training": {
+      "rows": 32,
+      "recomputed_mae": 3.613944548893728,
+      "metric_unit": "mae_vehicles_per_frame"
+    }
+  },
+  "receipts_rechecked": 28,
+  "catalogue_javascript": "passed",
+  "source_acquisition_counts_unchanged": true,
+  "serving_model_activated": false,
+  "provider_models_fitted": false,
+  "issues": [],
+  "code_receipts": [
+    {
+      "path": "CrossFlow_AI/scripts/train_ml_engine.py",
+      "sha256": "0b8e81dbd8a3978529c744a390ae17b0b08c827b9e2b94f8ef986b46de193cee"
+    },
+    {
+      "path": "CrossFlow_AI/backend/services/causal_forecasting.py",
+      "sha256": "80604c05dcf9893e262a049414cde6341e16b367fe09e5e2a64817b0668a024c"
+    },
+    {
+      "path": "CrossFlow_AI/backend/services/training_experiments.py",
+      "sha256": "8d84a1331219334e33f7c0f5233171949f758d9cc4b8741171faa7356a462db3"
+    },
+    {
+      "path": "CrossFlow_AI/backend/main.py",
+      "sha256": "74765ae2e7ddaf63925e66cde0e8fbd53d48e35ecfd3a01972aaa55246245c3e"
+    }
+  ]
+}

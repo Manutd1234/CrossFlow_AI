@@ -8,6 +8,8 @@
 
 # Dependencies
 node_modules
+.venv-vision/
+.venv-yolo26/
 .venv
 venv
 ENV
@@ -20,6 +22,12 @@ __pycache__
 *.db
 *.db-shm
 *.db-wal
+backend/data/cctv_observations.sqlite*
+
+# Local measured-data imports and fitted artifacts may be provider licensed.
+# Commit provenance summaries and reproducible code, not the raw archives.
+backend/data/traffic-imports/
+backend/data/model-artifacts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -239,3 +247,37 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Local observed-only model weights and weather captures are private runtime data.
+backend/data/real_traffic_model*.json
+backend/data/weather_context.db*
+backend/data/forecast_evaluation.db*
+
+# Local detector checkpoints, training images and caches stay with the collector.
+# Source code, reviewed numeric fixtures, model metadata and reports are versioned.
+backend/data/research/**/*.pt
+backend/data/research/**/*.pth
+backend/data/research/**/*.joblib
+backend/data/research/**/*.npz
+backend/data/research/**/*.gz
+backend/data/research/**/*.jpg
+backend/data/research/**/*.jpeg
+backend/data/research/**/development_dataset/
+backend/data/research/**/training/
+backend/data/research/**/runtime_config/
+.logs/
+.vercel/
+.venv*/
+
+# Private account-setup evidence is local, not part of the published app.
+docs/verification/nus-*
+docs/verification/google-*
+docs/verification/here-*
+docs/verification/tomtom-*
+docs/verification/signup-*
+docs/verification/otp-*
+docs/verification/brevo-*
+# Browser screenshots can include account data. Keep numeric audit reports in Git.
+docs/verification/**/*.png
+docs/verification/**/*.jpg
+docs/verification/**/*.jpeg
+docs/verification/**/*.webp

@@ -1,0 +1,31 @@
+{
+  "dataset_name": "Published Batam Tengku Sulung\u2013Raja M. Saleh saturation survey",
+  "authors": [
+    "Meva Bangun",
+    "Dian Hastari Agustina",
+    "Edi Kusmawan"
+  ],
+  "source_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/6939",
+  "source_pdf_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/download/6939/pdf",
+  "doi": "10.33373/sigmateknika.v7i2.6939",
+  "license": "CC BY-SA 4.0 as displayed on article page",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "Bangun, Agustina and Kusmawan (2024), Sigma Teknika 7(2), 439\u2013447, Table 4.3 p445. Direct transcription; dates resolved from the explicit 12\u201318 June 2023 survey period and published weekday order. No author endorsement.",
+  "source_pdf_sha256": "aa46bd328592ca8457f05030fd20afc2cea04fb84d8409cbd55820f1171cb0e1",
+  "csv_sha256": "ba1ebb24a01b7693ee17def2a17d650e82594c455f95e65f83a42f2dcb7abca8",
+  "location": "Tengku Sulung\u2013Raja M. Saleh unsignalised intersection, Batam",
+  "source_table": "Table 4.3, printed page 445 (PDF page 7)",
+  "source_period_evidence": "Conclusion p446 explicitly states 12\u201318 June 2023; p445 explicitly dates Saturday as 17 June 2023.",
+  "transcription_rows": 28,
+  "measurement_kind": "published_derived_volume_capacity_ratio",
+  "canonical_corridor_mapping": null,
+  "eligible_speed_training_rows": 0,
+  "scope_limitations": [
+    "Seven survey days at one intersection, four hourly peak intervals per day.",
+    "Degree of saturation is a calculated volume/capacity ratio, not speed, speed ratio or a 0\u2013100 congestion score.",
+    "Raw vehicle counts by interval and raw speeds are not supplied in this table.",
+    "Do not convert these ratios into fabricated km/h training labels.",
+    "The paper reports both 3001.6 and 3008.1 smp/hour for peak flow in its narrative; preserve the published Table 4.3 ratios without reconstructing missing counts."
+  ],
+  "reviewed_at": "2026-10-23T12:24:00.486663+00:00"
+}

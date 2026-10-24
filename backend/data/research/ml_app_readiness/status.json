@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "client_date": "2026-10-24",
+  "updated_at": "2026-10-23T18:24:19.606090+00:00",
+  "status": "experimental_preview_engineering_verified",
+  "app_capability": "experimental_operator_static_image_vehicle_count_preview",
+  "production_eligible": false,
+  "batam_camera_validated": false,
+  "google_comparison_performed": false,
+  "serving_traffic_model_replaced": false,
+  "traffic_observation_writes": false,
+  "newly_acquired_batam_vehicle_annotations": 0,
+  "newly_acquired_batam_count_observations": 0,
+  "count_experiments": {
+    "published_cells_newly_used_in_experiments": 288,
+    "final_fitting_history_cells": 228,
+    "final_heldout_target_cells": 60,
+    "sekupang_15min_mae": 1.4934687840167784,
+    "sekupang_persistence_mae": 1.8888888888888888,
+    "gajah_mada_hourly_uturn_mae": 32.0,
+    "gajah_mada_selected_model": "persistence"
+  },
+  "vehicle_detector": {
+    "selected_model": "fasterrcnn_pretrained_COCO",
+    "architecture": "fasterrcnn_resnet50_fpn_v2",
+    "selected_weights_finetuned": false,
+    "supervised_optimizer_updates_performed": 176,
+    "validation_frames": 16,
+    "validation_vehicle_boxes": 55,
+    "validation_count_mae": 1.5,
+    "reused_foreign_diagnostic_frames": 32,
+    "reused_foreign_diagnostic_vehicle_boxes": 163,
+    "reused_foreign_diagnostic_count_mae": 1.09375,
+    "reused_foreign_diagnostic_exact_count_percent": 34.375,
+    "reused_foreign_diagnostic_within_one_vehicle_percent": 81.25,
+    "improvement_percent_vs_previous_pixel_regressor": 69.7352854975373,
+    "fresh_independent_test": false,
+    "production_license_clearance": false,
+    "model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+  },
+  "verification": {
+    "status": "passed",
+    "backend_focused_tests": 39,
+    "backend_test_groups": {
+      "count_causality": 7,
+      "preview_api_and_bridge": 22,
+      "detector_runtime": 10
+    },
+    "frontend_focused_tests": 54,
+    "new_preview_client_tests": 41,
+    "count_causality_tests": 7,
+    "count_artifact_checks": 34,
+    "typescript_check": "passed",
+    "production_build": "passed",
+    "focused_lint": "passed",
+    "authenticated_preview_end_to_end": "passed_in_isolated_loopback_operator_fixture",
+    "production_auth_login_verified": false,
+    "existing_driver_session_changed": false,
+    "model_runtime": "persistent_repository_.venv-vision",
+    "browser_sample": {
+      "source": "public_foreign_Visaitech_development_image",
+      "predicted_count": 4,
+      "author_annotated_count": 6,
+      "rendered_boxes": 4,
+      "accuracy_success_claim": false
+    },
+    "real_http_statuses": {
+      "unauthorized": 403,
+      "invalid_image": 422,
+      "image_preview": 200
+    },
+    "all_http_checks_private_no_store": true,
+    "independent_detector_files_hashed": 53,
+    "independent_detector_bytes_hashed": 924420108,
+    "notes": [
+      "Engineering checks verify app behavior and artifact integrity, not production Batam camera accuracy.",
+      "Browser upload used actual app routes and the final detector with a separate loopback test-only operator identity; production sign-in was not verified.",
+      "Existing driver session and app servers were preserved; no traffic observations were written.",
+      "Auth checks use the existing helper: Supabase mode requires admin/bearer; explicit disabled/demo mode retains guest access. The loopback fixture is not production authentication validation."
+    ],
+    "evidence_files": [
+      "docs/verification/ml-app-2026-10-24/preview_qa.json",
+      "docs/verification/ml-app-2026-10-24/test_results.json",
+      "docs/verification/ml-app-2026-10-24/independent_detector_audit.json",
+      "docs/verification/ml-app-2026-10-24/vehicle-count-preview.png"
+    ],
+    "packaged_count_replay": "passed_from_extracted_licensed_subsets_without_original_composite_CSVs"
+  },
+  "sources": {
+    "count_report": "../batam_counts_training/report.json",
+    "detector_report": "../detector_training/report.json",
+    "detector_deployment_qa": "../detector_training/deployment_qa.json",
+    "source_audit": "../../../../../research/batam-traffic/datasets/round9_training_sources/manifest.json"
+  },
+  "auth_policy": {
+    "existing_helper": "identity.require_route_operator",
+    "supabase_auth_mode": "admin profile and bearer required",
+    "explicit_disabled_demo_auth_mode": "existing guest access policy retained",
+    "production_auth_login_verified": false
+  }
+}

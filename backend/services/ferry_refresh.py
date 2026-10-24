@@ -949,7 +949,12 @@ def _validate_scc_operations_board(
         "source_validation_status": "validated_same_day_operations_board",
         "matched_board_row_count": valid_rows,
         "matched_board_operator_count": len(operators),
-        "matched_departure_slot_count": valid_rows,
+        "board_date": expected_date.isoformat(),
+        "board_timezone": "Asia/Singapore",
+        "board_scope": "first_page_arrivals_only",
+        # Arrival-board entries corroborate source context. They are not
+        # recurring departure slots, seats, terminal capacity or complete-day coverage.
+        "matched_departure_slot_count": 0,
     }
 
 

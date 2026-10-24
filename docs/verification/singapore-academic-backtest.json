@@ -1,0 +1,3073 @@
+{
+  "schema_version": 1,
+  "evaluated_at": "2026-10-23T11:03:30.577346+00:00",
+  "scope": "independent Singapore academic benchmark; not Batam field validation",
+  "source_url": "https://github.com/EYLeong/traffic_prediction",
+  "data_sha256": {
+    "dataset.npy": "83a54790c3e7e4b16ca5dab1510b614e559abf1a3ad3ff760d39b04926991d0f",
+    "metadata.json": "74c43f17282d3c62c7fbbcca0f783ab739a663a419ff636d8b170f60ca47faca",
+    "timestamps.json": "85fdb55c15ae9d47aca36c825425e738bcd1ea5fd28312f7f7f7e49479ee009f"
+  },
+  "source_signal": "LTA Traffic Speed Bands; ordinal integer labels 1\u20138, not exact km/h",
+  "data_provider": "Singapore Land Transport Authority, collected by SUTD student research project",
+  "source_license": "LTA API datasets governed by Singapore Open Data Licence1.0; publisher code not reused",
+  "license_url": "https://datamall.lta.gov.sg/content/datamall/en/SingaporeOpenDataLicence.html",
+  "source_provenance": "Publisher directly copies SpeedBand from snapshots in inspected get_features; original API payloads unavailable for independent revalidation.",
+  "timestamp_basis": "Source filenames have no timezone; relative source-clock chronology retained; UTC/SGT offset not asserted.",
+  "source_first_timestamp": "2021-03-08T22:10:08",
+  "source_last_timestamp": "2021-04-03T23:55:09",
+  "source_calendar_days": 27,
+  "roads": 53,
+  "snapshots": 7497,
+  "speed_band_records": 397341,
+  "continuous_eligible_origins": 7240,
+  "chronology": {
+    "fit": {
+      "forecast_origins": 1431,
+      "rows": 75843,
+      "first_origin_source_clock": "2021-03-08T23:10:09",
+      "last_origin_source_clock": "2021-03-24T13:00:10",
+      "latest_target_source_clock": "2021-03-24T14:00:09"
+    },
+    "calibration": {
+      "forecast_origins": 1462,
+      "rows": 77486,
+      "first_origin_source_clock": "2021-03-24T14:05:08",
+      "last_origin_source_clock": "2021-03-29T17:55:08",
+      "latest_target_source_clock": "2021-03-29T18:55:08"
+    },
+    "test": {
+      "forecast_origins": 1463,
+      "rows": 77539,
+      "first_origin_source_clock": "2021-03-29T19:00:08",
+      "last_origin_source_clock": "2021-04-03T22:55:08",
+      "latest_target_source_clock": "2021-04-03T23:55:09"
+    },
+    "maximum_forecast_minutes": 60,
+    "training_origin_stride": 3,
+    "latest_fit_label_precedes_first_calibration_origin": true,
+    "latest_calibration_label_precedes_first_test_origin": true
+  },
+  "model": {
+    "kind": "RandomForestRegressor",
+    "parameters": {
+      "n_estimators": 80,
+      "max_depth": 12,
+      "min_samples_leaf": 12,
+      "random_state": 42,
+      "n_jobs": 1
+    },
+    "features": "Five prior bands, road identity/category/length, published source-clock phase and weekday; no future target/context embeddings."
+  },
+  "results": [
+    {
+      "horizon_minutes": 15,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.52892,
+        "rmse_band_units": 0.733561,
+        "rounded_band_accuracy": 0.584674,
+        "within_one_band": 0.953585
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.549156,
+        "rmse_band_units": 0.907907,
+        "rounded_band_accuracy": 0.551516,
+        "within_one_band": 0.925702
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.799146,
+      "calibration_radius_band_units": 0.849366,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.528852,
+          "rmse_band_units": 0.733539,
+          "rounded_band_accuracy": 0.58479,
+          "within_one_band": 0.953592
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.549106,
+          "rmse_band_units": 0.907926,
+          "rounded_band_accuracy": 0.551584,
+          "within_one_band": 0.925703
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.656544,
+          "rmse_band_units": 1.033128,
+          "rounded_band_accuracy": 0.48943,
+          "within_one_band": 0.896497
+        }
+      },
+      "per_road": [
+        {
+          "link_id": "103000423",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.638635,
+            "rmse_band_units": 0.878581,
+            "rounded_band_accuracy": 0.493506,
+            "within_one_band": 0.927546
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.704033,
+            "rmse_band_units": 1.112902,
+            "rounded_band_accuracy": 0.483254,
+            "within_one_band": 0.874231
+          }
+        },
+        {
+          "link_id": "103000768",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.463222,
+            "rmse_band_units": 0.617729,
+            "rounded_band_accuracy": 0.62406,
+            "within_one_band": 0.97676
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.485304,
+            "rmse_band_units": 0.786072,
+            "rounded_band_accuracy": 0.571429,
+            "within_one_band": 0.95147
+          }
+        },
+        {
+          "link_id": "103000843",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.694263,
+            "rmse_band_units": 1.031123,
+            "rounded_band_accuracy": 0.518113,
+            "within_one_band": 0.879699
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.822283,
+            "rmse_band_units": 1.318412,
+            "rounded_band_accuracy": 0.464798,
+            "within_one_band": 0.822967
+          }
+        },
+        {
+          "link_id": "103000980",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.764334,
+            "rmse_band_units": 1.094312,
+            "rounded_band_accuracy": 0.484621,
+            "within_one_band": 0.853042
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.906357,
+            "rmse_band_units": 1.381946,
+            "rounded_band_accuracy": 0.428571,
+            "within_one_band": 0.790841
+          }
+        },
+        {
+          "link_id": "103004580",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.498596,
+            "rmse_band_units": 0.697539,
+            "rounded_band_accuracy": 0.594668,
+            "within_one_band": 0.958305
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.563226,
+            "rmse_band_units": 0.880409,
+            "rounded_band_accuracy": 0.528366,
+            "within_one_band": 0.922078
+          }
+        },
+        {
+          "link_id": "103005716",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.466121,
+            "rmse_band_units": 0.623573,
+            "rounded_band_accuracy": 0.604238,
+            "within_one_band": 0.985646
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.498975,
+            "rmse_band_units": 0.760437,
+            "rounded_band_accuracy": 0.538619,
+            "within_one_band": 0.963773
+          }
+        },
+        {
+          "link_id": "103007532",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.61514,
+            "rmse_band_units": 0.835748,
+            "rounded_band_accuracy": 0.516063,
+            "within_one_band": 0.928913
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.723855,
+            "rmse_band_units": 1.07891,
+            "rounded_band_accuracy": 0.442925,
+            "within_one_band": 0.876965
+          }
+        },
+        {
+          "link_id": "103007692",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.420578,
+            "rmse_band_units": 0.592618,
+            "rounded_band_accuracy": 0.69378,
+            "within_one_band": 0.973342
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.37594,
+            "rmse_band_units": 0.715037,
+            "rounded_band_accuracy": 0.673274,
+            "within_one_band": 0.962406
+          }
+        },
+        {
+          "link_id": "103007800",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.490677,
+            "rmse_band_units": 0.671118,
+            "rounded_band_accuracy": 0.608339,
+            "within_one_band": 0.962406
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.516063,
+            "rmse_band_units": 0.832113,
+            "rounded_band_accuracy": 0.558442,
+            "within_one_band": 0.936432
+          }
+        },
+        {
+          "link_id": "103008040",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.617386,
+            "rmse_band_units": 0.891606,
+            "rounded_band_accuracy": 0.539303,
+            "within_one_band": 0.921394
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.714969,
+            "rmse_band_units": 1.122686,
+            "rounded_band_accuracy": 0.4689,
+            "within_one_band": 0.876965
+          }
+        },
+        {
+          "link_id": "103008060",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.518299,
+            "rmse_band_units": 0.739334,
+            "rounded_band_accuracy": 0.598086,
+            "within_one_band": 0.952837
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.578947,
+            "rmse_band_units": 0.943735,
+            "rounded_band_accuracy": 0.531784,
+            "within_one_band": 0.920711
+          }
+        },
+        {
+          "link_id": "103009728",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.48174,
+            "rmse_band_units": 0.608755,
+            "rounded_band_accuracy": 0.56596,
+            "within_one_band": 0.98838
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.475051,
+            "rmse_band_units": 0.746374,
+            "rounded_band_accuracy": 0.562543,
+            "within_one_band": 0.965824
+          }
+        },
+        {
+          "link_id": "103009752",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.575012,
+            "rmse_band_units": 0.80374,
+            "rounded_band_accuracy": 0.568011,
+            "within_one_band": 0.941217
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.620643,
+            "rmse_band_units": 0.979628,
+            "rounded_band_accuracy": 0.509911,
+            "within_one_band": 0.902256
+          }
+        },
+        {
+          "link_id": "103009774",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.485527,
+            "rmse_band_units": 0.630157,
+            "rounded_band_accuracy": 0.602871,
+            "within_one_band": 0.980178
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.481887,
+            "rmse_band_units": 0.774244,
+            "rounded_band_accuracy": 0.569378,
+            "within_one_band": 0.955571
+          }
+        },
+        {
+          "link_id": "103009775",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.458348,
+            "rmse_band_units": 0.576479,
+            "rounded_band_accuracy": 0.617225,
+            "within_one_band": 0.986329
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.421053,
+            "rmse_band_units": 0.690726,
+            "rounded_band_accuracy": 0.605605,
+            "within_one_band": 0.97471
+          }
+        },
+        {
+          "link_id": "103009778",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.430462,
+            "rmse_band_units": 0.592707,
+            "rounded_band_accuracy": 0.650034,
+            "within_one_band": 0.982228
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.454545,
+            "rmse_band_units": 0.761784,
+            "rounded_band_accuracy": 0.597403,
+            "within_one_band": 0.956254
+          }
+        },
+        {
+          "link_id": "103009779",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.452242,
+            "rmse_band_units": 0.576701,
+            "rounded_band_accuracy": 0.630895,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.43404,
+            "rmse_band_units": 0.708796,
+            "rounded_band_accuracy": 0.598086,
+            "within_one_band": 0.969925
+          }
+        },
+        {
+          "link_id": "103010660",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.45598,
+            "rmse_band_units": 0.553422,
+            "rounded_band_accuracy": 0.57758,
+            "within_one_band": 0.994532
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.414217,
+            "rmse_band_units": 0.677739,
+            "rounded_band_accuracy": 0.606972,
+            "within_one_band": 0.980178
+          }
+        },
+        {
+          "link_id": "103011232",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.657162,
+            "rmse_band_units": 0.941027,
+            "rounded_band_accuracy": 0.520164,
+            "within_one_band": 0.917977
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.732057,
+            "rmse_band_units": 1.187483,
+            "rounded_band_accuracy": 0.479152,
+            "within_one_band": 0.869446
+          }
+        },
+        {
+          "link_id": "103054664",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.423787,
+            "rmse_band_units": 0.6056,
+            "rounded_band_accuracy": 0.678059,
+            "within_one_band": 0.968558
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.416268,
+            "rmse_band_units": 0.712643,
+            "rounded_band_accuracy": 0.624744,
+            "within_one_band": 0.963773
+          }
+        },
+        {
+          "link_id": "103059762",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.366555,
+            "rmse_band_units": 0.518108,
+            "rounded_band_accuracy": 0.735475,
+            "within_one_band": 0.98838
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.347915,
+            "rmse_band_units": 0.643066,
+            "rounded_band_accuracy": 0.682843,
+            "within_one_band": 0.971292
+          }
+        },
+        {
+          "link_id": "103059763",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.468198,
+            "rmse_band_units": 0.604588,
+            "rounded_band_accuracy": 0.607656,
+            "within_one_band": 0.983595
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.455229,
+            "rmse_band_units": 0.739474,
+            "rounded_band_accuracy": 0.582365,
+            "within_one_band": 0.969241
+          }
+        },
+        {
+          "link_id": "103060004",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.447741,
+            "rmse_band_units": 0.637185,
+            "rounded_band_accuracy": 0.678059,
+            "within_one_band": 0.969241
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.388243,
+            "rmse_band_units": 0.723589,
+            "rounded_band_accuracy": 0.664388,
+            "within_one_band": 0.958988
+          }
+        },
+        {
+          "link_id": "103060008",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.585949,
+            "rmse_band_units": 0.757316,
+            "rounded_band_accuracy": 0.533835,
+            "within_one_band": 0.933698
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.52905,
+            "rmse_band_units": 0.86711,
+            "rounded_band_accuracy": 0.561176,
+            "within_one_band": 0.927546
+          }
+        },
+        {
+          "link_id": "103060820",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.419908,
+            "rmse_band_units": 0.621027,
+            "rounded_band_accuracy": 0.704716,
+            "within_one_band": 0.963773
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.441558,
+            "rmse_band_units": 0.788676,
+            "rounded_band_accuracy": 0.632262,
+            "within_one_band": 0.93985
+          }
+        },
+        {
+          "link_id": "103060824",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.56675,
+            "rmse_band_units": 0.779423,
+            "rounded_band_accuracy": 0.533151,
+            "within_one_band": 0.95147
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.639781,
+            "rmse_band_units": 0.990729,
+            "rounded_band_accuracy": 0.483254,
+            "within_one_band": 0.913192
+          }
+        },
+        {
+          "link_id": "103066000",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.469924,
+            "rmse_band_units": 0.663124,
+            "rounded_band_accuracy": 0.654819,
+            "within_one_band": 0.967191
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.489405,
+            "rmse_band_units": 0.820949,
+            "rounded_band_accuracy": 0.584416,
+            "within_one_band": 0.940533
+          }
+        },
+        {
+          "link_id": "103072100",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.287005,
+            "rmse_band_units": 0.451432,
+            "rounded_band_accuracy": 0.79836,
+            "within_one_band": 0.990431
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.268626,
+            "rmse_band_units": 0.549031,
+            "rounded_band_accuracy": 0.745044,
+            "within_one_band": 0.989064
+          }
+        },
+        {
+          "link_id": "103072132",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.300882,
+            "rmse_band_units": 0.467527,
+            "rounded_band_accuracy": 0.785373,
+            "within_one_band": 0.991114
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.287081,
+            "rmse_band_units": 0.569203,
+            "rounded_band_accuracy": 0.729323,
+            "within_one_band": 0.985646
+          }
+        },
+        {
+          "link_id": "103075472",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.323881,
+            "rmse_band_units": 0.485311,
+            "rounded_band_accuracy": 0.756664,
+            "within_one_band": 0.989747
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.30417,
+            "rmse_band_units": 0.580499,
+            "rounded_band_accuracy": 0.710185,
+            "within_one_band": 0.987697
+          }
+        },
+        {
+          "link_id": "103075952",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.570811,
+            "rmse_band_units": 0.795478,
+            "rounded_band_accuracy": 0.553657,
+            "within_one_band": 0.948052
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.611757,
+            "rmse_band_units": 0.952387,
+            "rounded_band_accuracy": 0.499658,
+            "within_one_band": 0.915243
+          }
+        },
+        {
+          "link_id": "103075956",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.677354,
+            "rmse_band_units": 0.935402,
+            "rounded_band_accuracy": 0.498291,
+            "within_one_band": 0.900205
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.701982,
+            "rmse_band_units": 1.087115,
+            "rounded_band_accuracy": 0.469583,
+            "within_one_band": 0.878332
+          }
+        },
+        {
+          "link_id": "103083856",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.697827,
+            "rmse_band_units": 0.915387,
+            "rounded_band_accuracy": 0.467532,
+            "within_one_band": 0.897471
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.701982,
+            "rmse_band_units": 1.10396,
+            "rounded_band_accuracy": 0.479152,
+            "within_one_band": 0.874915
+          }
+        },
+        {
+          "link_id": "103110766",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.463446,
+            "rmse_band_units": 0.572223,
+            "rounded_band_accuracy": 0.591934,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.429938,
+            "rmse_band_units": 0.688247,
+            "rounded_band_accuracy": 0.590567,
+            "within_one_band": 0.980861
+          }
+        },
+        {
+          "link_id": "103110767",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.471859,
+            "rmse_band_units": 0.620073,
+            "rounded_band_accuracy": 0.62201,
+            "within_one_band": 0.978811
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.48257,
+            "rmse_band_units": 0.779084,
+            "rounded_band_accuracy": 0.565277,
+            "within_one_band": 0.961722
+          }
+        },
+        {
+          "link_id": "104002012",
+          "road_name": "ORCHARD BOULEVARD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.437558,
+            "rmse_band_units": 0.589723,
+            "rounded_band_accuracy": 0.678059,
+            "within_one_band": 0.969241
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.36432,
+            "rmse_band_units": 0.690231,
+            "rounded_band_accuracy": 0.679426,
+            "within_one_band": 0.963773
+          }
+        },
+        {
+          "link_id": "104002152",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.527975,
+            "rmse_band_units": 0.651204,
+            "rounded_band_accuracy": 0.549556,
+            "within_one_band": 0.972659
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.487355,
+            "rmse_band_units": 0.801144,
+            "rounded_band_accuracy": 0.565277,
+            "within_one_band": 0.962406
+          }
+        },
+        {
+          "link_id": "104002164",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.631587,
+            "rmse_band_units": 0.831598,
+            "rounded_band_accuracy": 0.497608,
+            "within_one_band": 0.924129
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.672591,
+            "rmse_band_units": 1.060056,
+            "rounded_band_accuracy": 0.478469,
+            "within_one_band": 0.899522
+          }
+        },
+        {
+          "link_id": "104005090",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.445687,
+            "rmse_band_units": 0.598832,
+            "rounded_band_accuracy": 0.657553,
+            "within_one_band": 0.97471
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.433356,
+            "rmse_band_units": 0.723589,
+            "rounded_band_accuracy": 0.607656,
+            "within_one_band": 0.96309
+          }
+        },
+        {
+          "link_id": "104005091",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.475508,
+            "rmse_band_units": 0.649622,
+            "rounded_band_accuracy": 0.617908,
+            "within_one_band": 0.978127
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.483254,
+            "rmse_band_units": 0.823858,
+            "rounded_band_accuracy": 0.586466,
+            "within_one_band": 0.948052
+          }
+        },
+        {
+          "link_id": "107000872",
+          "road_name": "ORCHARD BOULEVARD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.581478,
+            "rmse_band_units": 0.754991,
+            "rounded_band_accuracy": 0.52905,
+            "within_one_band": 0.941217
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.572796,
+            "rmse_band_units": 0.904912,
+            "rounded_band_accuracy": 0.520848,
+            "within_one_band": 0.931647
+          }
+        },
+        {
+          "link_id": "107001232",
+          "road_name": "SOMERSET ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.595072,
+            "rmse_band_units": 0.815336,
+            "rounded_band_accuracy": 0.559809,
+            "within_one_band": 0.933698
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.602187,
+            "rmse_band_units": 0.974381,
+            "rounded_band_accuracy": 0.522215,
+            "within_one_band": 0.911825
+          }
+        },
+        {
+          "link_id": "108001560",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.482552,
+            "rmse_band_units": 0.686451,
+            "rounded_band_accuracy": 0.644566,
+            "within_one_band": 0.961039
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.498291,
+            "rmse_band_units": 0.847577,
+            "rounded_band_accuracy": 0.583049,
+            "within_one_band": 0.939166
+          }
+        },
+        {
+          "link_id": "108002604",
+          "road_name": "SOMERSET ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.581379,
+            "rmse_band_units": 0.761635,
+            "rounded_band_accuracy": 0.547505,
+            "within_one_band": 0.941217
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.615858,
+            "rmse_band_units": 0.994517,
+            "rounded_band_accuracy": 0.522215,
+            "within_one_band": 0.897471
+          }
+        },
+        {
+          "link_id": "108003594",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.466733,
+            "rmse_band_units": 0.586147,
+            "rounded_band_accuracy": 0.582365,
+            "within_one_band": 0.984279
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.44771,
+            "rmse_band_units": 0.706865,
+            "rounded_band_accuracy": 0.57758,
+            "within_one_band": 0.975393
+          }
+        },
+        {
+          "link_id": "108003595",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.432244,
+            "rmse_band_units": 0.60523,
+            "rounded_band_accuracy": 0.645933,
+            "within_one_band": 0.978811
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.456596,
+            "rmse_band_units": 0.758637,
+            "rounded_band_accuracy": 0.593301,
+            "within_one_band": 0.957621
+          }
+        },
+        {
+          "link_id": "116000660",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.630924,
+            "rmse_band_units": 0.821332,
+            "rounded_band_accuracy": 0.464798,
+            "within_one_band": 0.949419
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.681476,
+            "rmse_band_units": 1.023644,
+            "rounded_band_accuracy": 0.462748,
+            "within_one_band": 0.879016
+          }
+        },
+        {
+          "link_id": "116000664",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.632462,
+            "rmse_band_units": 0.79927,
+            "rounded_band_accuracy": 0.474368,
+            "within_one_band": 0.93985
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.628845,
+            "rmse_band_units": 0.969106,
+            "rounded_band_accuracy": 0.492139,
+            "within_one_band": 0.906357
+          }
+        },
+        {
+          "link_id": "116001108",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.641468,
+            "rmse_band_units": 0.861187,
+            "rounded_band_accuracy": 0.45728,
+            "within_one_band": 0.946685
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.671907,
+            "rmse_band_units": 1.044139,
+            "rounded_band_accuracy": 0.462748,
+            "within_one_band": 0.911141
+          }
+        },
+        {
+          "link_id": "116001284",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.752256,
+            "rmse_band_units": 0.947132,
+            "rounded_band_accuracy": 0.395762,
+            "within_one_band": 0.902939
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.815448,
+            "rmse_band_units": 1.16188,
+            "rounded_band_accuracy": 0.401914,
+            "within_one_band": 0.818865
+          }
+        },
+        {
+          "link_id": "116001312",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.73852,
+            "rmse_band_units": 0.980524,
+            "rounded_band_accuracy": 0.444293,
+            "within_one_band": 0.887218
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.835954,
+            "rmse_band_units": 1.227671,
+            "rounded_band_accuracy": 0.403964,
+            "within_one_band": 0.825017
+          }
+        },
+        {
+          "link_id": "116001332",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.520299,
+            "rmse_band_units": 0.748489,
+            "rounded_band_accuracy": 0.608339,
+            "within_one_band": 0.950103
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.548872,
+            "rmse_band_units": 0.968753,
+            "rounded_band_accuracy": 0.584416,
+            "within_one_band": 0.910458
+          }
+        },
+        {
+          "link_id": "116001372",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.733443,
+            "rmse_band_units": 0.961527,
+            "rounded_band_accuracy": 0.425837,
+            "within_one_band": 0.902256
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.869446,
+            "rmse_band_units": 1.235165,
+            "rounded_band_accuracy": 0.362269,
+            "within_one_band": 0.830485
+          }
+        }
+      ]
+    },
+    {
+      "horizon_minutes": 30,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.551534,
+        "rmse_band_units": 0.757287,
+        "rounded_band_accuracy": 0.570526,
+        "within_one_band": 0.950399
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.625221,
+        "rmse_band_units": 0.983472,
+        "rounded_band_accuracy": 0.500961,
+        "within_one_band": 0.90704
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.806175,
+      "calibration_radius_band_units": 0.872098,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.551516,
+          "rmse_band_units": 0.757322,
+          "rounded_band_accuracy": 0.570593,
+          "within_one_band": 0.950378
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.625377,
+          "rmse_band_units": 0.98367,
+          "rounded_band_accuracy": 0.50089,
+          "within_one_band": 0.906977
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.655757,
+          "rmse_band_units": 1.032897,
+          "rounded_band_accuracy": 0.490179,
+          "within_one_band": 0.896626
+        }
+      },
+      "per_road": [
+        {
+          "link_id": "103000423",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.651897,
+            "rmse_band_units": 0.884699,
+            "rounded_band_accuracy": 0.473684,
+            "within_one_band": 0.933698
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.813397,
+            "rmse_band_units": 1.222371,
+            "rounded_band_accuracy": 0.415584,
+            "within_one_band": 0.84689
+          }
+        },
+        {
+          "link_id": "103000768",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.479545,
+            "rmse_band_units": 0.624162,
+            "rounded_band_accuracy": 0.617908,
+            "within_one_band": 0.976077
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.526999,
+            "rmse_band_units": 0.807941,
+            "rounded_band_accuracy": 0.531784,
+            "within_one_band": 0.945318
+          }
+        },
+        {
+          "link_id": "103000843",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.720361,
+            "rmse_band_units": 1.063265,
+            "rounded_band_accuracy": 0.525632,
+            "within_one_band": 0.865345
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.997266,
+            "rmse_band_units": 1.447887,
+            "rounded_band_accuracy": 0.373889,
+            "within_one_band": 0.757348
+          }
+        },
+        {
+          "link_id": "103000980",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.787971,
+            "rmse_band_units": 1.135128,
+            "rounded_band_accuracy": 0.48257,
+            "within_one_band": 0.849624
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 1.015038,
+            "rmse_band_units": 1.482871,
+            "rounded_band_accuracy": 0.384142,
+            "within_one_band": 0.739576
+          }
+        },
+        {
+          "link_id": "103004580",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.510122,
+            "rmse_band_units": 0.710919,
+            "rounded_band_accuracy": 0.59877,
+            "within_one_band": 0.961039
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.640465,
+            "rmse_band_units": 0.965927,
+            "rounded_band_accuracy": 0.477102,
+            "within_one_band": 0.90499
+          }
+        },
+        {
+          "link_id": "103005716",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.478993,
+            "rmse_band_units": 0.638476,
+            "rounded_band_accuracy": 0.580314,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.560492,
+            "rmse_band_units": 0.832524,
+            "rounded_band_accuracy": 0.498291,
+            "within_one_band": 0.947368
+          }
+        },
+        {
+          "link_id": "103007532",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.636522,
+            "rmse_band_units": 0.856009,
+            "rounded_band_accuracy": 0.500342,
+            "within_one_band": 0.926863
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.792891,
+            "rmse_band_units": 1.139006,
+            "rounded_band_accuracy": 0.406699,
+            "within_one_band": 0.847573
+          }
+        },
+        {
+          "link_id": "103007692",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.447477,
+            "rmse_band_units": 0.620414,
+            "rounded_band_accuracy": 0.687628,
+            "within_one_band": 0.971975
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.451811,
+            "rmse_band_units": 0.775126,
+            "rounded_band_accuracy": 0.607656,
+            "within_one_band": 0.950786
+          }
+        },
+        {
+          "link_id": "103007800",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.505647,
+            "rmse_band_units": 0.686235,
+            "rounded_band_accuracy": 0.600137,
+            "within_one_band": 0.962406
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.597403,
+            "rmse_band_units": 0.912434,
+            "rounded_band_accuracy": 0.502392,
+            "within_one_band": 0.917293
+          }
+        },
+        {
+          "link_id": "103008040",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.618704,
+            "rmse_band_units": 0.893121,
+            "rounded_band_accuracy": 0.526999,
+            "within_one_band": 0.926179
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.774436,
+            "rmse_band_units": 1.176496,
+            "rounded_band_accuracy": 0.438141,
+            "within_one_band": 0.855092
+          }
+        },
+        {
+          "link_id": "103008060",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.536904,
+            "rmse_band_units": 0.753802,
+            "rounded_band_accuracy": 0.588517,
+            "within_one_band": 0.949419
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.647984,
+            "rmse_band_units": 0.997605,
+            "rounded_band_accuracy": 0.483254,
+            "within_one_band": 0.901572
+          }
+        },
+        {
+          "link_id": "103009728",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.519937,
+            "rmse_band_units": 0.639295,
+            "rounded_band_accuracy": 0.527683,
+            "within_one_band": 0.986329
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.538619,
+            "rmse_band_units": 0.805823,
+            "rounded_band_accuracy": 0.511962,
+            "within_one_band": 0.954204
+          }
+        },
+        {
+          "link_id": "103009752",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.591828,
+            "rmse_band_units": 0.825206,
+            "rounded_band_accuracy": 0.552973,
+            "within_one_band": 0.937799
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.692413,
+            "rmse_band_units": 1.042173,
+            "rounded_band_accuracy": 0.460697,
+            "within_one_band": 0.8838
+          }
+        },
+        {
+          "link_id": "103009774",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.490628,
+            "rmse_band_units": 0.641472,
+            "rounded_band_accuracy": 0.626111,
+            "within_one_band": 0.976077
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.532468,
+            "rmse_band_units": 0.813841,
+            "rounded_band_accuracy": 0.525632,
+            "within_one_band": 0.948052
+          }
+        },
+        {
+          "link_id": "103009775",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.494963,
+            "rmse_band_units": 0.610192,
+            "rounded_band_accuracy": 0.559125,
+            "within_one_band": 0.983595
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.524949,
+            "rmse_band_units": 0.776448,
+            "rounded_band_accuracy": 0.512645,
+            "within_one_band": 0.963773
+          }
+        },
+        {
+          "link_id": "103009778",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.437514,
+            "rmse_band_units": 0.6066,
+            "rounded_band_accuracy": 0.654135,
+            "within_one_band": 0.980861
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.477102,
+            "rmse_band_units": 0.778206,
+            "rounded_band_accuracy": 0.578947,
+            "within_one_band": 0.950103
+          }
+        },
+        {
+          "link_id": "103009779",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.475413,
+            "rmse_band_units": 0.598478,
+            "rounded_band_accuracy": 0.631579,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.496241,
+            "rmse_band_units": 0.763128,
+            "rounded_band_accuracy": 0.541353,
+            "within_one_band": 0.967874
+          }
+        },
+        {
+          "link_id": "103010660",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.482968,
+            "rmse_band_units": 0.572113,
+            "rounded_band_accuracy": 0.551606,
+            "within_one_band": 0.993848
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.460014,
+            "rmse_band_units": 0.714559,
+            "rounded_band_accuracy": 0.564593,
+            "within_one_band": 0.976077
+          }
+        },
+        {
+          "link_id": "103011232",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.667852,
+            "rmse_band_units": 0.965427,
+            "rounded_band_accuracy": 0.5311,
+            "within_one_band": 0.907724
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.827068,
+            "rmse_band_units": 1.311915,
+            "rounded_band_accuracy": 0.439508,
+            "within_one_band": 0.846206
+          }
+        },
+        {
+          "link_id": "103054664",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.456065,
+            "rmse_band_units": 0.652637,
+            "rounded_band_accuracy": 0.656186,
+            "within_one_band": 0.964457
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.481203,
+            "rmse_band_units": 0.795579,
+            "rounded_band_accuracy": 0.585783,
+            "within_one_band": 0.9419
+          }
+        },
+        {
+          "link_id": "103059762",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.389183,
+            "rmse_band_units": 0.53908,
+            "rounded_band_accuracy": 0.727956,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.404648,
+            "rmse_band_units": 0.703472,
+            "rounded_band_accuracy": 0.637047,
+            "within_one_band": 0.961722
+          }
+        },
+        {
+          "link_id": "103059763",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.491191,
+            "rmse_band_units": 0.62921,
+            "rounded_band_accuracy": 0.579631,
+            "within_one_band": 0.978127
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.520164,
+            "rmse_band_units": 0.79858,
+            "rounded_band_accuracy": 0.532468,
+            "within_one_band": 0.952837
+          }
+        },
+        {
+          "link_id": "103060004",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.489364,
+            "rmse_band_units": 0.68415,
+            "rounded_band_accuracy": 0.665072,
+            "within_one_band": 0.963773
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.446343,
+            "rmse_band_units": 0.802849,
+            "rounded_band_accuracy": 0.629528,
+            "within_one_band": 0.943267
+          }
+        },
+        {
+          "link_id": "103060008",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.622112,
+            "rmse_band_units": 0.793961,
+            "rounded_band_accuracy": 0.488722,
+            "within_one_band": 0.933698
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.641832,
+            "rmse_band_units": 0.975083,
+            "rounded_band_accuracy": 0.479152,
+            "within_one_band": 0.906357
+          }
+        },
+        {
+          "link_id": "103060820",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.430557,
+            "rmse_band_units": 0.627128,
+            "rounded_band_accuracy": 0.697198,
+            "within_one_band": 0.965824
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.474368,
+            "rmse_band_units": 0.823443,
+            "rounded_band_accuracy": 0.608339,
+            "within_one_band": 0.934381
+          }
+        },
+        {
+          "link_id": "103060824",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.590301,
+            "rmse_band_units": 0.7991,
+            "rounded_band_accuracy": 0.528366,
+            "within_one_band": 0.944634
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.680793,
+            "rmse_band_units": 1.012566,
+            "rounded_band_accuracy": 0.449761,
+            "within_one_band": 0.900889
+          }
+        },
+        {
+          "link_id": "103066000",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.504604,
+            "rmse_band_units": 0.69537,
+            "rounded_band_accuracy": 0.62406,
+            "within_one_band": 0.959672
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.571429,
+            "rmse_band_units": 0.88196,
+            "rounded_band_accuracy": 0.519481,
+            "within_one_band": 0.919344
+          }
+        },
+        {
+          "link_id": "103072100",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.308595,
+            "rmse_band_units": 0.474365,
+            "rounded_band_accuracy": 0.786056,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.276145,
+            "rmse_band_units": 0.570402,
+            "rounded_band_accuracy": 0.747779,
+            "within_one_band": 0.97676
+          }
+        },
+        {
+          "link_id": "103072132",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.320633,
+            "rmse_band_units": 0.491812,
+            "rounded_band_accuracy": 0.783322,
+            "within_one_band": 0.982228
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.295967,
+            "rmse_band_units": 0.587521,
+            "rounded_band_accuracy": 0.727956,
+            "within_one_band": 0.97676
+          }
+        },
+        {
+          "link_id": "103075472",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.34514,
+            "rmse_band_units": 0.505759,
+            "rounded_band_accuracy": 0.756664,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.315106,
+            "rmse_band_units": 0.602456,
+            "rounded_band_accuracy": 0.706767,
+            "within_one_band": 0.980178
+          }
+        },
+        {
+          "link_id": "103075952",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.595944,
+            "rmse_band_units": 0.831394,
+            "rounded_band_accuracy": 0.555024,
+            "within_one_band": 0.942584
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.727273,
+            "rmse_band_units": 1.093697,
+            "rounded_band_accuracy": 0.440191,
+            "within_one_band": 0.88175
+          }
+        },
+        {
+          "link_id": "103075956",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.724023,
+            "rmse_band_units": 0.994875,
+            "rounded_band_accuracy": 0.483254,
+            "within_one_band": 0.899522
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.87013,
+            "rmse_band_units": 1.261719,
+            "rounded_band_accuracy": 0.375256,
+            "within_one_band": 0.842105
+          }
+        },
+        {
+          "link_id": "103083856",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.738906,
+            "rmse_band_units": 0.954644,
+            "rounded_band_accuracy": 0.431989,
+            "within_one_band": 0.888585
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.859877,
+            "rmse_band_units": 1.253294,
+            "rounded_band_accuracy": 0.384142,
+            "within_one_band": 0.832536
+          }
+        },
+        {
+          "link_id": "103110766",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.471534,
+            "rmse_band_units": 0.58644,
+            "rounded_band_accuracy": 0.604238,
+            "within_one_band": 0.987013
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.485988,
+            "rmse_band_units": 0.748204,
+            "rounded_band_accuracy": 0.547505,
+            "within_one_band": 0.969925
+          }
+        },
+        {
+          "link_id": "103110767",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.474184,
+            "rmse_band_units": 0.623614,
+            "rounded_band_accuracy": 0.629528,
+            "within_one_band": 0.976077
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.538619,
+            "rmse_band_units": 0.828409,
+            "rounded_band_accuracy": 0.524265,
+            "within_one_band": 0.947368
+          }
+        },
+        {
+          "link_id": "104002012",
+          "road_name": "ORCHARD BOULEVARD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.469594,
+            "rmse_band_units": 0.61625,
+            "rounded_band_accuracy": 0.667806,
+            "within_one_band": 0.970608
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.388243,
+            "rmse_band_units": 0.714081,
+            "rounded_band_accuracy": 0.660971,
+            "within_one_band": 0.958988
+          }
+        },
+        {
+          "link_id": "104002152",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.556411,
+            "rmse_band_units": 0.679076,
+            "rounded_band_accuracy": 0.507177,
+            "within_one_band": 0.969241
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.570745,
+            "rmse_band_units": 0.873785,
+            "rounded_band_accuracy": 0.501025,
+            "within_one_band": 0.944634
+          }
+        },
+        {
+          "link_id": "104002164",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.656826,
+            "rmse_band_units": 0.858414,
+            "rounded_band_accuracy": 0.479152,
+            "within_one_band": 0.926863
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.779904,
+            "rmse_band_units": 1.163056,
+            "rounded_band_accuracy": 0.416268,
+            "within_one_band": 0.868763
+          }
+        },
+        {
+          "link_id": "104005090",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.470742,
+            "rmse_band_units": 0.629404,
+            "rounded_band_accuracy": 0.638414,
+            "within_one_band": 0.973342
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.486671,
+            "rmse_band_units": 0.792997,
+            "rounded_band_accuracy": 0.57553,
+            "within_one_band": 0.946001
+          }
+        },
+        {
+          "link_id": "104005091",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.496164,
+            "rmse_band_units": 0.655236,
+            "rounded_band_accuracy": 0.598086,
+            "within_one_band": 0.976077
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.557758,
+            "rmse_band_units": 0.876518,
+            "rounded_band_accuracy": 0.525632,
+            "within_one_band": 0.935065
+          }
+        },
+        {
+          "link_id": "107000872",
+          "road_name": "ORCHARD BOULEVARD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.604951,
+            "rmse_band_units": 0.791709,
+            "rounded_band_accuracy": 0.500342,
+            "within_one_band": 0.937799
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.665755,
+            "rmse_band_units": 0.995547,
+            "rounded_band_accuracy": 0.460014,
+            "within_one_band": 0.911141
+          }
+        },
+        {
+          "link_id": "107001232",
+          "road_name": "SOMERSET ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.63222,
+            "rmse_band_units": 0.851224,
+            "rounded_band_accuracy": 0.510595,
+            "within_one_band": 0.926179
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.701299,
+            "rmse_band_units": 1.086171,
+            "rounded_band_accuracy": 0.4689,
+            "within_one_band": 0.88175
+          }
+        },
+        {
+          "link_id": "108001560",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.488037,
+            "rmse_band_units": 0.696303,
+            "rounded_band_accuracy": 0.648667,
+            "within_one_band": 0.958305
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.579631,
+            "rmse_band_units": 0.954179,
+            "rounded_band_accuracy": 0.54067,
+            "within_one_band": 0.913192
+          }
+        },
+        {
+          "link_id": "108002604",
+          "road_name": "SOMERSET ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.602049,
+            "rmse_band_units": 0.771596,
+            "rounded_band_accuracy": 0.5311,
+            "within_one_band": 0.935065
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.721805,
+            "rmse_band_units": 1.049037,
+            "rounded_band_accuracy": 0.426521,
+            "within_one_band": 0.8838
+          }
+        },
+        {
+          "link_id": "108003594",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.482167,
+            "rmse_band_units": 0.603944,
+            "rounded_band_accuracy": 0.562543,
+            "within_one_band": 0.983595
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.533835,
+            "rmse_band_units": 0.793428,
+            "rounded_band_accuracy": 0.509228,
+            "within_one_band": 0.961722
+          }
+        },
+        {
+          "link_id": "108003595",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.450086,
+            "rmse_band_units": 0.616584,
+            "rounded_band_accuracy": 0.628845,
+            "within_one_band": 0.980178
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.543404,
+            "rmse_band_units": 0.827996,
+            "rounded_band_accuracy": 0.518113,
+            "within_one_band": 0.947368
+          }
+        },
+        {
+          "link_id": "116000660",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.652985,
+            "rmse_band_units": 0.84638,
+            "rounded_band_accuracy": 0.453178,
+            "within_one_band": 0.954887
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.782638,
+            "rmse_band_units": 1.126636,
+            "rounded_band_accuracy": 0.401914,
+            "within_one_band": 0.854409
+          }
+        },
+        {
+          "link_id": "116000664",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.669048,
+            "rmse_band_units": 0.847257,
+            "rounded_band_accuracy": 0.42447,
+            "within_one_band": 0.925496
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.719754,
+            "rmse_band_units": 1.062953,
+            "rounded_band_accuracy": 0.436774,
+            "within_one_band": 0.881066
+          }
+        },
+        {
+          "link_id": "116001108",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.668554,
+            "rmse_band_units": 0.892333,
+            "rounded_band_accuracy": 0.451811,
+            "within_one_band": 0.943951
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.787423,
+            "rmse_band_units": 1.173296,
+            "rounded_band_accuracy": 0.40123,
+            "within_one_band": 0.88175
+          }
+        },
+        {
+          "link_id": "116001284",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.764619,
+            "rmse_band_units": 0.973147,
+            "rounded_band_accuracy": 0.409433,
+            "within_one_band": 0.898838
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.902939,
+            "rmse_band_units": 1.25029,
+            "rounded_band_accuracy": 0.34108,
+            "within_one_band": 0.816815
+          }
+        },
+        {
+          "link_id": "116001312",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.76769,
+            "rmse_band_units": 0.99979,
+            "rounded_band_accuracy": 0.426521,
+            "within_one_band": 0.875598
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.911825,
+            "rmse_band_units": 1.294079,
+            "rounded_band_accuracy": 0.356801,
+            "within_one_band": 0.81203
+          }
+        },
+        {
+          "link_id": "116001332",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.553048,
+            "rmse_band_units": 0.77176,
+            "rounded_band_accuracy": 0.591934,
+            "within_one_band": 0.946685
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.627478,
+            "rmse_band_units": 1.001707,
+            "rounded_band_accuracy": 0.514696,
+            "within_one_band": 0.89337
+          }
+        },
+        {
+          "link_id": "116001372",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.758504,
+            "rmse_band_units": 0.974805,
+            "rounded_band_accuracy": 0.393712,
+            "within_one_band": 0.888585
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.91866,
+            "rmse_band_units": 1.282939,
+            "rounded_band_accuracy": 0.345865,
+            "within_one_band": 0.809296
+          }
+        }
+      ]
+    },
+    {
+      "horizon_minutes": 60,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.562846,
+        "rmse_band_units": 0.768228,
+        "rounded_band_accuracy": 0.558506,
+        "within_one_band": 0.946079
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.659475,
+        "rmse_band_units": 1.021247,
+        "rounded_band_accuracy": 0.481874,
+        "within_one_band": 0.896697
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.805788,
+      "calibration_radius_band_units": 0.886057,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.562811,
+          "rmse_band_units": 0.768244,
+          "rounded_band_accuracy": 0.558565,
+          "within_one_band": 0.946081
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.659526,
+          "rmse_band_units": 1.021325,
+          "rounded_band_accuracy": 0.481855,
+          "within_one_band": 0.896678
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.654776,
+          "rmse_band_units": 1.03241,
+          "rounded_band_accuracy": 0.491082,
+          "within_one_band": 0.896768
+        }
+      },
+      "per_road": [
+        {
+          "link_id": "103000423",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.659429,
+            "rmse_band_units": 0.893186,
+            "rounded_band_accuracy": 0.466849,
+            "within_one_band": 0.926179
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.811347,
+            "rmse_band_units": 1.196657,
+            "rounded_band_accuracy": 0.4108,
+            "within_one_band": 0.846206
+          }
+        },
+        {
+          "link_id": "103000768",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.485711,
+            "rmse_band_units": 0.628964,
+            "rounded_band_accuracy": 0.602187,
+            "within_one_band": 0.976077
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.560492,
+            "rmse_band_units": 0.845559,
+            "rounded_band_accuracy": 0.50581,
+            "within_one_band": 0.943951
+          }
+        },
+        {
+          "link_id": "103000843",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.717969,
+            "rmse_band_units": 1.064427,
+            "rounded_band_accuracy": 0.520848,
+            "within_one_band": 0.868079
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.987697,
+            "rmse_band_units": 1.429357,
+            "rounded_band_accuracy": 0.368421,
+            "within_one_band": 0.769651
+          }
+        },
+        {
+          "link_id": "103000980",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.794371,
+            "rmse_band_units": 1.141582,
+            "rounded_band_accuracy": 0.479152,
+            "within_one_band": 0.842789
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 1.074504,
+            "rmse_band_units": 1.550693,
+            "rounded_band_accuracy": 0.357485,
+            "within_one_band": 0.737526
+          }
+        },
+        {
+          "link_id": "103004580",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.498334,
+            "rmse_band_units": 0.705001,
+            "rounded_band_accuracy": 0.615174,
+            "within_one_band": 0.955571
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.598086,
+            "rmse_band_units": 0.94156,
+            "rounded_band_accuracy": 0.507861,
+            "within_one_band": 0.922761
+          }
+        },
+        {
+          "link_id": "103005716",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.482226,
+            "rmse_band_units": 0.643267,
+            "rounded_band_accuracy": 0.57758,
+            "within_one_band": 0.984962
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.587833,
+            "rmse_band_units": 0.853604,
+            "rounded_band_accuracy": 0.477102,
+            "within_one_band": 0.93985
+          }
+        },
+        {
+          "link_id": "103007532",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.626079,
+            "rmse_band_units": 0.845134,
+            "rounded_band_accuracy": 0.504443,
+            "within_one_band": 0.92823
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.802461,
+            "rmse_band_units": 1.155095,
+            "rounded_band_accuracy": 0.406015,
+            "within_one_band": 0.840055
+          }
+        },
+        {
+          "link_id": "103007692",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.462735,
+            "rmse_band_units": 0.62335,
+            "rounded_band_accuracy": 0.671907,
+            "within_one_band": 0.968558
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.468216,
+            "rmse_band_units": 0.776888,
+            "rounded_band_accuracy": 0.588517,
+            "within_one_band": 0.950786
+          }
+        },
+        {
+          "link_id": "103007800",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.509866,
+            "rmse_band_units": 0.697196,
+            "rounded_band_accuracy": 0.608339,
+            "within_one_band": 0.957621
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.62406,
+            "rmse_band_units": 0.930607,
+            "rounded_band_accuracy": 0.475051,
+            "within_one_band": 0.920711
+          }
+        },
+        {
+          "link_id": "103008040",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.623993,
+            "rmse_band_units": 0.900346,
+            "rounded_band_accuracy": 0.534518,
+            "within_one_band": 0.920711
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.796992,
+            "rmse_band_units": 1.226279,
+            "rounded_band_accuracy": 0.431989,
+            "within_one_band": 0.859193
+          }
+        },
+        {
+          "link_id": "103008060",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.541502,
+            "rmse_band_units": 0.757946,
+            "rounded_band_accuracy": 0.571429,
+            "within_one_band": 0.950103
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.684894,
+            "rmse_band_units": 1.017281,
+            "rounded_band_accuracy": 0.451128,
+            "within_one_band": 0.896787
+          }
+        },
+        {
+          "link_id": "103009728",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.552468,
+            "rmse_band_units": 0.666649,
+            "rounded_band_accuracy": 0.490089,
+            "within_one_band": 0.982228
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.596036,
+            "rmse_band_units": 0.868685,
+            "rounded_band_accuracy": 0.475051,
+            "within_one_band": 0.937116
+          }
+        },
+        {
+          "link_id": "103009752",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.611063,
+            "rmse_band_units": 0.854924,
+            "rounded_band_accuracy": 0.556391,
+            "within_one_band": 0.927546
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.747779,
+            "rmse_band_units": 1.125726,
+            "rounded_band_accuracy": 0.438141,
+            "within_one_band": 0.864662
+          }
+        },
+        {
+          "link_id": "103009774",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.493819,
+            "rmse_band_units": 0.642639,
+            "rounded_band_accuracy": 0.606972,
+            "within_one_band": 0.970608
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.534518,
+            "rmse_band_units": 0.821781,
+            "rounded_band_accuracy": 0.520164,
+            "within_one_band": 0.958988
+          }
+        },
+        {
+          "link_id": "103009775",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.499239,
+            "rmse_band_units": 0.615678,
+            "rounded_band_accuracy": 0.568011,
+            "within_one_band": 0.982228
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.566644,
+            "rmse_band_units": 0.814681,
+            "rounded_band_accuracy": 0.479836,
+            "within_one_band": 0.955571
+          }
+        },
+        {
+          "link_id": "103009778",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.436886,
+            "rmse_band_units": 0.613042,
+            "rounded_band_accuracy": 0.661654,
+            "within_one_band": 0.977444
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.516746,
+            "rmse_band_units": 0.820949,
+            "rounded_band_accuracy": 0.553657,
+            "within_one_band": 0.936432
+          }
+        },
+        {
+          "link_id": "103009779",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.489075,
+            "rmse_band_units": 0.610268,
+            "rounded_band_accuracy": 0.602187,
+            "within_one_band": 0.982228
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.524265,
+            "rmse_band_units": 0.802849,
+            "rounded_band_accuracy": 0.529733,
+            "within_one_band": 0.952153
+          }
+        },
+        {
+          "link_id": "103010660",
+          "road_name": "BIDEFORD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.512347,
+            "rmse_band_units": 0.599009,
+            "rounded_band_accuracy": 0.526999,
+            "within_one_band": 0.98838
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.501025,
+            "rmse_band_units": 0.756381,
+            "rounded_band_accuracy": 0.533151,
+            "within_one_band": 0.967191
+          }
+        },
+        {
+          "link_id": "103011232",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.678729,
+            "rmse_band_units": 0.977263,
+            "rounded_band_accuracy": 0.519481,
+            "within_one_band": 0.904306
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.82365,
+            "rmse_band_units": 1.298561,
+            "rounded_band_accuracy": 0.43404,
+            "within_one_band": 0.845523
+          }
+        },
+        {
+          "link_id": "103054664",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.502937,
+            "rmse_band_units": 0.706948,
+            "rounded_band_accuracy": 0.626794,
+            "within_one_band": 0.95147
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.550923,
+            "rmse_band_units": 0.895802,
+            "rounded_band_accuracy": 0.552973,
+            "within_one_band": 0.917977
+          }
+        },
+        {
+          "link_id": "103059762",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.405905,
+            "rmse_band_units": 0.549153,
+            "rounded_band_accuracy": 0.706083,
+            "within_one_band": 0.987013
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.411483,
+            "rmse_band_units": 0.715037,
+            "rounded_band_accuracy": 0.632946,
+            "within_one_band": 0.959672
+          }
+        },
+        {
+          "link_id": "103059763",
+          "road_name": "CAIRNHILL CIRCLE",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.498953,
+            "rmse_band_units": 0.641372,
+            "rounded_band_accuracy": 0.570062,
+            "within_one_band": 0.97676
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.579631,
+            "rmse_band_units": 0.87261,
+            "rounded_band_accuracy": 0.49419,
+            "within_one_band": 0.9419
+          }
+        },
+        {
+          "link_id": "103060004",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.522173,
+            "rmse_band_units": 0.701605,
+            "rounded_band_accuracy": 0.629528,
+            "within_one_band": 0.959672
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.47095,
+            "rmse_band_units": 0.868292,
+            "rounded_band_accuracy": 0.621326,
+            "within_one_band": 0.93985
+          }
+        },
+        {
+          "link_id": "103060008",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.639887,
+            "rmse_band_units": 0.798563,
+            "rounded_band_accuracy": 0.448394,
+            "within_one_band": 0.93028
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.627478,
+            "rmse_band_units": 0.983806,
+            "rounded_band_accuracy": 0.499658,
+            "within_one_band": 0.905673
+          }
+        },
+        {
+          "link_id": "103060820",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.431665,
+            "rmse_band_units": 0.620016,
+            "rounded_band_accuracy": 0.697198,
+            "within_one_band": 0.965824
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.511278,
+            "rmse_band_units": 0.856003,
+            "rounded_band_accuracy": 0.57553,
+            "within_one_band": 0.932331
+          }
+        },
+        {
+          "link_id": "103060824",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.602469,
+            "rmse_band_units": 0.81882,
+            "rounded_band_accuracy": 0.526316,
+            "within_one_band": 0.933014
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.767601,
+            "rmse_band_units": 1.10396,
+            "rounded_band_accuracy": 0.409433,
+            "within_one_band": 0.867396
+          }
+        },
+        {
+          "link_id": "103066000",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.522398,
+            "rmse_band_units": 0.715859,
+            "rounded_band_accuracy": 0.61244,
+            "within_one_band": 0.954204
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.628161,
+            "rmse_band_units": 0.953104,
+            "rounded_band_accuracy": 0.490089,
+            "within_one_band": 0.900889
+          }
+        },
+        {
+          "link_id": "103072100",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.333303,
+            "rmse_band_units": 0.498711,
+            "rounded_band_accuracy": 0.76555,
+            "within_one_band": 0.979494
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.343814,
+            "rmse_band_units": 0.650464,
+            "rounded_band_accuracy": 0.69378,
+            "within_one_band": 0.964457
+          }
+        },
+        {
+          "link_id": "103072132",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.346406,
+            "rmse_band_units": 0.516748,
+            "rounded_band_accuracy": 0.755297,
+            "within_one_band": 0.976077
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.367738,
+            "rmse_band_units": 0.675719,
+            "rounded_band_accuracy": 0.674641,
+            "within_one_band": 0.959672
+          }
+        },
+        {
+          "link_id": "103075472",
+          "road_name": "ORCHARD ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.372633,
+            "rmse_band_units": 0.532125,
+            "rounded_band_accuracy": 0.726589,
+            "within_one_band": 0.980178
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.384826,
+            "rmse_band_units": 0.686258,
+            "rounded_band_accuracy": 0.654819,
+            "within_one_band": 0.963773
+          }
+        },
+        {
+          "link_id": "103075952",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.617128,
+            "rmse_band_units": 0.855062,
+            "rounded_band_accuracy": 0.546138,
+            "within_one_band": 0.9419
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.783322,
+            "rmse_band_units": 1.134797,
+            "rounded_band_accuracy": 0.410116,
+            "within_one_band": 0.855776
+          }
+        },
+        {
+          "link_id": "103075956",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.740555,
+            "rmse_band_units": 1.016005,
+            "rounded_band_accuracy": 0.468216,
+            "within_one_band": 0.876965
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.935748,
+            "rmse_band_units": 1.358249,
+            "rounded_band_accuracy": 0.380725,
+            "within_one_band": 0.790841
+          }
+        },
+        {
+          "link_id": "103083856",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.742727,
+            "rmse_band_units": 0.962003,
+            "rounded_band_accuracy": 0.411483,
+            "within_one_band": 0.877649
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.92823,
+            "rmse_band_units": 1.317634,
+            "rounded_band_accuracy": 0.355434,
+            "within_one_band": 0.808612
+          }
+        },
+        {
+          "link_id": "103110766",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.479388,
+            "rmse_band_units": 0.598081,
+            "rounded_band_accuracy": 0.583732,
+            "within_one_band": 0.985646
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.51743,
+            "rmse_band_units": 0.789109,
+            "rounded_band_accuracy": 0.530417,
+            "within_one_band": 0.956938
+          }
+        },
+        {
+          "link_id": "103110767",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.476962,
+            "rmse_band_units": 0.62707,
+            "rounded_band_accuracy": 0.623377,
+            "within_one_band": 0.978811
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.560492,
+            "rmse_band_units": 0.860781,
+            "rounded_band_accuracy": 0.511962,
+            "within_one_band": 0.943267
+          }
+        },
+        {
+          "link_id": "104002012",
+          "road_name": "ORCHARD BOULEVARD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.484379,
+            "rmse_band_units": 0.618815,
+            "rounded_band_accuracy": 0.636364,
+            "within_one_band": 0.970608
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.411483,
+            "rmse_band_units": 0.749573,
+            "rounded_band_accuracy": 0.650034,
+            "within_one_band": 0.950786
+          }
+        },
+        {
+          "link_id": "104002152",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.561565,
+            "rmse_band_units": 0.687615,
+            "rounded_band_accuracy": 0.498975,
+            "within_one_band": 0.967191
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.602187,
+            "rmse_band_units": 0.888523,
+            "rounded_band_accuracy": 0.475051,
+            "within_one_band": 0.936432
+          }
+        },
+        {
+          "link_id": "104002164",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.666619,
+            "rmse_band_units": 0.861169,
+            "rounded_band_accuracy": 0.460697,
+            "within_one_band": 0.913192
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.793575,
+            "rmse_band_units": 1.14827,
+            "rounded_band_accuracy": 0.397813,
+            "within_one_band": 0.866029
+          }
+        },
+        {
+          "link_id": "104005090",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.503766,
+            "rmse_band_units": 0.670329,
+            "rounded_band_accuracy": 0.613807,
+            "within_one_band": 0.958988
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.544087,
+            "rmse_band_units": 0.865532,
+            "rounded_band_accuracy": 0.54272,
+            "within_one_band": 0.927546
+          }
+        },
+        {
+          "link_id": "104005091",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.499913,
+            "rmse_band_units": 0.658219,
+            "rounded_band_accuracy": 0.596719,
+            "within_one_band": 0.974026
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.520848,
+            "rmse_band_units": 0.845559,
+            "rounded_band_accuracy": 0.553657,
+            "within_one_band": 0.943951
+          }
+        },
+        {
+          "link_id": "107000872",
+          "road_name": "ORCHARD BOULEVARD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.611941,
+            "rmse_band_units": 0.797352,
+            "rounded_band_accuracy": 0.511278,
+            "within_one_band": 0.935065
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.699248,
+            "rmse_band_units": 1.036253,
+            "rounded_band_accuracy": 0.444293,
+            "within_one_band": 0.896787
+          }
+        },
+        {
+          "link_id": "107001232",
+          "road_name": "SOMERSET ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.649729,
+            "rmse_band_units": 0.863409,
+            "rounded_band_accuracy": 0.480519,
+            "within_one_band": 0.928913
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.779904,
+            "rmse_band_units": 1.155982,
+            "rounded_band_accuracy": 0.4108,
+            "within_one_band": 0.873548
+          }
+        },
+        {
+          "link_id": "108001560",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.494016,
+            "rmse_band_units": 0.700943,
+            "rounded_band_accuracy": 0.645933,
+            "within_one_band": 0.956254
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.604238,
+            "rmse_band_units": 0.956326,
+            "rounded_band_accuracy": 0.514696,
+            "within_one_band": 0.911141
+          }
+        },
+        {
+          "link_id": "108002604",
+          "road_name": "SOMERSET ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.594242,
+            "rmse_band_units": 0.765627,
+            "rounded_band_accuracy": 0.518797,
+            "within_one_band": 0.928913
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.733424,
+            "rmse_band_units": 1.051315,
+            "rounded_band_accuracy": 0.416951,
+            "within_one_band": 0.879016
+          }
+        },
+        {
+          "link_id": "108003594",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.490803,
+            "rmse_band_units": 0.621845,
+            "rounded_band_accuracy": 0.574846,
+            "within_one_band": 0.980178
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.52905,
+            "rmse_band_units": 0.801571,
+            "rounded_band_accuracy": 0.523582,
+            "within_one_band": 0.95147
+          }
+        },
+        {
+          "link_id": "108003595",
+          "road_name": "CAIRNHILL ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.438366,
+            "rmse_band_units": 0.612816,
+            "rounded_band_accuracy": 0.639781,
+            "within_one_band": 0.981545
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.527683,
+            "rmse_band_units": 0.824273,
+            "rounded_band_accuracy": 0.5311,
+            "within_one_band": 0.956254
+          }
+        },
+        {
+          "link_id": "116000660",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.66326,
+            "rmse_band_units": 0.849273,
+            "rounded_band_accuracy": 0.446343,
+            "within_one_band": 0.944634
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.81203,
+            "rmse_band_units": 1.129363,
+            "rounded_band_accuracy": 0.375256,
+            "within_one_band": 0.844839
+          }
+        },
+        {
+          "link_id": "116000664",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.674471,
+            "rmse_band_units": 0.858211,
+            "rounded_band_accuracy": 0.414217,
+            "within_one_band": 0.926863
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.799043,
+            "rmse_band_units": 1.141703,
+            "rounded_band_accuracy": 0.380041,
+            "within_one_band": 0.873548
+          }
+        },
+        {
+          "link_id": "116001108",
+          "road_name": "GRANGE ROAD",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.668222,
+            "rmse_band_units": 0.895365,
+            "rounded_band_accuracy": 0.446343,
+            "within_one_band": 0.93985
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.820232,
+            "rmse_band_units": 1.241237,
+            "rounded_band_accuracy": 0.405332,
+            "within_one_band": 0.859193
+          }
+        },
+        {
+          "link_id": "116001284",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.78029,
+            "rmse_band_units": 0.983233,
+            "rounded_band_accuracy": 0.39918,
+            "within_one_band": 0.886535
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.977444,
+            "rmse_band_units": 1.309307,
+            "rounded_band_accuracy": 0.323992,
+            "within_one_band": 0.753247
+          }
+        },
+        {
+          "link_id": "116001312",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.799551,
+            "rmse_band_units": 1.02871,
+            "rounded_band_accuracy": 0.369788,
+            "within_one_band": 0.872864
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 1.006152,
+            "rmse_band_units": 1.387376,
+            "rounded_band_accuracy": 0.316473,
+            "within_one_band": 0.771018
+          }
+        },
+        {
+          "link_id": "116001332",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.573035,
+            "rmse_band_units": 0.782078,
+            "rounded_band_accuracy": 0.57553,
+            "within_one_band": 0.943267
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.638414,
+            "rmse_band_units": 1.033281,
+            "rounded_band_accuracy": 0.514696,
+            "within_one_band": 0.892003
+          }
+        },
+        {
+          "link_id": "116001372",
+          "road_name": "ORCHARD LINK",
+          "random_forest": {
+            "samples": 1463,
+            "mae_band_units": 0.765347,
+            "rmse_band_units": 0.994819,
+            "rounded_band_accuracy": 0.390294,
+            "within_one_band": 0.884484
+          },
+          "persistence": {
+            "samples": 1463,
+            "mae_band_units": 0.97676,
+            "rmse_band_units": 1.354217,
+            "rounded_band_accuracy": 0.330827,
+            "within_one_band": 0.784005
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "27 days of old Singapore data from53 selected road links; no Batam observations in this benchmark.",
+    "The dataset represents speed intervals, so no exact-speed or road-travel-time accuracy is claimed.",
+    "Timezone and observation availability delay were not supplied; benchmark assumes each snapshot was available at its source timestamp.",
+    "Training is bounded and hyperparameters were fixed before examining held-out scores; no claim of optimality.",
+    "Temporal/road dependence means empirical interval coverage has no distribution-free guarantee.",
+    "No raw vehicle counts, weather or ferry impacts were learned or validated."
+  ],
+  "synthetic_training_rows": 0,
+  "external_code_or_pickle_executed": false,
+  "application_history_modified": false,
+  "serving_model_replaced": false
+}

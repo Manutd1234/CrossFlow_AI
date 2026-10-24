@@ -6,6 +6,7 @@ import os
 import sys
 import threading
 import unittest
+from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -67,6 +68,23 @@ class SpatialQuantilePredictionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.forecaster = CongestionForecaster()
+
+    def test_training_metrics_declare_scope_and_do_not_change_with_request_time(self) -> None:
+        before = deepcopy(self.forecaster.metrics)
+        self.assertEqual(
+            before["evaluation_scope"],
+            "raw_forest_holdout_excludes_post_model_adjustment",
+        )
+        self.assertEqual(
+            before["feature_importance_scope"],
+            "raw_forest_impurity_importance",
+        )
+        self.assertIn("Ferry Surge Feature (Training Forest)", before["feature_importances"])
+        self.assertFalse(any("Post-model" in label for label in before["feature_importances"]))
+        morning = self.forecaster.predict_spatial(context(hour_float=7.0))
+        evening = self.forecaster.predict_spatial(context(hour_float=18.0))
+        self.assertNotEqual(morning.mean_score, evening.mean_score)
+        self.assertEqual(self.forecaster.metrics, before)
 
     def test_departed_ferry_does_not_become_maximum_future_surge(self) -> None:
         self.assertEqual(_forecast_ferry_minutes(40.0, 30.0), 10.0)
@@ -221,11 +239,15 @@ class SpatialCalibrationTests(unittest.TestCase):
             ))
 
         model = CongestionForecaster()
-        metrics = model.retrain_from_observations(reversed(observations))
+        metrics = model.retrain_from_observations(reversed(observations), include_modelled=True)
 
         self.assertEqual(
             metrics["validation_scope"],
             "chronological_spatial_holdout_mixed",
+        )
+        self.assertEqual(
+            metrics["evaluation_scope"],
+            "raw_forest_holdout_excludes_post_model_adjustment",
         )
         self.assertEqual(metrics["fit_source_counts"], {
             "synthetic": 60,

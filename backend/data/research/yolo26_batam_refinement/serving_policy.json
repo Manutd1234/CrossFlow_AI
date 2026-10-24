@@ -1,0 +1,30 @@
+{
+  "schema": "crossflow.yolo26_serving_policy.v1",
+  "selection_sha256": "5a34e2a2160289d1e2448b6a25b2042821c7b3970ed6439b06ca8b5231c01f3d",
+  "model_sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b",
+  "weights_selection_id": "yolo26s-batam-646f8bc3fe0a6568-1280",
+  "effective_detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf",
+  "inference_policy": {
+    "schema": "crossflow.yolo26_inference_policy.v1",
+    "architecture": "yolo26s",
+    "ultralytics_version": "8.4.184",
+    "num_classes": 80,
+    "vehicle_classes": {
+      "1": "bicycle",
+      "2": "car",
+      "3": "motorcycle",
+      "5": "bus",
+      "7": "truck"
+    },
+    "imgsz": 1280,
+    "score_threshold": 0.25,
+    "generic_vehicle_nms_iou": 0.5,
+    "min_vehicle_long_side_px": 12,
+    "min_vehicle_short_side_px": 4,
+    "max_detections": 100,
+    "image_orientation": "EXIF_transpose",
+    "roi_rule": "normalized_box_center"
+  },
+  "inference_policy_sha256": "9cceb5b6b9869bbfa4ef61e9f59542546eb0151ffb36668fc687126082c916c3",
+  "operational_eligible": false
+}

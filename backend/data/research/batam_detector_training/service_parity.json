@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "frames": [
+    {
+      "image_id": "commons:22923130",
+      "passed": true,
+      "raw_service_count": 6,
+      "size_filtered_pilot_count": 6,
+      "cpu_latency_ms": 2007.9518330021529
+    },
+    {
+      "image_id": "commons:49047298",
+      "passed": true,
+      "raw_service_count": 9,
+      "size_filtered_pilot_count": 9,
+      "cpu_latency_ms": 1783.9034589997027
+    },
+    {
+      "image_id": "commons:169779650",
+      "passed": true,
+      "raw_service_count": 14,
+      "size_filtered_pilot_count": 14,
+      "cpu_latency_ms": 1618.886415999441
+    }
+  ],
+  "scope": "Existing experimental service plus the frozen native-pixel 12/4 size filter"
+}

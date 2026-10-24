@@ -1,0 +1,218 @@
+{
+  "checked_at": "2026-10-23T13:16:15.347628+00:00",
+  "local_only": true,
+  "frontend": {
+    "tests": 422,
+    "files": 41,
+    "lint": "passed",
+    "typescript_and_build": "passed"
+  },
+  "backend": {
+    "pytest_tests": 458,
+    "subtests": 399,
+    "standalone_checks": 153,
+    "postgres_policy_tests": 26
+  },
+  "dependencies": {
+    "frontend_reported_vulnerabilities": 0,
+    "python_dependency_consistency": "passed",
+    "python_vulnerability_scan": "not_performed"
+  },
+  "stress": {
+    "status": "passed",
+    "requested_scenarios": 1000000,
+    "evaluated_scenarios": 1000000,
+    "seed": 20261023,
+    "batch_size": 4096,
+    "elapsed_seconds": 19.416,
+    "scenarios_per_second": 51503.7,
+    "paired_checks": {
+      "risk_monotonicity": 166667,
+      "surge_monotonicity": 166667,
+      "surge_decay": 166666
+    },
+    "failures": {},
+    "scope": "randomized production-forest inference and router-cost invariants, not end-to-end journey solves",
+    "coverage": {
+      "corridors": 5,
+      "road_classes": [
+        "ferry",
+        "living_street",
+        "motorway",
+        "primary",
+        "residential",
+        "road",
+        "secondary",
+        "service",
+        "tertiary",
+        "track",
+        "trunk",
+        "unclassified"
+      ],
+      "days": 7,
+      "weather_states": 3,
+      "capacity_vph_range": [
+        100,
+        8000
+      ],
+      "free_flow_kph_range": [
+        5,
+        130
+      ],
+      "terminal_distance_km_range": [
+        0,
+        30
+      ],
+      "properties": [
+        "finite outputs",
+        "ordered quantiles",
+        "bounded speed ratios",
+        "nonnegative delays",
+        "risk monotonicity",
+        "ferry surge cap and decay",
+        "P90 downside no faster than expected speed"
+      ]
+    },
+    "measured_traffic_accuracy_established": false
+  },
+  "batam_site_training": {
+    "scope": "exploratory_single_batam_site_next_survey_day",
+    "source_rows": 48,
+    "source_calendar_days": 3,
+    "synthetic_training_rows": 0,
+    "random_forest": {
+      "samples": 32,
+      "mae_kph": 2.637906743008701,
+      "rmse_kph": 3.224251858231197
+    },
+    "previous_survey_day": {
+      "samples": 32,
+      "mae_kph": 3.2071875,
+      "rmse_kph": 3.8192493536034013
+    },
+    "historical_slot_mean": {
+      "samples": 32,
+      "mae_kph": 2.9079687499999993,
+      "rmse_kph": 3.4162947079035786
+    },
+    "serving_model_replaced": false,
+    "promotion_eligible": false
+  },
+  "research": {
+    "additional_source_checks": 8,
+    "new_eligible_dated_speed_rows": 0
+  },
+  "singapore_retest_matches_previous_results": true,
+  "driver_dispatch_code": "3B55FVN",
+  "driver_departure": "2026-10-24T18:05:00+07:00",
+  "driver_itinerary": [
+    "ROAD",
+    "FERRY",
+    "ROAD"
+  ],
+  "multi_stop_road_code": "5868AKD",
+  "real_roles_tested": [
+    "admin",
+    "driver"
+  ],
+  "all_six_analytics_tabs_checked": true,
+  "api_checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/corridors",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/corridor-routes",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/route-locations",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/vehicle-profiles",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/route-preferences",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/ferries",
+      "status": 200,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/port-intelligence",
+      "status": 200,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/operations",
+      "status": 200,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/live-traffic",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/model-status",
+      "status": 200,
+      "cache_control": null
+    },
+    {
+      "path": "/api/analytics/research-history",
+      "status": 200,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/historical-congestion?corridor_id=corridor-1&days=7",
+      "status": 200,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/route-learning/status",
+      "status": 403,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/routing-intelligence/status",
+      "status": 403,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/routes",
+      "status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/routes/AHMKAQM",
+      "status": 200,
+      "cache_control": "private, no-store"
+    }
+  ],
+  "remaining_gaps": [
+    "Adequate dated Batam speed history for network model promotion",
+    "Live cargo, queue, berth and measured emissions feeds",
+    "Shared cross-instance route/history persistence unverified"
+  ],
+  "report": "docs/WEBSITE_AUDIT_2026-10-23.md",
+  "browser_console_errors": {
+    "operator": 0,
+    "driver": 0
+  },
+  "browser_view_checks": 35,
+  "browser_evidence": "docs/verification/website-audit-browser.json"
+}

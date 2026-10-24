@@ -1,0 +1,222 @@
+{
+  "checked_at": "2026-10-23T12:27:01.910034+00:00",
+  "boundaries": [
+    {
+      "path": "/api/operations",
+      "status": 200,
+      "cache_control": "private, no-store",
+      "analytics_metadata": {
+        "generated_at": "2026-10-23T19:27:01+07:00",
+        "as_of": "2026-10-23T19:25:30+07:00",
+        "input_snapshot_at": "2026-10-23T19:25:30+07:00",
+        "snapshot_age_seconds": 91,
+        "traffic_observed": true,
+        "traffic_source": "tomtom_live",
+        "observed_corridor_count": 5,
+        "expected_corridor_count": 5,
+        "complete_corridor_coverage": true,
+        "ferry_schedule_source": "published_timetable_snapshot",
+        "ferry_schedule_observed": false,
+        "ferry_schedule_computed_at": "2026-10-23T19:27:01+07:00",
+        "limitations": [
+          "One measured road point per available corridor; not whole-network coverage.",
+          "The congestion index is derived from measured speed/free-flow ratio.",
+          "No measured fleet volume, emissions reduction or historical traffic archive is available.",
+          "Ferry counts are published timetable departures, not live sailing status."
+        ],
+        "archive": {
+          "active": true,
+          "collection_started_at": "2026-10-23T19:25:29+07:00",
+          "last_attempt_at": "2026-10-23T19:25:29+07:00",
+          "last_success_at": "2026-10-23T19:25:29+07:00",
+          "last_observation_at": "2026-10-23T19:25:30+07:00",
+          "inserted_total": 5,
+          "last_received": 5,
+          "last_inserted": 5,
+          "last_duplicates": 0,
+          "last_error_code": null,
+          "enabled": true,
+          "configuration_status": "enabled",
+          "interval_seconds": 120,
+          "storage_scope": "local_sqlite",
+          "source": "tomtom_live",
+          "observed_only": true,
+          "history_begins_at_collection": true,
+          "counter_scope": "current_process"
+        }
+      },
+      "average_congestion_index": 5.8,
+      "observed_sample_count": 5
+    },
+    {
+      "path": "/api/model-status",
+      "status": 200,
+      "cache_control": null,
+      "metrics": {
+        "is_trained": true,
+        "total_samples": 4000,
+        "r2_score": 0.949,
+        "mae": 2.87,
+        "rmse": 3.61,
+        "last_trained_at": "2026-10-23T12:25:27.831683+00:00",
+        "training_data_source": "synthetic_profile_generator",
+        "validation_scope": "synthetic_holdout",
+        "evaluation_scope": "raw_forest_holdout_excludes_post_model_adjustment",
+        "feature_importance_scope": "raw_forest_impurity_importance",
+        "training_source_counts": {
+          "synthetic_profile_generator": 4000
+        },
+        "training_source_weight_totals": {
+          "synthetic_profile_generator": 600.0
+        },
+        "fit_source_counts": {
+          "synthetic_profile_generator": 3200
+        },
+        "fit_source_weight_totals": {
+          "synthetic_profile_generator": 480.0
+        },
+        "holdout_source_counts": {
+          "synthetic_profile_generator": 800
+        },
+        "observed_training_rows": 0,
+        "observed_fit_rows": 0,
+        "spatial_feature_scope": "Synthetic corridor-level defaults; not measured edge geometry.",
+        "ferry_surge_adjustment": {
+          "method": "post_model_exponential_tree_shift",
+          "amplitude_points": 15.0,
+          "decay_minutes": 45.0,
+          "reason": "Typed history does not yet persist ferry proximity; the published timetable signal remains a transparent, capped post-model adjustment."
+        },
+        "calibration": {
+          "interval": "P10-P90 empirical tree quantiles",
+          "interval_coverage_target": 0.8,
+          "interval_coverage_observed": 0.6613,
+          "mean_interval_width_points": 7.873,
+          "empirical_crps": 2.223,
+          "empirical_crps_method": "mean|tree_prediction-y| - 0.5*mean|tree_prediction_i-tree_prediction_j|",
+          "holdout_order": "deterministic_generator_order",
+          "holdout_samples": 800,
+          "mean_prediction": 35.614
+        },
+        "feature_importances": {
+          "Time of Day (Cyclical)": 0.551,
+          "Day of Week (Cyclical)": 0.032,
+          "Weather Condition": 0.232,
+          "Ferry Surge Feature (Training Forest)": 0.152,
+          "Corridor Identity (One-hot)": 0.005,
+          "Road Class (One-hot)": 0.003,
+          "Capacity": 0.007,
+          "Terminal Distance": 0.01,
+          "Free-flow Speed": 0.008
+        },
+        "retraining_enabled": false,
+        "observed_artifact_status": {
+          "configured": true,
+          "restored": false,
+          "status": "waiting_for_eligible_model"
+        }
+      }
+    },
+    {
+      "path": "/api/analytics/research-history",
+      "status": 200,
+      "cache_control": "private, no-store",
+      "speed_survey_rows": 48,
+      "saturation_rows": 28,
+      "saturation_dates": [
+        "2023-06-12",
+        "2023-06-13",
+        "2023-06-14",
+        "2023-06-15",
+        "2023-06-16",
+        "2023-06-17",
+        "2023-06-18"
+      ],
+      "saturation_speed_training_rows": 0
+    },
+    {
+      "path": "/api/historical-congestion?corridor_id=corridor-1&days=7",
+      "status": 200,
+      "cache_control": "private, no-store",
+      "history_metadata": {
+        "window_days": 7,
+        "window_basis": "Batam calendar days including the current day",
+        "window_start_at": "2026-10-17T00:00:00+07:00",
+        "window_end_at": "2026-10-23T12:27:01.929423+00:00",
+        "selection_scope": "observed_only",
+        "snapshot_selection": "latest_bounded_validated_spatial_rows_then_corridor_window_filter",
+        "snapshot_max_rows": 10000,
+        "snapshot_loaded_rows": 315,
+        "snapshot_may_be_truncated": false,
+        "sample_count": 63,
+        "observed": true,
+        "contains_observed_samples": true,
+        "source_counts": {
+          "tomtom_live": 63
+        },
+        "sources": {
+          "tomtom_live": {
+            "sample_count": 63,
+            "observed": true
+          }
+        },
+        "latest_sample_at": "2026-10-23T12:25:30+00:00",
+        "latest_sample_age_seconds": 91,
+        "freshness": "current",
+        "freshness_basis": "latest observed sample in the selected Batam calendar-day window",
+        "storage": {
+          "engine": "sqlite",
+          "durability": "persistent_file",
+          "durable": true,
+          "shared_across_instances": false,
+          "fallback_to_memory": false,
+          "spatial_history": {
+            "schema_version": 3,
+            "typed": true,
+            "retention_days": 1825,
+            "default_retention_years": 5,
+            "max_ingest_batch_size": 2000,
+            "provenance_separates_observed_and_modelled": true
+          }
+        },
+        "synthetic_seed": {
+          "source": "synthetic",
+          "version": 2,
+          "days": 14,
+          "timezone": "WIB (UTC+07:00)",
+          "generated_for_date": null,
+          "observed": false,
+          "included": false
+        },
+        "archive": {
+          "active": true,
+          "collection_started_at": "2026-10-23T19:25:29+07:00",
+          "last_attempt_at": "2026-10-23T19:25:29+07:00",
+          "last_success_at": "2026-10-23T19:25:29+07:00",
+          "last_observation_at": "2026-10-23T19:25:30+07:00",
+          "inserted_total": 5,
+          "last_received": 5,
+          "last_inserted": 5,
+          "last_duplicates": 0,
+          "last_error_code": null,
+          "enabled": true,
+          "configuration_status": "enabled",
+          "interval_seconds": 120,
+          "storage_scope": "local_sqlite",
+          "source": "tomtom_live",
+          "observed_only": true,
+          "history_begins_at_collection": true,
+          "counter_scope": "current_process"
+        }
+      }
+    },
+    {
+      "path": "/api/authority-reports",
+      "status": 200,
+      "cache_control": "private, no-store",
+      "source_status": "fresh",
+      "fetched_at": "2026-10-23T19:26:08+07:00",
+      "report_period": "Januari-Agustus 2026"
+    }
+  ]
+}

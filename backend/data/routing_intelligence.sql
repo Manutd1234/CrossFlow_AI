@@ -9,7 +9,8 @@ create table if not exists public.crossflow_spatial_traffic_observations (
   corridor_id text not null check (corridor_id ~ '^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$'),
   latitude double precision not null check (latitude >= 0.88 and latitude < 1.215),
   longitude double precision not null check (longitude between 103.75 and 104.30),
-  actual_speed_kph double precision not null check (actual_speed_kph > 0 and actual_speed_kph <= 250),
+  actual_speed_kph double precision not null constraint crossflow_spatial_actual_speed_check
+    check (actual_speed_kph >= 0 and actual_speed_kph <= 250),
   free_flow_speed_kph double precision not null check (free_flow_speed_kph > 0 and free_flow_speed_kph <= 250),
   source text not null check (source in (
     'loop_sensor', 'probe_gps', 'tomtom_live',
@@ -34,7 +35,8 @@ create table if not exists public.crossflow_spatial_traffic_observations (
   ),
   immutable_payload jsonb not null check (jsonb_typeof(immutable_payload) = 'object'),
   ingested_at timestamptz not null default now(),
-  check (actual_speed_kph / free_flow_speed_kph between 0.05 and 1.50),
+  constraint crossflow_spatial_speed_ratio_check
+    check (actual_speed_kph / free_flow_speed_kph between 0 and 1.50),
   check (
     (source = 'loop_sensor' and provenance = 'verified_sensor' and confidence = 1.00 and observed)
     or (source = 'probe_gps' and provenance = 'verified_gps' and confidence = 0.95 and observed)
@@ -46,6 +48,38 @@ create table if not exists public.crossflow_spatial_traffic_observations (
     or (source = 'synthetic' and provenance = 'synthetic' and confidence = 0.15 and not observed)
   )
 );
+
+-- A stopped vehicle is a valid measurement. Replace only checks involving
+-- actual/free-flow speed, including the original unnamed constraints. The
+-- DO statement is atomic, preserves every row and is safe to rerun.
+do $$
+declare
+  actual_column smallint;
+  free_flow_column smallint;
+  constraint_name text;
+begin
+  select attnum into actual_column from pg_attribute
+    where attrelid = 'public.crossflow_spatial_traffic_observations'::regclass
+      and attname = 'actual_speed_kph';
+  select attnum into free_flow_column from pg_attribute
+    where attrelid = 'public.crossflow_spatial_traffic_observations'::regclass
+      and attname = 'free_flow_speed_kph';
+  for constraint_name in
+    select conname from pg_constraint
+    where conrelid = 'public.crossflow_spatial_traffic_observations'::regclass
+      and contype = 'c'
+      and conkey @> array[actual_column]::smallint[]
+      and conkey <@ array[actual_column, free_flow_column]::smallint[]
+  loop
+    execute format('alter table public.crossflow_spatial_traffic_observations drop constraint %I', constraint_name);
+  end loop;
+  alter table public.crossflow_spatial_traffic_observations
+    add constraint crossflow_spatial_actual_speed_check
+      check (actual_speed_kph >= 0 and actual_speed_kph <= 250),
+    add constraint crossflow_spatial_speed_ratio_check
+      check (actual_speed_kph / free_flow_speed_kph between 0 and 1.50);
+end;
+$$;
 
 create extension if not exists pgcrypto with schema extensions;
 

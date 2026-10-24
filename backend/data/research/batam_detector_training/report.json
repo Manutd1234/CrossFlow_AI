@@ -1,0 +1,423 @@
+{
+  "schema": "crossflow.batam_vehicle_detector_report.v1",
+  "generated_at": "2026-10-23T18:46:40.823407+00:00",
+  "training_performed": true,
+  "selected_model": "pretrained_COCO",
+  "selected_model_is_finetuned": false,
+  "score_threshold": 0.4,
+  "source_image_counts": {
+    "test": 11,
+    "validation": 11,
+    "train": 28
+  },
+  "included_image_counts": {
+    "train": 9,
+    "validation": 3,
+    "test": 4
+  },
+  "included_annotated_vehicle_boxes": {
+    "train": 56,
+    "validation": 22,
+    "test": 18
+  },
+  "training_updates": 50,
+  "preinference_annotation_exclusions": [
+    {
+      "image_id": "commons:73475311",
+      "split": "train",
+      "reason": "Independent blind second review could not distinguish one or two above-threshold white vehicles partly hidden by the opposite carriageway barrier. Entire image excluded before inference instead of silently omitting possible vehicles.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:73475312",
+      "split": "train",
+      "reason": "Several overlapping distant cars at road center cannot be separated with a reliable whole-frame count at the acquired resolution; three foreground cars alone would be incomplete labels.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:152982808",
+      "split": "train",
+      "reason": "Distant yellow vehicle or construction equipment and tiny partly occluded far-side objects have unresolved above-threshold vehicle identity; exclude entire frame before inference.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:152982817",
+      "split": "train",
+      "reason": "Construction earthworks view without an assessable roadway; capture-vehicle mirror/trim only, outside the traffic image domain. Not a verified empty-road example.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:152982820",
+      "split": "train",
+      "reason": "Unresolved vehicle identities and count in the dense distant construction-road queue; multiple overlapping vehicles and small fragments near the 12px threshold. Image excluded before detector inference; not a negative frame.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:152982823",
+      "split": "train",
+      "reason": "Blurred overlapping motorcycles behind the foreground riders prevent a stable whole-image count for above-threshold candidates. Image excluded before detector inference; not a negative frame.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:152982826",
+      "split": "train",
+      "reason": "Opposite-road motorcycles overlap each other and background traffic; their count and visible extents remain unresolved above the threshold after crop review. Image excluded before detector inference; not a negative frame.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:73475309",
+      "split": "train",
+      "reason": "Several opposite-carriageway vehicles are occluded by median palms. Above-threshold fragments cannot be reliably assigned to separate instances after crop review. Image excluded before detector inference; not a negative frame.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:73475317",
+      "split": "train",
+      "reason": "Densely parked motorcycles beside the storefront are occluded by people and each other. The number of above-threshold vehicle instances cannot be established reliably. Image excluded before detector inference; not a negative frame.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:48282525",
+      "split": "train",
+      "reason": "off_domain_landscape",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:52594525",
+      "split": "train",
+      "reason": "off_domain_landscape",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:58503048",
+      "split": "train",
+      "reason": "off_domain_landscape",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:58503060",
+      "split": "train",
+      "reason": "off_domain_landscape",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:58503066",
+      "split": "train",
+      "reason": "off_domain_landscape",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:157335713",
+      "split": "train",
+      "reason": "off_domain_indoor",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:157335714",
+      "split": "train",
+      "reason": "off_domain_landscape",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:157335739",
+      "split": "train",
+      "reason": "off_domain_indoor",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:157335768",
+      "split": "train",
+      "reason": "off_domain_indoor",
+      "review_status": "excluded_off_domain",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "flickr:54235661866",
+      "split": "train",
+      "reason": "Unresolved above-threshold vehicle count in the distant cluster. Do not use this image as a zero-count label.",
+      "review_status": "excluded_ambiguous",
+      "annotation_sha256": "c2b08841bc7dd63adb07e6fab5b2b2cbf11166df799e0f1fbd0204a958e21a36"
+    },
+    {
+      "image_id": "commons:24521144",
+      "split": "validation",
+      "reason": "off_domain_food_closeup",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:24521145",
+      "split": "validation",
+      "reason": "off_domain_food_closeup",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:24521146",
+      "split": "validation",
+      "reason": "off_domain_shop_closeup",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:50293014",
+      "split": "validation",
+      "reason": "unresolved_vehicle_count_distant_occlusion",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:70086383",
+      "split": "validation",
+      "reason": "unresolved_vehicle_count_parked_motorcycle_overlap",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:70086435",
+      "split": "validation",
+      "reason": "off_domain_building_facade",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:70087409",
+      "split": "validation",
+      "reason": "off_domain_mall_interior",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:92225722",
+      "split": "validation",
+      "reason": "unresolved_vehicle_count_motion_blur_distant_parking",
+      "review_status": "reviewed",
+      "annotation_sha256": "b24e49ac252f5116af3a6bb44ec01c1c07e99ba939de578153e3a3b8033edf1d"
+    },
+    {
+      "image_id": "commons:49046984",
+      "split": "test",
+      "reason": "off_domain_indoor_market",
+      "review_status": "reviewed",
+      "annotation_sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50"
+    },
+    {
+      "image_id": "commons:49047170",
+      "split": "test",
+      "reason": "unresolved_vehicle_count_motion_blur_occlusion",
+      "review_status": "reviewed",
+      "annotation_sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50"
+    },
+    {
+      "image_id": "commons:49047240",
+      "split": "test",
+      "reason": "off_domain_mall_entrance_reflections",
+      "review_status": "reviewed",
+      "annotation_sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50"
+    },
+    {
+      "image_id": "commons:49047261",
+      "split": "test",
+      "reason": "off_domain_building_facade",
+      "review_status": "reviewed",
+      "annotation_sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50"
+    },
+    {
+      "image_id": "commons:49047463",
+      "split": "test",
+      "reason": "unresolved_vehicle_count_night_glare",
+      "review_status": "reviewed",
+      "annotation_sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50"
+    },
+    {
+      "image_id": "commons:49047587",
+      "split": "test",
+      "reason": "unresolved_vehicle_count_night_glare",
+      "review_status": "reviewed",
+      "annotation_sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50"
+    },
+    {
+      "image_id": "commons:196407356",
+      "split": "test",
+      "reason": "unresolved_vehicle_count_parked_motorcycle_overlap",
+      "review_status": "reviewed",
+      "annotation_sha256": "dc0beff8e169a6a93cca413527f0d93d216207e8b545d344c6e84fb5ef446f50"
+    }
+  ],
+  "validation": {
+    "count": {
+      "frames": 3,
+      "source_groups": 2,
+      "mae_vehicles_per_frame": 0.6666666666666666,
+      "macro_source_group_mae": 0.5,
+      "rmse_vehicles_per_frame": 1.1547005383792515,
+      "bias_vehicles_per_frame": -0.6666666666666666,
+      "exact_count_pct": 66.66666666666666,
+      "within_one_vehicle_pct": 66.66666666666666,
+      "actual_total": 22,
+      "predicted_total": 20
+    },
+    "detection_iou_50": {
+      "precision": 0.9,
+      "recall": 0.8181818181818182,
+      "f1": 0.8571428571428572,
+      "true_positive": 18,
+      "false_positive": 2,
+      "false_negative": 4
+    },
+    "per_source_group": {
+      "Cun Cun": {
+        "frames": 2,
+        "mae_vehicles_per_frame": 1,
+        "exact_count_pct": 50.0
+      },
+      "Husip": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 0,
+        "exact_count_pct": 100
+      }
+    }
+  },
+  "batam_group_holdout_pilot": {
+    "count": {
+      "frames": 4,
+      "source_groups": 4,
+      "mae_vehicles_per_frame": 3,
+      "macro_source_group_mae": 3,
+      "rmse_vehicles_per_frame": 3.5355339059327378,
+      "bias_vehicles_per_frame": 3,
+      "exact_count_pct": 0,
+      "within_one_vehicle_pct": 25.0,
+      "actual_total": 18,
+      "predicted_total": 30
+    },
+    "detection_iou_50": {
+      "precision": 0.6,
+      "recall": 1.0,
+      "f1": 0.7499999999999999,
+      "true_positive": 18,
+      "false_positive": 12,
+      "false_negative": 0
+    },
+    "per_source_group": {
+      "Akinori Takemoto": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 3,
+        "exact_count_pct": 0
+      },
+      "Christian Advs Sltg": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 1,
+        "exact_count_pct": 0
+      },
+      "Jpatokal": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 2,
+        "exact_count_pct": 0
+      },
+      "Zoresirinhongen": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 6,
+        "exact_count_pct": 0
+      }
+    }
+  },
+  "existing_app_fixed_threshold_reference": {
+    "count": {
+      "frames": 4,
+      "source_groups": 4,
+      "mae_vehicles_per_frame": 3,
+      "macro_source_group_mae": 3,
+      "rmse_vehicles_per_frame": 3.5355339059327378,
+      "bias_vehicles_per_frame": 3,
+      "exact_count_pct": 0,
+      "within_one_vehicle_pct": 25.0,
+      "actual_total": 18,
+      "predicted_total": 30
+    },
+    "detection_iou_50": {
+      "precision": 0.6,
+      "recall": 1.0,
+      "f1": 0.7499999999999999,
+      "true_positive": 18,
+      "false_positive": 12,
+      "false_negative": 0
+    },
+    "per_source_group": {
+      "Akinori Takemoto": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 3,
+        "exact_count_pct": 0
+      },
+      "Christian Advs Sltg": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 1,
+        "exact_count_pct": 0
+      },
+      "Jpatokal": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 2,
+        "exact_count_pct": 0
+      },
+      "Zoresirinhongen": {
+        "frames": 1,
+        "mae_vehicles_per_frame": 6,
+        "exact_count_pct": 0
+      }
+    }
+  },
+  "existing_app_reference_threshold": 0.4,
+  "reference_scope": "Prior app checkpoint at .4 with the same native-pixel 12/4 inclusion filter; not the literal unfiltered app response",
+  "count_scope": "size_filtered_visible_vehicle_boxes_per_image",
+  "min_vehicle_long_side_px": 12,
+  "min_vehicle_short_side_px": 4,
+  "test_mae_improvement_pct": 0.0,
+  "beats_existing_app_reference_on_this_pilot": false,
+  "test_selection_sha256": "5c3cf3cebb336290da61db404156c99d2c491bb736758a5f64ee60ce403ec63b",
+  "split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+  "annotation_manifest_sha256": "5efd0896bd61aa57b9d4a68668f03b94895445b71586349777604e3745edde90",
+  "annotation_origin": "ai_visual_blind",
+  "human_certified": false,
+  "production_eligible": false,
+  "batam_validated": false,
+  "independent_human_batam_benchmark": false,
+  "google_comparison_performed": false,
+  "application_model_promoted": false,
+  "latency_ms_cpu_forward": {
+    "selected_median": 1699.1396454977803,
+    "reference_median": 1749.8230624987627,
+    "threads": 2,
+    "scope": "Forward only; excludes decoding, first load, queue and network"
+  },
+  "runtime": {
+    "torch": "2.10.0",
+    "torchvision": "0.25.0",
+    "python": "3.12.14 (main, Aug 12 2026, 13:57:54) [Clang 21.0.0 (clang-2100.1.1.101)]"
+  },
+  "elapsed_seconds": 175.44753687499906,
+  "limitations": [
+    "Small public-photo Batam pilot with assistant-authored blind visual boxes, not certified human ground truth.",
+    "Distinct source/capture groups prevent exact group leakage, but photographer/capture timing may be incompletely documented.",
+    "No 99-100% accuracy, Google comparison, citywide camera accuracy, road flow, queue length, or speed claim.",
+    "Only visible vehicle extents meeting the frozen size policy are annotated; occluded objects remain uncertain.",
+    "Holdout is consumed after this report; future model selection requires a new untouched source-group test.",
+    "License evidence is retained per image; COCO-derived weight production rights are not certified."
+  ]
+}

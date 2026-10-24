@@ -36,9 +36,8 @@ from auth import transport
 AUTH_MODE_ENV = "CROSSFLOW_AUTH_MODE"
 PROFILES_TABLE = "crossflow_profiles"
 
-# Successful verifications are cached briefly so a chatty client does not force
-# a network round trip per request. Kept short deliberately: the window is also
-# how long a signed-out or deleted user keeps working.
+# Successful token verifications are cached briefly. Authorization is never
+# cached: the profile is read on every request so demotions take effect at once.
 VERIFICATION_TTL_SECONDS = 60.0
 MAX_CACHE_ENTRIES = 512
 
@@ -60,7 +59,13 @@ _NO_STORE_HEADERS = {
 NOT_YOURS_DETAIL = "No such record for this account."
 
 _CACHE_LOCK = threading.Lock()
-_CACHE: dict[str, tuple[float, "AuthenticatedUser"]] = {}
+_CACHE: dict[str, tuple[float, "VerifiedIdentity"]] = {}
+
+
+@dataclass(frozen=True, slots=True)
+class VerifiedIdentity:
+    id: str
+    expires_at: Optional[int]
 
 
 @dataclass(frozen=True, slots=True)
@@ -148,11 +153,14 @@ def _token_expiry(access_token: str) -> Optional[int]:
     return expiry
 
 
-def _cache_key(access_token: str) -> str:
-    return hashlib.sha256(access_token.encode("utf-8")).hexdigest()
+def _cache_key(config: transport.SupabaseUserConfig, access_token: str) -> str:
+    # A token verified in one project must never be reused after configuration
+    # changes. Hash the credentials rather than keeping them in cache keys.
+    scoped = f"{config.origin}\0{config.publishable_key}\0{access_token}"
+    return hashlib.sha256(scoped.encode("utf-8")).hexdigest()
 
 
-def _cached(key: str) -> Optional[AuthenticatedUser]:
+def _cached(key: str) -> Optional[VerifiedIdentity]:
     now = time.monotonic()
     with _CACHE_LOCK:
         entry = _CACHE.get(key)
@@ -165,7 +173,7 @@ def _cached(key: str) -> Optional[AuthenticatedUser]:
         return user
 
 
-def _remember(key: str, user: AuthenticatedUser) -> None:
+def _remember(key: str, user: VerifiedIdentity) -> None:
     ttl = VERIFICATION_TTL_SECONDS
     if user.expires_at is not None:
         remaining = user.expires_at - time.time()
@@ -249,20 +257,26 @@ def _read_profile(
         # A verified account with no profile row gets nothing. Defaulting to a
         # usable role here would grant access to anyone who can sign up.
         raise auth_error(403, "This account has no CrossFlow profile.")
+    if rows[0].get("id") != user_id:
+        raise auth_error(403, "This account has no CrossFlow profile.")
     return rows[0]
 
 
 def authenticate(access_token: str) -> AuthenticatedUser:
-    """Verify a token and resolve its role. Cached briefly on success only."""
+    """Verify a token and resolve its current role through the caller's JWT."""
     config = _config()
-    key = _cache_key(access_token)
-    cached = _cached(key)
-    if cached is not None:
-        return cached
+    try:
+        transport.validate_access_token(access_token)
+    except transport.SupabaseUserError as error:
+        raise _translate(error) from None
+    key = _cache_key(config, access_token)
+    verified = _cached(key)
+    freshly_verified = verified is None
+    if verified is None:
+        document = _verify_remote(config, access_token)
+        verified = VerifiedIdentity(str(document["id"]), _token_expiry(access_token))
 
-    document = _verify_remote(config, access_token)
-    user_id = str(document["id"])
-    profile = _read_profile(config, access_token, user_id)
+    profile = _read_profile(config, access_token, verified.id)
 
     role = profile.get("role")
     if role not in {"admin", "driver"}:
@@ -272,13 +286,14 @@ def authenticate(access_token: str) -> AuthenticatedUser:
         display_name = "CrossFlow user"
 
     user = AuthenticatedUser(
-        id=user_id,
+        id=verified.id,
         role=role,
         display_name=display_name.strip()[:120],
         access_token=access_token,
-        expires_at=_token_expiry(access_token),
+        expires_at=verified.expires_at,
     )
-    _remember(key, user)
+    if freshly_verified:
+        _remember(key, verified)
     return user
 
 
@@ -302,6 +317,23 @@ def require_admin_user(
     if not user.is_admin:
         raise auth_error(403, "Administrator access is required.")
     return user
+
+
+def require_route_operator(
+    authorization: Optional[str] = Header(default=None),
+) -> Optional[AuthenticatedUser]:
+    """Resolve the administrator who may plan and publish driver routes.
+
+    Explicit public/demo mode retains guest planning. Once Supabase auth is
+    enabled, the current profile role must authorize the work before route
+    computation or persistence begins.
+    """
+    mode = os.environ.get(AUTH_MODE_ENV, "disabled").strip().casefold() or "disabled"
+    if mode == "disabled":
+        return None
+    if mode != "supabase":
+        raise auth_error(503, "The server authentication mode is not valid.")
+    return require_admin_user(authorization)
 
 
 def status() -> dict[str, Any]:

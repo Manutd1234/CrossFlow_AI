@@ -1,0 +1,186 @@
+{
+  "schema": "crossflow.camera_diagnostic.v1",
+  "camera_id": "13",
+  "started_at": "2026-10-24T05:45:27.397657+00:00",
+  "finished_at": "2026-10-24T05:46:38.071656+00:00",
+  "frames_saved": false,
+  "temporary_numeric_db_removed_on_completion": true,
+  "model_accuracy_evaluated": false,
+  "main_registry_or_backend_changed": false,
+  "receipt": {
+    "camera_id": "13",
+    "segments": 7,
+    "frames": 69,
+    "accepted": 69,
+    "source_retries": 0,
+    "images_retained": false
+  },
+  "safe_events": [
+    {
+      "camera_id": "13",
+      "event": "started",
+      "stage": "startup",
+      "code": "ok"
+    },
+    {
+      "camera_id": "13",
+      "event": "waiting",
+      "stage": "playlist_parse",
+      "code": "waiting_segment"
+    },
+    {
+      "camera_id": "13",
+      "event": "waiting",
+      "stage": "playlist_parse",
+      "code": "waiting_segment"
+    },
+    {
+      "camera_id": "13",
+      "event": "waiting",
+      "stage": "playlist_parse",
+      "code": "waiting_segment"
+    },
+    {
+      "camera_id": "13",
+      "event": "progress",
+      "stage": "evidence_store",
+      "code": "ok",
+      "accepted": 10,
+      "frames": 10,
+      "segment_accepted": 10,
+      "quality_usable": false
+    },
+    {
+      "camera_id": "13",
+      "event": "progress",
+      "stage": "evidence_store",
+      "code": "ok",
+      "accepted": 20,
+      "frames": 20,
+      "segment_accepted": 10,
+      "quality_usable": true
+    },
+    {
+      "camera_id": "13",
+      "event": "progress",
+      "stage": "evidence_store",
+      "code": "ok",
+      "accepted": 30,
+      "frames": 30,
+      "segment_accepted": 10,
+      "quality_usable": true
+    },
+    {
+      "camera_id": "13",
+      "event": "progress",
+      "stage": "evidence_store",
+      "code": "ok",
+      "accepted": 40,
+      "frames": 40,
+      "segment_accepted": 10,
+      "quality_usable": true
+    },
+    {
+      "camera_id": "13",
+      "event": "progress",
+      "stage": "evidence_store",
+      "code": "ok",
+      "accepted": 50,
+      "frames": 50,
+      "segment_accepted": 10,
+      "quality_usable": true
+    },
+    {
+      "camera_id": "13",
+      "event": "progress",
+      "stage": "evidence_store",
+      "code": "ok",
+      "accepted": 59,
+      "frames": 59,
+      "segment_accepted": 9,
+      "quality_usable": true
+    },
+    {
+      "camera_id": "13",
+      "event": "progress",
+      "stage": "evidence_store",
+      "code": "ok",
+      "accepted": 69,
+      "frames": 69,
+      "segment_accepted": 10,
+      "quality_usable": true
+    },
+    {
+      "camera_id": "13",
+      "event": "completed",
+      "stage": "shutdown",
+      "code": "ok",
+      "accepted": 69,
+      "frames": 69
+    }
+  ],
+  "error": null,
+  "diagnostics": [],
+  "numeric_summary": {
+    "stored_observations": 69,
+    "usable_observations": 57,
+    "quality_reasons": {
+      "camera_stability_unknown": 1,
+      "minimum_temporal_window": 11,
+      "insufficient_track_history": 6
+    },
+    "minimum_vehicle_count": 1,
+    "maximum_vehicle_count": 6,
+    "latest_vehicle_count": 2,
+    "maximum_temporal_window_seconds": 59.339047,
+    "first_observed_at": "2026-10-24T05:45:23.551368Z",
+    "last_observed_at": "2026-10-24T05:46:32.847880Z",
+    "detector_ids": [
+      "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+    ],
+    "latest_usable_numeric_evidence": {
+      "captured_at": "2026-10-24T05:46:32.847880Z",
+      "vehicle_count": 2,
+      "tracked_vehicle_count": 2,
+      "moving_vehicle_count": 0,
+      "stationary_vehicle_count": 1,
+      "image_occupancy_ratio": 0.017750411817247118,
+      "normalized_motion_proxy": 0.00025372872155487184,
+      "stationary_fraction": 0.5,
+      "window_seconds": 59.339047,
+      "frame_count": 59,
+      "quality": {
+        "age_seconds": 5.219974,
+        "frame_count": 59,
+        "reasons": [],
+        "tracking": {
+          "current_motion_observations": 1,
+          "motion_observations": 152,
+          "scope": "rolling_detection_observations_v1",
+          "vehicle_observations": 167
+        },
+        "usable": true,
+        "window_seconds": 59.339047
+      }
+    }
+  },
+  "current_status_checked_at": "2026-10-24T05:46:38.074622+00:00",
+  "current_camera_status": {
+    "status": "estimated",
+    "reason": "Live YOLO26 road-view estimate; independent camera accuracy and thresholds are unvalidated",
+    "observed_at": "2026-10-24T05:46:32.847880Z",
+    "vehicle_count": 2,
+    "congestion_score": 3.7607030379213557,
+    "validation_status": "estimated",
+    "routing_enabled": false
+  },
+  "last_usable_sample_time_status": {
+    "status": "estimated",
+    "reason": "Live YOLO26 road-view estimate; independent camera accuracy and thresholds are unvalidated",
+    "observed_at": "2026-10-24T05:46:32.847880Z",
+    "vehicle_count": 2,
+    "congestion_score": 3.7607030379213557,
+    "validation_status": "estimated",
+    "routing_enabled": false
+  }
+}

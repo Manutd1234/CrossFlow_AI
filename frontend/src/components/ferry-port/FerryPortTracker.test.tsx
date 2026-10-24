@@ -1,7 +1,7 @@
 /* @vitest-environment jsdom */
 
 import { act, type ReactElement } from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createRoot, type Root } from 'react-dom/client';
 import {
   PUBLISHED_FERRY_TIMETABLE_METADATA,
@@ -74,6 +74,21 @@ function renderIntoDom(element: ReactElement): HTMLElement {
   return container;
 }
 
+beforeEach(() => {
+  const values = new Map<string, string>();
+  Object.defineProperty(window, 'sessionStorage', {
+    configurable: true,
+    value: {
+      get length() { return values.size; },
+      clear: () => values.clear(),
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => { values.set(key, String(value)); },
+      removeItem: (key: string) => { values.delete(key); },
+      key: (index: number) => Array.from(values.keys())[index] ?? null,
+    } satisfies Storage,
+  });
+});
+
 afterEach(() => {
   if (root) act(() => root?.unmount());
   root = undefined;
@@ -97,12 +112,11 @@ describe('published ferry schedule view', () => {
     expect(tabsLayout?.querySelector(':scope > .workspace-subtabs__rail')).not.toBeNull();
     expect(tabsLayout?.querySelector(':scope > .workspace-subtabs__panel')).not.toBeNull();
 
-    // The planning estimates are seeded synchronously, before the API request
-    // settles, so a slow or offline backend never produces empty terminal cards.
+    // Terminal references are available without inventing live queue values.
     expect(container.querySelectorAll('.terminal-intelligence-card')).toHaveLength(4);
-    expect(container.textContent).toContain('Passenger Queue');
-    expect(container.textContent).toContain('Processing');
-    expect(container.textContent).not.toContain('Unavailable');
+    expect(container.querySelector('.terminal-availability-note')?.textContent)
+      .toContain('Live queues and berth occupancy are unavailable.');
+    expect(container.querySelectorAll('.terminal-next-sailing')).toHaveLength(4);
     expect(container.textContent).not.toContain('Loading terminal queue and berth data');
 
     await act(async () => new Promise(resolve => window.setTimeout(resolve, 0)));
@@ -132,10 +146,9 @@ describe('published ferry schedule view', () => {
     expect(sailings?.querySelector('.ferry-departure-card__verified-at')).toBeNull();
     expect(sailings?.querySelector('.badge-critical')).toBeNull();
 
-    expect(container.textContent).toContain('SCHEDULE-INFORMED CONTINUITY');
+    expect(container.querySelector('.ferry-port-provenance')).toBeNull();
     expect(container.textContent).not.toContain('OFFLINE PORT FALLBACK');
-    expect(container.textContent).toContain('Passenger Queue');
-    expect(container.textContent).not.toContain('Unavailable');
+    expect(container.querySelector('.terminal-availability-note')?.textContent).toContain('unavailable');
     expect(container.textContent).not.toContain('Planning estimate, not a sensor observation');
     expect(container.textContent).toContain('BP Batam Terminal Reference');
     const terminalPhotos = Array.from(
@@ -176,7 +189,7 @@ describe('published ferry schedule view', () => {
     expect(panels.filter(panel => !panel.hidden)).toHaveLength(1);
     expect(terminalsTab?.getAttribute('aria-selected')).toBe('true');
     expect(panels.find(panel => !panel.hidden)?.querySelector(
-      '[aria-label="Terminal access and processing outlook"]',
+      '[aria-label="Terminal information and published departures"]',
     )).not.toBeNull();
     expect(container.querySelector('#terminal-status-title')).toBeNull();
 
@@ -196,10 +209,7 @@ describe('published ferry schedule view', () => {
     expect(terminalCard?.classList).toContain('terminal-card-content');
     expect(terminalCard?.classList).toContain('ui-white-card-hover');
     expect(terminalCard?.querySelector('.terminal-card-content')).toBeNull();
-    expect(terminalsPanel?.querySelector('[role="progressbar"]')?.classList)
-      .toContain('ui-progress-track');
-    expect(terminalsPanel?.querySelector('[role="progressbar"]')?.firstElementChild?.classList)
-      .toContain('ui-progress-fill');
+    expect(terminalsPanel?.querySelector('[role="progressbar"]')).toBeNull();
     const harbourBayPhoto = terminalsPanel?.querySelector<HTMLImageElement>(
       '.terminal-card-media img',
     );
@@ -221,11 +231,9 @@ describe('published ferry schedule view', () => {
     expect(container.querySelector('#ferry-workspace-panel-2')?.textContent).toContain(
       'Batam-SG Cargo Monitor',
     );
-    expect(container.querySelector('#ferry-workspace-panel-2 .cargo-monitor__description')).toBeNull();
-    expect(container.querySelector('#ferry-workspace-panel-2 [role="progressbar"]')?.classList)
-      .toContain('ui-progress-track');
-    expect(container.querySelector('#ferry-workspace-panel-2 [role="progressbar"]')?.firstElementChild?.classList)
-      .toContain('ui-progress-fill');
+    expect(container.querySelector('#ferry-workspace-panel-2 .cargo-monitor__description')?.textContent)
+      .toContain('no shipment or customs feed is connected');
+    expect(container.querySelector('#ferry-workspace-panel-2 [role="progressbar"]')).toBeNull();
 
     act(() => terminalsTab?.click());
     expect(terminalsTab?.getAttribute('aria-selected')).toBe('true');
@@ -245,8 +253,8 @@ describe('published ferry schedule view', () => {
     );
     const verificationBadge = container.querySelector('.ferry-port-overview__verified-badge');
 
-    expect(verificationBadge?.classList.contains('badge-smooth')).toBe(true);
-    expect(verificationBadge?.classList.contains('badge-heavy')).toBe(false);
+    expect(verificationBadge?.classList.contains('is-current')).toBe(true);
+    expect(verificationBadge?.classList.contains('is-stale')).toBe(false);
 
     act(() => root?.render(
       <FerryPortTracker
@@ -255,51 +263,103 @@ describe('published ferry schedule view', () => {
       />,
     ));
 
-    expect(verificationBadge?.classList.contains('badge-smooth')).toBe(false);
-    expect(verificationBadge?.classList.contains('badge-heavy')).toBe(true);
+    expect(verificationBadge?.classList.contains('is-current')).toBe(false);
+    expect(verificationBadge?.classList.contains('is-stale')).toBe(true);
   });
 
-  it('runs one coordinated refresh and reports verified and gated sources', async () => {
-    let resolveRefresh: ((report: FerryRefreshReport) => void) | undefined;
-    const onRefresh = vi.fn(() => new Promise<FerryRefreshReport>((resolve) => {
-      resolveRefresh = resolve;
-    }));
-    const container = renderIntoDom(
-      <FerryPortTracker {...baseProps} onRefreshOfficialSources={onRefresh} />,
-    );
-    const button = container.querySelector<HTMLButtonElement>(
-      '.ferry-port-overview__refresh-button',
-    );
+  it('coalesces refresh clicks and shows only a concise failure when a check is incomplete', async () => {
+    let finish!: (report: FerryRefreshReport) => void;
+    const refresh = vi.fn(() => new Promise<FerryRefreshReport>(resolve => { finish = resolve; }));
+    const container = renderIntoDom(<FerryPortTracker {...baseProps} onRefreshOfficialSources={refresh} />);
+    const button = container.querySelector<HTMLButtonElement>('.ferry-port-overview__refresh-button')!;
+    act(() => { button.click(); button.click(); });
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(button.disabled).toBe(true);
+    expect(button.textContent).toContain('Checking Schedules');
+    await act(async () => finish(REFRESH_REPORT));
+    expect(button.disabled).toBe(false);
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain('last verified timetable');
+    expect(container.querySelector('.ferry-port-source-results')).toBeNull();
+    expect(container.textContent).not.toContain('Official source check results');
+  });
 
-    expect(button).not.toBeNull();
-    act(() => button?.click());
-    expect(onRefresh).toHaveBeenCalledTimes(1);
-    expect(button?.disabled).toBe(true);
-    expect(button?.getAttribute('aria-busy')).toBe('true');
-    expect(container.textContent).toContain(
-      'Checking reviewed official ferry and terminal sources',
-    );
+  it.each([
+    [0, 6, 'Schedules could not be refreshed.'],
+    [5, 1, 'Some schedules could not be checked.'],
+  ])('preserves an unsuccessful cached check (%s verified, %s failed)', async (verified, failed, message) => {
+    const refresh = vi.fn(async () => ({ ...REFRESH_REPORT, status: 'cached' as const,
+      summary: { verified, failed, permission_gated: 0 } }));
+    const container = renderIntoDom(<FerryPortTracker {...baseProps} onRefreshOfficialSources={refresh} />);
+    await act(async () => container.querySelector<HTMLButtonElement>('.ferry-port-overview__refresh-button')!.click());
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain(message);
+    expect(container.querySelector('.ferry-port-refresh-confirmation')).toBeNull();
+    expect(container.textContent).toContain('The last verified timetable is still shown.');
+  });
 
-    await act(async () => {
-      resolveRefresh?.(REFRESH_REPORT);
-      await Promise.resolve();
-    });
+  it('can confirm a successful cached check without changing the supplied verification timestamp', async () => {
+    const refresh = vi.fn(async () => ({ ...REFRESH_REPORT, status: 'cached' as const,
+      summary: { verified: 6, failed: 0, permission_gated: 0 } }));
+    const container = renderIntoDom(<FerryPortTracker {...baseProps} onRefreshOfficialSources={refresh} />);
+    await act(async () => container.querySelector<HTMLButtonElement>('.ferry-port-overview__refresh-button')!.click());
+    expect(container.querySelector('[role="alert"]')).toBeNull();
+    expect(container.querySelector('.ferry-port-refresh-confirmation')?.textContent).toBe('6 official sources checked.');
+    expect(container.querySelector(`time[datetime="${baseProps.timetable.last_verified_at}"]`)).not.toBeNull();
+  });
 
-    expect(button?.disabled).toBe(false);
-    expect(container.textContent).toContain(
-      'Checked 1 official source page; 1 could not be validated',
-    );
-    expect(container.textContent).toContain('BatamFast');
-    expect(container.textContent).toContain('Singapore Cruise Centre');
-    expect(container.textContent).toContain('Permission required');
-    expect(container.querySelectorAll('.ferry-port-source-results .badge')).toHaveLength(0);
-    expect(container.querySelectorAll('.ferry-port-source-results .ferry-port-source-status-icon'))
-      .toHaveLength(2);
-    expect(container.querySelectorAll('.ferry-port-source-legend__item')).toHaveLength(3);
-    expect(container.querySelector('svg[aria-label="Page checked"]')).not.toBeNull();
-    expect(container.querySelector('svg[aria-label="Permission required"]')).not.toBeNull();
-    const gatedSourceLink = Array.from(container.querySelectorAll<HTMLAnchorElement>('a'))
-      .find(link => link.textContent === 'Singapore Cruise Centre');
-    expect(gatedSourceLink).toBeUndefined();
+  it('does not turn supplied modelled terminal numbers into observed operations or cargo', () => {
+    const container = renderIntoDom(<FerryPortTracker {...baseProps} ports={[{
+      ...PORTS[0], passenger_queue_mins: 987, customs_processing_mins: 876,
+      freight_clearance_mins: 765, active_berths: 4, total_berths: 4,
+      status: 'CONGESTED', observed: false,
+    }]} />);
+    const terminal = container.querySelector('.terminal-intelligence-card');
+    expect(terminal?.querySelector('.terminal-card-status')?.textContent).toBe('Timetable');
+    expect(container.querySelector('.terminal-availability-note')?.textContent).toContain('unavailable');
+    expect(terminal?.textContent).not.toMatch(/987|876|765|CONGESTED|4\/4/);
+    expect(container.textContent).toContain('NO LIVE CARGO FEED');
+    expect(container.querySelector('.cargo-shipment-card')).toBeNull();
+    expect(container.querySelector('[aria-label*="shipment progress"]')).toBeNull();
+    expect(terminal?.textContent).toContain('Next departure');
+  });
+
+  it('keeps the actual verification time while removing source and retrieval details', () => {
+    const checked = '2026-10-23T08:00:00+07:00';
+    const retrieved = '2026-10-23T08:05:00+07:00';
+    const container = renderIntoDom(<FerryPortTracker {...baseProps}
+      timetable={{ ...baseProps.timetable, latest_checked_at: checked }} portsCheckedAt={retrieved} />);
+    const controls = container.querySelector('[aria-label="Ferry data controls"]');
+    expect(controls?.textContent).toContain('Last verified');
+    expect(controls?.querySelectorAll('time')).toHaveLength(1);
+    expect(controls?.querySelector(`time[datetime="${baseProps.timetable.last_verified_at}"]`)).not.toBeNull();
+    expect(container.querySelector('.ferry-port-provenance')).toBeNull();
+    expect(container.querySelector('.terminal-status > [role="note"]')).toBeNull();
+    expect(container.textContent).not.toContain('Terminal references retrieved');
+  });
+
+  it('confirms a completed check concisely without persisting old source reports', async () => {
+    window.sessionStorage.setItem('crossflow.ferry.last-source-check', JSON.stringify({ snapshotId: baseProps.timetable.snapshot_id, report: REFRESH_REPORT }));
+    const refresh = vi.fn(async () => ({ ...REFRESH_REPORT, status: 'checked' as const, summary: { verified: 6, failed: 0, permission_gated: 0 } }));
+    let container = renderIntoDom(<FerryPortTracker {...baseProps} onRefreshOfficialSources={refresh} />);
+    expect(container.querySelector('.ferry-port-refresh-feedback')).toBeNull();
+    expect(container.textContent).not.toContain('Official source check results');
+    await act(async () => container.querySelector<HTMLButtonElement>('.ferry-port-overview__refresh-button')!.click());
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(container.querySelector('[role="alert"]')).toBeNull();
+    expect(container.querySelector('.ferry-port-refresh-confirmation')?.textContent)
+      .toBe('6 official sources checked.');
+    act(() => root?.unmount()); root = undefined;
+    container = renderIntoDom(<FerryPortTracker {...baseProps} onRefreshOfficialSources={refresh} />);
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(container.querySelector('.ferry-port-refresh-feedback')).toBeNull();
+    expect(container.querySelector('.ferry-port-refresh-confirmation')).toBeNull();
+  });
+
+  it('keeps refresh failures actionable without rendering provider diagnostic content', async () => {
+    const refresh = vi.fn().mockRejectedValue(new Error('private upstream URL and credentials'));
+    const container = renderIntoDom(<FerryPortTracker {...baseProps} onRefreshOfficialSources={refresh} />);
+    await act(async () => container.querySelector<HTMLButtonElement>('.ferry-port-overview__refresh-button')!.click());
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain('Please try again');
+    expect(container.textContent).not.toContain('private upstream');
   });
 });

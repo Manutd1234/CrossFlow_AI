@@ -39,6 +39,10 @@ os.environ["CROSSFLOW_HISTORY_DB"] = os.path.join(
     _TEST_HISTORY_DIRECTORY.name,
     "suite_history.db",
 )
+os.environ["CROSSFLOW_FERRY_FRESHNESS_DB"] = os.path.join(
+    _TEST_HISTORY_DIRECTORY.name,
+    "ferry_freshness.db",
+)
 
 from models.congestion_model import (  # noqa: E402
     classify_status, delay_from_score, forecaster, history_training_provenance,
@@ -944,7 +948,7 @@ def test_supabase_route_distance_comes_from_geometry():
         def __exit__(self, *_args):
             return False
 
-        def read(self):
+        def read(self, size=-1):
             return (
                 b'[{"cost_s":60,"geom":{"type":"LineString","coordinates":'
                 b'[[104.0,1.0],[104.001,1.0],[104.001,1.001]]}}]'
@@ -1032,7 +1036,7 @@ def test_google_http_parser_keeps_native_steps_and_alternatives():
         def __exit__(self, *_args):
             return False
 
-        def read(self):
+        def read(self, size=-1):
             return json.dumps(payload).encode()
 
     original_key = google_maps_router.get_api_key
@@ -1708,7 +1712,7 @@ def test_sindo_singapore_origin_schedule_preserves_singapore_local_time():
         ],
         "sindo-hf-skp": [
             "08:30", "10:00", "11:10", "14:10", "17:30",
-            "18:10", "19:30",
+            "18:10", "19:30", "20:30",
         ],
         "sindo-tm-bct": [
             "10:20", "12:30", "14:30", "16:30",
@@ -1939,6 +1943,9 @@ def test_ferry_refresh_uses_only_fixed_official_allowlist_and_preserves_snapshot
         "validated_same_day_operations_board"
     )
     assert scc_result["matched_board_row_count"] == 1
+    assert scc_result["matched_departure_slot_count"] == 0
+    assert scc_result["board_scope"] == "first_page_arrivals_only"
+    assert scc_result["board_date"] == WEEKDAY_1400.date().isoformat()
     assert report["schedule_validation_status"] == "matched_snapshot"
     assert report["schedule_unchanged"] is True
     assert report["schedule_applied"] is False
@@ -2084,7 +2091,11 @@ def test_non_timetable_source_failure_does_not_block_operator_verification():
 def test_ferry_refresh_endpoint_advances_latest_verified_time_atomically():
     ferry_refresh._reset_refresh_state_for_tests()
     ferry_schedule._reset_runtime_verification_for_tests()
-    verification_time = datetime(2026, 8, 13, 10, 25, tzinfo=TZ)
+    source_verified_at = {
+        source["source_id"]: source["last_verified_at"]
+        for source in ferry_schedule._TIMETABLE["sources"]
+    }
+    verification_time = max(datetime.fromisoformat(value) for value in source_verified_at.values()).astimezone(TZ) + timedelta(hours=1)
 
     def complete_fetch(source, **_kwargs):
         return ferry_refresh.FetchedSource(
@@ -2117,7 +2128,7 @@ def test_ferry_refresh_endpoint_advances_latest_verified_time_atomically():
             "2026-08-13T00:30:50+07:00"
         )
         assert all(
-            source["snapshot_verified_at"] == "2026-08-13T00:30:50+07:00"
+            source["snapshot_verified_at"] == source_verified_at[source["source_id"]]
             and source["last_verified_at"] == expected
             and source["latest_successful_validation_at"] == expected
             for source in response["timetable"]["sources"]
@@ -2125,14 +2136,16 @@ def test_ferry_refresh_endpoint_advances_latest_verified_time_atomically():
         assert all(
             sailing["schedule_last_verified_at"] == expected
             and sailing["schedule_snapshot_verified_at"]
-                == "2026-08-13T00:30:50+07:00"
+                == source_verified_at[sailing["schedule_source_id"]]
             for sailing in response["ferries"]
         )
 
+        ferry_schedule._reset_runtime_verification_for_tests(clear_local=False)
         with clock.frozen(verification_time + timedelta(seconds=5)):
             follow_up = api_main.get_ferries(Response())
             cached = api_main.refresh_ferry_sources(Response())
         assert follow_up["timetable"]["last_verified_at"] == expected
+        assert follow_up["timetable"]["freshness_durability"] == "local_sqlite"
         assert cached["refresh"]["status"] == "cached"
         assert cached["timetable"]["last_verified_at"] == expected
     finally:
@@ -2561,7 +2574,7 @@ def test_ferry_freshness_store_reports_safe_request_failure_reasons():
         def __exit__(self, *_args):
             return False
 
-        def read(self):
+        def read(self, size=-1):
             return (
                 f"not-json url={project_url} credential={secret}"
             ).encode()
@@ -2585,7 +2598,7 @@ def test_ferry_freshness_store_reports_safe_request_failure_reasons():
         def __exit__(self, *_args):
             return False
 
-        def read(self):
+        def read(self, size=-1):
             return f"private response credential={secret}".encode()
 
     class StatusFailureOpener:
@@ -2994,13 +3007,15 @@ def test_operations_aliases_and_methodology_do_not_claim_observed_data():
         assert assumption["live"] is False
         assert assumption["measured"] is False
 
-    with clock.frozen(WEEKDAY_1400):
+    from unittest.mock import patch
+    with clock.frozen(WEEKDAY_1400), patch.object(live_traffic, "_tomtom_segments", return_value={}):
         response = api_main.get_ops()
-    assert response["data_source"] == "simulated"
-    assert response["api_source"] == "simulated"
+    assert response["data_source"] == "unavailable"
+    assert response["api_source"] == "unavailable"
     assert response["operations_methodology"]["observed"] is False
-    assert "modelled" in response["provenance"]["operations"].lower()
-    assert "synthetic" in response["provenance"]["traffic"].lower()
+    assert response["average_congestion_index"] is None
+    assert response["total_co2_reduced_today_kg"] is None
+    assert response["provenance"]["traffic"] == "unavailable"
     assert "tomtom" not in json.dumps(response["provenance"]).lower()
 
 
@@ -3337,7 +3352,14 @@ def test_cross_border_route_api_uses_shared_latest_ferry_verification():
     original_load = ferry_freshness_store.load
     original_available = ferry_freshness_store.available
     original_osrm = multimodal_router._osrm_route
-    latest = "2026-08-14T09:00:08+07:00"
+    source_verified_at = {
+        source["source_id"]: source["last_verified_at"]
+        for source in ferry_schedule._TIMETABLE["sources"]
+    }
+    latest = (
+        max(datetime.fromisoformat(value) for value in source_verified_at.values())
+        + timedelta(hours=1)
+    ).astimezone(TZ).isoformat(timespec="seconds")
     try:
         os.environ[env_name] = "1"
         snapshot_id = ferry_schedule.timetable_metadata(
@@ -3373,7 +3395,7 @@ def test_cross_border_route_api_uses_shared_latest_ferry_verification():
         )
         assert all(
             sailing["schedule_snapshot_verified_at"]
-                == "2026-08-13T00:30:50+07:00"
+                == source_verified_at[sailing["schedule_source_id"]]
             for sailing in response["next_matching_ferries"]
         )
     finally:
@@ -4101,7 +4123,7 @@ def test_historical_api_reports_mixed_provenance_without_overclaiming():
         historical_store._store = store
         try:
             with clock.frozen(fixed_now):
-                response = api_main.api_historical_congestion("corridor-1", 7)
+                response = api_main.api_historical_congestion("corridor-1", 7, include_modelled=True)
 
             metadata = response["history_metadata"]
             assert len(response["hourly_profile"]) == 24
@@ -4212,7 +4234,7 @@ def test_tomtom_flow_request_uses_supported_unit_and_runtime_key():
         def __exit__(self, *_args):
             return False
 
-        def read(self):
+        def read(self, size=-1):
             return json.dumps({
                 "flowSegmentData": {
                     "currentSpeed": 32,
@@ -4244,11 +4266,12 @@ def test_tomtom_flow_request_uses_supported_unit_and_runtime_key():
         assert query["unit"] == ["kmph"]
         assert query["key"] == ["rotated-test-key"]
         assert captured["timeout"] < 3
-        assert segment == {
+        assert {key: segment[key] for key in ("current_speed_kmh", "free_flow_speed_kmh", "confidence")} == {
             "current_speed_kmh": 32.0,
             "free_flow_speed_kmh": 64.0,
             "confidence": 0.91,
         }
+        assert datetime.fromisoformat(segment["snapshot_generated_at"]).tzinfo is not None
     finally:
         live_traffic._tomtom_cache.clear()
         if original_key is None:
@@ -4620,7 +4643,7 @@ def test_tomtom_malformed_success_is_not_reported_as_live():
         def __exit__(self, *_args):
             return False
 
-        def read(self):
+        def read(self, size=-1):
             return b'{"flowSegmentData": {}}'
 
     live_traffic._tomtom_cache.clear()
@@ -5211,7 +5234,7 @@ def test_osrm_request_presents_a_verifying_tls_context():
         def __exit__(self, *_args):
             return False
 
-        def read(self):
+        def read(self, size=-1):
             return json.dumps({
                 "code": "Ok",
                 "routes": [{

@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "service_parity": [
+    {
+      "image": "transset/images/file_00001.jpg",
+      "passed": true,
+      "count": 0,
+      "latency_ms": 2175.1984160000575
+    },
+    {
+      "image": "transset/images/file_00153.jpg",
+      "passed": true,
+      "count": 6,
+      "latency_ms": 1747.3537920013769
+    },
+    {
+      "image": "transset/images/file_00304.jpg",
+      "passed": true,
+      "count": 6,
+      "latency_ms": 2114.11091699847
+    }
+  ],
+  "selection_unchanged_after_diagnostic": true,
+  "source_manifests_verified": true,
+  "production_activated": false,
+  "batam_accuracy_validated": false
+}

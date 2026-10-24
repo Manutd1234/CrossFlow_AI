@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "checked_at_utc": "2026-10-23T18:51:15.253709+00:00",
+  "backend_app_tests": 36,
+  "training_protocol_tests": 23,
+  "frontend_preview_client_tests": 41,
+  "total_focused_tests": 100,
+  "dataset_checks": 876,
+  "app_inference": "actual ASGI routes + real isolated local worker/model, isolated test operator identity",
+  "production_login_verified": false,
+  "existing_default_counter_status": "available; unchanged detector_training checkpoint",
+  "test_accuracy_gate_passed": false,
+  "model_promoted": false,
+  "notes": [
+    "Test counts are engineering checks, not model accuracy.",
+    "Frontend component/client code unchanged; both affected suites rerun successfully.",
+    "Frozen detector base code and prior model files preserved."
+  ]
+}

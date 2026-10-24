@@ -1,0 +1,354 @@
+{
+  "scope": "exploratory_single_batam_site_next_survey_day",
+  "evaluated_at": "2026-10-23T12:58:26.033647+00:00",
+  "source_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642",
+  "source_pdf_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/download/5642/3819",
+  "csv_sha256": "8dceaa2b73169ff33aded53fc9ca7a86274f3aa72cdd4ec60f4236b3cae68e44",
+  "source_license": "CC BY-SA 4.0 as displayed on article page",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, decimal commas normalized, explicit interval offsets and quality diagnostics added. No author endorsement.",
+  "source_rows": 48,
+  "source_calendar_days": 3,
+  "synthetic_training_rows": 0,
+  "serving_model_replaced": false,
+  "application_history_modified": false,
+  "canonical_corridor_mapping": null,
+  "unit": "km/h",
+  "model_parameters": {
+    "n_estimators": 80,
+    "max_depth": 3,
+    "min_samples_leaf": 2,
+    "random_state": 42,
+    "n_jobs": 1
+  },
+  "folds": [
+    {
+      "test_date": "2023-02-17",
+      "forecast_origin": "2023-02-17T00:00:00+07:00",
+      "latest_training_interval_end": "2023-02-16T18:00:00+07:00",
+      "training_rows": 16,
+      "test_rows": 16,
+      "random_forest": {
+        "samples": 16,
+        "mae_kph": 1.9203747302827336,
+        "rmse_kph": 2.3319047732672145
+      },
+      "previous_survey_day": {
+        "samples": 16,
+        "mae_kph": 2.279375,
+        "rmse_kph": 2.7310311697232605
+      },
+      "historical_slot_mean": {
+        "samples": 16,
+        "mae_kph": 2.279375,
+        "rmse_kph": 2.7310311697232605
+      }
+    },
+    {
+      "test_date": "2023-02-18",
+      "forecast_origin": "2023-02-18T00:00:00+07:00",
+      "latest_training_interval_end": "2023-02-17T18:00:00+07:00",
+      "training_rows": 32,
+      "test_rows": 16,
+      "random_forest": {
+        "samples": 16,
+        "mae_kph": 3.355438755734668,
+        "rmse_kph": 3.918395107569964
+      },
+      "previous_survey_day": {
+        "samples": 16,
+        "mae_kph": 4.135,
+        "rmse_kph": 4.659914162299558
+      },
+      "historical_slot_mean": {
+        "samples": 16,
+        "mae_kph": 3.536562499999999,
+        "rmse_kph": 3.9854244206232283
+      }
+    }
+  ],
+  "predictions": [
+    {
+      "interval_start": "2023-02-17T07:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 24.02,
+      "random_forest_kph": 22.36691979166666,
+      "previous_survey_day_kph": 21.16,
+      "historical_slot_mean_kph": 21.16
+    },
+    {
+      "interval_start": "2023-02-17T07:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 20.35,
+      "random_forest_kph": 23.626021428571423,
+      "previous_survey_day_kph": 24.64,
+      "historical_slot_mean_kph": 24.64
+    },
+    {
+      "interval_start": "2023-02-17T07:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 22.25,
+      "random_forest_kph": 22.656665624999995,
+      "previous_survey_day_kph": 20.95,
+      "historical_slot_mean_kph": 20.95
+    },
+    {
+      "interval_start": "2023-02-17T07:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 23.65,
+      "random_forest_kph": 23.781862202380943,
+      "previous_survey_day_kph": 24.19,
+      "historical_slot_mean_kph": 24.19
+    },
+    {
+      "interval_start": "2023-02-17T08:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 24.44,
+      "random_forest_kph": 25.14470446428571,
+      "previous_survey_day_kph": 23.48,
+      "historical_slot_mean_kph": 23.48
+    },
+    {
+      "interval_start": "2023-02-17T08:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 21.42,
+      "random_forest_kph": 25.63479747023809,
+      "previous_survey_day_kph": 22.78,
+      "historical_slot_mean_kph": 22.78
+    },
+    {
+      "interval_start": "2023-02-17T08:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 30.56,
+      "random_forest_kph": 29.664566666666673,
+      "previous_survey_day_kph": 33.43,
+      "historical_slot_mean_kph": 33.43
+    },
+    {
+      "interval_start": "2023-02-17T08:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 28.19,
+      "random_forest_kph": 29.75091250000001,
+      "previous_survey_day_kph": 29.08,
+      "historical_slot_mean_kph": 29.08
+    },
+    {
+      "interval_start": "2023-02-17T16:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 23.58,
+      "random_forest_kph": 27.83037172619047,
+      "previous_survey_day_kph": 26.79,
+      "historical_slot_mean_kph": 26.79
+    },
+    {
+      "interval_start": "2023-02-17T16:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 25.05,
+      "random_forest_kph": 28.02457931547618,
+      "previous_survey_day_kph": 31.44,
+      "historical_slot_mean_kph": 31.44
+    },
+    {
+      "interval_start": "2023-02-17T16:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 21.54,
+      "random_forest_kph": 24.799312202380953,
+      "previous_survey_day_kph": 24.69,
+      "historical_slot_mean_kph": 24.69
+    },
+    {
+      "interval_start": "2023-02-17T16:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 23.42,
+      "random_forest_kph": 25.405856696428565,
+      "previous_survey_day_kph": 26.26,
+      "historical_slot_mean_kph": 26.26
+    },
+    {
+      "interval_start": "2023-02-17T17:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 21.16,
+      "random_forest_kph": 23.042501934523806,
+      "previous_survey_day_kph": 23.48,
+      "historical_slot_mean_kph": 23.48
+    },
+    {
+      "interval_start": "2023-02-17T17:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 23.5,
+      "random_forest_kph": 23.762926488095232,
+      "previous_survey_day_kph": 22.83,
+      "historical_slot_mean_kph": 22.83
+    },
+    {
+      "interval_start": "2023-02-17T17:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 20.51,
+      "random_forest_kph": 22.988272767857136,
+      "previous_survey_day_kph": 21.78,
+      "historical_slot_mean_kph": 21.78
+    },
+    {
+      "interval_start": "2023-02-17T17:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 22.92,
+      "random_forest_kph": 23.708697321428566,
+      "previous_survey_day_kph": 24.47,
+      "historical_slot_mean_kph": 24.47
+    },
+    {
+      "interval_start": "2023-02-18T07:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 28.55,
+      "random_forest_kph": 22.12975006223352,
+      "previous_survey_day_kph": 24.02,
+      "historical_slot_mean_kph": 22.59
+    },
+    {
+      "interval_start": "2023-02-18T07:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 26.57,
+      "random_forest_kph": 22.805703485893194,
+      "previous_survey_day_kph": 20.35,
+      "historical_slot_mean_kph": 22.495
+    },
+    {
+      "interval_start": "2023-02-18T07:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 26.07,
+      "random_forest_kph": 22.380151855517845,
+      "previous_survey_day_kph": 22.25,
+      "historical_slot_mean_kph": 21.6
+    },
+    {
+      "interval_start": "2023-02-18T07:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 24.21,
+      "random_forest_kph": 23.266529922936538,
+      "previous_survey_day_kph": 23.65,
+      "historical_slot_mean_kph": 23.92
+    },
+    {
+      "interval_start": "2023-02-18T08:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 26.79,
+      "random_forest_kph": 23.490155672595375,
+      "previous_survey_day_kph": 24.44,
+      "historical_slot_mean_kph": 23.96
+    },
+    {
+      "interval_start": "2023-02-18T08:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 28.41,
+      "random_forest_kph": 24.061899449651648,
+      "previous_survey_day_kph": 21.42,
+      "historical_slot_mean_kph": 22.1
+    },
+    {
+      "interval_start": "2023-02-18T08:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 28.19,
+      "random_forest_kph": 29.989321681096676,
+      "previous_survey_day_kph": 30.56,
+      "historical_slot_mean_kph": 31.994999999999997
+    },
+    {
+      "interval_start": "2023-02-18T08:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 31.69,
+      "random_forest_kph": 29.826653769841265,
+      "previous_survey_day_kph": 28.19,
+      "historical_slot_mean_kph": 28.634999999999998
+    },
+    {
+      "interval_start": "2023-02-18T16:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 29.2,
+      "random_forest_kph": 25.432155542864002,
+      "previous_survey_day_kph": 23.58,
+      "historical_slot_mean_kph": 25.185
+    },
+    {
+      "interval_start": "2023-02-18T16:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 34.32,
+      "random_forest_kph": 26.27771732587265,
+      "previous_survey_day_kph": 25.05,
+      "historical_slot_mean_kph": 28.245
+    },
+    {
+      "interval_start": "2023-02-18T16:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 24.05,
+      "random_forest_kph": 23.073520502353038,
+      "previous_survey_day_kph": 21.54,
+      "historical_slot_mean_kph": 23.115000000000002
+    },
+    {
+      "interval_start": "2023-02-18T16:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 28.32,
+      "random_forest_kph": 24.128034099172886,
+      "previous_survey_day_kph": 23.42,
+      "historical_slot_mean_kph": 24.840000000000003
+    },
+    {
+      "interval_start": "2023-02-18T17:00:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 25.07,
+      "random_forest_kph": 22.2561784905454,
+      "previous_survey_day_kph": 21.16,
+      "historical_slot_mean_kph": 22.32
+    },
+    {
+      "interval_start": "2023-02-18T17:00:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 28.89,
+      "random_forest_kph": 23.347145090612,
+      "previous_survey_day_kph": 23.5,
+      "historical_slot_mean_kph": 23.165
+    },
+    {
+      "interval_start": "2023-02-18T17:30:00+07:00",
+      "direction": "from_east",
+      "actual_kph": 22.63,
+      "random_forest_kph": 22.130112915148572,
+      "previous_survey_day_kph": 20.51,
+      "historical_slot_mean_kph": 21.145000000000003
+    },
+    {
+      "interval_start": "2023-02-18T17:30:00+07:00",
+      "direction": "from_west",
+      "actual_kph": 25.02,
+      "random_forest_kph": 23.29659340410406,
+      "previous_survey_day_kph": 22.92,
+      "historical_slot_mean_kph": 23.695
+    }
+  ],
+  "random_forest": {
+    "samples": 32,
+    "mae_kph": 2.637906743008701,
+    "rmse_kph": 3.224251858231197
+  },
+  "previous_survey_day": {
+    "samples": 32,
+    "mae_kph": 3.2071875,
+    "rmse_kph": 3.8192493536034013
+  },
+  "historical_slot_mean": {
+    "samples": 32,
+    "mae_kph": 2.9079687499999993,
+    "rmse_kph": 3.4162947079035786
+  },
+  "beats_previous_survey_day": true,
+  "promotion_eligible": false,
+  "limitations": [
+    "48 published means, one 100m site, two directions, three days and peak windows only; no vehicle-level samples.",
+    "Two expanding-day folds; 32 held-out interval means are correlated, not independent vehicle samples.",
+    "Fixed model parameters; no tuning on either test day and no test data used during fitting.",
+    "Reported speeds are retained, including one flagged speed/inverse-mean-time discrepancy; raw samples cannot resolve it.",
+    "Forecasts are made at midnight for the next survey day, not 15/30/60-minute operational predictions.",
+    "Exact geometry and canonical corridor mapping remain unverified. No network accuracy, uncertainty coverage or deployment claim.",
+    "Insufficient geographic and temporal coverage for serving-model promotion, regardless of benchmark score."
+  ]
+}

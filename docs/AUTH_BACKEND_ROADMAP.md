@@ -9,23 +9,104 @@
 
 | Phase | State | Evidence |
 |---|---|---|
-| A1 schema and RLS | Written, **not yet applied** to the project | `backend/auth/schema.sql` |
+| A1 schema and RLS | Minimal hosted v1→v2 hardening applied and independently checked; full schema/backfill not rerun | `backend/auth/migrations/002_harden_auth_role_guard.sql`; hosted v2 health, invoker guard, 3 unchanged profiles |
 | A2 user-scoped transport | Done | `backend/auth/transport.py` |
 | A3 identity and role resolution | Done | `backend/auth/identity.py` |
 | A4 API surface | Done | 3 endpoints live in the OpenAPI schema |
-| A5 boundary tests | Done | 25 tests, all passing |
-| A6 frontend sign-in flow | Done | `frontend/src/services/auth.ts`, `frontend/src/components/auth/SignInPanel.tsx` |
+| A5 boundary tests | Done locally | 32 Python tests plus the final focused email-verification rejection case; 19 PostgreSQL schema/migration tests passing |
+| A6 frontend email/password, signup OTP and Google PKCE | Google admin and EJC code login/reload/repeat verified; NUS Outlook receipt, signup OTP, owner-entered password sign-in and driver-session reload verified | Full frontend check: 379 tests / 37 files, lint, TypeScript and build; includes 41 SignInPanel tests, 31 email-OTP service tests and 4 email-isolation tests |
 | A7 configuration and docs | Done | `.env.example`, README, CI step |
 
-Verified locally: 25/25 auth tests pass; the 105 existing modular tests still
-pass; auth endpoints register alongside the public ones; a missing, malformed or
-machine-secret bearer token returns 401; and with auth enabled against an
-unreachable project, `/api/auth/session` returns 503 while `/api/corridors` and
-`/api/ferries` keep answering 200.
+Verified locally: 32/32 Python authentication boundary tests and 19/19
+PostgreSQL behavioral tests pass (15 schema + 4 migration cases). The SQL suite executes the committed schema
+using PGlite, including RLS, signup/backfill, role edits, anonymous denial and
+account deletion. It reproduces the original SECURITY DEFINER role-guard
+vulnerability and confirms that the SECURITY INVOKER guard denies driver
+self-promotion. The health RPC now reports schema version 2.
+Migration cases additionally verify idempotence, preservation of existing
+rows/ACLs/owners/policies/triggers, Google naming and transaction rollback.
 
-**Not yet verified:** anything requiring the live project — the RLS policies
-themselves, the signup trigger, and a real end-to-end sign-in. That is the A1
-acceptance gate and needs the SQL applied first (§10).
+The final focused regression also rejects a missing signup session and a
+forged token claiming email verification before profile lookup, giving 33
+distinct Python auth cases exercised. Supabase Confirm Email must stay enabled
+for the intended signup policy; creating a driver profile does not itself
+authenticate the account.
+
+The configured hosted project has existing `crossflow_profiles` rows. Its
+public Auth settings endpoint responds successfully, and an anonymous profile
+read is denied. The local app uses that project's URL and publishable key.
+
+The hosted minimal upgrade was applied through Codex's in-app browser. An
+independent clean query confirmed `schema_version = 2`, RLS enabled,
+authenticated read access, authenticated insert denied, the role guard's
+`SECURITY DEFINER` flag false and three unchanged profiles. The full schema and
+its backfill were not applied.
+[Hosted verification screenshot](verification/hosted-auth-v2.png).
+
+The **CrossFlow AI** Google Cloud project (`crossflow-ai-512506`) and
+**CrossFlow AI Local Web** client exist with the approved identity scopes,
+localhost origin and Supabase callback. Supabase has the correct Client ID,
+nonempty masked saved secret and Google enabled. A fresh Google OAuth round
+trip from `http://localhost:3000` succeeded as **Ian Wangsa**, with **admin**
+resolved by the backend from the protected profile. This confirms the user's
+approved operator role in a fresh session.
+[Fresh Google login evidence](verification/google-login-admin-success.png).
+
+The original Google secret appeared once in a copy-button label in tool
+output. Replacement and old-secret revocation remain **unverified**; successful
+login does not prove rotation. Remove the exposed old secret after a verified
+replacement round trip. Secret values are absent from repository files.
+Saved Google settings retain nonce checks and disallow users without email.
+
+Brevo's sender is Verified as **CrossFlow AI**; phone verification is complete.
+Custom SMTP is enabled/saved and delivered a numeric confirmation email to
+`2021.ian.abiel.wangsa@ejc.edu.sg` after one `/otp` request at 16:13 returned
+200 with no session. The sender was **CrossFlow AI**, subject **Verify your
+CrossFlow account**. At 16:22, the email-code UI requested another numeric
+confirmation email and verified it with type `email`; the backend resolved
+**CrossFlow OTP Demo** as **driver**, without an agent-set password. The session
+survived reload; its modal confirmed DRIVER from `crossflow_profiles`. A repeat
+code arrived at 16:23 with subject **Your CrossFlow sign-in code** and its UI
+verification succeeded again as driver, with zero console errors. The owner
+submitted NUS password signup at 16:26 from `http://127.0.0.1:3000/`. It has a
+separate Supabase user ID with confirmation sent at 16:26:45 SGT. The NUS-only
+resend at 16:49 was located in `e1525902@u.nus.edu` Outlook. Codex independently
+confirmed its **To: ian1234@comp.nus.edu.sg** header and recipient-aware body,
+then verified the code against the original NUS signup. The backend resolved
+**CrossFlow Driver Demo / driver**, and reload restoration passed with
+`crossflow_profiles` as role source. No account email changed or merged.
+A separate localhost password sign-in using the owner-entered password also
+passed, followed by reload restoration and the server-resolved DRIVER modal,
+with zero console errors.
+[Password-login evidence](verification/nus-password-login-restored.png).
+EJC's 16:22/16:23 tests remain separate. The mail issue is resolved; the
+[historical delivery trace](SUPABASE_SIGNUP_EMAIL_SETUP.md#nus-delivery-trace-and-handoff)
+now records Outlook receipt and verification, with no support trace required.
+The precise institutional forwarding/gateway rule was not inspected.
+[Exact-recipient evidence](verification/recipient-specific-smtp-delivery.png),
+[NUS-bound verification](verification/nus-recipient-bound-verification.png).
+The exact saved Brevo key label is
+unverified: both key rows still show `Last used --`.
+
+Both templates are saved with numeric `{{ .Token }}`:
+**Confirm signup** uses **Verify your CrossFlow account**, and **Magic link or
+OTP** uses **Your CrossFlow sign-in code**. Both now include `{{ .Email }}` and
+instructions to use the code only with that address. Both recipient updates
+are independently reload-verified with Email/Token persisted and Save disabled.
+Four email-isolation and three cross-account UI tests cover binding;
+the destination notices/captions/labels preserve the current verification state.
+Codes are verified together with the requested email; globally unique digits
+across accounts are not promised.
+The first-class email-code flow is
+implemented and its first live code verification succeeded. The full frontend
+check passed 379 tests in 37 files plus lint, TypeScript and build; 41 panel
+tests and 31 email-OTP service tests are included subsets.
+
+**Still pending:** Google secret replacement/revocation and exact saved Brevo key
+label. Demo readiness stays
+**LIMITED** until the remaining authentication and observed-data validation flows
+succeed. See [the local verification report](LOCAL_VERIFICATION_REPORT.md) and
+[signup email setup](SUPABASE_SIGNUP_EMAIL_SETUP.md).
 
 ---
 
@@ -212,10 +293,10 @@ class AuthenticatedUser:
 
 - `authenticate(token)` verifies the token through `/auth/v1/user` and reads the
   caller's profile through the user-scoped transport.
-- **Verification cache:** keyed by `sha256(token)`, TTL 60 s, capped size,
+- **Verification cache:** keyed by project configuration and `sha256(token)`, TTL 60 s, capped size,
   successful verifications only, and never cached beyond the token's own `exp`.
-  Bounds the network cost of a chatty driver UI without meaningfully extending
-  a revoked token's life.
+  Only the verified identity is cached; the profile and role are reread on
+  every request so demotion and profile deletion take effect immediately.
 - `_read_profile()` resolves the role **through the caller's JWT**. A user with
   no profile row is a hard `403`, not a defaulted `driver`.
 - `require_user()` / `require_admin_user()` are the FastAPI dependencies. Note
@@ -234,13 +315,16 @@ class AuthenticatedUser:
 |---|---|---|
 | `GET /api/auth/session` | any valid token | `{ user_id, role, display_name, expires_at }` |
 | `GET /api/auth/status` | public | `{ mode, enabled, configured, project_origin, sign_in, notes }` — reports configuration, not a live reachability probe |
+| `POST /api/optimize-route`, `/api/optimize-free-route`, `/api/optimize-multi-stop-route` and their aliases | verified admin/operator when Supabase mode is enabled | Calculated route and verified attribution; 401 missing/invalid session, 403 driver; auth-disabled development mode allows guest planning |
 
 `/api/auth/status` is what makes D4's graceful degradation visible instead of
 implicit. Both carry the existing `private, no-store` headers used by the
 routing-intelligence endpoints.
 
-No existing endpoint changes behaviour in this phase — freight/deliveries
-endpoints get their guards in WP9.
+The planning handlers now enforce the operator role before computation and
+persistence. Individual dispatch-code retrieval remains public; account history
+retains its separate account-scope guard. Freight/deliveries endpoints remain
+future work in WP9.
 
 ### A5 · Tests · `backend/auth/tests/test_auth.py`
 
@@ -326,18 +410,28 @@ proof lives here.
 - **Delivery-specific admin scheduling and driver workflows** beyond the current
   sign-in/session boundary.
 - **Freight routing** (WP1–WP7) — the other track entirely.
-- Password reset, email confirmation, MFA — Supabase Auth features, configured
-  in its console, not code we write.
+- Password reset and MFA screens. Signup email OTP entry/verification/resend
+  have since been implemented; delivery and confirmation policy remain
+  Supabase configuration responsibilities.
 
 ---
 
 ## 10. Turning it on
 
-The code path is implemented. The remaining acceptance gate is applying the
-schema to a real Supabase project and proving RLS and end-to-end sign-in there.
+The minimal v1→v2 hosted hardening and metadata verification are complete.
+Fresh Google login/admin role and first EJC email-code login/driver role are
+verified, including EJC reload restoration and repeat confirmed-account login.
+NUS signup OTP, owner-entered password sign-in and reload restoration are also
+verified. Credential-rotation verification remains an acceptance gate. The instructions below are a recipe for other setups;
+the explicitly approved operator promotion and current account states are
+recorded above.
 
-1. **Apply the schema.** Paste `backend/auth/schema.sql` into the Supabase SQL
-   Editor and run it. It is rerunnable.
+1. **Choose the matching database setup.** A new project uses
+   `backend/auth/schema.sql`. An existing v1 project uses the tested minimal
+   `backend/auth/migrations/002_harden_auth_role_guard.sql`; this preserves
+   existing rows, grants, policies, triggers and owners and does not run the
+   full schema's backfill. The configured project has completed this minimal
+   upgrade.
 2. **Configure the backend.** In `.env`:
    ```
    CROSSFLOW_AUTH_MODE=supabase

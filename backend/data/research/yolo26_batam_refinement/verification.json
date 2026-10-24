@@ -1,0 +1,7 @@
+{
+  "schema": "crossflow.yolo26_artifact_verification.v1",
+  "manifest_sha256": "c023829c1624515e18272eb860149d3ad64891c6820752783debf99820d3c8db",
+  "checked_files": 57,
+  "all_hashes_match": true,
+  "production_eligible": false
+}

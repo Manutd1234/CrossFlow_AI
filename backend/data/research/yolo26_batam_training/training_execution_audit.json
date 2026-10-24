@@ -1,0 +1,11 @@
+{
+  "schema": "crossflow.yolo26_optimizer_audit.v1",
+  "epochs": 20,
+  "minibatches": 60,
+  "batch": 3,
+  "nbs": 64,
+  "gradient_accumulation": 21,
+  "optimizer_steps_derived_from_pinned_trainer_loop": 2,
+  "direct_instrumentation": false,
+  "note": "Original nano protocol inherited Ultralytics nbs64. This is 60 forward/backward microbatches, not60optimizerupdates. New refinement protocol explicitlysetsnbs3 and directlycountsoptimizer_step calls."
+}

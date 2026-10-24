@@ -1,0 +1,26 @@
+.cctv-monitor { padding: 24px; }
+.cctv-monitor__header, .cctv-camera__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.cctv-monitor h3 { display: flex; align-items: center; gap: 10px; margin: 0; }
+.cctv-monitor__header p, .cctv-camera__heading p { margin: 8px 0 0; color: var(--text-secondary); }
+.cctv-monitor__header button { flex-shrink: 0; }
+.cctv-monitor__message, .cctv-monitor__awaiting { margin: 20px 0; line-height: 1.6; }
+.cctv-monitor__awaiting { border-left: 3px solid var(--accent-indigo); padding-left: 12px; }
+.cctv-monitor__coverage { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+.cctv-monitor__coverage div { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; }
+.cctv-monitor__coverage dt, .cctv-camera__measurements dt { color: var(--text-secondary); font-size: 0.8rem; }
+.cctv-monitor__coverage dd { font-size: 1.75rem; font-weight: var(--weight-semibold); margin: 8px 0 0; }
+.cctv-monitor__checked, .cctv-monitor__scope, .cctv-camera__time, .cctv-camera__pending { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+.cctv-monitor__details { border-top: 1px solid var(--border-color); margin-top: 18px; padding-top: 16px; }
+.cctv-monitor__details summary { cursor: pointer; font-weight: var(--weight-semibold); }
+.cctv-monitor__cameras { list-style: none; margin: 0; padding: 0; }
+.cctv-camera { padding: 20px 0; border-bottom: 1px solid var(--border-color); }
+.cctv-camera:last-child { border-bottom: 0; }
+.cctv-camera h4 { margin: 0; }
+.cctv-camera__reason { line-height: 1.6; margin: 12px 0; }
+.cctv-camera__measurements { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 18px; }
+.cctv-camera__measurements dd { margin: 6px 0 0; font-weight: var(--weight-semibold); }
+.cctv-camera__source { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+.cctv-monitor__error { color: var(--accent-rose); line-height: 1.6; }
+.cctv-monitor__scope { margin: 18px 0 0; }
+@media (max-width: 1000px) { .cctv-monitor__coverage { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .cctv-monitor { padding: 18px; } .cctv-monitor__header { flex-direction: column; } .cctv-monitor__coverage { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cctv-camera__heading { flex-wrap: wrap; gap: 10px; } }

@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "training_performed": true,
+  "protocol_sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217",
+  "production_eligible": false,
+  "source_count": 2,
+  "published_count_cells": 288,
+  "files": [
+    {
+      "path": "gajah_mada_uturn_hourly/model.json",
+      "bytes": 6120,
+      "sha256": "37de92f5d212742f3afd823e2056af20b6c5d7c317a3975356cbb3e3f4bab8ff"
+    },
+    {
+      "path": "gajah_mada_uturn_hourly/predictions.csv",
+      "bytes": 9010,
+      "sha256": "f9d3d68cd0d537c55865de39216e8116e18419e7d96aeba4c68881fa000a8ece"
+    },
+    {
+      "path": "gajah_mada_uturn_hourly/report.json",
+      "bytes": 8269,
+      "sha256": "75fe2c7487bee09fe362c3381ec279bdff89c2fc844302b9dec3ab717f9c27e3"
+    },
+    {
+      "path": "gajah_mada_uturn_hourly/selection.json",
+      "bytes": 2589,
+      "sha256": "0a292edf783d31180bae4c4786e226825cae21ffa858da16be71d6c5b79ba148"
+    },
+    {
+      "path": "gajah_mada_uturn_hourly/source_cells.csv",
+      "bytes": 27793,
+      "sha256": "03468df2a65b3058a2881d93df6a72e0dc29a613d0e3b9ec703ff25d99ab510b"
+    },
+    {
+      "path": "gajah_mada_uturn_hourly/validation.csv",
+      "bytes": 603,
+      "sha256": "3be5a7c50d4b99b5b18a2817703bb675de4791c3208a429d41b566502dae71d5"
+    },
+    {
+      "path": "protocol.json",
+      "bytes": 4418,
+      "sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217"
+    },
+    {
+      "path": "report.json",
+      "bytes": 20803,
+      "sha256": "dda454adb27d95336e39d36ffded73d2aa6b28af51451b50c15788305586f22d"
+    },
+    {
+      "path": "sekupang_15min/model.json",
+      "bytes": 8625,
+      "sha256": "82788bab95fb68813c36880336c981cc756e44e658b15d19f403e8d420cc7539"
+    },
+    {
+      "path": "sekupang_15min/predictions.csv",
+      "bytes": 11918,
+      "sha256": "e12762416aefd315c8823dcd4aaa464ea881fd6d6963b9aaab8ebbd1f37d64be"
+    },
+    {
+      "path": "sekupang_15min/report.json",
+      "bytes": 9766,
+      "sha256": "29cf4fe5c625a670f4c35ec4e76cc1d66a194d2ecec8cd8d3fb9f835e8a5a20c"
+    },
+    {
+      "path": "sekupang_15min/selection.json",
+      "bytes": 3949,
+      "sha256": "c75b8a1e27612dddaf0b8593cef4c66ee88423c5e9af0deca1c116b6843f3cf6"
+    },
+    {
+      "path": "sekupang_15min/source_cells.csv",
+      "bytes": 74767,
+      "sha256": "05047a63aff18128d16f06088cfc6220e050529f7d87f18fd8f0e2f3f4c6429e"
+    },
+    {
+      "path": "sekupang_15min/validation.csv",
+      "bytes": 1018,
+      "sha256": "0e9b26e4e4da708eb8fd790dce21edf9291a70444e6823bb77be927f2929ceb4"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 4760,
+      "sha256": "7963308b945f6be3bf24cd9c6b62df0df0a95d41a32b9e5e157cbdbc87e7f043"
+    }
+  ],
+  "reproduce": "CrossFlow_AI/.venv/bin/python CrossFlow_AI/scripts/train_batam_counts.py --prepare-only; then run without --prepare-only in a new output directory",
+  "environment": {
+    "python": "3.12.14 (main, Aug 12 2026, 13:57:54) [Clang 21.0.0 (clang-2100.1.1.101)]",
+    "numpy": "2.5.1"
+  },
+  "script_sha256": "691f4886d0e900b5081742d33037d516ae7cf4eeea8ac502db2aa47ef94cc2f5",
+  "source_inputs_unchanged": true,
+  "fitted_source_cells": 228,
+  "final_heldout_target_cells": 60,
+  "reporting_correction_no_retraining": true
+}

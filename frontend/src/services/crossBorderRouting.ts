@@ -5,6 +5,7 @@ import type {
   RouteLeg,
   RouteOptimizationResult,
   RoutePreference,
+  RouteScheduleOptions,
   VehicleType,
 } from '../types';
 import { FERRY_SEA_ROUTE, offlineFerries, PUBLISHED_FERRY_TIMETABLE } from '../data/mockData';
@@ -342,6 +343,7 @@ export function offlineCrossBorderOptimize(
   hour: number,
   routePreference: RoutePreference,
   now = new Date(),
+  schedule?: RouteScheduleOptions,
 ): RouteOptimizationResult {
   const originRegion = locationRegion(origin.lat, origin.lng);
   const destinationRegion = locationRegion(destination.lat, destination.lng);
@@ -358,17 +360,25 @@ export function offlineCrossBorderOptimize(
   const destinationPoint: [number, number] = [destination.lat, destination.lng];
   const departureTimezone = originRegion === 'SINGAPORE'
     ? 'Asia/Singapore' : 'Asia/Jakarta';
-  const departure = nextCorridorHour(hour, departureTimezone, now);
+  const requestedDeparture = schedule?.departure_at ? new Date(schedule.departure_at) : null;
+  const deadline = schedule?.arrive_by ? new Date(schedule.arrive_by) : null;
+  if ((requestedDeparture && Number.isNaN(requestedDeparture.getTime()))
+    || (deadline && Number.isNaN(deadline.getTime()))) {
+    throw new Error('Choose a valid journey departure or arrival time.');
+  }
+  let departure = requestedDeparture ?? nextCorridorHour(hour, departureTimezone, now);
   const legs: RouteLeg[] = [];
   let sailings: FerrySchedule[] = [];
   let ferryNote: string | undefined;
   let waitMins = 0;
 
   if (originRegion === destinationRegion) {
-    legs.push(roadLeg(
+    const road = roadLeg(
       originPoint, destinationPoint,
       origin.display_name, destination.display_name,
-    ));
+    );
+    if (deadline) departure = new Date(deadline.getTime() - road.duration_mins * 60_000);
+    legs.push(road);
   } else {
     const pair = chooseTerminalPair(originPoint, destinationPoint, originRegion);
     const departureTerminal = originRegion === 'SINGAPORE' ? pair.singapore : pair.batam;
@@ -381,15 +391,28 @@ export function offlineCrossBorderOptimize(
       originPoint, departureTerminal,
       origin.display_name, departureTerminalName,
     );
+    const finalRoad = roadLeg(
+      arrivalTerminal, destinationPoint,
+      arrivalTerminalName, destination.display_name,
+    );
+    if (deadline) {
+      const after = new Date(deadline.getTime() - 48 * 60 * 60_000);
+      const matchingSailings = offlineFerries(after, now, 48)
+        .filter(sailing => sailing.departure_port === departureTerminalName
+          && sailing.arrival_port === arrivalTerminalName
+          && typeof sailing.arrival_time === 'string'
+          && new Date(sailing.arrival_time).getTime() + finalRoad.duration_mins * 60_000 <= deadline.getTime());
+      const lastSailing = matchingSailings[matchingSailings.length - 1];
+      if (!lastSailing) throw new Error('No published ferry journey can meet that arrival time. Choose a later arrival or a different corridor.');
+      // Retain more than the snapshot's strict 15-minute boarding cutoff.
+      departure = new Date(new Date(lastSailing.departure_time).getTime()
+        - (firstRoad.duration_mins + BOARDING_BUFFER_MINS + 1) * 60_000);
+    }
     const terminalArrival = new Date(
       departure.getTime() + firstRoad.duration_mins * 60_000,
     );
     const ferry = ferryLeg(pair, originRegion, terminalArrival, now);
     firstRoad.vehicle_role = 'FIRST_LAST_MILE_ACCESS';
-    const finalRoad = roadLeg(
-      arrivalTerminal, destinationPoint,
-      arrivalTerminalName, destination.display_name,
-    );
     finalRoad.vehicle_role = 'FIRST_LAST_MILE_ACCESS';
     legs.push(
       firstRoad,
@@ -429,6 +452,17 @@ export function offlineCrossBorderOptimize(
     route_preference: routePreference,
     route_preference_profile: routePreferenceProfile(routePreference),
     planned_departure: toCorridorIso(departure, departureTimezone),
+    estimated_arrival: toCorridorIso(new Date(departure.getTime()
+      + (movementMins + waitMins) * 60_000), destinationRegion === 'SINGAPORE'
+      ? 'Asia/Singapore' : 'Asia/Jakarta'),
+    ...(deadline ? {
+      scheduling: {
+        mode: 'ARRIVE_BY' as const, requested_departure_at: null,
+        requested_arrive_by: schedule!.arrive_by!,
+        deadline_slack_mins: Math.round((deadline.getTime() - departure.getTime()) / 60_000
+          - movementMins - waitMins),
+      },
+    } : {}),
     congestion_prediction: {
       current_score: 0, predicted_30min: 0, predicted_60min: 0,
       estimated_delay_mins: 0, status: 'NOT_MODELLED',

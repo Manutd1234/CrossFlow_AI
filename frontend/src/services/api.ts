@@ -3,6 +3,7 @@ import {
   FerryRefreshReport, FerryRefreshSourceResult, FerrySchedule, FerryTimetableMetadata,
   FetchedFerryRefresh, FetchedFerrySchedule, FreeLocation, GeocodedLocation, HistoricalProfile,
   LiveTrafficData, ModelMetrics, NavigationData, OperationsSummary, PortStatus, RouteLocation,
+  ObservedBacktestMetrics, ObservedBacktestPartition, ObservedBacktestReport, ObservedBacktestResult,
   RouteBenchmarkResult, RouteEndpointSnapshot, RouteOptimizationResult, RoutePreference,
   RouteRunHistory,
   RouteScheduleOptions,
@@ -10,12 +11,11 @@ import {
 } from '../types';
 
 import {
-  INITIAL_CORRIDORS, MOCK_OPERATIONS, CORRIDOR_INDEX, ROUTE_LOCATIONS,
+  INITIAL_CORRIDORS, CORRIDOR_INDEX, ROUTE_LOCATIONS,
   EMISSIONS_PRESSURE_MODEL, PUBLISHED_FERRY_TIMETABLE_METADATA,
   offlineCongestionZones, offlineFerries,
 } from '../data/mockData';
-import { browserModeledHistoricalProfile } from '../data/offlineHistory';
-import { BUNDLED_RF_VALIDATION } from '../data/modelManifest';
+import { UNAVAILABLE_OPERATIONS } from '../data/unavailableOperations';
 import { CORRIDOR_STREET_GEOMETRIES } from '../data/corridorGeometries';
 import { predictLocal } from './localForecast';
 import { planWithBundledRoadGraph } from './offlineRoadRouter';
@@ -27,7 +27,7 @@ import {
 } from './crossBorderRouting';
 import type { OfflineRoadPlan, OfflineRoutingContext } from '../workers/offlineRouterCore';
 import { vehicleProfile, vehicleProfileSnapshot } from '../data/vehicleCatalog';
-import { batamParts, nextBatamHour, toBatamIso } from '../utils/batamTime';
+import { batamParts, nextBatamHour, toBatamIso, toCorridorIso } from '../utils/batamTime';
 
 
 /** Same-origin by default (Vite proxies /api in development); configurable for split deployments. */
@@ -72,10 +72,8 @@ function hasExactSchedule(schedule?: RouteScheduleOptions): boolean {
 function hourFromSchedule(schedule?: RouteScheduleOptions): number | undefined {
   const value = schedule?.departure_at;
   if (!value) return undefined;
-  const match = value.match(/T(\d{2})(?::\d{2})?/);
-  if (!match) return undefined;
-  const hour = Number(match[1]);
-  return Number.isInteger(hour) && hour >= 0 && hour <= 23 ? hour : undefined;
+  const instant = new Date(value);
+  return Number.isNaN(instant.getTime()) ? undefined : batamParts(instant).hour;
 }
 
 function simulatedSchedule(
@@ -89,22 +87,53 @@ function simulatedSchedule(
   const totalEtaMins = route.total_eta_mins ?? route.estimated_travel_time_mins ?? 0;
   const arrivalDeadline = requestedArrival ? new Date(requestedArrival) : null;
   const calculatedDeparture = arrivalDeadline && !Number.isNaN(arrivalDeadline.getTime())
-    ? new Date(arrivalDeadline.getTime() - totalEtaMins * 60_000).toISOString()
+    ? route.scheduling?.mode === 'ARRIVE_BY'
+      ? route.planned_departure
+      : new Date(arrivalDeadline.getTime() - totalEtaMins * 60_000).toISOString()
     : undefined;
+  const origin = route.requested_origin;
+  const destination = route.requested_destination;
+  const departureTimezone = origin && locationRegion(origin.lat, origin.lng) === 'SINGAPORE'
+    ? 'Asia/Singapore' : 'Asia/Jakarta';
+  const arrivalTimezone = destination && locationRegion(destination.lat, destination.lng) === 'SINGAPORE'
+    ? 'Asia/Singapore' : 'Asia/Jakarta';
+  const plannedDeparture = toCorridorIso(new Date(requestedDeparture ?? calculatedDeparture
+    ?? route.planned_departure ?? toBatamIso(new Date())), departureTimezone);
+  const estimatedArrival = new Date(new Date(plannedDeparture).getTime() + totalEtaMins * 60_000);
+  const deadlineSlack = arrivalDeadline
+    ? Math.round((arrivalDeadline.getTime() - estimatedArrival.getTime()) / 60_000)
+    : null;
+  const destinationPort = route.requested_destination
+    ? destinationFerryPort(route.requested_destination)
+    : null;
+  const hasFerryLeg = route.route_legs?.some(leg => leg.mode === 'FERRY');
+  const retimedFerries = (etaMins: number) => destinationPort && !hasFerryLeg
+    ? offlineFerries(new Date(new Date(plannedDeparture).getTime()
+      + (etaMins + FERRY_BOARDING_CUTOFF_MINS) * 60_000), new Date(), 48)
+      .filter(ferry => ferry.departure_port === destinationPort).slice(0, 3)
+    : null;
 
   return {
     ...route,
-    planned_departure: requestedDeparture ?? calculatedDeparture ?? route.planned_departure,
+    planned_departure: plannedDeparture,
+    estimated_arrival: toCorridorIso(estimatedArrival, arrivalTimezone),
+    next_matching_ferries: retimedFerries(totalEtaMins) ?? route.next_matching_ferries,
+    alternative_routes: route.alternative_routes?.map(alternative => ({
+      ...alternative,
+      next_matching_ferries: retimedFerries(alternative.total_eta_mins
+        ?? alternative.estimated_travel_time_mins + route.customs_buffer_mins)
+        ?? alternative.next_matching_ferries,
+    })),
     scheduling: {
       mode: requestedArrival ? 'ARRIVE_BY' : 'DEPART_AT',
       requested_departure_at: requestedDeparture ?? null,
       requested_arrive_by: requestedArrival ?? null,
-      deadline_slack_mins: requestedArrival ? 0 : null,
+      deadline_slack_mins: deadlineSlack,
     },
     schedule_mode: requestedArrival ? 'arrive_by' : 'departure',
     requested_departure_at: requestedDeparture,
     requested_arrive_by: requestedArrival,
-    deadline_slack_mins: requestedArrival ? 0 : null,
+    deadline_slack_mins: deadlineSlack,
     schedule_provenance: {
       source: 'committed_timetable_simulation',
       snapshot_id: PUBLISHED_FERRY_TIMETABLE_METADATA.snapshot_id,
@@ -154,11 +183,15 @@ async function getJSON<T>(
     });
     if (!res.ok) {
       console.warn(`[crossflow] ${path} -> HTTP ${res.status} ${res.statusText}`);
-      // Only semantic validation failures are authoritative. A 404/405 from
+      // Validation and authentication failures are authoritative. A 404/405 from
       // an older deployment, plus rate limits and gateway timeouts, should
       // still permit the bundled road engine to plan the trip.
-      if (throwClientErrors && (res.status === 400 || res.status === 422)) {
-        let message = `The route request was rejected (${res.status}).`;
+      if (throwClientErrors && [400, 401, 403, 422].includes(res.status)) {
+        let message = res.status === 401
+          ? 'Sign in again before planning a route.'
+          : res.status === 403
+            ? 'An authorized operator account is required to plan routes.'
+            : `The route request was rejected (${res.status}).`;
         try {
           const body = await res.json() as { detail?: unknown };
           if (typeof body.detail === 'string' && body.detail.trim()) message = body.detail;
@@ -374,127 +407,43 @@ export async function refreshOfficialFerrySources(): Promise<FetchedFerryRefresh
 }
 
 const BROWSER_PORT_CONFIG = [
-  { port_name: 'Batam Centre', terminal_code: 'BCT', baseQueue: 20, baseProcessing: 15, totalBerths: 6, officialUrl: 'https://batamport.bpbatam.go.id/batam-centre/' },
-  { port_name: 'HarbourBay', terminal_code: 'HBT', baseQueue: 12, baseProcessing: 10, totalBerths: 4, officialUrl: 'https://batamport.bpbatam.go.id/harbour-bay/' },
-  { port_name: 'Sekupang', terminal_code: 'SKP', baseQueue: 15, baseProcessing: 12, totalBerths: 4, officialUrl: 'https://batamport.bpbatam.go.id/sekupang/' },
-  { port_name: 'Nongsa Pura', terminal_code: 'NPT', baseQueue: 10, baseProcessing: 8, totalBerths: 2, officialUrl: 'https://batamport.bpbatam.go.id/nongsapura/' },
+  { port_name: 'Batam Centre', terminal_code: 'BCT', officialUrl: 'https://batamport.bpbatam.go.id/batam-centre/' },
+  { port_name: 'HarbourBay', terminal_code: 'HBT', officialUrl: 'https://batamport.bpbatam.go.id/harbour-bay/' },
+  { port_name: 'Sekupang', terminal_code: 'SKP', officialUrl: 'https://batamport.bpbatam.go.id/sekupang/' },
+  { port_name: 'Nongsa Pura', terminal_code: 'NPT', officialUrl: 'https://batamport.bpbatam.go.id/nongsapura/' },
 ] as const;
 
+/** Published terminal references and current timetable selection; no invented queues. */
 export function scheduleInformedPortSeed(at: Date = new Date()): PortStatus[] {
   const publishedDepartures = offlineFerries(at, at, 24);
-  const hour = batamParts(at).hour;
-  const peakFactor = ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) ? 1.35 : 0.85;
-  return BROWSER_PORT_CONFIG.map((terminal) => {
-    const terminalDepartures = publishedDepartures.filter(
-      ferry => ferry.departure_port === terminal.port_name,
-    );
-    const nextDeparture = terminalDepartures[0];
-    const departuresWithinHour = terminalDepartures.filter(
-      ferry => (ferry.minutes_until_departure ?? Number.POSITIVE_INFINITY) <= 60,
-    ).length;
-    const sailingFactor = 1 + Math.min(0.3, departuresWithinHour * 0.08);
-    const estimateFactor = peakFactor * sailingFactor;
+  return BROWSER_PORT_CONFIG.map(terminal => {
+    const nextDeparture = publishedDepartures.find(ferry => ferry.departure_port === terminal.port_name);
     return {
-      port_name: terminal.port_name,
-      terminal_code: terminal.terminal_code,
-      passenger_queue_mins: Math.max(5, Math.round(terminal.baseQueue * estimateFactor)),
-      customs_processing_mins: Math.max(4, Math.round(terminal.baseProcessing * estimateFactor)),
-      freight_clearance_mins: Math.max(15, Math.round((terminal.baseProcessing + 15) * estimateFactor)),
-      active_berths: Math.max(1, Math.min(terminal.totalBerths, departuresWithinHour || 1)),
-      total_berths: terminal.totalBerths,
-      status: estimateFactor >= 1.35 ? 'BUSY' : 'NORMAL',
+      port_name: terminal.port_name, terminal_code: terminal.terminal_code,
+      passenger_queue_mins: null, customs_processing_mins: null, freight_clearance_mins: null,
+      active_berths: null, total_berths: null, status: null, next_vessel: null,
       next_sailing_in_mins: nextDeparture?.minutes_until_departure ?? null,
       next_operator: nextDeparture?.operator ?? null,
-      data_source: 'browser_schedule_informed_estimate' as const,
-      observed: false as const,
-      estimate_basis: 'Published departure density × Batam time-of-day planning profile',
+      data_source: 'published_terminal_reference', observed: false,
+      estimate_basis: 'Next published timetable departure only; operating conditions are not observed.',
       official_reference_url: terminal.officialUrl,
-      limitations: (
-        'Planning estimate, not a sensor observation. No public official live queue feed was available; '
-        + 'verify conditions with the terminal or operator before travel.'
-      ),
+      limitations: 'No observed queue, clearance, berth occupancy or live vessel feed is connected.',
     };
   });
 }
 
-function mergePortIntelligence(
-  payloadPorts: unknown[],
-  seed: PortStatus[],
-): PortStatus[] {
-  const knownNames = new Set(BROWSER_PORT_CONFIG.map(port => port.port_name));
-  const byName = new Map<string, Record<string, unknown>>();
-  payloadPorts.forEach((candidate) => {
-    if (!isRecord(candidate)
-      || typeof candidate.port_name !== 'string'
-      || !knownNames.has(candidate.port_name as typeof BROWSER_PORT_CONFIG[number]['port_name'])) {
-      return;
-    }
-    byName.set(candidate.port_name, candidate);
-  });
-
-  const planningMinutes = (value: unknown, fallback: number | null): number | null => (
-    isFiniteNonNegative(value) ? value : fallback
-  );
-  const nullableInteger = (value: unknown, fallback: number | null): number | null => (
-    value === null ? null : isNonNegativeInteger(value) ? value : fallback
-  );
-  const optionalText = (value: unknown, fallback?: string): string | undefined => (
-    typeof value === 'string' && value.trim() ? value : fallback
-  );
-  const validStatuses = new Set<PortStatus['status']>([
-    'NORMAL', 'BUSY', 'CONGESTED', null,
-  ]);
-
-  return seed.map((fallback) => {
-    const candidate = byName.get(fallback.port_name);
-    if (!candidate) return fallback;
-    const queueFromApi = isFiniteNonNegative(candidate.passenger_queue_mins);
-    const processingFromApi = isFiniteNonNegative(candidate.customs_processing_mins);
-    const usedBrowserEstimate = !queueFromApi || !processingFromApi;
-    const status = validStatuses.has(candidate.status as PortStatus['status'])
-      ? candidate.status as PortStatus['status']
-      : fallback.status;
-    const apiSource = candidate.data_source === 'schedule_informed_planning_estimate'
-      || candidate.data_source === 'browser_schedule_informed_estimate'
-      ? candidate.data_source
-      : fallback.data_source;
-    const apiLimitations = optionalText(candidate.limitations, fallback.limitations);
+function mergePortIntelligence(payloadPorts: unknown[], seed: PortStatus[]): PortStatus[] {
+  return seed.map(fallback => {
+    const candidate = payloadPorts.find(item => isRecord(item) && item.port_name === fallback.port_name);
+    if (!isRecord(candidate)) return fallback;
+    // Existing adapters supply schedule estimates, not measured operations.
+    // Preserve published references/sailings but do not promote those estimates.
     return {
-      port_name: fallback.port_name,
-      terminal_code: typeof candidate.terminal_code === 'string'
-        && candidate.terminal_code.trim()
-        ? candidate.terminal_code : fallback.terminal_code,
-      passenger_queue_mins: planningMinutes(
-        candidate.passenger_queue_mins, fallback.passenger_queue_mins,
-      ),
-      customs_processing_mins: planningMinutes(
-        candidate.customs_processing_mins, fallback.customs_processing_mins,
-      ),
-      freight_clearance_mins: planningMinutes(
-        candidate.freight_clearance_mins, fallback.freight_clearance_mins,
-      ),
-      active_berths: nullableInteger(candidate.active_berths, fallback.active_berths),
-      total_berths: nullableInteger(candidate.total_berths, fallback.total_berths),
-      status,
-      next_sailing_in_mins: nullableInteger(
-        candidate.next_sailing_in_mins, fallback.next_sailing_in_mins ?? null,
-      ),
-      next_vessel: candidate.next_vessel === null
-        ? null : optionalText(candidate.next_vessel, fallback.next_vessel ?? undefined),
-      next_operator: candidate.next_operator === null
-        ? null : optionalText(candidate.next_operator, fallback.next_operator ?? undefined),
-      data_source: usedBrowserEstimate
-        ? 'browser_schedule_informed_estimate' : apiSource,
-      observed: false,
-      estimate_basis: usedBrowserEstimate
-        ? `${fallback.estimate_basis}; browser continuity supplied missing API queue/processing fields`
-        : optionalText(candidate.estimate_basis, fallback.estimate_basis),
-      official_reference_url: optionalText(
-        candidate.official_reference_url, fallback.official_reference_url,
-      ),
-      limitations: usedBrowserEstimate
-        ? `${apiLimitations ?? ''} Missing API queue/processing values were filled from the published-schedule planning profile.`.trim()
-        : apiLimitations,
+      ...fallback,
+      next_sailing_in_mins: isNonNegativeInteger(candidate.next_sailing_in_mins)
+        ? candidate.next_sailing_in_mins : fallback.next_sailing_in_mins,
+      next_operator: typeof candidate.next_operator === 'string'
+        ? candidate.next_operator : fallback.next_operator,
     };
   });
 }
@@ -530,11 +479,11 @@ function isFiniteNonNegative(value: unknown): value is number {
 function isOperationsSummaryPayload(value: unknown): value is OperationsSummary {
   if (!isRecord(value)
     || typeof value.overall_network_status !== 'string'
-    || !isFiniteNonNegative(value.average_congestion_index)
-    || value.average_congestion_index > 100
-    || !isNonNegativeInteger(value.active_bottlenecks)
-    || !isFiniteNonNegative(value.total_co2_reduced_today_kg)
-    || !isNonNegativeInteger(value.active_ferry_sailings)
+    || !(value.average_congestion_index === null || isFiniteNonNegative(value.average_congestion_index))
+    || (typeof value.average_congestion_index === 'number' && value.average_congestion_index > 100)
+    || !(value.active_bottlenecks === null || isNonNegativeInteger(value.active_bottlenecks))
+    || !(value.total_co2_reduced_today_kg === null || isFiniteNonNegative(value.total_co2_reduced_today_kg))
+    || !(value.active_ferry_sailings === null || isNonNegativeInteger(value.active_ferry_sailings))
     || !Array.isArray(value.alerts)
     || !value.alerts.every(alert => (
       isRecord(alert)
@@ -544,6 +493,29 @@ function isOperationsSummaryPayload(value: unknown): value is OperationsSummary 
       && typeof alert.message === 'string'
       && typeof alert.timestamp === 'string'
     ))) return false;
+
+  const coverage = value.road_network_coverage;
+  if (coverage !== undefined && (!isRecord(coverage)
+    || coverage.source !== 'OpenStreetMap' || coverage.scope !== 'bundled_batam_routing_graph'
+    || ![coverage.mapped_nodes, coverage.directed_edges].every(isNonNegativeInteger)
+    || !(coverage.mapped_source_ways === null || isNonNegativeInteger(coverage.mapped_source_ways))
+    || !(coverage.live_camera_edge_count === null || (isNonNegativeInteger(coverage.live_camera_edge_count)
+      && coverage.live_camera_edge_count <= (coverage.directed_edges as number)))
+    || !(coverage.live_camera_edge_coverage_percent === null || (isFiniteNonNegative(coverage.live_camera_edge_coverage_percent)
+      && coverage.live_camera_edge_coverage_percent <= 100))
+    || coverage.complete_live_coverage !== false)) return false;
+  const estimates = value.camera_traffic_summary;
+  if (estimates !== undefined && (!isRecord(estimates)
+    || typeof estimates.status !== 'string' || typeof estimates.source !== 'string' || typeof estimates.scope !== 'string'
+    || !(estimates.configured_cameras === null || isNonNegativeInteger(estimates.configured_cameras))
+    || ![estimates.fresh_cameras, estimates.validated_cameras, estimates.estimated_cameras].every(isNonNegativeInteger)
+    || (estimates.configured_cameras !== null && (estimates.fresh_cameras as number) > (estimates.configured_cameras as number))
+    || (estimates.validated_cameras as number) + (estimates.estimated_cameras as number) !== estimates.fresh_cameras
+    || !(estimates.mean_congestion_index === null || (isFiniteNonNegative(estimates.mean_congestion_index) && estimates.mean_congestion_index <= 100))
+    || !(estimates.vehicle_detections === null || isNonNegativeInteger(estimates.vehicle_detections))
+    || !['latest_observed_at', 'oldest_observed_at', 'valid_until'].every(key => estimates[key] === undefined
+      || estimates[key] === null || (typeof estimates[key] === 'string' && Number.isFinite(Date.parse(estimates[key] as string))))
+    || estimates.measured_road_speed !== false || typeof estimates.independently_validated !== 'boolean')) return false;
 
   const methodology = value.operations_methodology;
   if (!isRecord(methodology)
@@ -560,7 +532,7 @@ function isOperationsSummaryPayload(value: unknown): value is OperationsSummary 
     value.modeled_projected_full_day_avoidable_emissions_kg,
     value.live_co2_rate_kg_hr,
   ];
-  if (optionalNumbers.some(item => item !== undefined && !isFiniteNonNegative(item))) return false;
+  if (optionalNumbers.some(item => item !== undefined && item !== null && !isFiniteNonNegative(item))) return false;
 
   for (const candidate of [value.co2_by_corridor_kg, value.co2_by_vehicle_type]) {
     if (candidate !== undefined && (
@@ -581,7 +553,7 @@ function isOperationsSummaryPayload(value: unknown): value is OperationsSummary 
 
 export async function fetchOperationsSummary(): Promise<Fetched<OperationsSummary>> {
   const payload = await getJSON<OperationsSummary>('/api/operations', CORRIDOR_TIMEOUT_MS);
-  if (!isOperationsSummaryPayload(payload)) return wrap(null, MOCK_OPERATIONS);
+  if (!isOperationsSummaryPayload(payload)) return wrap(null, UNAVAILABLE_OPERATIONS);
   return wrap(payload, payload);
 }
 
@@ -629,6 +601,7 @@ export async function requestRouteBenchmark(
   origin: Pick<RouteEndpointSnapshot, 'lat' | 'lng'>,
   destination: Pick<RouteEndpointSnapshot, 'lat' | 'lng'>,
   routePreference: RoutePreference,
+  accessToken?: string | null,
 ): Promise<RouteBenchmarkResult> {
   let response: Response;
   try {
@@ -636,7 +609,7 @@ export async function requestRouteBenchmark(
       method: 'POST',
       cache: 'no-store',
       signal: AbortSignal.timeout(ROUTE_TIMEOUT_MS),
-      headers: { 'Content-Type': 'application/json' },
+      headers: routeRequestHeaders(accessToken),
       body: JSON.stringify({
         origin_lat: origin.lat,
         origin_lng: origin.lng,
@@ -671,6 +644,14 @@ export async function requestRouteBenchmark(
   return payload;
 }
 
+/** Forward the operator session; the server decides whether authentication is required. */
+function routeRequestHeaders(accessToken?: string | null): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+  };
+}
+
 export async function requestRouteOptimization(
   originId: string,
   destinationId: string,
@@ -679,6 +660,7 @@ export async function requestRouteOptimization(
   weather: number = 0,
   routePreference: RoutePreference = 'BALANCED',
   schedule?: RouteScheduleOptions,
+  accessToken?: string | null,
 ): Promise<Fetched<RouteOptimizationResult>> {
   const origin = ROUTE_LOCATIONS.find(location => location.id === originId) ?? ROUTE_LOCATIONS[0];
   const destination = ROUTE_LOCATIONS.find(location => location.id === destinationId)
@@ -703,7 +685,7 @@ export async function requestRouteOptimization(
       ROUTE_TIMEOUT_MS,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: routeRequestHeaders(accessToken),
         body: requestBody,
       },
       true,
@@ -724,7 +706,7 @@ export async function requestRouteOptimization(
       {
         method: 'POST',
         signal: backendAbort.signal,
-        headers: { 'Content-Type': 'application/json' },
+        headers: routeRequestHeaders(accessToken),
         body: requestBody,
       },
       true,
@@ -746,6 +728,7 @@ export async function requestRouteOptimization(
     weather,
     corridorIdx,
     routePreference,
+    !hasExactSchedule(schedule),
   ), schedule));
 }
 
@@ -777,7 +760,9 @@ export async function requestPersistedRoute(
   if (!response.ok) {
     let detail = response.status === 404
       ? 'No assigned route matches that code.'
-      : 'Your account is not authorized to retrieve this assigned route.';
+      : response.status === 401 || response.status === 403
+        ? 'Your account is not authorized to retrieve this assigned route.'
+        : 'The assigned route service is temporarily unavailable. Try again.';
     try {
       const body = await response.json() as { detail?: unknown };
       if (typeof body.detail === 'string' && body.detail.trim()) detail = body.detail;
@@ -786,7 +771,13 @@ export async function requestPersistedRoute(
     }
     throw new ApiRequestError(detail, response.status);
   }
-  const payload = validatedRoadPayload(await response.json() as RouteOptimizationResult);
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    throw new ApiRequestError('The assigned route response is incomplete. Try again.', 503);
+  }
+  const payload = validatedRoadPayload(body as RouteOptimizationResult);
   if (!payload) throw new ApiRequestError('The assigned route response is incomplete.', 503);
   return wrap(payload as RouteOptimizationResult & Envelope, payload);
 }
@@ -832,6 +823,7 @@ export async function fetchRouteRunHistory(
   return {
     runs: Array.isArray(payload.runs) ? payload.runs : [],
     scope: payload.scope === 'all_accounts' ? 'all_accounts' : 'own_account',
+    ...(payload.history_storage ? { history_storage: payload.history_storage } : {}),
   };
 }
 
@@ -1013,6 +1005,7 @@ function routeMetrics(
     congestion_delay_after_30_mins?: number;
     routing_cost_breakdown?: { congestion_delay_mins?: number };
   },
+  allowDeferral = true,
 ): ComputedRoadMetrics {
   const maneuverDelayMins = (navigation?.maneuvers ?? []).reduce((delay, maneuver) => {
     if (maneuver.type === 'turn') return delay + 0.2;
@@ -1038,7 +1031,7 @@ function routeMetrics(
   const travelLater = routedTiming?.estimated_travel_time_after_30_mins ?? Math.round(
     (baseTimeMins + later.estimated_delay_mins) * fallbackTimeFactor * 10,
   ) / 10;
-  const defer = travelLater <= travelNow - 0.5 && later.current_score < now.current_score;
+  const defer = allowDeferral && travelLater <= travelNow - 0.5 && later.current_score < now.current_score;
   const savedMins = Math.max(0, Math.round((travelNow - travelLater) * 10) / 10);
   const recommendedDeparture = defer
     ? new Date(departure.getTime() + 30 * 60_000)
@@ -1152,6 +1145,7 @@ function applyBundledRoadPlan(
   weather: number,
   corridorIdx: number,
   routePreference: RoutePreference,
+  allowDeferral = true,
 ): RouteOptimizationResult {
   const primary = plan.routes[0];
   const totalAccessDistanceKm = (plan.origin_snap_m + plan.destination_snap_m) / 1000;
@@ -1187,6 +1181,7 @@ function applyBundledRoadPlan(
     totalAccessTimeMins,
     terminalBufferMins,
     primary,
+    allowDeferral,
   );
   const primaryFerries = offlineFerryConnection(
     destination,
@@ -1214,6 +1209,7 @@ function applyBundledRoadPlan(
       totalAccessTimeMins,
       terminalBufferMins,
       route,
+      allowDeferral,
     );
     const optionFerries = offlineFerryConnection(
       destination,
@@ -1480,6 +1476,7 @@ export async function requestFreeRouteOptimization(
   weather: number = 0,
   routePreference: RoutePreference = 'BALANCED',
   schedule?: RouteScheduleOptions,
+  accessToken?: string | null,
 ): Promise<Fetched<RouteOptimizationResult>> {
   const originRegion = locationRegion(origin.lat, origin.lng);
   const destinationRegion = locationRegion(destination.lat, destination.lng);
@@ -1517,15 +1514,19 @@ export async function requestFreeRouteOptimization(
       ROUTE_TIMEOUT_MS,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: routeRequestHeaders(accessToken),
         body: requestBody,
       },
       true,
     ).then(validatedRoadPayload);
     if (payload) return wrap(payload, payload);
-    return wrap(null, simulatedSchedule(offlineCrossBorderOptimize(
-      origin, destination, vehicleType, effectiveHour, routePreference,
-    ), schedule));
+    try {
+      return wrap(null, simulatedSchedule(offlineCrossBorderOptimize(
+        origin, destination, vehicleType, effectiveHour, routePreference, new Date(), schedule,
+      ), schedule));
+    } catch (error) {
+      throw new ApiRequestError(error instanceof Error ? error.message : 'The scheduled journey could not be planned.', 400);
+    }
   }
 
   const exactSchedule = hasExactSchedule(schedule);
@@ -1535,7 +1536,7 @@ export async function requestFreeRouteOptimization(
       ROUTE_TIMEOUT_MS,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: routeRequestHeaders(accessToken),
         body: requestBody,
       },
       true,
@@ -1557,7 +1558,7 @@ export async function requestFreeRouteOptimization(
       {
         method: 'POST',
         signal: backendAbort.signal,
-        headers: { 'Content-Type': 'application/json' },
+        headers: routeRequestHeaders(accessToken),
         body: requestBody,
       },
       true,
@@ -1571,7 +1572,7 @@ export async function requestFreeRouteOptimization(
   const fallback = offlineOptimizeFree(origin, destination, vehicleType, effectiveHour, weather);
   if (!sources.roadPlan) {
     return wrap(null, simulatedSchedule(offlineCrossBorderOptimize(
-      origin, destination, vehicleType, effectiveHour, routePreference,
+      origin, destination, vehicleType, effectiveHour, routePreference, new Date(), schedule,
     ), schedule));
   }
   return wrap(null, simulatedSchedule(applyBundledRoadPlan(
@@ -1582,6 +1583,7 @@ export async function requestFreeRouteOptimization(
     weather,
     corridorIdx,
     routePreference,
+    !hasExactSchedule(schedule),
   ), schedule));
 }
 
@@ -1591,11 +1593,12 @@ export async function requestMultiStopRouteOptimization(
   schedule: { departureAt?: string; arriveBy?: string },
   weather: number = 0,
   routePreference: RoutePreference = 'BALANCED',
+  accessToken?: string | null,
 ): Promise<Fetched<RouteOptimizationResult>> {
   const payload = await getJSON<Envelope & RouteOptimizationResult>(
     '/api/optimize-multi-stop-route', MULTI_STOP_TIMEOUT_MS, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: routeRequestHeaders(accessToken),
       body: JSON.stringify({
         stops: stops.map((stop) => ({
           lat: stop.lat, lng: stop.lng, name: stop.display_name,
@@ -1619,7 +1622,8 @@ export async function requestMultiStopRouteOptimization(
       504,
     );
   }
-  if (typeof payload.route_code !== 'string' || !/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.test(payload.route_code)) {
+  if (payload.dispatch_available !== false
+    && (typeof payload.route_code !== 'string' || !/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$/.test(payload.route_code))) {
     throw new ApiRequestError('The backend returned no valid seven-character route code.', 503);
   }
   return wrap(payload, payload);
@@ -1876,13 +1880,29 @@ function isHistoricalProfilePayload(
 export async function fetchHistoricalCongestion(
   corridorId: string,
   days = 7,
+  includeModelled = false,
 ): Promise<Fetched<HistoricalProfile>> {
   const params = new URLSearchParams({ corridor_id: corridorId, days: String(days) });
+  if (includeModelled) params.set('include_modelled', 'true');
   const payload = await getJSON<Envelope & HistoricalProfile>(
     `/api/historical-congestion?${params}`, ROUTE_TIMEOUT_MS,
   );
   if (isHistoricalProfilePayload(payload, corridorId, days)) return wrap(payload, payload);
-  return wrap(null, browserModeledHistoricalProfile(corridorId, days));
+  const referenceTime = new Date().toISOString();
+  return wrap(null, {
+    corridor_id: corridorId,
+    days_requested: days,
+    hourly_profile: Array.from({ length: 24 }, (_, hour) => ({ hour, avg_score: null, sample_count: 0 })),
+    weekly_trend: [],
+    history_metadata: {
+      observed: false,
+      source: 'history_unavailable',
+      model: 'crossflow_local_forecast_equation_v1',
+      methodology: 'Observed traffic history could not be retrieved; no synthetic samples were substituted.',
+      limitations: ['Connect an observed traffic source and a reachable history store.'],
+      reference_time: referenceTime,
+    },
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -1902,6 +1922,20 @@ function isModelMetricsPayload(value: unknown): value is ModelMetrics {
     || !(typeof value.last_trained_at === 'string' || value.last_trained_at === null)
     || !isRecord(value.feature_importances)) return false;
 
+  for (const field of ['observed_training_rows', 'observed_fit_rows', 'observed_calibration_rows', 'observed_evaluation_rows']) {
+    if (value[field] !== undefined && !isNonNegativeInteger(value[field])) return false;
+  }
+  if (value.observed_evaluation_horizon_minutes !== undefined && (!isNonNegativeInteger(value.observed_evaluation_horizon_minutes)
+    || value.observed_evaluation_horizon_minutes < 1 || value.observed_evaluation_horizon_minutes > 180)) return false;
+  if (value.training_source_counts !== undefined && (!isRecord(value.training_source_counts)
+    || !Object.values(value.training_source_counts).every(isNonNegativeInteger))) return false;
+  if (value.observed_training !== undefined && !isObservedBacktestReport(value.observed_training)) return false;
+  if (value.observed_artifact_status !== undefined) {
+    const artifact = value.observed_artifact_status;
+    if (!isRecord(artifact) || typeof artifact.configured !== 'boolean' || typeof artifact.restored !== 'boolean'
+      || !['disabled', 'waiting_for_eligible_model', 'restored', 'restore_failed_previous_model_retained'].includes(String(artifact.status))) return false;
+  }
+
   return Object.values(value.feature_importances).every(weight => (
     isFiniteNonNegative(weight) && weight <= 1
   ));
@@ -1912,7 +1946,10 @@ export async function fetchModelStatus(): Promise<Fetched<ModelMetrics>> {
     '/api/model-status', ROUTE_TIMEOUT_MS,
   );
   if (payload && isModelMetricsPayload(payload.metrics)) return wrap(payload, payload.metrics);
-  return wrap(null, BUNDLED_RF_VALIDATION);
+  return wrap(null, {
+    is_trained: false, total_samples: 0, r2_score: 0, mae: 0, rmse: 0,
+    last_trained_at: null, feature_importances: {},
+  });
 }
 
 export async function requestModelRetrain(): Promise<Fetched<ModelMetrics>> {
@@ -1924,4 +1961,410 @@ export async function requestModelRetrain(): Promise<Fetched<ModelMetrics>> {
   );
   if (payload && isModelMetricsPayload(payload.metrics)) return wrap(payload, payload.metrics);
   throw new ApiRequestError('The backend is unavailable; the model was not retrained.', 503);
+}
+
+function isObservedBacktestReport(value: unknown): value is ObservedBacktestReport {
+  const dateOrNull = (date: unknown) => date === null || (typeof date === 'string' && Number.isFinite(Date.parse(date)));
+  const nullableMetric = (metric: unknown, allowNegative = false) => metric === null
+    || (typeof metric === 'number' && Number.isFinite(metric) && (allowNegative || metric >= 0));
+  const validMetrics = (metrics: unknown): metrics is ObservedBacktestMetrics => isRecord(metrics)
+    && isNonNegativeInteger(metrics.samples) && nullableMetric(metrics.mae_points)
+    && nullableMetric(metrics.rmse_points) && nullableMetric(metrics.bias_points, true);
+  const validPartition = (partition: unknown): partition is ObservedBacktestPartition => isRecord(partition)
+    && isNonNegativeInteger(partition.rows) && dateOrNull(partition.start_at) && dateOrNull(partition.end_at);
+  if (!isRecord(value) || value.schema_version !== 1
+    || value.fixture_only === true || value.not_real_accuracy_evidence === true
+    || typeof value.generated_at !== 'string' || !Number.isFinite(Date.parse(value.generated_at))
+    || !['insufficient_observations', 'evaluated', 'eligible', 'activated'].includes(String(value.status))
+    || value.validation_scope !== 'observed_chronological_backtest'
+    || value.evaluation_subject !== 'private_observed_candidate_serving_pipeline'
+    || value.running_model_evaluated !== false || typeof value.model_replaced !== 'boolean'
+    || !isRecord(value.selection) || !isRecord(value.chronology) || !isRecord(value.activation)
+    || !Array.isArray(value.assumptions) || !value.assumptions.every(item => typeof item === 'string')) return false;
+  const selection = value.selection;
+  if (!['input_rows', 'unique_rows', 'eligible_rows', 'observed_rows', 'selected_rows', 'excluded_non_observed_rows',
+    'excluded_unsupported_corridor_rows', 'duplicate_rows', 'distinct_timestamps'].every(key => isNonNegativeInteger(selection[key]))
+    || !isRecord(selection.source_counts) || !Object.values(selection.source_counts).every(isNonNegativeInteger)
+    || !dateOrNull(selection.first_at) || !dateOrNull(selection.last_at) || !isFiniteNonNegative(selection.span_hours)
+    || typeof selection.sampling_policy !== 'string') return false;
+  if ((selection.distinct_local_dates !== undefined && !isNonNegativeInteger(selection.distinct_local_dates))
+    || (selection.observed_hour_bins !== undefined && (!Array.isArray(selection.observed_hour_bins)
+      || !selection.observed_hour_bins.every(hour => Number.isInteger(hour) && hour >= 0 && hour <= 23)))) return false;
+  if (!validPartition(value.chronology.fit) || !validPartition(value.chronology.calibration)
+    || !validPartition(value.chronology.holdout) || value.chronology.strict_timestamp_groups !== true
+    || !isFiniteNonNegative(value.chronology.purge_minutes)) return false;
+  if (value.interval_calibration !== undefined) {
+    const calibration = value.interval_calibration;
+    if (!isRecord(calibration) || typeof calibration.method !== 'string'
+      || !isNonNegativeInteger(calibration.calibration_rows) || !isNonNegativeInteger(calibration.calibration_forecast_pairs)
+      || !isFiniteNonNegative(calibration.padding_points) || calibration.coverage_guaranteed !== false
+      || typeof calibration.target_coverage !== 'number' || calibration.target_coverage < 0 || calibration.target_coverage > 1) return false;
+  }
+  if (!Array.isArray(value.horizons) || !value.horizons.every(row => isRecord(row)
+    && [15, 30, 60].includes(Number(row.horizon_minutes)) && typeof row.horizon_minutes === 'number'
+    && typeof row.status === 'string' && validMetrics(row.serving_model)
+    && validMetrics(row.persistence) && validMetrics(row.current_history_blend)
+    && (row.per_corridor === undefined || (isRecord(row.per_corridor) && Object.values(row.per_corridor).every(corridor => (
+      isRecord(corridor) && validMetrics(corridor.serving_model) && validMetrics(corridor.persistence)
+    ))))
+    && (row.p10_p90_coverage === null || (typeof row.p10_p90_coverage === 'number'
+      && Number.isFinite(row.p10_p90_coverage) && row.p10_p90_coverage >= 0 && row.p10_p90_coverage <= 1)))) return false;
+  if (value.model_replaced !== (value.status === 'activated')) return false;
+  return typeof value.activation.eligible === 'boolean' && Array.isArray(value.activation.reasons)
+    && value.activation.reasons.every(reason => typeof reason === 'string') && isRecord(value.activation.policy)
+    && Object.values(value.activation.policy).every(policy => typeof policy === 'string'
+      || (typeof policy === 'number' && Number.isFinite(policy))
+      || (Array.isArray(policy) && policy.every(item => typeof item === 'number' && Number.isFinite(item))));
+}
+
+/** Explicit read-only evaluation: no machine credential, synthetic fallback or model promotion. */
+export async function requestObservedBacktest(accessToken: string | null): Promise<Fetched<ObservedBacktestResult>> {
+  if (!API_ENABLED) throw new ApiRequestError('Connect the backend to evaluate observed history.', 503);
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}/api/analytics/backtest`, {
+      method: 'POST', headers: routeRequestHeaders(accessToken), body: '{}',
+      signal: AbortSignal.timeout(ROUTE_TIMEOUT_MS), cache: 'no-store',
+    });
+  } catch {
+    throw new ApiRequestError('The observed-data backtest could not be reached. Try again when the service is available.', 503);
+  }
+  if (!response.ok) {
+    let message = response.status === 401 ? 'Sign in again to evaluate observed history.'
+      : response.status === 403 ? 'An authorized operator account is required to evaluate observed history.'
+        : response.status === 429 ? 'Another observed-data evaluation is running.'
+          : 'The observed-data backtest is temporarily unavailable.';
+    try {
+      const body = await response.json() as { detail?: unknown };
+      if (typeof body.detail === 'string' && body.detail.trim()) message = body.detail;
+    } catch { /* Preserve a useful message for non-JSON gateway errors. */ }
+    if (response.status === 429) {
+      const retryAfter = Number(response.headers.get('Retry-After'));
+      message += Number.isFinite(retryAfter) && retryAfter > 0 && retryAfter <= 120
+        ? ` Try again in ${retryAfter} seconds.` : ' Wait briefly and try again.';
+    }
+    throw new ApiRequestError(message, response.status);
+  }
+  let payload: unknown;
+  try { payload = await response.json(); } catch { payload = null; }
+  if (!isRecord(payload) || !isObservedBacktestReport(payload.backtest) || !isRecord(payload.evaluation_snapshot)) {
+    throw new ApiRequestError('The observed-data backtest is unavailable or returned an incomplete report. No synthetic evaluation was substituted.', 503);
+  }
+  return wrap(payload as Envelope, { backtest: payload.backtest, evaluation_snapshot: payload.evaluation_snapshot });
+}
+
+export interface SimulationPoint {
+  timestamp: string;
+  mean_score: number;
+  p10_score: number;
+  p90_score: number;
+}
+
+export interface MeasuredRoadFeatures {
+  matched: boolean; match_distance_m: number; road_name: string | null; road_class: string | null;
+  lanes: number | null; posted_maxspeed_kph: number | null; capacity_vph: null;
+  segment_length_m: number | null; nearest_mapped_terminal_km: number; graph_revision: string;
+  source: string; source_url: string;
+}
+export interface RealForecastPoint {
+  horizon_minutes: number; mean_score: number; lower: number | null; upper: number | null;
+  strategy: 'random_forest' | 'persistence'; forest_candidate_score: number;
+}
+export interface RealHorizonEvidence {
+  horizon_minutes: number; selected_strategy: 'random_forest' | 'persistence';
+  test: { samples: number; mae_points: number; rmse_points: number; r2: number | null };
+  forest_test: { samples: number; mae_points: number; rmse_points: number; r2: number | null };
+  persistence_test: { samples: number; mae_points: number; rmse_points: number; r2: number | null };
+  speed_mae_kph: number;
+  pairs: Record<string, number>;
+  interval: { target: number; calibration_pairs: number; test_coverage: number; coverage_guaranteed: false; network_calibration_groups: number };
+  feature_importances: Record<string, number>;
+}
+export interface RealTrafficForecast {
+  generated_at: string; source: 'observed_traffic_model'; observed: false;
+  status: 'provisional_observed_model' | 'validated_observed_candidate';
+  model: { available: boolean; automatic_training?: boolean; engine: { algorithm: string; trees_per_horizon: Record<string, number>; feature_count: number; synthetic_rows: 0 };
+    report: { trained_at: string; raw_observed_rows: number; selected_rows: number; training_pairs: number;
+      span_hours: number; distinct_local_days: number; weather_training_rows: number; synthetic_rows: 0;
+      feature_names: string[]; horizons: RealHorizonEvidence[]; source_counts: Record<string, number>;
+      quality_gate: { eligible: boolean; reasons: string[] } } };
+  weather: { status: 'fresh' | 'stale' | 'unavailable'; source: string; source_url: string;
+    captured_at?: string; kind?: string; coverage?: string;
+    current: null | { valid_at: string; captured_at: string; weather_code: number; precipitation_mm: number; temperature_c: number; wind_kph: number };
+    hourly: Array<{ valid_at: string; weather_code: number; precipitation_mm: number; temperature_c: number; wind_kph: number }> };
+  points: Array<{ corridor_id: string; observed_at: string; current_speed_kph: number; free_flow_speed_kph: number;
+    current_index: number; road: MeasuredRoadFeatures; forecasts: RealForecastPoint[] }>;
+  network: Array<{ horizon_minutes: number; mean_score: number; lower: number | null; upper: number | null; strategy?: 'random_forest' | 'persistence' | 'mixed' }>;
+  coverage: { monitored_points: number; expected_points: number; max_horizon_minutes: number;
+    configured_point_ids?: string[]; sampling_scope?: 'representative_provider_points' };
+  limitations: string[];
+  prospective_evaluation?: { status: string; issued: number; matched: number; matched_days: number;
+    horizons?: Array<{ horizon_minutes: number; samples: number; candidate_mae_points: number; selected_mae_points: number; persistence_mae_points: number; within_5_points_fraction: number }> };
+  historical_benchmarks?: Array<{ id: string; name: string; geography: string; source_rows: number; source_days: number; source_url: string; scope: string;
+    horizons: Array<{ horizon_minutes: number; candidate: { samples: number; mae_kph: number; rmse_kph: number; within_5_kph: number };
+      persistence: { samples: number; mae_kph: number; rmse_kph: number; within_5_kph: number };
+      mae_improvement_percent: number; test_days: number; improvement_ci95_kph: [number, number] | null }> }>;
+}
+
+export async function fetchRealTrafficForecast(accessToken: string | null): Promise<RealTrafficForecast> {
+  const value = await getJSON<Envelope & { forecast: RealTrafficForecast }>('/api/analytics/real-forecast', 15_000,
+    { method: 'POST', headers: routeRequestHeaders(accessToken), body: '{}' }, true);
+  const forecast = value?.forecast;
+  const finite = (x: unknown) => typeof x === 'number' && Number.isFinite(x);
+  const count = (x: unknown) => Number.isSafeInteger(x) && (x as number) >= 0;
+  const score = (x: unknown) => finite(x) && (x as number) >= 0 && (x as number) <= 100;
+  const date = (x: unknown) => typeof x === 'string' && Number.isFinite(Date.parse(x));
+  const band = (p: { mean_score: number; lower: number | null; upper: number | null }) => p && score(p.mean_score)
+    && ((p.lower === null && p.upper === null) || (score(p.lower) && score(p.upper) && p.lower! <= p.mean_score && p.mean_score <= p.upper!));
+  const metrics = (m: RealHorizonEvidence['test']) => m && Number.isSafeInteger(m.samples) && m.samples > 0
+    && finite(m.mae_points) && m.mae_points >= 0 && finite(m.rmse_points) && m.rmse_points >= 0 && (m.r2 === null || finite(m.r2));
+  if (!forecast || forecast.source !== 'observed_traffic_model' || forecast.observed !== false
+    || !date(forecast.generated_at) || !['provisional_observed_model', 'validated_observed_candidate'].includes(forecast.status)
+    || forecast.model?.report?.synthetic_rows !== 0 || forecast.model?.engine?.synthetic_rows !== 0
+    || forecast.model.available !== true
+    || !Number.isSafeInteger(forecast.model.engine.feature_count) || forecast.model.engine.feature_count < 1
+    || !isRecord(forecast.model.engine.trees_per_horizon) || !Object.values(forecast.model.engine.trees_per_horizon).every(n => Number.isSafeInteger(n) && n > 0)
+    || !date(forecast.model.report.trained_at) || !finite(forecast.model.report.span_hours)
+    || !['raw_observed_rows', 'selected_rows', 'training_pairs', 'distinct_local_days', 'weather_training_rows'].every(key => count((forecast.model.report as unknown as Record<string, unknown>)[key]))
+    || !Array.isArray(forecast.model.report.feature_names) || forecast.model.report.feature_names.length !== forecast.model.engine.feature_count
+    || !forecast.model.report.feature_names.every(x => typeof x === 'string')
+    || !isRecord(forecast.model.report.source_counts) || !Object.values(forecast.model.report.source_counts).every(count)
+    || typeof forecast.model.report.quality_gate?.eligible !== 'boolean'
+    || !Array.isArray(forecast.model.report.quality_gate.reasons) || !forecast.model.report.quality_gate.reasons.every(x => typeof x === 'string')
+    || (forecast.status === 'validated_observed_candidate') !== forecast.model.report.quality_gate.eligible
+    || !Array.isArray(forecast.model.report.horizons) || forecast.model.report.horizons.length !== 3
+    || !forecast.model.report.horizons.every((h, i) => h && h.horizon_minutes === [15, 30, 60][i] && metrics(h.test) && metrics(h.forest_test) && metrics(h.persistence_test)
+      && ['random_forest', 'persistence'].includes(h.selected_strategy) && isRecord(h.feature_importances)
+      && Object.values(h.feature_importances).every(value => finite(value) && value >= 0 && value <= 1)
+      && h.interval?.coverage_guaranteed === false && count(h.interval.calibration_pairs)
+      && finite(h.interval.test_coverage) && h.interval.test_coverage >= 0 && h.interval.test_coverage <= 1)
+    || !count(forecast.coverage?.expected_points) || forecast.coverage.expected_points < 1 || forecast.coverage.expected_points > 512
+    || !Array.isArray(forecast.points) || forecast.points.length < 1 || forecast.points.length > forecast.coverage.expected_points
+    || new Set(forecast.points.map(p => p?.corridor_id)).size !== forecast.points.length
+    || !forecast.points.every(p => p && typeof p.corridor_id === 'string' && /^[A-Za-z0-9._:-]{1,128}$/.test(p.corridor_id) && date(p.observed_at) && score(p.current_index)
+      && finite(p.current_speed_kph) && p.current_speed_kph >= 0 && p.current_speed_kph <= 250 && finite(p.free_flow_speed_kph) && p.free_flow_speed_kph > 0
+      && p.road?.source === 'OpenStreetMap' && p.road.capacity_vph === null
+      && finite(p.road.match_distance_m) && Array.isArray(p.forecasts) && p.forecasts.length === 3
+      && p.forecasts.every((h, i) => h && h.horizon_minutes === [15, 30, 60][i] && band(h) && score(h.forest_candidate_score) && ['random_forest', 'persistence'].includes(h.strategy)))
+    || !Array.isArray(forecast.network) || forecast.network.length !== 3 || !forecast.network.every((p, i) => {
+      const strategies = new Set(forecast.points.map(point => point.forecasts[i].strategy));
+      const pointMean = forecast.points.reduce((sum, point) => sum + point.forecasts[i].mean_score, 0) / forecast.points.length;
+      return p && p.horizon_minutes === [15, 30, 60][i] && band(p) && Math.abs(p.mean_score - pointMean) <= 0.001
+        && (p.strategy === undefined || p.strategy === (strategies.size === 1 ? [...strategies][0] : 'mixed'));
+    })
+    || forecast.coverage.monitored_points !== forecast.points.length || forecast.coverage.max_horizon_minutes !== 60
+    || (forecast.coverage.sampling_scope !== undefined && forecast.coverage.sampling_scope !== 'representative_provider_points')
+    || (forecast.coverage.configured_point_ids !== undefined && (!Array.isArray(forecast.coverage.configured_point_ids)
+      || forecast.coverage.configured_point_ids.length !== forecast.coverage.expected_points
+      || new Set(forecast.coverage.configured_point_ids).size !== forecast.coverage.expected_points
+      || !forecast.coverage.configured_point_ids.every(id => typeof id === 'string' && /^[A-Za-z0-9._:-]{1,128}$/.test(id))
+      || !forecast.points.every(point => forecast.coverage.configured_point_ids!.includes(point.corridor_id))))
+    || !['fresh', 'stale', 'unavailable'].includes(forecast.weather?.status)
+    || forecast.weather.source_url !== 'https://open-meteo.com/en/docs'
+    || (forecast.weather.status === 'fresh' && (!forecast.weather.current || !date(forecast.weather.current.valid_at)
+      || !finite(forecast.weather.current.weather_code) || !finite(forecast.weather.current.wind_kph)
+      || !finite(forecast.weather.current.temperature_c) || !finite(forecast.weather.current.precipitation_mm)))
+    || !Array.isArray(forecast.limitations) || !forecast.limitations.every(x => typeof x === 'string')) {
+    throw new ApiRequestError('Real traffic forecast failed validation. No synthetic values were substituted.', 503);
+  }
+  const prospective = forecast.prospective_evaluation;
+  const benchmarks = forecast.historical_benchmarks;
+  const benchmarkMetric = (m: NonNullable<RealTrafficForecast['historical_benchmarks']>[number]['horizons'][number]['candidate']) => m
+    && count(m.samples) && m.samples > 0 && finite(m.mae_kph) && m.mae_kph >= 0 && finite(m.rmse_kph) && m.rmse_kph >= 0
+    && finite(m.within_5_kph) && m.within_5_kph >= 0 && m.within_5_kph <= 1;
+  if ((prospective && (typeof prospective.status !== 'string' || ![prospective.issued, prospective.matched, prospective.matched_days].every(count) || prospective.matched > prospective.issued
+      || (prospective.horizons && (!Array.isArray(prospective.horizons) || !prospective.horizons.every(h => h && [15, 30, 60].includes(h.horizon_minutes) && count(h.samples)
+        && [h.candidate_mae_points, h.selected_mae_points, h.persistence_mae_points].every(score) && finite(h.within_5_points_fraction) && h.within_5_points_fraction >= 0 && h.within_5_points_fraction <= 1)))))
+    || (benchmarks && (!Array.isArray(benchmarks) || !benchmarks.every(b => b && ['grand_batam_survey', 'guangzhou_speed'].includes(b.id)
+      && typeof b.name === 'string' && typeof b.geography === 'string' && typeof b.scope === 'string' && count(b.source_rows) && count(b.source_days)
+      && typeof b.source_url === 'string' && (b.source_url === 'https://zenodo.org/records/1205229' || b.source_url.startsWith('https://repository.unrika.ac.id/xmlui/'))
+      && Array.isArray(b.horizons) && b.horizons.every(h => h && [10, 30, 60].includes(h.horizon_minutes)
+        && benchmarkMetric(h.candidate) && benchmarkMetric(h.persistence) && h.candidate.samples === h.persistence.samples
+        && finite(h.mae_improvement_percent) && count(h.test_days) && (h.improvement_ci95_kph === null
+          || (Array.isArray(h.improvement_ci95_kph) && h.improvement_ci95_kph.length === 2 && h.improvement_ci95_kph.every(finite) && h.improvement_ci95_kph[0] <= h.improvement_ci95_kph[1]))))))) {
+    throw new ApiRequestError('Traffic evaluation evidence failed validation.', 503);
+  }
+  return forecast;
+}
+
+export interface AnalyticsSimulation {
+  prediction_count?: number;
+  engine?: { algorithm: string; estimator_count: number; feature_count: number; is_trained: boolean; last_trained_at: string | null };
+  horizon_hours: number;
+  step_minutes: number;
+  weather: number;
+  timezone: string;
+  hourly_forecast: SimulationPoint[];
+  corridors: Array<{ corridor_id: string; corridor_name: string; hourly_forecast: SimulationPoint[] }>;
+  weather_comparison: Array<{ weather: number; label: string; mean_score: number; p10_score: number; p90_score: number }>;
+  model: { training_data_source?: string; total_samples?: number; observed_training_rows?: number; evaluation_scope?: string };
+  limitations: string[];
+}
+export async function requestAnalyticsSimulation(
+  weather: number, corridorIds: string[] | undefined, accessToken: string | null,
+): Promise<Fetched<AnalyticsSimulation>> {
+  const payload = await getJSON<Envelope & { observed: false; simulation: AnalyticsSimulation }>(
+    '/api/analytics/simulation', CORRIDOR_TIMEOUT_MS, {
+      method: 'POST', headers: routeRequestHeaders(accessToken),
+      body: JSON.stringify({ weather, ...(corridorIds ? { corridor_ids: corridorIds } : {}) }),
+    }, true,
+  );
+  const points = payload?.simulation?.hourly_forecast;
+  const validScore = (value: unknown) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 100;
+  const validPoint = (point: SimulationPoint) => point && typeof point.timestamp === 'string' && Number.isFinite(Date.parse(point.timestamp))
+    && [point.mean_score, point.p10_score, point.p90_score].every(validScore) && point.p10_score <= point.p90_score;
+  if (!payload || payload.observed !== false || !Array.isArray(points) || !points.length
+    || (payload.simulation.prediction_count !== undefined && (!Number.isSafeInteger(payload.simulation.prediction_count) || payload.simulation.prediction_count < 1))
+    || (payload.simulation.engine !== undefined && (!isRecord(payload.simulation.engine)
+      || typeof payload.simulation.engine.algorithm !== 'string'
+      || typeof payload.simulation.engine.is_trained !== 'boolean'
+      || !Number.isSafeInteger(payload.simulation.engine.estimator_count) || payload.simulation.engine.estimator_count < 0
+      || !Number.isSafeInteger(payload.simulation.engine.feature_count) || payload.simulation.engine.feature_count < 0
+      || (payload.simulation.engine.last_trained_at !== null && (typeof payload.simulation.engine.last_trained_at !== 'string' || !Number.isFinite(Date.parse(payload.simulation.engine.last_trained_at))))))
+    || payload.simulation.horizon_hours !== 24 || payload.simulation.step_minutes !== 60
+    || ![0, 1, 2].includes(payload.simulation.weather) || payload.simulation.timezone !== 'Asia/Jakarta'
+    || typeof payload.generated_at !== 'string' || !Number.isFinite(Date.parse(payload.generated_at))
+    || !points.every(validPoint) || !isRecord(payload.simulation.model)
+    || !Array.isArray(payload.simulation.corridors) || !payload.simulation.corridors.every(corridor => (
+      corridor && typeof corridor.corridor_id === 'string' && typeof corridor.corridor_name === 'string'
+      && Array.isArray(corridor.hourly_forecast) && corridor.hourly_forecast.every(validPoint)
+    ))
+    || !Array.isArray(payload.simulation.weather_comparison) || !payload.simulation.weather_comparison.every(row => (
+      row && typeof row.label === 'string' && [0, 1, 2].includes(row.weather)
+      && [row.mean_score, row.p10_score, row.p90_score].every(validScore)
+    ))
+    || !Array.isArray(payload.simulation.limitations) || !payload.simulation.limitations.every(limit => typeof limit === 'string')) {
+    throw new ApiRequestError('The backend simulation is unavailable. No illustrative curve was substituted.', 503);
+  }
+  return wrap(payload, payload.simulation);
+}
+export interface AuthorityReport {
+  publisher: string; source_url: string; period_label: string; period_start: string; period_end: string;
+  metrics: Array<{ id: string; label: string; value: number; unit: string }>;
+  content_sha256: string;
+}
+export interface AuthorityReports {
+  status: 'fresh' | 'stale' | 'unavailable'; checked_at: string | null; fetched_at: string | null;
+  report: AuthorityReport | null; stored_reports: AuthorityReport[];
+  storage: { durable: boolean; scope: string }; error: string | null;
+}
+export async function fetchAuthorityReports(): Promise<AuthorityReports> {
+  const payload = await getJSON<Envelope & AuthorityReports>('/api/authority-reports', CORRIDOR_TIMEOUT_MS);
+  const validReport = (report: AuthorityReport) => report && typeof report.period_label === 'string'
+    && typeof report.publisher === 'string' && typeof report.content_sha256 === 'string'
+    && /^\d{4}-\d{2}$/.test(report.period_start) && /^\d{4}-\d{2}$/.test(report.period_end)
+    && typeof report.source_url === 'string' && report.source_url.startsWith('https://') && Array.isArray(report.metrics)
+    && report.metrics.every(metric => metric && typeof metric.id === 'string' && typeof metric.unit === 'string'
+      && typeof metric.label === 'string' && isFiniteNonNegative(metric.value));
+  if (!payload || !['fresh', 'stale', 'unavailable'].includes(payload.status)
+    || (payload.report !== null && !validReport(payload.report)) || !Array.isArray(payload.stored_reports)
+    || !payload.stored_reports.every(validReport) || !isRecord(payload.storage)
+    || typeof payload.storage.durable !== 'boolean' || typeof payload.storage.scope !== 'string') {
+    throw new ApiRequestError('Published operating reports could not be checked. No fixed totals were substituted.', 503);
+  }
+  return payload;
+}
+
+export interface HistoricalResearch {
+  batam_benchmark?: {
+    scope: 'exploratory_single_batam_site_next_survey_day'; evaluated_at: string;
+    unit: 'km/h'; source_rows: 48; source_calendar_days: 3; synthetic_training_rows: 0;
+    serving_model_replaced: false; application_history_modified: false; promotion_eligible: false;
+    random_forest: { samples: number; mae_kph: number; rmse_kph: number };
+    previous_survey_day: { samples: number; mae_kph: number; rmse_kph: number };
+    historical_slot_mean: { samples: number; mae_kph: number; rmse_kph: number };
+    limitations: string[];
+    folds: Array<{ test_date: string; forecast_origin: string; latest_training_interval_end: string;
+      training_rows: number; test_rows: number }>;
+  };
+  saturation_survey?: {
+    dataset_name: string; source_url: string; source_pdf_url: string; license: string; license_url: string;
+    attribution: string; source_table: string; location: string; scope_limitations: string[];
+    unit: 'volume_capacity_ratio'; eligible_speed_training_rows: 0; dates: string[];
+    rows: Array<{ interval_start: string; interval_end: string; degree_of_saturation: number }>;
+  };
+  survey: {
+    name: string; location: string; source_url: string; source_pdf_url: string;
+    attribution: string; license: string; license_url: string; source_table: string;
+    csv_sha256: string; dates: string[]; row_count: number; min_speed_kph: number; max_speed_kph: number;
+    scope_limitations: string[]; canonical_corridor_mapping: null; serving_model_replaced: false;
+    rows: Array<{ interval_start: string; interval_end: string; direction: 'from_east' | 'from_west';
+      speed_kph: number; travel_seconds: number; segment_length_m: number; quality_flag: string }>;
+  };
+  benchmark: {
+    scope: string; source_url: string; source_signal: string; source_license: string; license_url: string;
+    source_provenance: string; timestamp_basis: string; source_first_timestamp: string; source_last_timestamp: string;
+    source_calendar_days: number; roads: number; snapshots: number; speed_band_records: number;
+    evaluated_at: string; limitations: string[]; synthetic_training_rows: 0; serving_model_replaced: false;
+    results: Array<{ horizon_minutes: number; random_forest: { samples: number; mae_band_units: number; rmse_band_units: number };
+      persistence: { samples: number; mae_band_units: number; rmse_band_units: number };
+      interval_empirical_coverage: number }>;
+  };
+}
+
+export async function fetchHistoricalResearch(): Promise<HistoricalResearch> {
+  const payload = await getJSON<HistoricalResearch>('/api/analytics/research-history', CORRIDOR_TIMEOUT_MS);
+  const survey = payload?.survey;
+  const benchmark = payload?.benchmark;
+  const text = (v: unknown): v is string => typeof v === 'string' && v.length > 0;
+  const texts = (v: unknown) => Array.isArray(v) && v.every(text);
+  const positive = (v: unknown) => isFiniteNonNegative(v) && Number(v) > 0;
+  const https = (v: unknown) => text(v) && /^https:\/\//.test(v);
+  const instant = (v: unknown) => text(v) && Number.isFinite(Date.parse(v));
+  const metrics = (v: HistoricalResearch['benchmark']['results'][number]['random_forest']) => v
+    && Number.isInteger(v.samples) && v.samples > 0
+    && isFiniteNonNegative(v.mae_band_units) && v.mae_band_units <= 7
+    && isFiniteNonNegative(v.rmse_band_units) && v.rmse_band_units <= 7;
+  const saturation = payload?.saturation_survey;
+  const batam = payload?.batam_benchmark;
+  const invalidBatam = batam !== undefined && (!batam || batam.scope !== 'exploratory_single_batam_site_next_survey_day'
+    || batam.unit !== 'km/h' || batam.source_rows !== 48 || batam.source_calendar_days !== 3
+    || batam.synthetic_training_rows !== 0 || batam.serving_model_replaced !== false
+    || batam.application_history_modified !== false || batam.promotion_eligible !== false
+    || !instant(batam.evaluated_at) || !texts(batam.limitations)
+    || ![batam.random_forest, batam.previous_survey_day, batam.historical_slot_mean].every(m => m
+      && m.samples === 32 && isFiniteNonNegative(m.mae_kph) && m.mae_kph <= 200
+      && isFiniteNonNegative(m.rmse_kph) && m.rmse_kph <= 200)
+    || !Array.isArray(batam.folds) || batam.folds.length !== 2
+    || !batam.folds.every((f, i) => f && f.test_date === ['2023-02-17', '2023-02-18'][i]
+      && f.training_rows === [16, 32][i] && f.test_rows === 16
+      && instant(f.forecast_origin) && instant(f.latest_training_interval_end)
+      && f.forecast_origin.slice(0, 10) === f.test_date && f.forecast_origin.endsWith('+07:00')
+      && Date.parse(f.latest_training_interval_end) < Date.parse(f.forecast_origin)));
+  const invalidSaturation = saturation !== undefined && (!saturation || saturation.unit !== 'volume_capacity_ratio'
+    || saturation.eligible_speed_training_rows !== 0 || ![saturation.source_url, saturation.source_pdf_url, saturation.license_url].every(https)
+    || ![saturation.dataset_name, saturation.attribution, saturation.source_table, saturation.location, saturation.license].every(text)
+    || !texts(saturation.scope_limitations) || !Array.isArray(saturation.dates) || !saturation.dates.length
+    || !saturation.dates.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d))
+    || !Array.isArray(saturation.rows) || !saturation.rows.length || saturation.rows.length > 1000
+    || !saturation.rows.every(r => r && instant(r.interval_start) && instant(r.interval_end)
+      && r.interval_start.endsWith('+07:00') && r.interval_end.endsWith('+07:00')
+      && Date.parse(r.interval_end) - Date.parse(r.interval_start) === 60 * 60_000
+      && saturation.dates.includes(r.interval_start.slice(0, 10))
+      && isFiniteNonNegative(r.degree_of_saturation) && r.degree_of_saturation <= 5));
+  if (!survey || !benchmark || !text(survey.name) || !text(survey.location) || !text(survey.source_table)
+    || invalidSaturation || invalidBatam
+    || !text(survey.attribution) || !text(survey.license) || !/^[a-f0-9]{64}$/.test(survey.csv_sha256)
+    || ![survey.source_url, survey.source_pdf_url, survey.license_url, benchmark.source_url, benchmark.license_url].every(https)
+    || survey.canonical_corridor_mapping !== null || survey.serving_model_replaced !== false
+    || benchmark.synthetic_training_rows !== 0 || benchmark.serving_model_replaced !== false
+    || !texts(survey.scope_limitations) || !texts(benchmark.limitations)
+    || !Array.isArray(survey.dates) || !survey.dates.length || !survey.dates.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d))
+    || !Array.isArray(survey.rows) || !survey.rows.length || survey.rows.length > 1000 || survey.rows.length !== survey.row_count
+    || !survey.rows.every(row => row && instant(row.interval_start) && instant(row.interval_end)
+      && row.interval_start.endsWith('+07:00') && row.interval_end.endsWith('+07:00')
+      && Date.parse(row.interval_end) - Date.parse(row.interval_start) === 30 * 60_000
+      && survey.dates.includes(row.interval_start.slice(0, 10))
+      && ['from_east', 'from_west'].includes(row.direction) && positive(row.speed_kph) && row.speed_kph <= 200
+      && positive(row.travel_seconds) && positive(row.segment_length_m) && text(row.quality_flag))
+    || ![survey.min_speed_kph, survey.max_speed_kph].every(positive)
+    || ![benchmark.scope, benchmark.source_signal, benchmark.source_license, benchmark.source_provenance, benchmark.timestamp_basis].every(text)
+    || ![benchmark.source_first_timestamp, benchmark.source_last_timestamp, benchmark.evaluated_at].every(instant)
+    || ![benchmark.source_calendar_days, benchmark.roads, benchmark.snapshots, benchmark.speed_band_records].every(v => Number.isInteger(v) && v > 0)
+    || !Array.isArray(benchmark.results) || benchmark.results.length !== 3
+    || !benchmark.results.every((r, i) => r && r.horizon_minutes === [15, 30, 60][i] && metrics(r.random_forest) && metrics(r.persistence)
+      && r.random_forest.samples === r.persistence.samples && isFiniteNonNegative(r.interval_empirical_coverage) && r.interval_empirical_coverage <= 1)) {
+    throw new ApiRequestError('Published historical evidence could not be validated. No sample observations were substituted.', 503);
+  }
+  return payload;
 }

@@ -1,0 +1,293 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-23T07:52:44.419373+00:00",
+  "engine_source_sha256": "51b7ffb477dc4160aa7526506b3c4dd7b650f08a7f0e2ff53cc688349c1047f8",
+  "stress": {
+    "status": "passed",
+    "requested_scenarios": 2000000,
+    "evaluated_scenarios": 2000000,
+    "seed": 20261023,
+    "batch_size": 4096,
+    "elapsed_seconds": 36.841,
+    "scenarios_per_second": 54286.7,
+    "paired_checks": {
+      "risk_monotonicity": 333334,
+      "surge_monotonicity": 333333,
+      "surge_decay": 333333
+    },
+    "failures": {},
+    "scope": "randomized production-forest inference and router-cost invariants, not end-to-end journey solves",
+    "coverage": {
+      "corridors": 5,
+      "road_classes": [
+        "ferry",
+        "living_street",
+        "motorway",
+        "primary",
+        "residential",
+        "road",
+        "secondary",
+        "service",
+        "tertiary",
+        "track",
+        "trunk",
+        "unclassified"
+      ],
+      "days": 7,
+      "weather_states": 3,
+      "capacity_vph_range": [
+        100,
+        8000
+      ],
+      "free_flow_kph_range": [
+        5,
+        130
+      ],
+      "terminal_distance_km_range": [
+        0,
+        30
+      ],
+      "properties": [
+        "finite outputs",
+        "ordered quantiles",
+        "bounded speed ratios",
+        "nonnegative delays",
+        "risk monotonicity",
+        "ferry surge cap and decay",
+        "P90 downside no faster than expected speed"
+      ]
+    },
+    "measured_traffic_accuracy_established": false
+  },
+  "local_observed_backtest": {
+    "schema_version": 1,
+    "generated_at": "2026-10-23T07:53:21.776165+00:00",
+    "status": "insufficient_observations",
+    "validation_scope": "observed_chronological_backtest",
+    "input_rows": 0,
+    "unique_rows": 0,
+    "eligible_rows": 0,
+    "observed_rows": 0,
+    "source_counts": {},
+    "requires_measured_data_for_accuracy_claim": true,
+    "model_replaced": false,
+    "assumptions": [
+      "weather=clear; ferry proximity unknown because observations do not persist these inputs",
+      "missing capacity and terminal distance use declared corridor defaults",
+      "speed-ratio congestion target is clipped to [0,95] points",
+      "observed timestamps are treated as availability timestamps; ingestion delays are unknown",
+      "current baselines require the same corridor and location rounded to 5 decimals (about 1m); this is not edge map matching"
+    ],
+    "horizons": [],
+    "reason": "At least 150 eligible unique observations are required."
+  },
+  "synthetic_replay_backtest": {
+    "schema_version": 1,
+    "generated_at": "2026-10-23T07:53:21.809636+00:00",
+    "status": "complete",
+    "validation_scope": "synthetic_or_mixed_chronological_backtest",
+    "input_rows": 3360,
+    "unique_rows": 3360,
+    "eligible_rows": 3360,
+    "observed_rows": 0,
+    "source_counts": {
+      "synthetic": 3360
+    },
+    "requires_measured_data_for_accuracy_claim": true,
+    "model_replaced": false,
+    "assumptions": [
+      "weather=clear; ferry proximity unknown because observations do not persist these inputs",
+      "missing capacity and terminal distance use declared corridor defaults",
+      "speed-ratio congestion target is clipped to [0,95] points",
+      "observed timestamps are treated as availability timestamps; ingestion delays are unknown",
+      "current baselines require the same corridor and location rounded to 5 decimals (about 1m); this is not edge map matching"
+    ],
+    "horizons": [
+      {
+        "horizon_minutes": 15,
+        "status": "complete",
+        "skipped_missing_or_stale_current": 0,
+        "forest": {
+          "samples": 675,
+          "mae_points": 6.6282,
+          "rmse_points": 8.6395,
+          "bias_points": 4.4828
+        },
+        "persistence": {
+          "samples": 675,
+          "mae_points": 4.6786,
+          "rmse_points": 5.8429,
+          "bias_points": -0.2034
+        },
+        "current_history_blend": {
+          "samples": 675,
+          "mae_points": 5.1065,
+          "rmse_points": 6.4206,
+          "bias_points": -1.9667
+        },
+        "p10_p90_coverage": 0.3719,
+        "per_corridor": {
+          "corridor-1": {
+            "samples": 135,
+            "mae_points": 6.6347,
+            "rmse_points": 8.7392,
+            "bias_points": 5.1625
+          },
+          "corridor-2": {
+            "samples": 135,
+            "mae_points": 6.5218,
+            "rmse_points": 8.5903,
+            "bias_points": 4.6223
+          },
+          "corridor-3": {
+            "samples": 135,
+            "mae_points": 7.4919,
+            "rmse_points": 9.4958,
+            "bias_points": 5.4875
+          },
+          "corridor-4": {
+            "samples": 135,
+            "mae_points": 5.9966,
+            "rmse_points": 7.7446,
+            "bias_points": 2.6595
+          },
+          "corridor-5": {
+            "samples": 135,
+            "mae_points": 6.4958,
+            "rmse_points": 8.5377,
+            "bias_points": 4.4823
+          }
+        }
+      },
+      {
+        "horizon_minutes": 30,
+        "status": "complete",
+        "skipped_missing_or_stale_current": 0,
+        "forest": {
+          "samples": 675,
+          "mae_points": 6.6282,
+          "rmse_points": 8.6395,
+          "bias_points": 4.4828
+        },
+        "persistence": {
+          "samples": 675,
+          "mae_points": 5.1312,
+          "rmse_points": 6.3775,
+          "bias_points": -0.3366
+        },
+        "current_history_blend": {
+          "samples": 675,
+          "mae_points": 5.4543,
+          "rmse_points": 6.9185,
+          "bias_points": -2.037
+        },
+        "p10_p90_coverage": 0.3719,
+        "per_corridor": {
+          "corridor-1": {
+            "samples": 135,
+            "mae_points": 6.6347,
+            "rmse_points": 8.7392,
+            "bias_points": 5.1625
+          },
+          "corridor-2": {
+            "samples": 135,
+            "mae_points": 6.5218,
+            "rmse_points": 8.5903,
+            "bias_points": 4.6223
+          },
+          "corridor-3": {
+            "samples": 135,
+            "mae_points": 7.4919,
+            "rmse_points": 9.4958,
+            "bias_points": 5.4875
+          },
+          "corridor-4": {
+            "samples": 135,
+            "mae_points": 5.9966,
+            "rmse_points": 7.7446,
+            "bias_points": 2.6595
+          },
+          "corridor-5": {
+            "samples": 135,
+            "mae_points": 6.4958,
+            "rmse_points": 8.5377,
+            "bias_points": 4.4823
+          }
+        }
+      },
+      {
+        "horizon_minutes": 60,
+        "status": "complete",
+        "skipped_missing_or_stale_current": 0,
+        "forest": {
+          "samples": 675,
+          "mae_points": 6.6282,
+          "rmse_points": 8.6395,
+          "bias_points": 4.4828
+        },
+        "persistence": {
+          "samples": 675,
+          "mae_points": 6.0766,
+          "rmse_points": 7.8565,
+          "bias_points": -0.5908
+        },
+        "current_history_blend": {
+          "samples": 675,
+          "mae_points": 6.1829,
+          "rmse_points": 8.097,
+          "bias_points": -2.1549
+        },
+        "p10_p90_coverage": 0.3719,
+        "per_corridor": {
+          "corridor-1": {
+            "samples": 135,
+            "mae_points": 6.6347,
+            "rmse_points": 8.7392,
+            "bias_points": 5.1625
+          },
+          "corridor-2": {
+            "samples": 135,
+            "mae_points": 6.5218,
+            "rmse_points": 8.5903,
+            "bias_points": 4.6223
+          },
+          "corridor-3": {
+            "samples": 135,
+            "mae_points": 7.4919,
+            "rmse_points": 9.4958,
+            "bias_points": 5.4875
+          },
+          "corridor-4": {
+            "samples": 135,
+            "mae_points": 5.9966,
+            "rmse_points": 7.7446,
+            "bias_points": 2.6595
+          },
+          "corridor-5": {
+            "samples": 135,
+            "mae_points": 6.4958,
+            "rmse_points": 8.5377,
+            "bias_points": 4.4823
+          }
+        }
+      }
+    ],
+    "training_input_rows": 2665,
+    "training_input_end_exclusive": "2026-01-06T13:15:00+00:00",
+    "training_input_last_at": "2026-01-06T13:00:00+00:00",
+    "outer_holdout_start": "2026-01-06T14:15:00+00:00",
+    "outer_holdout_rows": 675,
+    "candidate_calibration": {
+      "interval": "P10-P90 empirical tree quantiles",
+      "interval_coverage_target": 0.8,
+      "interval_coverage_observed": 0.137,
+      "mean_interval_width_points": 7.956,
+      "empirical_crps": 9.004,
+      "empirical_crps_method": "mean|tree_prediction-y| - 0.5*mean|tree_prediction_i-tree_prediction_j|",
+      "holdout_order": "chronological_observed_at",
+      "holdout_samples": 533,
+      "mean_prediction": 33.357
+    },
+    "candidate_fit_rows": 2132
+  }
+}

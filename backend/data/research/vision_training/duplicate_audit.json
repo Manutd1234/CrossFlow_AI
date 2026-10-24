@@ -1,0 +1,18 @@
+{
+  "rule": "Exact source bytes or exact decoded RGB, or BOTH 64-bit dHash and DCT pHash Hamming distances <= 4",
+  "train_potential_duplicate_pairs": [],
+  "train_cross_video_merge_pairs": 0,
+  "train_original_video_group_count": 6,
+  "effective_validation_groups": [
+    "V001",
+    "V002",
+    "V003",
+    "V004",
+    "V005",
+    "VEHICLES"
+  ],
+  "cross_source_potential_duplicate_pairs": [],
+  "test_images_excluded_for_training_similarity": [],
+  "within_test_potential_duplicate_pairs": [],
+  "limitation": "Hash screening does not prove independent captures or detect every crop/near-duplicate. TRANSSET sessions are not released; within-test images are correlated, not independent trials."
+}

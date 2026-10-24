@@ -27,6 +27,7 @@ from types import MappingProxyType
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from services.alt_index import AltIndex
+from services import cctv_routing
 from services.route_learning_store import (
     DEFAULT_ROUTE_LEARNING_STORE,
     MAX_CLEAR_CONGESTION_SCORE,
@@ -2024,6 +2025,13 @@ def _edge_cost_components(
     uncertainty_penalty_s = (
         weights.congestion * policy.risk_aversion * uncertainty_spread_s
     )
+    camera_penalty_s = cctv_routing.edge_penalty_s(
+        source, edge.target, edge.road_index, free_flow_s,
+        profile.congestion_sensitivity,
+    )
+    # Image occupancy is not speed. Camera observations alter the search
+    # objective while physical ETA and emissions keep their existing model.
+    expected_objective_s += weights.congestion * camera_penalty_s
     return {
         "baseline_free_flow_s": baseline_free_flow_s,
         "free_flow_s": free_flow_s,
@@ -2035,6 +2043,7 @@ def _edge_cost_components(
         "road_quality_penalty_s": road_quality_penalty_s,
         "congestion_uncertainty_s": uncertainty_spread_s,
         "uncertainty_penalty_s": uncertainty_penalty_s,
+        "cctv_search_penalty_s": camera_penalty_s,
         "distance_proxy_s": distance_proxy_s,
         "objective_time_s": objective_time_s,
         "expected_objective_cost_s": expected_objective_s,
@@ -2071,7 +2080,10 @@ def _edge_objective_cost_s(
             + components["suitability_penalty_s"]
         )
     if preference.key == "FASTEST":
-        return components["modeled_travel_s"] + uncertainty_penalty_s
+        return (
+            components["modeled_travel_s"] + uncertainty_penalty_s
+            + components.get("cctv_search_penalty_s", 0.0)
+        )
     return (
         preference.distance_proxy * distance_proxy_s * policy_weights.distance
         + preference.free_flow * time_s * policy_weights.time
@@ -2083,6 +2095,8 @@ def _edge_objective_cost_s(
         + preference.suitability * components["road_quality_penalty_s"]
         * policy_weights.road_quality
         + preference.congestion * uncertainty_penalty_s
+        + preference.congestion * components.get("cctv_search_penalty_s", 0.0)
+        * policy_weights.congestion
     )
 
 
@@ -2120,6 +2134,7 @@ def path_cost_breakdown(
         "road_quality_penalty_s": 0.0,
         "congestion_uncertainty_s": 0.0,
         "uncertainty_penalty_s": 0.0,
+        "cctv_search_penalty_s": 0.0,
         "distance_proxy_s": 0.0,
         "objective_time_s": 0.0,
         "expected_objective_cost_s": 0.0,
@@ -3364,6 +3379,9 @@ def _path_payload(
         "uncertainty_penalty_mins": round(
             raw_breakdown["uncertainty_penalty_s"] / 60.0, 2,
         ),
+        "cctv_search_penalty_mins": round(
+            raw_breakdown["cctv_search_penalty_s"] / 60.0, 3,
+        ),
         "modeled_travel_time_mins": round(
             raw_breakdown["modeled_travel_s"] / 60.0, 2,
         ),
@@ -3508,6 +3526,17 @@ def _path_payload(
         },
         "vehicle_profile": vehicle_profile_payload(profile),
     }
+    camera_audit = cctv_routing.audit({
+        _edge_key(source, edge)
+        for source, edge in zip(result.nodes, result.edges)
+    })
+    if camera_audit is not None:
+        camera_audit["applied_to_objective"] = preference.congestion > 0.0
+        payload["routing_model"]["cctv"] = camera_audit
+        payload["routing_model"]["traffic_provenance"] = (
+            "Modelled travel times with fresh CCTV image estimates applied "
+            "only to the route search objective."
+        )
     approved_overrides = [
         {
             "override_id": edge.approved_override_id,
@@ -3969,6 +3998,24 @@ def route_between_nodes(
     ):
         raise TypeError(
             "default_congestion_estimate must be an EdgeCongestionEstimate."
+        )
+    if cctv_routing.active_snapshot() is not None:
+        # Camera evidence is short-lived and permission can be revoked between
+        # requests. Never reuse a route or primary-path cache from another
+        # camera snapshot, including a clear/default cached path.
+        return _route_between_nodes_uncached(
+            src_node, dst_node, avoid_zones=avoid_zones,
+            origin_name=origin_name, destination_name=destination_name,
+            include_alternatives=include_alternatives,
+            vehicle_type=vehicle_type,
+            network_congestion_score=network_congestion_score,
+            default_congestion_estimate=default_congestion_estimate,
+            weather=weather, route_preference=route_preference,
+            approved_override_snapshot=approved_override_snapshot,
+            reuse_primary_cache=False,
+            alternative_max_searches=alternative_max_searches,
+            alternative_time_budget_ms=alternative_time_budget_ms,
+            alternative_max_settled_states=alternative_max_settled_states,
         )
     result = _route_between_nodes_cached(
         src_node,

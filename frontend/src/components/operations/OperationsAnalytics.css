@@ -1,0 +1,123 @@
+.operations-data-status {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.operations-data-status__row,
+.operations-data-status__copy,
+.operations-data-status__copy strong {
+  display: flex;
+  align-items: center;
+}
+
+.operations-data-status__row { width: 100%; gap: 20px; justify-content: space-between; }
+.operations-data-status__copy { flex: 1; flex-wrap: wrap; gap: 8px 24px; min-width: 0; }
+.operations-data-status__copy strong { gap: 8px; font-size: var(--text-body); line-height: var(--leading-body); }
+.operations-data-status__copy p { margin: 0; color: var(--text-secondary); font-size: var(--text-sm); }
+.operations-data-status__row > button { flex: 0 0 auto; min-height: 40px; }
+.operations-data-status__dot { flex: 0 0 7px; height: 7px; border-radius: 50%; background: var(--text-muted); }
+.operations-data-status__dot.is-observed { background: var(--accent-emerald); }
+.operations-data-status__details { width: 100%; }
+.operations-data-status__details > summary { display: flex; width: fit-content; align-items: center; gap: 8px; color: var(--lagoon-text); font-size: var(--text-sm); }
+.operations-data-status__details > summary::after { content: '+'; margin-left: 4px; }
+.operations-data-status__details[open] > summary::after { content: '−'; }
+.operations-data-status__details > summary::-webkit-details-marker { display: none; }
+.operations-data-status__provenance { display: grid; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+.operations-data-status__provenance p { margin: 0; max-width: 95ch; color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.6; }
+.operations-data-status__error { margin: 0; color: var(--accent-rose); }
+.operations-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.operations-history-link { align-self: flex-start; }
+.operations-history-workspace { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.operations-history-intro { display: grid; gap: 8px; }
+.operations-history-intro p, .operations-history-check { color: var(--text-muted); font-size: var(--text-sm); line-height: var(--leading-body); }
+.operations-history-workspace .operations-published-report { padding: 24px; border-radius: 16px; background: var(--warm-card); box-shadow: var(--shadow-card); }
+.history-dataset-tabs { min-width: 0; }
+.history-dataset-tabs .workspace-subtabs__rail { background: transparent; }
+.operations-disclosure > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+.operations-disclosure > summary::-webkit-details-marker { display: none; }
+.operations-disclosure > summary > svg { flex: 0 0 auto; transition: transform 160ms ease; }
+.operations-disclosure[open] > summary > svg { transform: rotate(180deg); }
+.operations-disclosure[open] > :not(summary) { margin-top: 16px; }
+.operations-alerts-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 16px; margin-bottom: 16px; }
+.operations-alerts-heading h3 { min-width: 0; margin: 0; }
+.operations-alerts-heading > .badge { margin: 0; }
+.operations-alerts-heading button { min-height: 44px; }
+.operations-source-controls.operations-forecast-toolbar { align-items: flex-end; }
+.operations-forecast-caption { color: var(--text-muted); font-size: var(--text-sm); }
+.operations-alert-monitoring { display: flex; flex-wrap: wrap; gap: 12px 28px; padding: 14px 16px; border-radius: 12px; background: var(--surface-1); color: var(--text-secondary); font-size: var(--text-sm); }
+.operations-alert-monitoring strong { color: var(--text-primary); }
+.operations-alerts-empty-state { display: flex; align-items: center; flex-direction: column; gap: 12px; padding: 32px 20px; text-align: center; }
+.operations-alerts-empty-state > svg { color: var(--accent-emerald); }
+.operations-alerts-empty-state > strong { font-size: var(--text-card-title); color: var(--text-primary); }
+.operations-alerts-empty-state > p { max-width: 65ch; margin: 0; }
+.operations-alerts-empty-state > time { color: var(--text-muted); font-size: var(--text-xs); }
+.operations-model-run { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px 18px; background: var(--surface-1); }
+.operations-model-run > strong { display: flex; align-items: center; gap: 8px; font-size: var(--text-sm); }
+.operations-model-run > span, .operations-model-run > p { color: var(--text-muted); font-size: var(--text-sm); }
+.operations-model-run > p { flex: 0 0 100%; margin: 0; line-height: 1.6; }
+
+.model-forecast-check { padding: 24px; border: 1px solid var(--border-accent); border-radius: 18px; background: linear-gradient(120deg, var(--tint-cyan-strong), var(--surface-2)); }
+.model-forecast-check__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.model-forecast-check h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: var(--text-section-title); }
+.model-forecast-check p { color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.6; }
+.model-forecast-check__header p { margin: 0; }
+.model-forecast-check__idle { margin: 20px 0 0; }
+.model-forecast-check__result { margin-top: 24px; }
+.model-forecast-check__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.model-forecast-check__stats > div { display: grid; gap: 8px; }
+.model-forecast-check__stats span { color: var(--text-secondary); font-size: var(--text-sm); }
+.model-forecast-check__stats strong { font-family: var(--font-body); font-size: 2rem; font-weight: var(--weight-semibold); font-variant-numeric: tabular-nums; color: var(--lagoon-text); }
+.model-forecast-check__stats small { font-family: var(--font-body); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.model-forecast-check__result > svg { display: block; width: 100%; height: 150px; margin-top: 16px; }
+.model-forecast-check__caption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: var(--text-xs); color: var(--text-muted); }
+.model-forecast-check__result > p { margin: 12px 0 0; }
+
+@media (max-width: 1000px) {
+  .operations-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .operations-alerts-heading { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+  .operations-alerts-heading h3 { grid-column: 1 / -1; }
+  .operations-alerts-heading > .badge { justify-self: start; }
+  .model-forecast-check { padding: 18px; }
+  .model-forecast-check__stats { grid-template-columns: 1fr; gap: 16px; }
+  .operations-data-status { padding: 16px; }
+  .operations-data-status__row { align-items: flex-start; gap: 12px; }
+  .operations-data-status__copy { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .operations-data-status__row > button { min-width: 40px; padding-inline: 10px; }
+}
+
+@media (max-width: 540px) {
+  .operations-metrics { grid-template-columns: minmax(0, 1fr); }
+}
+
+.operations-road-coverage { padding: 22px 24px; }
+.operations-road-coverage__heading, .operations-road-coverage__heading h3,
+.operations-road-coverage__traffic > div { display: flex; align-items: center; gap: 10px; }
+.operations-road-coverage__heading { justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.operations-road-coverage__heading h3 { margin: 0; font-size: var(--text-card-title); }
+.operations-road-coverage__heading a { color: var(--lagoon-text); font-size: var(--text-xs); }
+.operations-road-coverage__metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin: 22px 0 14px; }
+.operations-road-coverage__metrics > div { min-width: 0; }
+.operations-road-coverage__metrics dt { color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.5; }
+.operations-road-coverage__metrics dd { margin: 8px 0 0; font-size: var(--text-section-title); font-weight: var(--weight-semibold); font-variant-numeric: tabular-nums; color: var(--lagoon-text); overflow-wrap: anywhere; }
+.operations-road-coverage__metrics small, .operations-road-coverage__scope,
+.operations-road-coverage__traffic > p, .operations-road-coverage__traffic time { color: var(--text-secondary); font-size: var(--text-xs); line-height: 1.6; }
+.operations-road-coverage__scope { margin: 0; }
+.operations-road-coverage__traffic { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-color); }
+.operations-road-coverage__traffic > div { justify-content: space-between; flex-wrap: wrap; }
+.operations-road-coverage__traffic > div > strong { font-size: var(--text-sm); }
+.operations-road-coverage__traffic > p { margin: 8px 0 0; }
+.operations-road-coverage__traffic > p > strong { color: var(--text-primary); font-size: var(--text-body); }
+.operations-road-coverage__traffic time { display: block; margin-top: 8px; }
+
+@media (max-width: 1000px) {
+  .operations-road-coverage__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 540px) {
+  .operations-road-coverage { padding: 18px; }
+  .operations-road-coverage__metrics { gap: 18px 14px; }
+}

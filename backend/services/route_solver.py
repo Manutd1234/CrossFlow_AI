@@ -11,7 +11,7 @@ from models.congestion_model import (
     forecaster,
 )
 from services import (
-    clock, ferry_schedule, live_traffic, multimodal_router, router,
+    clock, cctv_routing, ferry_schedule, live_traffic, multimodal_router, router,
     supabase_pgrouting,
 )
 from services.service_contracts import ApprovedGraphOverrideSnapshot
@@ -132,6 +132,11 @@ FERRY_TERMINAL_MATCH_M = 500.0
 # them as conservative walking/access legs, never as extra road kilometres.
 ACCESS_CONNECTOR_SPEED_KPH = 5.0
 
+# A browser's "Depart now" ISO timestamp is already in the past when its HTTP
+# request reaches this service. A small receipt-time grace handles transport
+# latency without allowing an old historical departure to use live evidence.
+DEPART_NOW_TRANSPORT_GRACE_SECONDS = 30.0
+
 
 def _validated_profile(vehicle_type: str) -> router.VehicleProfile:
     return router.vehicle_profile(vehicle_type)
@@ -217,13 +222,10 @@ def _probabilistic_corridor_prediction(
             ),
         )
 
-    current = forecaster.predict_spatial(context(effective_at, 0.0))
-    after_30 = forecaster.predict_spatial(context(
-        effective_at + timedelta(minutes=30), 30.0,
-    ))
-    after_60 = forecaster.predict_spatial(context(
-        effective_at + timedelta(minutes=60), 60.0,
-    ))
+    current, after_30, after_60 = forecaster.predict_spatial_batch(
+        context(effective_at + timedelta(minutes=offset), float(offset))
+        for offset in (0, 30, 60)
+    )
     prediction = {
         "current_score": round(current.mean_score, 1),
         "predicted_30min": round(after_30.mean_score, 1),
@@ -247,9 +249,9 @@ def _probabilistic_corridor_prediction(
         "spatial_source": current.spatial_source,
         "defaults_applied": list(current.defaults_applied),
         "risk_aversion": risk_aversion,
-        "provenance": "probabilistic_forecast",
+        "provenance": 'provisional_observed_reference' if current.model_id == 'crossflow_observed_short_horizon_v1' else 'probabilistic_forecast',
         "observed": False,
-        "training_data_source": forecaster.metrics.get("training_data_source"),
+        "training_data_source": 'observed_traffic_archive' if current.model_id == 'crossflow_observed_short_horizon_v1' else forecaster.metrics.get("training_data_source"),
     }
     estimate = router.EdgeCongestionEstimate(**current.router_payload(
         free_flow_travel_seconds=0.0,
@@ -345,11 +347,15 @@ def _geometry(
     include_alternatives: bool = False,
     route_preference: str = "BALANCED",
     approved_override_snapshot: Optional[ApprovedGraphOverrideSnapshot] = None,
+    effective_at: Optional[datetime] = None,
+    observed_at: Optional[datetime] = None,
 ) -> Optional[Dict[str, Any]]:
     origin = LOCATION_BY_ID.get(corridor["origin"], {})
     destination = LOCATION_BY_ID.get(corridor["destination"], {})
-    return router.route_between(
+    return cctv_routing.route_call(
+        router.route_between,
         corridor["origin"], corridor["destination"],
+        effective_at=effective_at, observed_at=observed_at,
         include_alternatives=include_alternatives,
         origin_name=origin.get("name"), destination_name=destination.get("name"),
         vehicle_type=vehicle_type, weather=weather,
@@ -809,7 +815,9 @@ def _validate_schedule_request(
     if arrive_by is not None and arrive_by < now.astimezone(clock.BATAM_TZ):
         raise ValueError("arrive_by must be in the future.")
     if departure_at is not None and departure_at < now.astimezone(clock.BATAM_TZ):
-        raise ValueError("departure_at must be in the future.")
+        if (now.astimezone(clock.BATAM_TZ) - departure_at).total_seconds() > DEPART_NOW_TRANSPORT_GRACE_SECONDS:
+            raise ValueError("departure_at must be in the future.")
+        departure_at = now.astimezone(clock.BATAM_TZ)
     return departure_at, arrive_by
 
 
@@ -992,6 +1000,7 @@ def optimize_route(corridor_id: Optional[str], vehicle_type: str, hour: int = 14
     zones = live_traffic.get_congestion_zones(planned_departure, weather=weather)
     route_now = _geometry(
         corridor, vehicle_type=vehicle_type, weather=weather,
+        effective_at=planned_departure, observed_at=now,
         network_congestion_score=prediction["current_score"], zones=zones,
         default_congestion_estimate=congestion_estimate,
         include_alternatives=False,
@@ -1005,34 +1014,42 @@ def optimize_route(corridor_id: Optional[str], vehicle_type: str, hour: int = 14
         profile.customs_buffer_mins if corridor["destination_port"] else 0.0
     )
 
-    # Compare against departing half an hour later.
-    later = planned_departure + timedelta(minutes=30)
-    surge_later, surge_source_later = ferry_schedule.ferry_surge_for_port(
-        corridor["destination_port"],
-        later,
-        schedule_verified_at=schedule_verified_at,
-    )
-    prediction_later, congestion_estimate_later = (
-        _probabilistic_corridor_prediction(
-            later,
-            weather=weather,
-            corridor_idx=corridor["corridor_idx"],
-            ferry_surge=surge_later,
-            surge_source=surge_source_later,
-            profile=profile,
-        )
-    )
-    zones_later = live_traffic.get_congestion_zones(later, weather=weather)
-    route_later = _geometry(
-        corridor, vehicle_type=vehicle_type, weather=weather,
-        network_congestion_score=prediction_later["current_score"],
-        default_congestion_estimate=congestion_estimate_later,
-        zones=zones_later, include_alternatives=False,
-        route_preference=preference.key,
-        approved_override_snapshot=approved_override_snapshot,
-    )
-    if not route_later:
+    # A precise departure is fixed, including every arrive-by probe. Its
+    # +30-minute route can never be selected, so avoid an otherwise expensive
+    # graph search whose result would immediately be discarded.
+    if departure_at is not None:
+        later = planned_departure
+        surge_later, surge_source_later = surge, surge_source
+        prediction_later, congestion_estimate_later = prediction, congestion_estimate
+        zones_later = zones
         route_later = route_now
+    else:
+        later = planned_departure + timedelta(minutes=30)
+        surge_later, surge_source_later = ferry_schedule.ferry_surge_for_port(
+            corridor["destination_port"],
+            later,
+            schedule_verified_at=schedule_verified_at,
+        )
+        prediction_later, congestion_estimate_later = (
+            _probabilistic_corridor_prediction(
+                later,
+                weather=weather,
+                corridor_idx=corridor["corridor_idx"],
+                ferry_surge=surge_later,
+                surge_source=surge_source_later,
+                profile=profile,
+            )
+        )
+        zones_later = live_traffic.get_congestion_zones(later, weather=weather)
+        route_later = _geometry(
+            corridor, vehicle_type=vehicle_type, weather=weather,
+            effective_at=later, observed_at=now,
+            network_congestion_score=prediction_later["current_score"],
+            default_congestion_estimate=congestion_estimate_later,
+            zones=zones_later, include_alternatives=False,
+            route_preference=preference.key,
+            approved_override_snapshot=approved_override_snapshot,
+        ) or route_now
     travel_later = round(_modeled_route_time_mins(route_later), 1)
 
     defer = (
@@ -1055,6 +1072,7 @@ def optimize_route(corridor_id: Optional[str], vehicle_type: str, hour: int = 14
     recommended_zones = zones_later if defer else zones
     route = _geometry(
         corridor, vehicle_type=vehicle_type, weather=weather,
+        effective_at=recommended_departure, observed_at=now,
         network_congestion_score=recommended_prediction["current_score"],
         default_congestion_estimate=recommended_congestion_estimate,
         # A deadline probe is read for its arrival time alone, and alternatives
@@ -1395,8 +1413,10 @@ def optimize_free_route(
     )
 
     zones = live_traffic.get_congestion_zones(planned_departure, weather=weather)
-    route_now = router.route_between_nodes(
+    route_now = cctv_routing.route_call(
+        router.route_between_nodes,
         src_node, dst_node, avoid_zones=zones,
+        effective_at=planned_departure, observed_at=now,
         origin_name=origin_display, destination_name=dest_display,
         include_alternatives=False, vehicle_type=vehicle_type,
         network_congestion_score=prediction["current_score"], weather=weather,
@@ -1408,7 +1428,7 @@ def optimize_free_route(
         raise ValueError("No drivable path connects those coordinates.")
     travel_now = round(_modeled_route_time_mins(route_now), 1)
 
-    if leg_mode or _schedule_search:
+    if leg_mode or _schedule_search or departure_at is not None:
         # The journey owns the departure decision, so a leg reuses its own
         # conditions rather than searching a +30 minute alternative it has no
         # authority to act on. A deadline probe is in the same position: it
@@ -1439,8 +1459,10 @@ def optimize_free_route(
             )
         )
         zones_later = live_traffic.get_congestion_zones(later, weather=weather)
-        route_later = router.route_between_nodes(
+        route_later = cctv_routing.route_call(
+            router.route_between_nodes,
             src_node, dst_node, avoid_zones=zones_later,
+            effective_at=later, observed_at=now,
             origin_name=origin_display, destination_name=dest_display,
             include_alternatives=False, vehicle_type=vehicle_type,
             network_congestion_score=prediction_later["current_score"],
@@ -1472,8 +1494,10 @@ def optimize_free_route(
         # recommended route is by construction the one already solved above.
         route = route_now
     else:
-        route = router.route_between_nodes(
+        route = cctv_routing.route_call(
+            router.route_between_nodes,
             src_node, dst_node, avoid_zones=recommended_zones,
+            effective_at=recommended_departure, observed_at=now,
             origin_name=origin_display, destination_name=dest_display,
             # A deadline probe is read for its arrival time alone, and
             # alternatives only decorate the payload the primary search

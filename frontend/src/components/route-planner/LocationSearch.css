@@ -1,0 +1,26 @@
+.location-search-popover {
+  position: fixed;
+  z-index: 1100;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scroll-padding-block: 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--warm-card);
+  box-shadow: 0 12px 32px rgba(7, 59, 76, 0.16);
+  font-family: var(--font-body);
+  line-height: var(--leading-body);
+}
+
+/* One scroll surface for map actions, remote matches and saved suggestions. */
+.location-search-popover .location-search-option-list {
+  max-height: none;
+  overflow: visible;
+}
+
+.location-search-popover [role='option'] {
+  scroll-margin-block: 4px;
+}

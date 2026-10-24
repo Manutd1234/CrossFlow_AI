@@ -1,0 +1,76 @@
+{
+  "verified_at": "2026-10-23T18:00:24+08:00",
+  "environment": "local_only_codex_in_app_browser",
+  "operator_origin": "http://localhost:3000",
+  "driver_origin": "http://127.0.0.1:3000",
+  "authentication": {
+    "operator": "Real Google sign-in with server-resolved admin role",
+    "driver": "Real NUS signup OTP and password sign-in with server-resolved driver role",
+    "passwordless_demo": "Real EJC email-code sign-in and reload restoration",
+    "backend_outage_recovery": "Both existing sessions recovered after backend restart through Retry saved session without another password or OTP"
+  },
+  "dispatch": {
+    "code": "AHMKAQM",
+    "journey": "Batamindo Industrial Park to HarbourFront Ferry Terminal Singapore",
+    "operator_created_driver_loaded": true,
+    "padded_lowercase_code_normalized": true,
+    "geometry_points": 62,
+    "directions": 12,
+    "legs": ["ROAD", "FERRY", "ROAD"],
+    "map_tiles_rendered": 25,
+    "connections_tab_and_timezone_labels_verified": true,
+    "api_evidence": "final-operator-driver-dispatch.json"
+  },
+  "integrations": {
+    "official_ferry_source_checks": "6 passed, 0 need review, 0 permission-gated",
+    "source_evidence": "final-official-source-checks.json",
+    "current_traffic": "Five fresh validated TomTom representative points with original timestamps",
+    "final_overview_index": 6.9,
+    "final_published_departures_next_12_hours": 38,
+    "official_port_report": {
+      "period": "2026-01 to 2026-08",
+      "vessel_calls": 51733,
+      "domestic_passenger_movements": 3075059,
+      "international_passenger_movements": 3643016,
+      "source": "https://batamport.bpbatam.go.id/pelabuhan-penumpang/"
+    },
+    "history": "New observed samples accumulate through the enabled local collector; synthetic replay is separately selected and labelled"
+  },
+  "ml_simulation": {
+    "actual_serving_random_forest_invoked": true,
+    "weather_and_corridor_controls_verified": true,
+    "final_forecast_generated_at": "2026-10-23T18:00:17+08:00",
+    "final_current_time_counterfactuals": {"clear": 57.2, "rain": 69.4, "storm": 76.2},
+    "forecast_horizon_hours": 24,
+    "provenance": "synthetic_profile_generator",
+    "observed_training_rows": 0
+  },
+  "checks": {
+    "frontend_tests": 379,
+    "frontend_test_files": 37,
+    "backend_auth_tests": 360,
+    "backend_subtests": 321,
+    "standalone_checks": 153,
+    "postgresql_cases": 26,
+    "lint_typescript_production_build": "passed",
+    "browser_console_errors_since_final_restart": {"operator": 0, "driver": 0}
+  },
+  "screenshots": [
+    "driver-assigned-route-final-map.png",
+    "driver-assigned-route-final-directions.png",
+    "operator-new-route-summary.png",
+    "operator-official-source-checks.png",
+    "operator-live-overview-and-reports.png",
+    "operator-final-computed-forecast.png",
+    "operator-observed-history.png",
+    "operator-synthetic-history-replay.png"
+  ],
+  "limits": [
+    "Route and history durability is local SQLite on this host; shared hosted migrations and configuration require deployment verification.",
+    "Observed collection begins now, without fabricated older traffic history.",
+    "Random Forest training remains synthetic; real-world historical accuracy and interval calibration are unverified.",
+    "Published ferry timetables and period reports do not supply live seats, terminal queues, berth occupancy or cancellations.",
+    "Google client-secret replacement and old-secret revocation remain unverified.",
+    "No repository push or deployment was performed."
+  ]
+}

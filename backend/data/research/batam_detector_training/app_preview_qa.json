@@ -1,0 +1,91 @@
+{
+  "status": "passed",
+  "scope": "actual_ASGI_routes_with_isolated_operator_identity_and_real_local_worker_model",
+  "production_login_verified": false,
+  "old_app_default_model_retained": true,
+  "app_release_pointer_written": false,
+  "model_promoted": false,
+  "production_eligible": false,
+  "batam_validated": false,
+  "newly_acquired_training_sample": "flickr:54235662106",
+  "sample_is_not_test_evidence": true,
+  "image_sha256": "2427425d79d5d8354c36e410babd4636b1eeaba40787204afa41d42fbbdc2f26",
+  "source_split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+  "report_sha256": "bcaaec144c479e5dfe5c23f7fe73e0b30902cd43b41f3db56f2500bdd85ecc48",
+  "http_equivalent_codes": {
+    "status": 200,
+    "unauthorized": 403,
+    "invalid_image": 422,
+    "real_image": 200
+  },
+  "no_store_all": true,
+  "actual_sample_response": {
+    "vehicle_count": 4,
+    "image": {
+      "width": 1553,
+      "height": 1600
+    },
+    "detections": [
+      {
+        "class_name": "car",
+        "score": 0.993582546710968,
+        "box": [
+          0.8896226557469414,
+          0.642819595336914,
+          0.9985041867051674,
+          0.745185317993164
+        ]
+      },
+      {
+        "class_name": "car",
+        "score": 0.987345278263092,
+        "box": [
+          0.02050399043371197,
+          0.6339315032958984,
+          0.07080265789437279,
+          0.6763973236083984
+        ]
+      },
+      {
+        "class_name": "car",
+        "score": 0.9822328090667725,
+        "box": [
+          0.8712357854505393,
+          0.6366150283813476,
+          0.9452363337844092,
+          0.7279197692871093
+        ]
+      },
+      {
+        "class_name": "motorcycle",
+        "score": 0.9558232426643372,
+        "box": [
+          0.10308766165473579,
+          0.6464879608154297,
+          0.13843949533476035,
+          0.6675614166259766
+        ]
+      }
+    ],
+    "model_id": "pretrained_COCO",
+    "latency_ms": 2409.191667000414,
+    "experimental": true,
+    "production_eligible": false,
+    "batam_validated": false,
+    "scope": "single_image_vehicle_count_preview",
+    "image_retained": false,
+    "max_detections": 100,
+    "may_be_truncated": false,
+    "note": "Batam photo pilot: counts boxes at least 12 pixels long and 4 pixels short. Labels were assistant-reviewed; accuracy is not human-certified. This is not flow, queue length or speed.",
+    "count_policy": {
+      "min_long_side_px": 12,
+      "min_short_side_px": 4,
+      "scope": "size_filtered_visible_vehicle_boxes_per_image"
+    }
+  },
+  "backend_app_tests": 36,
+  "training_protocol_tests": 23,
+  "dataset_integrity_checks": 876,
+  "accuracy_gate_passed": false,
+  "test_outcome": "No improvement versus predeclared size-filtered reference; 0/4 exact counts. Test consumed."
+}

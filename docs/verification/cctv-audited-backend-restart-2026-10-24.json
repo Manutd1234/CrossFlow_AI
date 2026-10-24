@@ -1,0 +1,433 @@
+{
+  "schema": "crossflow.audited_api_restart.v1",
+  "backend_pid": 2291,
+  "backend_session": 16249,
+  "started_at": "2026-10-24T06:20:38.984119+00:00",
+  "finished_at": "2026-10-24T06:20:59.213470+00:00",
+  "preserved_environment_without_printing_values": true,
+  "registry_or_secret_changes": false,
+  "configuration": {
+    "registered_cameras": 28,
+    "inference_configured": 6,
+    "inference_capacity": 6,
+    "enabled_maximum_age_seconds": [
+      30.0
+    ],
+    "enabled_frame_intervals_seconds": [
+      1.0
+    ]
+  },
+  "snapshots": [
+    {
+      "checked_at": "2026-10-24T06:20:38.986766+00:00",
+      "inference_workers": [
+        {
+          "pid": 2331,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2332,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2334,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2336,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        }
+      ],
+      "numeric_evidence_summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 4,
+        "stale": 2,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:29.468070Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:32.395725Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 1,
+          "congestion_score": 10.21789477327123,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "stale",
+          "observed_at": "2026-10-24T06:11:00.205155Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:32.073044Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 33.908074534177146,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:32.696376Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 2,
+          "congestion_score": 2.946667912835317,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T06:20:49.051969+00:00",
+      "inference_workers": [
+        {
+          "pid": 2331,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2332,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2334,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2336,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        }
+      ],
+      "numeric_evidence_summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 4,
+        "stale": 2,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:40.345989Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:43.584291Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 1,
+          "congestion_score": 2.1091760255934564,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "stale",
+          "observed_at": "2026-10-24T06:11:00.205155Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:40.398218Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 6,
+          "congestion_score": 50.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:42.570026Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-10-24T06:20:59.093511+00:00",
+      "inference_workers": [
+        {
+          "pid": 2331,
+          "camera_id": "1",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2332,
+          "camera_id": "13",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2334,
+          "camera_id": "19",
+          "capture_seconds": 3600
+        },
+        {
+          "pid": 2336,
+          "camera_id": "48",
+          "capture_seconds": 3600
+        }
+      ],
+      "numeric_evidence_summary": {
+        "listed": 28,
+        "configured": 6,
+        "live": 0,
+        "estimated": 4,
+        "stale": 2,
+        "unavailable": 0,
+        "permission_pending": 22,
+        "calibration_pending": 0
+      },
+      "cameras": [
+        {
+          "camera_id": "1",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:49.265448Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 0,
+          "congestion_score": 0.0,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf-viewe79f428deca0eba7"
+        },
+        {
+          "camera_id": "13",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:52.622222Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 1,
+          "congestion_score": 8.603176143298064,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "51",
+          "status": "stale",
+          "observed_at": "2026-10-24T06:11:00.205155Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "15",
+          "status": "stale",
+          "observed_at": "2026-10-24T05:43:47.835697Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": null,
+          "congestion_score": null,
+          "validation_status": "unavailable",
+          "routing_enabled": false,
+          "detector_id": null
+        },
+        {
+          "camera_id": "19",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:49.787688Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 5,
+          "congestion_score": 56.64331746559459,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        },
+        {
+          "camera_id": "48",
+          "status": "estimated",
+          "observed_at": "2026-10-24T06:20:52.724571Z",
+          "maximum_age_seconds": 30.0,
+          "vehicle_count": 1,
+          "congestion_score": 3.2387956036063525,
+          "validation_status": "estimated",
+          "routing_enabled": false,
+          "detector_id": "yolo26s-646f8bc3fe0a6568-p9cceb5b6b9869bbf"
+        }
+      ]
+    }
+  ],
+  "numeric_store_check": [
+    {
+      "camera_id": "1",
+      "latest_observed_at": "2026-10-24T06:20:49.265448Z",
+      "recent_records": 100,
+      "records_since_verification_started": 10,
+      "media_fields_present": false,
+      "claims_image_retention": false
+    },
+    {
+      "camera_id": "13",
+      "latest_observed_at": "2026-10-24T06:20:52.622222Z",
+      "recent_records": 100,
+      "records_since_verification_started": 14,
+      "media_fields_present": false,
+      "claims_image_retention": false
+    },
+    {
+      "camera_id": "15",
+      "latest_observed_at": "2026-10-24T05:43:47.835697Z",
+      "recent_records": 100,
+      "records_since_verification_started": 0,
+      "media_fields_present": false,
+      "claims_image_retention": false
+    },
+    {
+      "camera_id": "19",
+      "latest_observed_at": "2026-10-24T06:20:49.787688Z",
+      "recent_records": 100,
+      "records_since_verification_started": 12,
+      "media_fields_present": false,
+      "claims_image_retention": false
+    },
+    {
+      "camera_id": "48",
+      "latest_observed_at": "2026-10-24T06:20:52.724571Z",
+      "recent_records": 100,
+      "records_since_verification_started": 14,
+      "media_fields_present": false,
+      "claims_image_retention": false
+    },
+    {
+      "camera_id": "51",
+      "latest_observed_at": "2026-10-24T06:11:00.205155Z",
+      "recent_records": 100,
+      "records_since_verification_started": 0,
+      "media_fields_present": false,
+      "claims_image_retention": false
+    }
+  ],
+  "http": {
+    "operations_status": 200,
+    "camera_traffic_summary": {
+      "status": "active",
+      "configured_cameras": 6,
+      "fresh_cameras": 4,
+      "validated_cameras": 0,
+      "estimated_cameras": 4,
+      "mean_congestion_index": 17.1,
+      "vehicle_detections": 7,
+      "latest_observed_at": "2026-10-24T13:20:52+07:00",
+      "oldest_observed_at": "2026-10-24T13:20:49+07:00",
+      "valid_until": "2026-10-24T13:21:19+07:00",
+      "source": "registered_camera_aggregates",
+      "scope": "fresh_registered_camera_views_only",
+      "measured_road_speed": false,
+      "independently_validated": false
+    },
+    "road_network_coverage": {
+      "source": "OpenStreetMap",
+      "scope": "bundled_batam_routing_graph",
+      "mapped_nodes": 115320,
+      "mapped_source_ways": 27018,
+      "directed_edges": 249745,
+      "live_camera_edge_count": 0,
+      "live_camera_edge_coverage_percent": 0.0,
+      "complete_live_coverage": false
+    },
+    "auth_status_code": 200,
+    "auth_enabled": true,
+    "cctv_status_without_token": 401,
+    "real_model_without_token": 401
+  },
+  "availability_verification": {
+    "protected_live_authenticated_http_read_performed": false,
+    "actual_server_availability_summary_read": false,
+    "no_browser_tokens_extracted": true,
+    "hermetic_asgi_contract_test": "test_operator_availability_contract_is_private_readonly_and_not_a_congestion_measurement",
+    "startup_hook_and_bounded_threads_covered_by_tests": true,
+    "independent_actual_28_source_smoke_receipt": "cctv-availability-28-2026-10-24.json",
+    "smoke_progress_samples_per_advancing_source": 2,
+    "smoke_media_requested": false
+  },
+  "hermetic_http_fixture_tests": {
+    "passed": 34,
+    "subtests_passed": 35,
+    "seconds": 49.42,
+    "external_capture_archiving_and_training_disabled": true,
+    "numeric_paths_class_owned_temporary": true
+  },
+  "verification_media_requested_or_saved": false,
+  "model_accuracy_evaluated": false
+}

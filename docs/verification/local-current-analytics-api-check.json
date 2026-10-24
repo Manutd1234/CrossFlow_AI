@@ -1,0 +1,177 @@
+{
+  "verified_at": "2026-10-23T09:30:15.416074+00:00",
+  "scope": "Manual local API verification only; no auth credentials, provider archive or training writes",
+  "operations_samples": [
+    {
+      "generated_at": "2026-10-23T16:30:14+07:00",
+      "data_source": "live",
+      "average_congestion_index": 2.9,
+      "active_bottlenecks": 0,
+      "scheduled_ferry_departures_next_12h": 43,
+      "analytics_metadata": {
+        "generated_at": "2026-10-23T16:30:14+07:00",
+        "as_of": "2026-10-23T16:29:33+07:00",
+        "input_snapshot_at": "2026-10-23T16:29:33+07:00",
+        "snapshot_age_seconds": 41,
+        "traffic_observed": true,
+        "traffic_source": "tomtom_live",
+        "observed_corridor_count": 5,
+        "expected_corridor_count": 5,
+        "complete_corridor_coverage": true,
+        "ferry_schedule_source": "published_timetable_snapshot",
+        "ferry_schedule_observed": false,
+        "ferry_schedule_computed_at": "2026-10-23T16:30:14+07:00",
+        "limitations": [
+          "One measured road point per available corridor; not whole-network coverage.",
+          "The congestion index is derived from measured speed/free-flow ratio.",
+          "No measured fleet volume, emissions reduction or historical traffic archive is available.",
+          "Ferry counts are published timetable departures, not live sailing status."
+        ]
+      },
+      "unsupported_emissions": null,
+      "model_metrics": {
+        "r2_score": 0.949,
+        "mae": 2.87,
+        "rmse": 3.61,
+        "last_trained_at": "2026-10-23T09:29:20.603843+00:00",
+        "training_data_source": "synthetic_profile_generator",
+        "validation_scope": "synthetic_holdout",
+        "evaluation_scope": "raw_forest_holdout_excludes_post_model_adjustment",
+        "feature_importance_scope": "raw_forest_impurity_importance",
+        "observed_training_rows": 0
+      }
+    },
+    {
+      "generated_at": "2026-10-23T16:30:15+07:00",
+      "data_source": "live",
+      "average_congestion_index": 2.9,
+      "active_bottlenecks": 0,
+      "scheduled_ferry_departures_next_12h": 43,
+      "analytics_metadata": {
+        "generated_at": "2026-10-23T16:30:15+07:00",
+        "as_of": "2026-10-23T16:29:33+07:00",
+        "input_snapshot_at": "2026-10-23T16:29:33+07:00",
+        "snapshot_age_seconds": 42,
+        "traffic_observed": true,
+        "traffic_source": "tomtom_live",
+        "observed_corridor_count": 5,
+        "expected_corridor_count": 5,
+        "complete_corridor_coverage": true,
+        "ferry_schedule_source": "published_timetable_snapshot",
+        "ferry_schedule_observed": false,
+        "ferry_schedule_computed_at": "2026-10-23T16:30:15+07:00",
+        "limitations": [
+          "One measured road point per available corridor; not whole-network coverage.",
+          "The congestion index is derived from measured speed/free-flow ratio.",
+          "No measured fleet volume, emissions reduction or historical traffic archive is available.",
+          "Ferry counts are published timetable departures, not live sailing status."
+        ]
+      },
+      "unsupported_emissions": null,
+      "model_metrics": {
+        "r2_score": 0.949,
+        "mae": 2.87,
+        "rmse": 3.61,
+        "last_trained_at": "2026-10-23T09:29:20.603843+00:00",
+        "training_data_source": "synthetic_profile_generator",
+        "validation_scope": "synthetic_holdout",
+        "evaluation_scope": "raw_forest_holdout_excludes_post_model_adjustment",
+        "feature_importance_scope": "raw_forest_impurity_importance",
+        "observed_training_rows": 0
+      }
+    }
+  ],
+  "generated_at_advances": true,
+  "model_metrics_stable_without_training": true,
+  "history": {
+    "generated_at": "2026-10-23T16:30:15+07:00",
+    "metadata": {
+      "window_days": 7,
+      "window_basis": "Batam calendar days including the current day",
+      "window_start_at": "2026-10-17T00:00:00+07:00",
+      "window_end_at": "2026-10-23T09:30:15.406004+00:00",
+      "selection_scope": "observed_only",
+      "snapshot_selection": "latest_bounded_validated_spatial_rows_then_corridor_window_filter",
+      "snapshot_max_rows": 10000,
+      "snapshot_loaded_rows": 0,
+      "snapshot_may_be_truncated": false,
+      "sample_count": 0,
+      "observed": false,
+      "contains_observed_samples": false,
+      "source_counts": {},
+      "sources": {},
+      "latest_sample_at": null,
+      "latest_sample_age_seconds": null,
+      "freshness": "empty",
+      "freshness_basis": "latest observed sample in the selected Batam calendar-day window",
+      "storage": {
+        "engine": "sqlite",
+        "durability": "persistent_file",
+        "durable": true,
+        "shared_across_instances": false,
+        "fallback_to_memory": false,
+        "spatial_history": {
+          "schema_version": 3,
+          "typed": true,
+          "retention_days": 1825,
+          "default_retention_years": 5,
+          "max_ingest_batch_size": 2000,
+          "provenance_separates_observed_and_modelled": true
+        }
+      },
+      "synthetic_seed": {
+        "source": "synthetic",
+        "version": 2,
+        "days": 14,
+        "timezone": "WIB (UTC+07:00)",
+        "generated_for_date": null,
+        "observed": false,
+        "included": false
+      }
+    },
+    "empty_hour_buckets": 24,
+    "daily_rows": 0
+  },
+  "ports": {
+    "generated_at": "2026-10-23T16:30:15+07:00",
+    "data_source": "published_schedule",
+    "count": 4,
+    "live_operating_values_unavailable": true
+  },
+  "persisted_dispatch_after_restart": [
+    {
+      "route_code": "9H2WQHF",
+      "status": 200,
+      "full_id_alias_status": 200,
+      "route_type": "ROAD_ROUTE",
+      "geometry_points": 55,
+      "leg_types": [],
+      "route_storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": true,
+        "durability": "persistent_local_file",
+        "scope": "single_host"
+      }
+    },
+    {
+      "route_code": "V5D9FB8",
+      "status": 200,
+      "full_id_alias_status": 200,
+      "route_type": "MULTIMODAL_FERRY_ROUTE",
+      "geometry_points": 62,
+      "leg_types": [
+        "ROAD",
+        "FERRY",
+        "ROAD"
+      ],
+      "route_storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": true,
+        "durability": "persistent_local_file",
+        "scope": "single_host"
+      }
+    }
+  ]
+}

@@ -51,7 +51,7 @@ _REQUEST_WORKER_SLOTS = threading.BoundedSemaphore(MAX_IN_FLIGHT_REQUEST_WORKERS
 
 # Only PostgREST data paths and the Auth user endpoint. Anything else -- token
 # issuance, admin user management -- is deliberately unreachable from here.
-_ALLOWED_PATH = re.compile(r"^/(?:rest|auth)/v1/[A-Za-z0-9_.~-]+(?:/[A-Za-z0-9_.~-]+)*$")
+_ALLOWED_DATA_PATH = re.compile(r"^/rest/v1/[A-Za-z0-9_.~-]+(?:/[A-Za-z0-9_.~-]+)*$")
 _QUERY_KEY = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
 _OFFICIAL_HOST = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.supabase\.co$")
 _ENCODED_CONTROL = re.compile(r"%(?:0[ad]|5c)", re.IGNORECASE)
@@ -240,11 +240,15 @@ def request_json(
     thread enforces the absolute budget and closes an opened response on
     expiry; the bounded worker semaphore caps abandoned connection attempts.
     """
-    if not _ALLOWED_PATH.fullmatch(path) or any(
+    if not isinstance(path, str) or not (
+        path == "/auth/v1/user" or _ALLOWED_DATA_PATH.fullmatch(path)
+    ) or any(
         segment in {"", ".", ".."} for segment in path.split("/")[3:]
     ):
         raise SupabaseUserError("invalid_path")
     if method not in {"GET", "POST", "PATCH", "DELETE"}:
+        raise SupabaseUserError("invalid_method")
+    if path == "/auth/v1/user" and method != "GET":
         raise SupabaseUserError("invalid_method")
     if (
         isinstance(timeout_seconds, bool)

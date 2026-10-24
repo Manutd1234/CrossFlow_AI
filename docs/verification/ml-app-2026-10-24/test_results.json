@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "backend_focused_tests": 39,
+  "backend_test_groups": {
+    "count_causality": 7,
+    "preview_api_and_bridge": 22,
+    "detector_runtime": 10
+  },
+  "frontend_focused_tests": 54,
+  "typescript_check": "passed",
+  "production_build": "passed",
+  "focused_eslint": "passed",
+  "fresh_batam_accuracy_test": false,
+  "production_auth_login_verified": false,
+  "notes": [
+    "Tests verify engineering behavior; metrics come from the separately frozen research reports.",
+    "Detector tests use the persistent optional .venv-vision runtime; API/causality checks use .venv.",
+    "Browser upload used a separate localhost operator identity fixture and the real application endpoints/model; existing driver session and app servers were left intact."
+  ]
+}

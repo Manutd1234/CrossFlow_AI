@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "format": "crossflow_batam_published_count_numeric_v1",
+  "experiment": "sekupang_15min",
+  "scope": "retrospective_published_single_site_count_diagnostic_only",
+  "site_id": "batam-sekupang-four-approach-published-2023",
+  "source_id": "BATAM-014",
+  "source_pdf_sha256": "97fbbc1da8acafabbaea5589a75937e92ca78e6a0b87b5a104401162a8d053c9",
+  "source_csv_sha256": "39a96d4fddba284b9106b84666589eb28ea8c65770e8305d779d1e4018b0d35c",
+  "protocol_sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217",
+  "unit": "vehicles_in_15_minute_interval",
+  "model_name": "ridge_residual_10",
+  "model": {
+    "kind": "ridge_residual_10",
+    "series_means": {
+      "[\"Jl. Ir. Sutami\",\"LT (left turn)\",\"HV\"]": 2.0,
+      "[\"Jl. Ir. Sutami\",\"LT (left turn)\",\"LV\"]": 22.6,
+      "[\"Jl. Ir. Sutami\",\"LT (left turn)\",\"MC\"]": 25.6,
+      "[\"Jl. Ir. Sutami\",\"RT (right turn)\",\"HV\"]": 1.4,
+      "[\"Jl. Ir. Sutami\",\"RT (right turn)\",\"LV\"]": 26.0,
+      "[\"Jl. Ir. Sutami\",\"RT (right turn)\",\"MC\"]": 27.8,
+      "[\"Jl. Ir. Sutami\",\"ST (straight through)\",\"HV\"]": 1.6,
+      "[\"Jl. Ir. Sutami\",\"ST (straight through)\",\"LV\"]": 22.8,
+      "[\"Jl. Ir. Sutami\",\"ST (straight through)\",\"MC\"]": 23.0,
+      "[\"Jl. Kawasan Industri Sekupang\",\"LT (left turn)\",\"HV\"]": 1.2,
+      "[\"Jl. Kawasan Industri Sekupang\",\"LT (left turn)\",\"LV\"]": 23.8,
+      "[\"Jl. Kawasan Industri Sekupang\",\"LT (left turn)\",\"MC\"]": 27.4,
+      "[\"Jl. Kawasan Industri Sekupang\",\"RT (right turn)\",\"HV\"]": 1.4,
+      "[\"Jl. Kawasan Industri Sekupang\",\"RT (right turn)\",\"LV\"]": 20.2,
+      "[\"Jl. Kawasan Industri Sekupang\",\"RT (right turn)\",\"MC\"]": 21.2,
+      "[\"Jl. Kawasan Industri Sekupang\",\"ST (straight through)\",\"HV\"]": 0.8,
+      "[\"Jl. Kawasan Industri Sekupang\",\"ST (straight through)\",\"LV\"]": 22.2,
+      "[\"Jl. Kawasan Industri Sekupang\",\"ST (straight through)\",\"MC\"]": 24.2,
+      "[\"Jl. RE Martadinata\",\"LT (left turn)\",\"HV\"]": 2.0,
+      "[\"Jl. RE Martadinata\",\"LT (left turn)\",\"LV\"]": 17.8,
+      "[\"Jl. RE Martadinata\",\"LT (left turn)\",\"MC\"]": 19.8,
+      "[\"Jl. RE Martadinata\",\"RT (right turn)\",\"HV\"]": 1.0,
+      "[\"Jl. RE Martadinata\",\"RT (right turn)\",\"LV\"]": 18.2,
+      "[\"Jl. RE Martadinata\",\"RT (right turn)\",\"MC\"]": 19.0,
+      "[\"Jl. RE Martadinata\",\"ST (straight through)\",\"HV\"]": 1.2,
+      "[\"Jl. RE Martadinata\",\"ST (straight through)\",\"LV\"]": 25.2,
+      "[\"Jl. RE Martadinata\",\"ST (straight through)\",\"MC\"]": 26.0,
+      "[\"Jl. RE Martadinata 2\",\"LT (left turn)\",\"HV\"]": 1.0,
+      "[\"Jl. RE Martadinata 2\",\"LT (left turn)\",\"LV\"]": 24.0,
+      "[\"Jl. RE Martadinata 2\",\"LT (left turn)\",\"MC\"]": 27.0,
+      "[\"Jl. RE Martadinata 2\",\"RT (right turn)\",\"HV\"]": 2.2,
+      "[\"Jl. RE Martadinata 2\",\"RT (right turn)\",\"LV\"]": 20.2,
+      "[\"Jl. RE Martadinata 2\",\"RT (right turn)\",\"MC\"]": 22.6,
+      "[\"Jl. RE Martadinata 2\",\"ST (straight through)\",\"HV\"]": 2.2,
+      "[\"Jl. RE Martadinata 2\",\"ST (straight through)\",\"LV\"]": 24.0,
+      "[\"Jl. RE Martadinata 2\",\"ST (straight through)\",\"MC\"]": 25.0
+    },
+    "class_means": {
+      "HV": 1.5,
+      "LV": 22.25,
+      "MC": 24.05
+    },
+    "vocab": [
+      [
+        0,
+        "Jl. Ir. Sutami"
+      ],
+      [
+        0,
+        "Jl. Kawasan Industri Sekupang"
+      ],
+      [
+        0,
+        "Jl. RE Martadinata"
+      ],
+      [
+        0,
+        "Jl. RE Martadinata 2"
+      ],
+      [
+        1,
+        "LT (left turn)"
+      ],
+      [
+        1,
+        "RT (right turn)"
+      ],
+      [
+        1,
+        "ST (straight through)"
+      ],
+      [
+        2,
+        "HV"
+      ],
+      [
+        2,
+        "LV"
+      ],
+      [
+        2,
+        "MC"
+      ]
+    ],
+    "mean": [
+      15.51388888888889,
+      2.378835373136239,
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "scale": [
+      10.334667999230593,
+      1.1186515527338836,
+      0.4330127018922193,
+      0.4330127018922193,
+      0.4330127018922193,
+      0.4330127018922193,
+      0.4714045207910312,
+      0.4714045207910312,
+      0.4714045207910312,
+      0.4714045207910312,
+      0.4714045207910312,
+      0.4714045207910312
+    ],
+    "coefficients": [
+      -1.1275751294266625,
+      -0.5742536138950094,
+      0.13014708350433923,
+      0.016355977945044592,
+      -0.2120545187352087,
+      0.0655514572858247,
+      0.06424909301971786,
+      -0.136170333287685,
+      0.07192124026796805,
+      -1.4586980792254272,
+      0.5834928488643958,
+      0.8752052303610206
+    ],
+    "intercept": 0.9861111111111112,
+    "alpha": 10.0
+  },
+  "series_keys": [
+    [
+      "Jl. Ir. Sutami",
+      "LT (left turn)",
+      "HV"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "LT (left turn)",
+      "LV"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "LT (left turn)",
+      "MC"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "RT (right turn)",
+      "HV"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "RT (right turn)",
+      "LV"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "RT (right turn)",
+      "MC"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "ST (straight through)",
+      "HV"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "ST (straight through)",
+      "LV"
+    ],
+    [
+      "Jl. Ir. Sutami",
+      "ST (straight through)",
+      "MC"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "LT (left turn)",
+      "HV"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "LT (left turn)",
+      "LV"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "LT (left turn)",
+      "MC"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "RT (right turn)",
+      "HV"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "RT (right turn)",
+      "LV"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "RT (right turn)",
+      "MC"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "ST (straight through)",
+      "HV"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "ST (straight through)",
+      "LV"
+    ],
+    [
+      "Jl. Kawasan Industri Sekupang",
+      "ST (straight through)",
+      "MC"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "LT (left turn)",
+      "HV"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "LT (left turn)",
+      "LV"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "LT (left turn)",
+      "MC"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "RT (right turn)",
+      "HV"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "RT (right turn)",
+      "LV"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "RT (right turn)",
+      "MC"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "ST (straight through)",
+      "HV"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "ST (straight through)",
+      "LV"
+    ],
+    [
+      "Jl. RE Martadinata",
+      "ST (straight through)",
+      "MC"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "LT (left turn)",
+      "HV"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "LT (left turn)",
+      "LV"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "LT (left turn)",
+      "MC"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "RT (right turn)",
+      "HV"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "RT (right turn)",
+      "LV"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "RT (right turn)",
+      "MC"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "ST (straight through)",
+      "HV"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "ST (straight through)",
+      "LV"
+    ],
+    [
+      "Jl. RE Martadinata 2",
+      "ST (straight through)",
+      "MC"
+    ]
+  ],
+  "allowed_test_intervals": [
+    "2023-12-17T07:45:00+07:00"
+  ],
+  "expected_previous_intervals": [
+    {
+      "target_interval_start": "2023-12-17T07:45:00+07:00",
+      "previous_interval_end": "2023-12-17T07:45:00+07:00"
+    }
+  ],
+  "training_rows": 180,
+  "training_target_rows": 144,
+  "source_license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "Uswatun Azizatul Syarqiah and Yusra Aulia Sari (2024), Optimizing Traffic Management at Batam City Intersections: Analysis of Congestion Causes and Mitigation Strategies, Journal of Civil Engineering and Planning 5(1), DOI 10.37253/jcep.v5i1.9076. Table 4.1 individually transcribed; time offsets, provenance and diagnostics added. No author endorsement.",
+  "production_eligible": false
+}

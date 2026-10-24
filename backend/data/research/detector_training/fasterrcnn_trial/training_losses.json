@@ -1,0 +1,22 @@
+[
+  {
+    "epoch": 1,
+    "mean_roi_training_loss": 1.0051076784729958
+  },
+  {
+    "epoch": 2,
+    "mean_roi_training_loss": 0.7485869489610195
+  },
+  {
+    "epoch": 3,
+    "mean_roi_training_loss": 0.6483500227332115
+  },
+  {
+    "epoch": 4,
+    "mean_roi_training_loss": 0.61196418851614
+  },
+  {
+    "epoch": 5,
+    "mean_roi_training_loss": 0.5758433304727077
+  }
+]

@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "evaluated_at": "2026-10-23T11:03:30.577346+00:00",
+  "scope": "independent Singapore academic benchmark; not Batam field validation",
+  "source_url": "https://github.com/EYLeong/traffic_prediction",
+  "data_sha256": {
+    "dataset.npy": "83a54790c3e7e4b16ca5dab1510b614e559abf1a3ad3ff760d39b04926991d0f",
+    "metadata.json": "74c43f17282d3c62c7fbbcca0f783ab739a663a419ff636d8b170f60ca47faca",
+    "timestamps.json": "85fdb55c15ae9d47aca36c825425e738bcd1ea5fd28312f7f7f7e49479ee009f"
+  },
+  "source_signal": "LTA Traffic Speed Bands; ordinal integer labels 1\u20138, not exact km/h",
+  "data_provider": "Singapore Land Transport Authority, collected by SUTD student research project",
+  "source_license": "LTA API datasets governed by Singapore Open Data Licence1.0; publisher code not reused",
+  "license_url": "https://datamall.lta.gov.sg/content/datamall/en/SingaporeOpenDataLicence.html",
+  "source_provenance": "Publisher directly copies SpeedBand from snapshots in inspected get_features; original API payloads unavailable for independent revalidation.",
+  "timestamp_basis": "Source filenames have no timezone; relative source-clock chronology retained; UTC/SGT offset not asserted.",
+  "source_first_timestamp": "2021-03-08T22:10:08",
+  "source_last_timestamp": "2021-04-03T23:55:09",
+  "source_calendar_days": 27,
+  "roads": 53,
+  "snapshots": 7497,
+  "speed_band_records": 397341,
+  "continuous_eligible_origins": 7240,
+  "chronology": {
+    "fit": {
+      "forecast_origins": 1431,
+      "rows": 75843,
+      "first_origin_source_clock": "2021-03-08T23:10:09",
+      "last_origin_source_clock": "2021-03-24T13:00:10",
+      "latest_target_source_clock": "2021-03-24T14:00:09"
+    },
+    "calibration": {
+      "forecast_origins": 1462,
+      "rows": 77486,
+      "first_origin_source_clock": "2021-03-24T14:05:08",
+      "last_origin_source_clock": "2021-03-29T17:55:08",
+      "latest_target_source_clock": "2021-03-29T18:55:08"
+    },
+    "test": {
+      "forecast_origins": 1463,
+      "rows": 77539,
+      "first_origin_source_clock": "2021-03-29T19:00:08",
+      "last_origin_source_clock": "2021-04-03T22:55:08",
+      "latest_target_source_clock": "2021-04-03T23:55:09"
+    },
+    "maximum_forecast_minutes": 60,
+    "training_origin_stride": 3,
+    "latest_fit_label_precedes_first_calibration_origin": true,
+    "latest_calibration_label_precedes_first_test_origin": true
+  },
+  "model": {
+    "kind": "RandomForestRegressor",
+    "parameters": {
+      "n_estimators": 80,
+      "max_depth": 12,
+      "min_samples_leaf": 12,
+      "random_state": 42,
+      "n_jobs": 1
+    },
+    "features": "Five prior bands, road identity/category/length, published source-clock phase and weekday; no future target/context embeddings."
+  },
+  "results": [
+    {
+      "horizon_minutes": 15,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.52892,
+        "rmse_band_units": 0.733561,
+        "rounded_band_accuracy": 0.584674,
+        "within_one_band": 0.953585
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.549156,
+        "rmse_band_units": 0.907907,
+        "rounded_band_accuracy": 0.551516,
+        "within_one_band": 0.925702
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.799146,
+      "calibration_radius_band_units": 0.849366,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.528852,
+          "rmse_band_units": 0.733539,
+          "rounded_band_accuracy": 0.58479,
+          "within_one_band": 0.953592
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.549106,
+          "rmse_band_units": 0.907926,
+          "rounded_band_accuracy": 0.551584,
+          "within_one_band": 0.925703
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.656544,
+          "rmse_band_units": 1.033128,
+          "rounded_band_accuracy": 0.48943,
+          "within_one_band": 0.896497
+        }
+      }
+    },
+    {
+      "horizon_minutes": 30,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.551534,
+        "rmse_band_units": 0.757287,
+        "rounded_band_accuracy": 0.570526,
+        "within_one_band": 0.950399
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.625221,
+        "rmse_band_units": 0.983472,
+        "rounded_band_accuracy": 0.500961,
+        "within_one_band": 0.90704
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.806175,
+      "calibration_radius_band_units": 0.872098,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.551516,
+          "rmse_band_units": 0.757322,
+          "rounded_band_accuracy": 0.570593,
+          "within_one_band": 0.950378
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.625377,
+          "rmse_band_units": 0.98367,
+          "rounded_band_accuracy": 0.50089,
+          "within_one_band": 0.906977
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.655757,
+          "rmse_band_units": 1.032897,
+          "rounded_band_accuracy": 0.490179,
+          "within_one_band": 0.896626
+        }
+      }
+    },
+    {
+      "horizon_minutes": 60,
+      "random_forest": {
+        "samples": 77539,
+        "mae_band_units": 0.562846,
+        "rmse_band_units": 0.768228,
+        "rounded_band_accuracy": 0.558506,
+        "within_one_band": 0.946079
+      },
+      "persistence": {
+        "samples": 77539,
+        "mae_band_units": 0.659475,
+        "rmse_band_units": 1.021247,
+        "rounded_band_accuracy": 0.481874,
+        "within_one_band": 0.896697
+      },
+      "interval_nominal_coverage": 0.8,
+      "interval_empirical_coverage": 0.805788,
+      "calibration_radius_band_units": 0.886057,
+      "prior_day_common_subset": {
+        "random_forest": {
+          "samples": 77486,
+          "mae_band_units": 0.562811,
+          "rmse_band_units": 0.768244,
+          "rounded_band_accuracy": 0.558565,
+          "within_one_band": 0.946081
+        },
+        "persistence": {
+          "samples": 77486,
+          "mae_band_units": 0.659526,
+          "rmse_band_units": 1.021325,
+          "rounded_band_accuracy": 0.481855,
+          "within_one_band": 0.896678
+        },
+        "prior_day_same_source_clock": {
+          "samples": 77486,
+          "mae_band_units": 0.654776,
+          "rmse_band_units": 1.03241,
+          "rounded_band_accuracy": 0.491082,
+          "within_one_band": 0.896768
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "27 days of old Singapore data from53 selected road links; no Batam observations in this benchmark.",
+    "The dataset represents speed intervals, so no exact-speed or road-travel-time accuracy is claimed.",
+    "Timezone and observation availability delay were not supplied; benchmark assumes each snapshot was available at its source timestamp.",
+    "Training is bounded and hyperparameters were fixed before examining held-out scores; no claim of optimality.",
+    "Temporal/road dependence means empirical interval coverage has no distribution-free guarantee.",
+    "No raw vehicle counts, weather or ferry impacts were learned or validated."
+  ],
+  "synthetic_training_rows": 0,
+  "external_code_or_pickle_executed": false,
+  "application_history_modified": false,
+  "serving_model_replaced": false,
+  "full_report_sha256": "4e39f24e1c29be7c2de289100bead45d818adb399d77a4eed947d996c539a442"
+}

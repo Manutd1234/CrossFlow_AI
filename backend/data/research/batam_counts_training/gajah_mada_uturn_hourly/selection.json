@@ -1,0 +1,80 @@
+{
+  "winner": "persistence",
+  "protocol_sha256": "9bfd09d53c397e828417fbb046e104b326853ed8d2b02a1c57441150fb3b5217",
+  "validation_scores": [
+    {
+      "model": "persistence",
+      "declaration_order": 0,
+      "metrics": {
+        "cells": 24,
+        "mae_vehicles_per_source_interval": 24.875,
+        "rmse_vehicles_per_source_interval": 41.07868465924065,
+        "wape_percent": 10.245409301527372,
+        "actual_vehicles_in_evaluated_cells": 5827.0,
+        "bias_vehicles_per_source_interval": 0.125
+      }
+    },
+    {
+      "model": "series_mean",
+      "declaration_order": 1,
+      "metrics": {
+        "cells": 24,
+        "mae_vehicles_per_source_interval": 24.875,
+        "rmse_vehicles_per_source_interval": 41.07868465924065,
+        "wape_percent": 10.245409301527372,
+        "actual_vehicles_in_evaluated_cells": 5827.0,
+        "bias_vehicles_per_source_interval": 0.125
+      }
+    },
+    {
+      "model": "class_mean",
+      "declaration_order": 2,
+      "metrics": {
+        "cells": 24,
+        "mae_vehicles_per_source_interval": 34.208333333333336,
+        "rmse_vehicles_per_source_interval": 58.71168963673248,
+        "wape_percent": 14.0895829758023,
+        "actual_vehicles_in_evaluated_cells": 5827.0,
+        "bias_vehicles_per_source_interval": 0.125
+      }
+    },
+    {
+      "model": "shrink_25",
+      "declaration_order": 3,
+      "metrics": {
+        "cells": 24,
+        "mae_vehicles_per_source_interval": 24.875,
+        "rmse_vehicles_per_source_interval": 41.07868465924065,
+        "wape_percent": 10.245409301527372,
+        "actual_vehicles_in_evaluated_cells": 5827.0,
+        "bias_vehicles_per_source_interval": 0.125
+      }
+    },
+    {
+      "model": "shrink_50",
+      "declaration_order": 4,
+      "metrics": {
+        "cells": 24,
+        "mae_vehicles_per_source_interval": 24.875,
+        "rmse_vehicles_per_source_interval": 41.07868465924065,
+        "wape_percent": 10.245409301527372,
+        "actual_vehicles_in_evaluated_cells": 5827.0,
+        "bias_vehicles_per_source_interval": 0.125
+      }
+    },
+    {
+      "model": "shrink_75",
+      "declaration_order": 5,
+      "metrics": {
+        "cells": 24,
+        "mae_vehicles_per_source_interval": 24.875,
+        "rmse_vehicles_per_source_interval": 41.07868465924065,
+        "wape_percent": 10.245409301527372,
+        "actual_vehicles_in_evaluated_cells": 5827.0,
+        "bias_vehicles_per_source_interval": 0.125
+      }
+    }
+  ],
+  "final_model_sha256": "a2e591903f2c83651ad1129db67daa7b916797dce72f04bb2d76a42e72ad09d0",
+  "frozen_before_test": true
+}

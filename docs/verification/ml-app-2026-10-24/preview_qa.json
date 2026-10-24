@@ -1,0 +1,115 @@
+{
+  "checked_at_utc": "2026-10-23T18:22:19.959485+00:00",
+  "status": "passed",
+  "scope": "isolated_loopback_operator_fixture_using_actual_main_routes_and_final_detector",
+  "production_login_verified": false,
+  "existing_driver_session_changed": false,
+  "fixture_identity_note": "Loopback test-only identity; existing Supabase auth and servers unchanged. No test token is retained in this receipt.",
+  "image_source": "visaitech_mixed_traffic/images/train/V001__V001_2022-05-19_10-14.mp4#t=0.jpg",
+  "image_sha256": "6c3236655ae741c1c31872cd2e1186f6897e1516e841c777833e1ae954514116",
+  "image_geographic_role": "foreign_transfer_only",
+  "author_annotated_visible_vehicles": 6,
+  "sample_count_error": -2,
+  "model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "http_checks": {
+    "unauthorized": {
+      "status": 403,
+      "cache_control": "private, no-store",
+      "elapsed_ms": 11.6,
+      "body": {
+        "detail": "Verification operator token required."
+      }
+    },
+    "invalid_image": {
+      "status": 422,
+      "cache_control": "private, no-store",
+      "elapsed_ms": 997.04,
+      "body": {
+        "detail": "Use a valid JPEG, PNG or WebP image within the pixel limit."
+      }
+    },
+    "real_image": {
+      "status": 200,
+      "cache_control": "private, no-store",
+      "elapsed_ms": 3822.05,
+      "body": {
+        "generated_at": "2026-10-24T01:22:19+07:00",
+        "data_source": "experimental_vehicle_detection",
+        "provenance": {
+          "road_network": "OpenStreetMap Batam Extract",
+          "road_network_license": "ODbL",
+          "routing": "A* over the committed OpenStreetMap road graph (115,320 union-retention nodes; a mutually reachable vehicle-specific core is selected per request)",
+          "traffic": "Historical & Telemetry Model"
+        },
+        "vehicle_count": {
+          "vehicle_count": 4,
+          "image": {
+            "width": 640,
+            "height": 480
+          },
+          "detections": [
+            {
+              "class_name": "motorcycle",
+              "score": 0.6611705422401428,
+              "box": [
+                0.39586284160614016,
+                0.3993266423543294,
+                0.5284775257110595,
+                0.5992600758870442
+              ]
+            },
+            {
+              "class_name": "car",
+              "score": 0.6216322779655457,
+              "box": [
+                0.363306450843811,
+                0.41511850357055663,
+                0.44162611961364745,
+                0.5163963635762533
+              ]
+            },
+            {
+              "class_name": "motorcycle",
+              "score": 0.6099769473075867,
+              "box": [
+                0.59817533493042,
+                0.49189745585123695,
+                0.7323555946350098,
+                0.7290794372558593
+              ]
+            },
+            {
+              "class_name": "motorcycle",
+              "score": 0.5464863181114197,
+              "box": [
+                0.6535377502441406,
+                0.5817178090413412,
+                0.7181607246398926,
+                0.7330760955810547
+              ]
+            }
+          ],
+          "model_id": "fasterrcnn_pretrained_COCO",
+          "latency_ms": 2413.3458330034046,
+          "experimental": true,
+          "production_eligible": false,
+          "batam_validated": false,
+          "scope": "single_image_vehicle_count_preview",
+          "image_retained": false,
+          "note": "Detected vehicle boxes in this image. This is not flow, queue length, speed or verified ground truth."
+        }
+      }
+    }
+  },
+  "browser_check": {
+    "selected_image": true,
+    "explicit_count_button": true,
+    "rendered_result": "4 vehicles detected",
+    "boxes_rendered": 4,
+    "experimental_warning": true,
+    "no_accuracy_claim": true
+  },
+  "screenshot": "vehicle-count-preview.png",
+  "mutated_live_traffic": false,
+  "training_ground_truth_created": false
+}

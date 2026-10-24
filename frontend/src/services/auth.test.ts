@@ -17,8 +17,8 @@ vi.stubEnv('VITE_TEST_ADMIN_EMAIL', TEST_ADMIN_EMAIL);
 vi.stubEnv('VITE_TEST_ADMIN_PASSWORD', TEST_ADMIN_PASSWORD);
 
 const {
-  AuthError, fetchSession, projectMismatch, readStoredSession, refreshSession,
-  signIn, signInAsTestAdmin, signOut, supabaseConfigured, testAdminConfigured,
+  AuthError, clearStoredSession, fetchAuthStatus, fetchSession, projectMismatch, readStoredSession, refreshSession,
+  sessionGeneration, SessionChangedError, SessionRejectedError, signIn, signInAsTestAdmin, signOut, supabaseConfigured, testAdminConfigured,
   validSession,
 } = await import('./auth');
 
@@ -140,10 +140,177 @@ describe('supabase sign-in', () => {
 
     window.localStorage.setItem('crossflow.session', JSON.stringify({ accessToken: '' }));
     expect(readStoredSession()).toBeNull();
+
+    window.localStorage.setItem('crossflow.session', '{"accessToken":"a","expiresAtMs":1e309}');
+    expect(readStoredSession()).toBeNull();
+  });
+
+  it('rejects a malformed session expiry instead of scheduling a refresh loop', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ ...TOKEN_PAYLOAD, expires_in: -1 })));
+    await expect(signIn('driver@example.com', 'hunter2')).rejects.toThrow('invalid session expiry');
+    expect(readStoredSession()).toBeNull();
+  });
+});
+
+describe('saved session rejection versus temporary service failure', () => {
+  const saved = { accessToken: 'saved', refreshToken: 'saved-refresh', expiresAtMs: 1 };
+
+  it.each([
+    [400, { error: 'invalid_grant', error_description: 'Refresh credential was revoked' }],
+    [400, { code: 'refresh_token_not_found', msg: 'Refresh token missing' }],
+    [400, { error_code: 'refresh_token_already_used', message: 'Refresh token already used' }],
+    [400, { msg: 'Invalid Refresh Token: Refresh Token Not Found' }],
+    [401, { message: 'Session is no longer valid' }],
+  ])('classifies authoritative refresh rejection (%s) for the lifecycle to clear', async (status, payload) => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(payload, status as number)));
+    await expect(refreshSession(saved)).rejects.toBeInstanceOf(SessionRejectedError);
+  });
+
+  it.each([400, 403, 429, 500, 503])('keeps a temporary/non-token refresh failure (%s) recoverable', async (status) => {
+    window.localStorage.setItem('crossflow.session', JSON.stringify(saved));
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ message: 'Service temporarily unavailable' }, status)));
+    const error = await refreshSession(saved).catch(error => error);
+    expect(error).toBeInstanceOf(AuthError);
+    expect(error).not.toBeInstanceOf(SessionRejectedError);
+    expect(readStoredSession()).toEqual(saved);
+  });
+
+  it('preserves credentials after a network failure during backend identity resolution', async () => {
+    window.localStorage.setItem('crossflow.session', JSON.stringify(saved));
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('connection reset')));
+    const error = await fetchSession(saved).catch(error => error);
+    expect(error).toBeInstanceOf(AuthError);
+    expect(error).not.toBeInstanceOf(SessionRejectedError);
+    expect(readStoredSession()).toEqual(saved);
+  });
+
+  it.each([403, 500, 503])('does not revoke a saved credential because the API returns %s', async (status) => {
+    window.localStorage.setItem('crossflow.session', JSON.stringify(saved));
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ detail: 'Role service is unavailable' }, status)));
+    const error = await fetchSession(saved).catch(error => error);
+    expect(error).toBeInstanceOf(AuthError);
+    expect(error).not.toBeInstanceOf(SessionRejectedError);
+    expect(readStoredSession()).toEqual(saved);
+  });
+
+  it('marks an authoritative API401 as a rejected saved session', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({}, 401)));
+    await expect(fetchSession(saved)).rejects.toBeInstanceOf(SessionRejectedError);
   });
 });
 
 describe('session lifetime', () => {
+  it('shares a concurrent refresh and cannot restore tokens after sign-out', async () => {
+    let finish!: (response: Response) => void;
+    const fetchMock = vi.fn<FetchLike>(() => new Promise(resolve => { finish = resolve; }));
+    vi.stubGlobal('fetch', fetchMock);
+    const old = {
+      accessToken: 'old', refreshToken: 'r', expiresAtMs: Date.now(),
+    };
+    window.localStorage.setItem('crossflow.session', JSON.stringify(old));
+    const first = refreshSession(old);
+    const second = refreshSession(old);
+    const firstRejected = expect(first).rejects.toBeInstanceOf(SessionChangedError);
+    const secondRejected = expect(second).rejects.toBeInstanceOf(SessionChangedError);
+    expect(fetchMock).toHaveBeenCalledOnce();
+    clearStoredSession();
+    finish(jsonResponse(TOKEN_PAYLOAD));
+    await Promise.all([firstRejected, secondRejected]);
+    expect(readStoredSession()).toBeNull();
+  });
+
+  it('does not replace another account when an old refresh completes', async () => {
+    let finish!: (response: Response) => void;
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(resolve => { finish = resolve; })));
+    const pending = refreshSession({ accessToken: 'old', refreshToken: 'old-r', expiresAtMs: 0 });
+    const rejected = expect(pending).rejects.toBeInstanceOf(SessionChangedError);
+    const other = { accessToken: 'other', refreshToken: 'other-r', expiresAtMs: 100 };
+    window.localStorage.setItem('crossflow.session', JSON.stringify(other));
+    finish(jsonResponse(TOKEN_PAYLOAD));
+    await rejected;
+    expect(readStoredSession()).toEqual(other);
+  });
+
+  it('does not restore a sign-in request that finishes after sign-out', async () => {
+    let finish!: (response: Response) => void;
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(resolve => { finish = resolve; })));
+    const pending = signIn('driver@example.com', 'hunter2');
+    const rejected = expect(pending).rejects.toBeInstanceOf(SessionChangedError);
+    await signOut(null);
+    finish(jsonResponse(TOKEN_PAYLOAD));
+    await rejected;
+    expect(readStoredSession()).toBeNull();
+  });
+
+  it('keeps the account generation stable across a successful token refresh', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(TOKEN_PAYLOAD)));
+    const generation = sessionGeneration();
+    await refreshSession({ accessToken: 'a', refreshToken: 'r', expiresAtMs: 0 });
+    expect(sessionGeneration()).toBe(generation);
+  });
+
+  it('bounds a stalled session check instead of leaving sign-in busy forever', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => new Promise((_resolve, reject) => {
+      init.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
+    })));
+    const check = expect(fetchSession({ accessToken: 'a', refreshToken: 'r', expiresAtMs: 1 }))
+      .rejects.toThrow('Could not reach the sign-in service');
+    await vi.advanceTimersByTimeAsync(15_000);
+    await check;
+    vi.useRealTimers();
+  });
+
+  it('also times out a session response whose headers arrived but body stalled', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('fetch', vi.fn(async (_url, init: RequestInit) => ({
+      ...jsonResponse({}),
+      json: () => new Promise((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
+      }),
+    })));
+    const check = expect(fetchSession({ accessToken: 'a', refreshToken: 'r', expiresAtMs: 1 }))
+      .rejects.toThrow('Could not reach the sign-in service');
+    await vi.advanceTimersByTimeAsync(15_000);
+    await check;
+    vi.useRealTimers();
+  });
+
+  it('also times out a Supabase response whose body stalled', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('fetch', vi.fn(async (_url, init: RequestInit) => ({
+      ...jsonResponse({}),
+      json: () => new Promise((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
+      }),
+    })));
+    const check = expect(signIn('driver@example.com', 'hunter2')).rejects.toThrow('did not respond in time');
+    await vi.advanceTimersByTimeAsync(15_000);
+    await check;
+    vi.useRealTimers();
+  });
+
+  it('ignores an identity response that finishes after the account changed', async () => {
+    let finish!: (response: Response) => void;
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(resolve => { finish = resolve; })));
+    const pending = fetchSession({ accessToken: 'a', refreshToken: 'r', expiresAtMs: 1 });
+    const rejected = expect(pending).rejects.toBeInstanceOf(SessionChangedError);
+    clearStoredSession();
+    finish(jsonResponse({ user_id: 'old', role: 'admin' }));
+    await rejected;
+  });
+
+  it('returns unavailable when the auth-status service stalls', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => new Promise((_resolve, reject) => {
+      init.signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
+    })));
+    const status = fetchAuthStatus();
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(await status).toBeNull();
+    vi.useRealTimers();
+  });
+
   it('refreshes a session that is close to expiry', async () => {
     const fetchMock = vi.fn<FetchLike>(async () => jsonResponse({
       ...TOKEN_PAYLOAD, access_token: 'refreshed-token',

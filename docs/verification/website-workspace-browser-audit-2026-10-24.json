@@ -1,0 +1,1096 @@
+{
+  "checkedAt": "2026-10-24T06:35:23.444Z",
+  "operator": {
+    "origin": "http://localhost:3000",
+    "role": "admin",
+    "session": "existing restored signed-in session; normal UI retry succeeded after detached API recovery"
+  },
+  "driver": {
+    "origin": "http://127.0.0.1:3000",
+    "access": "guest driver workspace; no new sign-in or email performed",
+    "authenticatedRoleBoundary": "covered separately by isolated HTTP/auth tests"
+  },
+  "dispatchCodeCreated": "XK7RWH4",
+  "savedFerryDispatchCode": "3B55FVN",
+  "consoleErrors": {
+    "operator": [],
+    "driver": []
+  },
+  "expiryPollingBrowserCheck": [
+    {
+      "at": "2026-10-24T06:34:00.814Z",
+      "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n11.0 / 100 across 3 current road views\n\n5 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:33:52 pm SGT",
+      "visibility": "visible"
+    },
+    {
+      "at": "2026-10-24T06:34:08.827Z",
+      "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n11.0 / 100 across 3 current road views\n\n5 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:33:52 pm SGT",
+      "visibility": "visible"
+    },
+    {
+      "at": "2026-10-24T06:34:16.837Z",
+      "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n15.5 / 100 across 5 current road views\n\n14 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:34:03 pm SGT",
+      "visibility": "visible"
+    },
+    {
+      "at": "2026-10-24T06:34:24.847Z",
+      "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n7.3 / 100 across 5 current road views\n\n10 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:34:12 pm SGT",
+      "visibility": "visible"
+    },
+    {
+      "at": "2026-10-24T06:34:32.855Z",
+      "localEstimate": "Local congestion estimate\nPROVISIONAL\n\n10.9 / 100 across 5 current road views\n\n7 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:34:22 pm SGT",
+      "visibility": "visible"
+    }
+  ],
+  "observations": [
+    {
+      "name": "operator congestion hotspots",
+      "alerts": [],
+      "at": "2026-10-24T06:08:54.481Z",
+      "charts": 0,
+      "headings": [
+        "Batam Congestion Watch",
+        "30-Area Congestion Watch",
+        "Mukakuning Industrial ➔ Batam Centre Terminal",
+        "Batam Corridor Telemetry Feeds (5)"
+      ],
+      "mainText": "Batam Congestion Watch\nExplore 30 planning hotspots across Batam.\nBatam · Riau Islands\n+\n−\n Leaflet | © OpenStreetMap contributors\nBatam Mobility Watch • Hotspots\nCritical\nHeavy\n30 areas\nHotspots\nCorridor\n30-Area Congestion Watch\n\nPorts, neighbourhoods and the roads between.\n\n20 CRITICAL\n10 HEAVY\n\nModelled planning priorities · choose a place to explore.\n\n01\nFreight access\nBatu Ampar Freight Terminal\nCritical\n48.9 / 100\nNearby area photo · 2018\nCun Cun\nCC BY-SA 4.0\n02\nCommercial district\nNagoya / Lubuk Baja Centre\nCritical\n45.9 / 100\nLocation photo · 2009\nKok Leng Yeo (yeowatzup)\nCC BY 2.0\n03\nUrban junction\nSimpang Jam / Laluan Madani\nCritical\n45.9 / 100\nLocation photo · 2018\nFirzafp\nCC BY-SA 4.0\n04\nIndustrial junction\nSimpang Panbil / Muka Kuning\nCritical\n45.5 / 100\nCorridor reference photo · 2008\nSoham Banerjee\nCC BY 2.0\n05\nFerry and port access\nHarbour Bay / Duyung\nCritical\n45.2 / 100\nLocation photo · 2018\nCun Cun\nCC BY-SA 4.0\n06\nIndustrial access\nBatamindo Industrial Gate\nCritical\n44.7 / 100\nCorridor reference photo · 2008\nSoham Banerjee\nCC BY 2.0\n07\nPort access\nBatam Centre Ferry / Engku Putri\nCritical\n44.5 / 100\nLocation photo · 2008\nMasgatotkaca\nGFDL 1.2+\n08\nArterial junction\nSei Panas / Sudirman\nCritical\n43.7 / 100\nCorridor reference photo · 2018\nFirzafp\nCC BY-SA 4.0\n09\nCommercial junction\nJodoh / Ali Haji\nCritical\n43.4 / 100\nNearby area photo · 2009\nKok Leng Yeo (yeowatzup)\nCC BY 2.0\n10\nIndustrial and port access\nKabil Industrial Estate Access\nCritical\n42.3 / 100\nCorridor reference photo · 2024\nFirzafp\nCC BY 4.0\n11\nUrban junction\nSimpang Kabil / Plamo Garden\nCritical\n42.1 / 100\nCorridor reference photo · 2018\nFirzafp\nCC BY-SA 4.0\n12\nCommercial junction\nKepri Mall / Pandan Wangi\nCritical\n41.1 / 100\nCorridor reference photo · 2018\nFirzafp\nCC BY-SA 4.0\n13\nCommercial junction\nBaloi / Bunga Raya\nCritical\n41 / 100\nLocation photo · 2018\nFirzafp\nCC BY-SA 4.0\n14\nCommercial access\nBatu Selicin / Pembangunan\nCritical\n40.7 / 100\nLocation photo · 2018\nCun Cun\nCC BY-SA 4.0\n15\nUrban junction\nSimpang Kara / Duta Mas\nCritical\n40.6 / 100\nCorridor reference photo · 2018\nFirzafp\nCC BY-SA 4.0\n16\nUrban junction\nBengkong / Hang Jebat\nCritical\n40.4 / 100\nNearby area photo · 2018\nFirzafp\nCC BY-SA 4.0\n17\nUrban junction\nSimpang KDA / Raja Isa\nCritical\n40.4 / 100\nCorridor reference photo · 2018\nFirzafp\nCC BY-SA 4.0\n18\nTransit junction\nSimpang Basecamp / Batu Aji\nCritical\n40.2 / 100\nCorridor reference photo · 2008\nSoham Banerjee\nCC BY 2.0\n19\nResidential junction\nSimpang Cikitsu / Tengku Sulung\nCritical\n40.2 / 100\nNearby area photo · 2024\nFirzafp\nCC BY 4.0\n20\nAirport access\nHang Nadim Airport Access\nCritical\n40.1 / 100\nCorridor reference photo · 2024\nFirzafp\nCC BY 4.0\n21\nTransit junction\nBatu Aji Transit Hub\nHeavy\n39.5 / 100\nCorridor reference photo · 2008\nSoham Banerjee\nCC BY 2.0\n22\nPort access\nSekupang Ferry Terminal\nHeavy\n39.4 / 100\nLocation photo · 2011\nalantankenghoe\nCC BY 2.0\n23\nResidential access\nVitka / Tiban Centre\nHeavy\n38.3 / 100\nNearby area photo · 2018\nFirzafp\nCC BY-SA 4.0\n24\nResidential access\nFanindo / Sagulung\nHeavy\n37.8 / 100\nCorridor reference photo · 2008\nSoham Banerjee\nCC BY 2.0\n25\nDomestic ferry access\nTelaga Punggur Ferry Terminal\nHeavy\n37.7 / 100\nCorridor reference photo · 2008\nMasgatotkaca\nGFDL 1.2+\n26\nCommercial junction\nBotania / Batam Centre East\nHeavy\n37.4 / 100\nNearby area photo · 2024\nFirzafp\nCC BY 4.0\n27\nResidential and industrial access\nTanjung Piayu / Sei Beduk\nHeavy\n37.4 / 100\nCorridor reference photo · 2008\nSoham Banerjee\nCC BY 2.0\n28\nAirport corridor\nBatu Besar / Hang Tuah\nHeavy\n36.2 / 100\nCorridor reference photo · 2024\nFirzafp\nCC BY 4.0\n29\nFerry and resort access\nNongsa Pura Ferry Terminal\nHeavy\n35.9 / 100\nCorridor reference photo · 2024\nFirzafp\nCC BY 4.0\n30\nCoastal residential access\nMarina City / Tanjung Riau\nHeavy\n33.2 / 100\nNearby area photo · 2011\nalantankenghoe\nCC BY 2.0",
+      "maps": 1,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "CongestionNetwork conditions",
+        "Hotspots"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator corridor telemetry",
+      "alerts": [],
+      "at": "2026-10-24T06:09:16.164Z",
+      "charts": 0,
+      "headings": [
+        "Batam Congestion Watch",
+        "30-Area Congestion Watch",
+        "Mukakuning Industrial ➔ Batam Centre Terminal",
+        "Batam Corridor Telemetry Feeds (5)"
+      ],
+      "mainText": "Batam Congestion Watch\nExplore 30 planning hotspots across Batam.\nBatam · Riau Islands\n+\n−\n Leaflet | © OpenStreetMap contributors\nBatam Mobility Watch • Hotspots\nCritical\nHeavy\n30 areas\nHotspots\nCorridor\nSMOOTH FLOW\nMukakuning Industrial ➔ Batam Centre Terminal\n\nModelled corridor estimates and forecasts. Provider observations are shown separately on the map.\n\nCurrent Congestion\n0 / 100\nEst. Traffic Delay\n+0 mins\nAI 30-Min Trend Forecast\n\nPredicted to reach 0 in 30 minutes and 0 in 60 (stable).\n\nSolve Route Departure\nBATAM CORRIDOR TELEMETRY FEEDS (5)\nMukakuning Industrial\nSMOOTH\nDist: 10.98 km\nDelay: +0m\nIdx: 0\nBatu Ampar Freight Port\nSMOOTH\nDist: 9.92 km\nDelay: +4.8m\nIdx: 17.1\nHang Nadim Airport\nSMOOTH\nDist: 17.96 km\nDelay: +0m\nIdx: 0\nSekupang Ferry Terminal\nSMOOTH\nDist: 22.14 km\nDelay: +0m\nIdx: 0\nNongsa Digital Park\nSMOOTH\nDist: 20.03 km\nDelay: +0m\nIdx: 0",
+      "maps": 1,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "CongestionNetwork conditions",
+        "Corridor"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator planning request started",
+      "alerts": [],
+      "at": "2026-10-24T06:09:39.473Z",
+      "charts": 0,
+      "headings": [
+        "Cross-Border Route Planner",
+        "Composing your journey"
+      ],
+      "mainText": "Cross-Border Route Planner\nPlan your road and ferry journey.\nBatam · Riau Islands\nSearch\nSaved\nROUTE\nFROM\nBatamindo Industrial Park selected\nTO\nBatam Centre Ferry Terminal selected\nROAD VEHICLE\nHeavy Freight Truck\nStrongly favours major roads; height, weight and turn restrictions are not in the bundled graph.\nWEATHER & TIME\nClear\nRain\nHeavy storm\nDeparture time\n:\nAM\nPM\nArrival time\n:\nAM\nPM\n\nTimes use Asia/Singapore. A past clock time selects tomorrow.\n\nComposing Journey…\nComposing your journey\n\nMatching local roads, viable ferry terminals, and the selected departure window.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "RoutePlan a road journey"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator new road journey summary",
+      "alerts": [],
+      "at": "2026-10-24T06:10:04.920Z",
+      "charts": 0,
+      "headings": [
+        "Cross-Border Route Planner",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Current road traffic is within optimal flow parameters.",
+        "Use this seven-character ID to retrieve the journey",
+        "Route Overview",
+        "Road directions",
+        "Indicative vehicle comparison",
+        "Ferry connections"
+      ],
+      "mainText": "Cross-Border Route Planner\nPlan your road and ferry journey.\nBatam · Riau Islands\nSearch\nSaved\nROUTE\nFROM\nBatamindo Industrial Park selected\nTO\nBatam Centre Ferry Terminal selected\nROAD VEHICLE\nHeavy Freight Truck\nStrongly favours major roads; height, weight and turn restrictions are not in the bundled graph.\nWEATHER & TIME\nClear\nRain\nHeavy storm\nDeparture time\n:\nAM\nPM\nArrival time\n:\nAM\nPM\n\nTimes use Asia/Singapore. A past clock time selects tomorrow.\n\nPlan Journey\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nDEPART NOW\nCurrent road traffic is within optimal flow parameters.\nDeparture 2026-10-24 · 13:09 WIB\n9.11 km\n19.6 min road time\nDRIVER ROUTE ID\nUse this seven-character ID to retrieve the journey\nXK7RWH4\nRoad travel\n19.6 min\nRoad distance\n9.11 km\nTotal trip ETA\n54.4 min\nEstimated CO₂\n9.57 kg\n\nFewer than two sufficiently distinct routes satisfy the detour limit.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "RoutePlan a road journey",
+        "Summary"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver fresh dispatch summary",
+      "alerts": [],
+      "at": "2026-10-24T06:10:20.630Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Current road traffic is within optimal flow parameters.",
+        "Use this seven-character ID to retrieve the journey"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nDEPART NOW\nCurrent road traffic is within optimal flow parameters.\nDeparture 2026-10-24 · 13:09 WIB\n9.11 km\n19.6 min road time\nDRIVER ROUTE ID\nUse this seven-character ID to retrieve the journey\nXK7RWH4\nRoad travel\n19.6 min\nRoad distance\n9.11 km\nTotal trip ETA\n54.4 min\nEstimated CO₂\n9.57 kg\n\nFewer than two sufficiently distinct routes satisfy the detour limit.",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Summary"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator road Journey map",
+      "alerts": [],
+      "at": "2026-10-24T06:10:20.995Z",
+      "charts": 0,
+      "headings": [
+        "Cross-Border Route Planner",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Route Overview"
+      ],
+      "mainText": "Cross-Border Route Planner\nPlan your road and ferry journey.\nBatam · Riau Islands\nSearch\nSaved\nROUTE\nFROM\nBatamindo Industrial Park selected\nTO\nBatam Centre Ferry Terminal selected\nROAD VEHICLE\nHeavy Freight Truck\nStrongly favours major roads; height, weight and turn restrictions are not in the bundled graph.\nWEATHER & TIME\nClear\nRain\nHeavy storm\nDeparture time\n:\nAM\nPM\nArrival time\n:\nAM\nPM\n\nTimes use Asia/Singapore. A past clock time selects tomorrow.\n\nPlan Journey\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nA\nB\n19.6 min\n9.11 km\n+\n−\n Leaflet | © OpenStreetMap contributors\nRecommended\n9.11 km\n19.6 min\nRoute Overview\n\n9.11 km from Batamindo Industrial Park to Batam Centre Ferry Terminal, mainly via Jalan S.Parman and Jalan Jendral Ahmad Yani.",
+      "maps": 1,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "RoutePlan a road journey",
+        "Journey map"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver road Journey map",
+      "alerts": [],
+      "at": "2026-10-24T06:10:21.343Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Route Overview"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nA\nB\n19.6 min\n9.11 km\n+\n−\n Leaflet | © OpenStreetMap contributors\nRecommended\n9.11 km\n19.6 min\nRoute Overview\n\n9.11 km from Batamindo Industrial Park to Batam Centre Ferry Terminal, mainly via Jalan S.Parman and Jalan Jendral Ahmad Yani.",
+      "maps": 1,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Journey map"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator road Directions",
+      "alerts": [],
+      "at": "2026-10-24T06:10:21.787Z",
+      "charts": 0,
+      "headings": [
+        "Cross-Border Route Planner",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Road directions"
+      ],
+      "mainText": "Cross-Border Route Planner\nPlan your road and ferry journey.\nBatam · Riau Islands\nSearch\nSaved\nROUTE\nFROM\nBatamindo Industrial Park selected\nTO\nBatam Centre Ferry Terminal selected\nROAD VEHICLE\nHeavy Freight Truck\nStrongly favours major roads; height, weight and turn restrictions are not in the bundled graph.\nWEATHER & TIME\nClear\nRain\nHeavy storm\nDeparture time\n:\nAM\nPM\nArrival time\n:\nAM\nPM\n\nTimes use Asia/Singapore. A past clock time selects tomorrow.\n\nPlan Journey\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nRoad directions\n6 TRAFFIC LIGHT INTERSECTIONS\nStep 1: Head northwest on Jalan S.Parman\nStreet: Jalan S.Parman\n1.0 km\nStep 2: Turn right onto Jalan S.Parman\nStreet: Jalan S.Parman\n15 m\nStep 3: Turn right onto Jalan Jendral Ahmad Yani\nStreet: Jalan Jendral Ahmad Yani\nRoad ref: 39\n7.2 km\nStep 4: Continue straight onto Jalan B.J. Habibie\nStreet: Jalan B.J. Habibie\nRoad ref: 39\n249 m\nStep 5: At the roundabout, take exit 5 onto Jalan Engku Putri Utara\nStreet: Jalan Engku Putri Utara\n515 m\nStep 6: Turn left onto Ferry Terminal Btm Cntr\nStreet: Ferry Terminal Btm Cntr\n102 m\nStep 7: Turn left onto Ferry Terminal Btm Cntr\nStreet: Ferry Terminal Btm Cntr\n48 m\nStep 8: Arrive at Batam Centre Ferry Terminal\nStreet: Batam Centre Ferry Terminal",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "RoutePlan a road journey",
+        "Directions"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver road Directions",
+      "alerts": [],
+      "at": "2026-10-24T06:10:22.138Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Road directions"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nRoad directions\n6 TRAFFIC LIGHT INTERSECTIONS\nStep 1: Head northwest on Jalan S.Parman\nStreet: Jalan S.Parman\n1.0 km\nStep 2: Turn right onto Jalan S.Parman\nStreet: Jalan S.Parman\n15 m\nStep 3: Turn right onto Jalan Jendral Ahmad Yani\nStreet: Jalan Jendral Ahmad Yani\nRoad ref: 39\n7.2 km\nStep 4: Continue straight onto Jalan B.J. Habibie\nStreet: Jalan B.J. Habibie\nRoad ref: 39\n249 m\nStep 5: At the roundabout, take exit 5 onto Jalan Engku Putri Utara\nStreet: Jalan Engku Putri Utara\n515 m\nStep 6: Turn left onto Ferry Terminal Btm Cntr\nStreet: Ferry Terminal Btm Cntr\n102 m\nStep 7: Turn left onto Ferry Terminal Btm Cntr\nStreet: Ferry Terminal Btm Cntr\n48 m\nStep 8: Arrive at Batam Centre Ferry Terminal\nStreet: Batam Centre Ferry Terminal",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Directions"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator road Comparison",
+      "alerts": [],
+      "at": "2026-10-24T06:10:22.469Z",
+      "charts": 0,
+      "headings": [
+        "Cross-Border Route Planner",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Indicative vehicle comparison",
+        "Ferry connections"
+      ],
+      "mainText": "Cross-Border Route Planner\nPlan your road and ferry journey.\nBatam · Riau Islands\nSearch\nSaved\nROUTE\nFROM\nBatamindo Industrial Park selected\nTO\nBatam Centre Ferry Terminal selected\nROAD VEHICLE\nHeavy Freight Truck\nStrongly favours major roads; height, weight and turn restrictions are not in the bundled graph.\nWEATHER & TIME\nClear\nRain\nHeavy storm\nDeparture time\n:\nAM\nPM\nArrival time\n:\nAM\nPM\n\nTimes use Asia/Singapore. A past clock time selects tomorrow.\n\nPlan Journey\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nIndicative vehicle comparison\n\nIndicative travel times and emissions. Re-plan after changing vehicle to update your route.\n\nVehicle\tRoad time\tTerminal buffer\tRoad + buffer\tCO₂ estimate\n\nCar / Taxi\n\t11.9 min\t+0 min\t11.9 min\t1.91 kg\n\nElectric Car\n\t11.6 min\t+0 min\t11.6 min\t0.41 kg\n\nMotorcycle\n\t10.2 min\t+5 min\t15.2 min\t0.82 kg\n\nExpress Van\n\t13.1 min\t+10 min\t23.1 min\t2.46 kg\n\nMinibus / Shuttle\n\t14.2 min\t+0 min\t14.2 min\t2.92 kg\n\nCity Bus\n\t17.3 min\t+0 min\t17.3 min\t6.56 kg\n\nLight Cargo Truck\n\t15.4 min\t+18 min\t33.4 min\t4.37 kg\n\nHeavy Freight Truck\nSELECTED\n\t19.6 min\t+25 min\t44.6 min\t9.57 kg\nFerry connections\n\nPublished departures after your arrival.\n\nTIMETABLE\nMajestic Fast Ferry\nDeparts\n14:30 WIB\nBatam Centre\nArrives · estimated\n16:25 SGT\nHarbourFront SG\nin 1h 20m\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\nSindo Ferry\nDeparts\n15:10 WIB\nBatam Centre\nArrives · estimated\n17:10 SGT\nHarbourFront SG\nin 2h\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\nMajestic Fast Ferry\nDeparts\n15:15 WIB\nBatam Centre\nArrives · estimated\n17:10 SGT\nHarbourFront SG\nin 2h 5m\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\n\nTimes may change. Confirm with your operator before travel.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "RoutePlan a road journey",
+        "Comparison"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver road Comparison",
+      "alerts": [],
+      "at": "2026-10-24T06:10:22.858Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Indicative vehicle comparison",
+        "Ferry connections"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nIndicative vehicle comparison\n\nIndicative travel times and emissions. Re-plan after changing vehicle to update your route.\n\nVehicle\tRoad time\tTerminal buffer\tRoad + buffer\tCO₂ estimate\n\nCar / Taxi\n\t11.9 min\t+0 min\t11.9 min\t1.91 kg\n\nElectric Car\n\t11.6 min\t+0 min\t11.6 min\t0.41 kg\n\nMotorcycle\n\t10.2 min\t+5 min\t15.2 min\t0.82 kg\n\nExpress Van\n\t13.1 min\t+10 min\t23.1 min\t2.46 kg\n\nMinibus / Shuttle\n\t14.2 min\t+0 min\t14.2 min\t2.92 kg\n\nCity Bus\n\t17.3 min\t+0 min\t17.3 min\t6.56 kg\n\nLight Cargo Truck\n\t15.4 min\t+18 min\t33.4 min\t4.37 kg\n\nHeavy Freight Truck\nSELECTED\n\t19.6 min\t+25 min\t44.6 min\t9.57 kg\nFerry connections\n\nPublished departures after your arrival.\n\nTIMETABLE\nMajestic Fast Ferry\nDeparts\n14:30 WIB\nBatam Centre\nArrives · estimated\n16:25 SGT\nHarbourFront SG\nin 1h 20m\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\nSindo Ferry\nDeparts\n15:10 WIB\nBatam Centre\nArrives · estimated\n17:10 SGT\nHarbourFront SG\nin 2h\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\nMajestic Fast Ferry\nDeparts\n15:15 WIB\nBatam Centre\nArrives · estimated\n17:10 SGT\nHarbourFront SG\nin 2h 5m\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\n\nTimes may change. Confirm with your operator before travel.",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Comparison"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver persisted cross-border dispatch loading",
+      "alerts": [],
+      "at": "2026-10-24T06:10:51.145Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → HarbourFront Ferry Terminal Singapore",
+        "Route estimate for the scheduled departure.",
+        "Use this seven-character ID to retrieve the journey"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nSummary\nJourney map\nDirections\nConnections\nSCHEDULED DEPARTURE\nRoute estimate for the scheduled departure.\nDeparture 2026-10-24 · 18:05 WIB\n39.88 km\n67.9 min movement time\n\nExact times use the committed timetable simulation because shared schedule freshness is unavailable. Verify the departure and book with the operator.\n\nDRIVER ROUTE ID\nUse this seven-character ID to retrieve the journey\n3B55FVN\nMovement time\n67.9 min\nJourney distance\n39.88 km\nTotal trip ETA\n111 min\nEstimated CO₂\n1.91 kg\n\nTerminal pair selected by estimated access time plus published crossing duration; road-provider alternatives are not mixed across modes.",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Summary"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator saved runs",
+      "alerts": [],
+      "at": "2026-10-24T06:10:59.938Z",
+      "charts": 0,
+      "headings": [
+        "Cross-Border Route Planner",
+        "Recent runs",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Indicative vehicle comparison",
+        "Ferry connections"
+      ],
+      "mainText": "Cross-Border Route Planner\nPlan your road and ferry journey.\nBatam · Riau Islands\nSearch\nSaved\nRecent runs\n\nEvery account’s runs, newest first.\n\nHistory is stored on this server only.\n\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nXK7RWH4\nCARGO TRUCK\n24 Oct, 14:09\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n8QQ35AV\nCARGO TRUCK\n24 Oct, 13:50\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n8UHKNEX\nCARGO TRUCK\n24 Oct, 12:17\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nWX8UUK6\nCARGO TRUCK\n24 Oct, 03:19\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nYWEQRKN\nCARGO TRUCK\n24 Oct, 02:30\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n7GCMTR4\nCARGO TRUCK\n24 Oct, 02:27\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nS57UPHS\nCARGO TRUCK\n24 Oct, 02:14\nHarbour Bay Ferry Terminal → Batam Centre Ferry Terminal\nQG7TDQJ\nCARGO TRUCK\n24 Oct, 00:56\nHarbour Bay Ferry Terminal → Batam Centre Ferry Terminal\nFQN37PQ\nCARGO TRUCK\n24 Oct, 00:47\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nH4Y83EQ\nCARGO TRUCK\n24 Oct, 00:31\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n9JL6N52\nCARGO TRUCK\n23 Oct, 21:39\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nLVE33W7\nCOMMUTER\n23 Oct, 21:20\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n5868AKD\nCOMMUTER\n23 Oct, 21:10\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\n3B55FVN\nCOMMUTER\n23 Oct, 21:05\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nTU2G8QG\nCARGO TRUCK\n23 Oct, 21:00\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nAHMKAQM\nCOMMUTER\n23 Oct, 17:55\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nV5D9FB8\nCOMMUTER\n23 Oct, 17:22\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n9H2WQHF\nCARGO TRUCK\n23 Oct, 17:16\nBatamindo Industrial Park → HarbourFront, Telok Blangah Road, Maritime Square\nH6SNDCM\nCOMMUTER\n23 Oct, 13:34\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nUB735NT\nCARGO TRUCK\n23 Oct, 13:32\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nIndicative vehicle comparison\n\nIndicative travel times and emissions. Re-plan after changing vehicle to update your route.\n\nVehicle\tRoad time\tTerminal buffer\tRoad + buffer\tCO₂ estimate\n\nCar / Taxi\n\t11.9 min\t+0 min\t11.9 min\t1.91 kg\n\nElectric Car\n\t11.6 min\t+0 min\t11.6 min\t0.41 kg\n\nMotorcycle\n\t10.2 min\t+5 min\t15.2 min\t0.82 kg\n\nExpress Van\n\t13.1 min\t+10 min\t23.1 min\t2.46 kg\n\nMinibus / Shuttle\n\t14.2 min\t+0 min\t14.2 min\t2.92 kg\n\nCity Bus\n\t17.3 min\t+0 min\t17.3 min\t6.56 kg\n\nLight Cargo Truck\n\t15.4 min\t+18 min\t33.4 min\t4.37 kg\n\nHeavy Freight Truck\nSELECTED\n\t19.6 min\t+25 min\t44.6 min\t9.57 kg\nFerry connections\n\nPublished departures after your arrival.\n\nTIMETABLE\nMajestic Fast Ferry\nDeparts\n14:30 WIB\nBatam Centre\nArrives · estimated\n16:25 SGT\nHarbourFront SG\nin 1h 20m\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\nSindo Ferry\nDeparts\n15:10 WIB\nBatam Centre\nArrives · estimated\n17:10 SGT\nHarbourFront SG\nin 2h\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\nMajestic Fast Ferry\nDeparts\n15:15 WIB\nBatam Centre\nArrives · estimated\n17:10 SGT\nHarbourFront SG\nin 2h 5m\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\n\nTimes may change. Confirm with your operator before travel.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "RoutePlan a road journey",
+        "Comparison"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver ferry Journey map",
+      "alerts": [],
+      "at": "2026-10-24T06:11:00.433Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → HarbourFront Ferry Terminal Singapore",
+        "Route Overview"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nSummary\nJourney map\nDirections\nConnections\n1. Batamindo Industrial Park → Batam Centre\nMAPPED\n11.9 min\nRoad · 9.11 km\n2. Batam Centre → HarbourFront SG\nESTIMATE\n55 min + 43.1 min wait\nFerry · 30.77 km\n3. HarbourFront SG → HarbourFront Ferry Terminal Singapore\nESTIMATE\n1 min\nRoad · 0 km\n\nFreight note: the cited ferry sources are passenger-operator timetables. Cargo, dangerous-goods, and vehicle acceptance must be confirmed separately with the operator.\n\nA\nB\n67.9 min\n39.88 km\n+\n−\n Leaflet | © OpenStreetMap contributors\nRecommended\n39.88 km\n67.9 min\nRoute Overview\n\n39.88 km from Batamindo Industrial Park to HarbourFront Ferry Terminal Singapore, with a ferry crossing from Batam Centre to HarbourFront SG.",
+      "maps": 1,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Journey map"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver ferry Directions",
+      "alerts": [],
+      "at": "2026-10-24T06:11:00.854Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → HarbourFront Ferry Terminal Singapore",
+        "Journey steps"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nSummary\nJourney map\nDirections\nConnections\nJourney steps\n6 TRAFFIC LIGHT INTERSECTIONS\nStep 1: Head northwest on Jalan S.Parman\nStreet: Jalan S.Parman\n1.0 km\nStep 2: Turn right onto Jalan S.Parman\nStreet: Jalan S.Parman\n15 m\nStep 3: Turn right onto Jalan Jendral Ahmad Yani\nStreet: Jalan Jendral Ahmad Yani\nRoad ref: 39\n7.2 km\nStep 4: Continue straight onto Jalan B.J. Habibie\nStreet: Jalan B.J. Habibie\nRoad ref: 39\n249 m\nStep 5: At the roundabout, take exit 5 onto Jalan Engku Putri Utara\nStreet: Jalan Engku Putri Utara\n515 m\nStep 6: Turn left onto Ferry Terminal Btm Cntr\nStreet: Ferry Terminal Btm Cntr\n102 m\nStep 7: Turn left onto Ferry Terminal Btm Cntr\nStreet: Ferry Terminal Btm Cntr\n48 m\nStep 8: Arrive at Batam Centre\nStreet: Batam Centre\nStep 9: Board the ferry at Batam Centre\nStreet: Batam Centre\nStep 10: Disembark at HarbourFront SG\nStreet: HarbourFront SG\nStep 11: Start the estimated road-access leg\nStreet: Road access estimate\nStep 12: Arrive at HarbourFront Ferry Terminal Singapore\nStreet: HarbourFront Ferry Terminal Singapore",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Directions"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver ferry Connections",
+      "alerts": [],
+      "at": "2026-10-24T06:11:01.186Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → HarbourFront Ferry Terminal Singapore",
+        "Your ferry connection"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nSummary\nJourney map\nDirections\nConnections\nYour ferry connection\n\nPublished departures after your arrival.\n\nTIMETABLE\nBatamFast\nDeparts\n19:00 WIB\nBatam Centre\nArrives · estimated\n20:55 SGT\nHarbourFront SG\nin 5h 49m\nTimetable\nChecked 13 Aug 2026, 00:30 WIB\n\nTimes may change. Confirm with your operator before travel.",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Connections"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator restored fresh saved run",
+      "alerts": [],
+      "at": "2026-10-24T06:11:49.178Z",
+      "charts": 0,
+      "headings": [
+        "Cross-Border Route Planner",
+        "Recent runs",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "Current road traffic is within optimal flow parameters.",
+        "Use this seven-character ID to retrieve the journey"
+      ],
+      "mainText": "Cross-Border Route Planner\nPlan your road and ferry journey.\nBatam · Riau Islands\nSearch\nSaved\nRecent runs\n\nEvery account’s runs, newest first.\n\nHistory is stored on this server only.\n\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nXK7RWH4\nCARGO TRUCK\n24 Oct, 14:09\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n8QQ35AV\nCARGO TRUCK\n24 Oct, 13:50\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n8UHKNEX\nCARGO TRUCK\n24 Oct, 12:17\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nWX8UUK6\nCARGO TRUCK\n24 Oct, 03:19\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nYWEQRKN\nCARGO TRUCK\n24 Oct, 02:30\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n7GCMTR4\nCARGO TRUCK\n24 Oct, 02:27\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nS57UPHS\nCARGO TRUCK\n24 Oct, 02:14\nHarbour Bay Ferry Terminal → Batam Centre Ferry Terminal\nQG7TDQJ\nCARGO TRUCK\n24 Oct, 00:56\nHarbour Bay Ferry Terminal → Batam Centre Ferry Terminal\nFQN37PQ\nCARGO TRUCK\n24 Oct, 00:47\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nH4Y83EQ\nCARGO TRUCK\n24 Oct, 00:31\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n9JL6N52\nCARGO TRUCK\n23 Oct, 21:39\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nLVE33W7\nCOMMUTER\n23 Oct, 21:20\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n5868AKD\nCOMMUTER\n23 Oct, 21:10\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\n3B55FVN\nCOMMUTER\n23 Oct, 21:05\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nTU2G8QG\nCARGO TRUCK\n23 Oct, 21:00\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nAHMKAQM\nCOMMUTER\n23 Oct, 17:55\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nV5D9FB8\nCOMMUTER\n23 Oct, 17:22\nBatamindo Industrial Park → Batam Centre Ferry Terminal\n9H2WQHF\nCARGO TRUCK\n23 Oct, 17:16\nBatamindo Industrial Park → HarbourFront, Telok Blangah Road, Maritime Square\nH6SNDCM\nCOMMUTER\n23 Oct, 13:34\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nUB735NT\nCARGO TRUCK\n23 Oct, 13:32\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nDEPART NOW\nCurrent road traffic is within optimal flow parameters.\nDeparture 2026-10-24 · 13:09 WIB\n9.11 km\n19.6 min road time\nDRIVER ROUTE ID\nUse this seven-character ID to retrieve the journey\nXK7RWH4\nRoad travel\n19.6 min\nRoad distance\n9.11 km\nTotal trip ETA\n54.4 min\nEstimated CO₂\n9.57 kg\n\nFewer than two sufficiently distinct routes satisfy the detour limit.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "RoutePlan a road journey",
+        "Summary"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator analytics Overview",
+      "alerts": [],
+      "at": "2026-10-24T06:11:49.514Z",
+      "charts": 2,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Road coverage",
+        "Road speeds at a glance",
+        "Traffic conditions",
+        "Current observed corridor points",
+        "Published operating records",
+        "Batam Authority Operating Context"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:11:49 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Index\n3.4 / 100\n\n5 fresh road points\n\nObserved Bottlenecks\n0\n\nNo measured points above threshold.\n\nPublished Departures\n87\n\nPublished timetable · next 12 hours\n\nMeasured Emissions Impact\nUnavailable\n\nAwaiting measured emissions data\n\nRoad coverage\nOpenStreetMap\nMapped roads & paths\n27,018\nMap nodes\n115,320\nDirected road links\n249,745\nLinks with current traffic estimates\n0\n0% of mapped links\n\nMapped roads include paths. Live measurements cover selected locations.\n\nLocal congestion estimate\nPROVISIONAL\n\n10.8 / 100 across 4 current road views\n\n4 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:11:43 pm SGT\nRoad speeds at a glance\nMeasured speeds\n\nCurrent provider speed alongside its free-flow reference, in km/h.\n\n0 km/h\n15 km/h\n30 km/h\n45 km/h\n60 km/h\nMukakuningIndustrial\nBatu AmparFreight Port\nHang NadimAirport\nSekupang FerryTerminal\nNongsa DigitalPark\nMeasured speed\nFree-flow reference\nView speed values\nTraffic conditions\nObserved snapshot\n\n5 of 5 representative road points. Counts describe these points, not the whole island.\n\n5\nroad points\nSmooth\n5\nHeavy\n0\nCritical\n0\n\nCongestion index: smooth <40 · heavy 40–69 · critical ≥70.\n\nCurrent observed corridor points\nCorridor point\tMeasured speed\tFree-flow speed\tCongestion index\tSnapshot (SGT)\nMukakuning Industrial\t47 km/h\t47 km/h\t0 / 100\t24 Oct 2026, 2:10:21 pm SGT\nBatu Ampar Freight Port\t34 km/h\t41 km/h\t17.1 / 100\t24 Oct 2026, 2:10:21 pm SGT\nHang Nadim Airport\t60 km/h\t60 km/h\t0 / 100\t24 Oct 2026, 2:10:21 pm SGT\nSekupang Ferry Terminal\t51 km/h\t51 km/h\t0 / 100\t24 Oct 2026, 2:10:21 pm SGT\nNongsa Digital Park\t57 km/h\t57 km/h\t0 / 100\t24 Oct 2026, 2:10:21 pm SGT\nPublished operating records\n\nPublished period totals, not live terminal activity.\n\nChecking report…\nCHECKING\nBatam Authority Operating Context\nPRIMARY-SOURCE REFERENCES\n\nOpen the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.\n\nBP Batam Port Business Entity\nBatam City Transportation Agency",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Overview"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator Ports Terminals",
+      "alerts": [],
+      "at": "2026-10-24T06:12:02.816Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Cross-Border Ferry & Port Intelligence",
+        "Batam Centre",
+        "HarbourBay",
+        "Sekupang",
+        "Nongsa Pura"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:11:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nCross-Border Ferry & Port Intelligence\n\nTerminal references and published departures across the Singapore–Batam strait.\n\nLast verified\n24 Oct 2026, 11:42 WIB\nAll\nBatam Centre\nHarbourBay\nSekupang\nNongsa Pura\nCheck Schedules\nTerminals\nDepartures\nCargo\n\nPublished sailings. Live queues and berth occupancy are unavailable.\n\nBatam Centre\nTerminal BCT\nTIMETABLE\nNext departure\nin 8 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2007.\nPhoto by Masgatotkaca · CC BY-SA 3.0\n\nHarbourBay\nTerminal HBT\nTIMETABLE\nNext departure\nin 48 min\nHorizon Fast Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2018.\nPhoto by Exbeing · CC BY-SA 4.0\n\nSekupang\nTerminal SKP\nTIMETABLE\nNext departure\nin 38 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2011.\nPhoto by alantankenghoe · CC BY 2.0\n\nNongsa Pura\nTerminal NPT\nTIMETABLE\nNext departure\nin 1h 8m\nBatamFast\nBP Batam Terminal Reference\n\nNongsa area reference, 2014.\nPhoto by Lobster1 · CC BY-SA 3.0",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Ports",
+        "Terminals"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver expired historical dispatch warning",
+      "alerts": [],
+      "at": "2026-10-24T06:12:03.681Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → HarbourFront Ferry Terminal Singapore",
+        "The saved departure has passed.",
+        "Use this seven-character ID to retrieve the journey"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nSummary\nJourney map\nDirections\nConnections\nSAVED JOURNEY\nThe saved departure has passed.\nDeparture 2026-10-23 · 18:15 WIB\n39.88 km\n67.9 min movement time\n\nAsk dispatch for an updated departure plan before travelling. This map and timetable belong to the saved journey.\n\nExact times use the committed timetable simulation because shared schedule freshness is unavailable. Verify the departure and book with the operator.\n\nDRIVER ROUTE ID\nUse this seven-character ID to retrieve the journey\nAHMKAQM\nMovement time\n67.9 min\nJourney distance\n39.88 km\nTotal trip ETA\n101 min\nEstimated CO₂\n1.91 kg\n\nTerminal pair selected by estimated access time plus published crossing duration; road-provider alternatives are not mixed across modes.",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Summary"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator Ports Departures",
+      "alerts": [],
+      "at": "2026-10-24T06:12:17.963Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Cross-Border Ferry & Port Intelligence",
+        "Upcoming Departures"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:11:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nCross-Border Ferry & Port Intelligence\n\nTerminal references and published departures across the Singapore–Batam strait.\n\nLast verified\n24 Oct 2026, 13:12 WIB\n\n6 official sources checked.\n\nAll\nBatam Centre\nHarbourBay\nSekupang\nNongsa Pura\nCheck Schedules\nTerminals\nDepartures\nCargo\nUpcoming Departures\nPUBLISHED TIMETABLE\n87 SHOWN\nHorizon Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ HarbourBay\nOfficial operator timetable\n14:15 SGT\nin 3 min\nEst. arrival 14:05 WIB\nBatamFast\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n14:20 SGT\nin 8 min\nEst. arrival 14:15 WIB\nBatamFast\nSCHEDULED\nTanah Merah SG ➔ Nongsa Pura\nOfficial operator timetable\n14:20 SGT\nin 8 min\nEst. arrival 14:05 WIB\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ Tanah Merah SG\nOfficial operator timetable\n13:20 WIB\nin 8 min\nEst. arrival 15:20 SGT\nSindo Ferry\nSCHEDULED\nTanah Merah SG ➔ Batam Centre\nOfficial operator timetable\n14:30 SGT\nin 18 min\nEst. arrival 14:30 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n13:30 WIB\nin 18 min\nEst. arrival 15:25 SGT\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n14:50 SGT\nin 38 min\nEst. arrival 14:50 WIB\nSindo Ferry\nSCHEDULED\nSekupang ➔ HarbourFront SG\nOfficial operator timetable\n13:50 WIB\nin 38 min\nEst. arrival 15:40 SGT\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n14:00 WIB\nin 48 min\nEst. arrival 16:00 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourBay ➔ HarbourFront SG\nOfficial operator timetable\n14:00 WIB\nin 48 min\nEst. arrival 15:50 SGT\nBatamFast\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n14:10 WIB\nin 58 min\nEst. arrival 16:05 SGT\nMajestic Fast Ferry\nSCHEDULED\nTanah Merah SG ➔ Batam Centre\nOfficial operator timetable\n15:15 SGT\nin 1h 3m\nEst. arrival 15:10 WIB\nHorizon Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ HarbourBay\nOfficial operator timetable\n15:15 SGT\nin 1h 3m\nEst. arrival 15:05 WIB\nBatamFast\nSCHEDULED\nNongsa Pura ➔ Tanah Merah SG\nOfficial operator timetable\n14:20 WIB\nin 1h 8m\nEst. arrival 16:05 SGT\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n15:20 SGT\nin 1h 8m\nEst. arrival 15:15 WIB\nBatamFast\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n15:30 SGT\nin 1h 18m\nEst. arrival 15:25 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n14:30 WIB\nin 1h 18m\nEst. arrival 16:25 SGT\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Sekupang\nOfficial operator timetable\n16:00 SGT\nin 1h 48m\nEst. arrival 15:50 WIB\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n15:10 WIB\nin 1h 58m\nEst. arrival 17:10 SGT\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n16:10 SGT\nin 1h 58m\nEst. arrival 16:10 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n15:15 WIB\nin 2h 3m\nEst. arrival 17:10 SGT\nBatamFast\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n15:20 WIB\nin 2h 8m\nEst. arrival 17:15 SGT\nBatamFast\nSCHEDULED\nTanah Merah SG ➔ Nongsa Pura\nOfficial operator timetable\n16:20 SGT\nin 2h 8m\nEst. arrival 16:05 WIB\nSindo Ferry\nSCHEDULED\nSekupang ➔ HarbourFront SG\nOfficial operator timetable\n15:20 WIB\nin 2h 8m\nEst. arrival 17:10 SGT\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n16:20 SGT\nin 2h 8m\nEst. arrival 16:15 WIB\nSindo Ferry\nSCHEDULED\nTanah Merah SG ➔ Batam Centre\nOfficial operator timetable\n16:30 SGT\nin 2h 18m\nEst. arrival 16:30 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ Tanah Merah SG\nOfficial operator timetable\n15:30 WIB\nin 2h 18m\nEst. arrival 17:25 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourBay ➔ HarbourFront SG\nOfficial operator timetable\n15:30 WIB\nin 2h 18m\nEst. arrival 17:20 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ HarbourBay\nOfficial operator timetable\n16:30 SGT\nin 2h 18m\nEst. arrival 16:20 WIB\nBatamFast\nSCHEDULED\nNongsa Pura ➔ Tanah Merah SG\nOfficial operator timetable\n15:40 WIB\nin 2h 28m\nEst. arrival 17:25 SGT\nMajestic Fast Ferry\nSCHEDULED\nTanah Merah SG ➔ Batam Centre\nOfficial operator timetable\n16:45 SGT\nin 2h 33m\nEst. arrival 16:40 WIB\nBatamFast\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n16:50 SGT\nin 2h 38m\nEst. arrival 16:45 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n16:00 WIB\nin 2h 48m\nEst. arrival 17:55 SGT\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n16:10 WIB\nin 2h 58m\nEst. arrival 18:10 SGT\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n17:10 SGT\nin 2h 58m\nEst. arrival 17:05 WIB\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n17:20 SGT\nin 3h 8m\nEst. arrival 17:20 WIB\nMajestic Fast Ferry\nSCHEDULED\nSekupang ➔ HarbourFront SG\nOfficial operator timetable\n16:20 WIB\nin 3h 8m\nEst. arrival 18:10 SGT\nBatamFast\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n16:30 WIB\nin 3h 18m\nEst. arrival 18:25 SGT\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Sekupang\nOfficial operator timetable\n17:30 SGT\nin 3h 18m\nEst. arrival 17:20 WIB\nHorizon Fast Ferry\nSCHEDULED\nHarbourBay ➔ HarbourFront SG\nOfficial operator timetable\n16:30 WIB\nin 3h 18m\nEst. arrival 18:20 SGT\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Sekupang\nOfficial operator timetable\n17:40 SGT\nin 3h 28m\nEst. arrival 17:30 WIB\nHorizon Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ HarbourBay\nOfficial operator timetable\n17:45 SGT\nin 3h 33m\nEst. arrival 17:35 WIB\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n17:50 SGT\nin 3h 38m\nEst. arrival 17:45 WIB\nBatamFast\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n18:00 SGT\nin 3h 48m\nEst. arrival 17:55 WIB\nSindo Ferry\nSCHEDULED\nSekupang ➔ HarbourFront SG\nOfficial operator timetable\n17:00 WIB\nin 3h 48m\nEst. arrival 18:50 SGT\nMajestic Fast Ferry\nSCHEDULED\nTanah Merah SG ➔ Batam Centre\nOfficial operator timetable\n18:00 SGT\nin 3h 48m\nEst. arrival 17:55 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ Tanah Merah SG\nOfficial operator timetable\n17:00 WIB\nin 3h 48m\nEst. arrival 18:55 SGT\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Sekupang\nOfficial operator timetable\n18:10 SGT\nin 3h 58m\nEst. arrival 18:00 WIB\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n17:20 WIB\nin 4h 8m\nEst. arrival 19:20 SGT\nBatamFast\nSCHEDULED\nNongsa Pura ➔ Tanah Merah SG\nOfficial operator timetable\n17:30 WIB\nin 4h 18m\nEst. arrival 19:15 SGT\nBatamFast\nSCHEDULED\nTanah Merah SG ➔ Nongsa Pura\nOfficial operator timetable\n18:30 SGT\nin 4h 18m\nEst. arrival 18:15 WIB\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n18:30 SGT\nin 4h 18m\nEst. arrival 18:30 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n17:30 WIB\nin 4h 18m\nEst. arrival 19:25 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourBay ➔ HarbourFront SG\nOfficial operator timetable\n17:30 WIB\nin 4h 18m\nEst. arrival 19:20 SGT\nBatamFast\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n17:40 WIB\nin 4h 28m\nEst. arrival 19:35 SGT\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n18:50 SGT\nin 4h 38m\nEst. arrival 18:45 WIB\nMajestic Fast Ferry\nSCHEDULED\nSekupang ➔ HarbourFront SG\nOfficial operator timetable\n18:00 WIB\nin 4h 48m\nEst. arrival 19:50 SGT\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ Tanah Merah SG\nOfficial operator timetable\n18:00 WIB\nin 4h 48m\nEst. arrival 19:55 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ HarbourBay\nOfficial operator timetable\n19:00 SGT\nin 4h 48m\nEst. arrival 18:50 WIB\nBatamFast\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n19:10 SGT\nin 4h 58m\nEst. arrival 19:05 WIB\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n18:20 WIB\nin 5h 8m\nEst. arrival 20:20 SGT\nMajestic Fast Ferry\nSCHEDULED\nTanah Merah SG ➔ Batam Centre\nOfficial operator timetable\n19:20 SGT\nin 5h 8m\nEst. arrival 19:15 WIB\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Sekupang\nOfficial operator timetable\n19:30 SGT\nin 5h 18m\nEst. arrival 19:20 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n18:30 WIB\nin 5h 18m\nEst. arrival 20:25 SGT\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n19:40 SGT\nin 5h 28m\nEst. arrival 19:40 WIB\nBatamFast\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n19:00 WIB\nin 5h 48m\nEst. arrival 20:55 SGT\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n20:10 SGT\nin 5h 58m\nEst. arrival 20:05 WIB\nHorizon Fast Ferry\nSCHEDULED\nHarbourBay ➔ HarbourFront SG\nOfficial operator timetable\n19:15 WIB\nin 6h 3m\nEst. arrival 21:05 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ HarbourBay\nOfficial operator timetable\n20:15 SGT\nin 6h 3m\nEst. arrival 20:05 WIB\nBatamFast\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n20:20 SGT\nin 6h 8m\nEst. arrival 20:15 WIB\nBatamFast\nSCHEDULED\nTanah Merah SG ➔ Nongsa Pura\nOfficial operator timetable\n20:20 SGT\nin 6h 8m\nEst. arrival 20:05 WIB\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n19:30 WIB\nin 6h 18m\nEst. arrival 21:30 SGT\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Sekupang\nOfficial operator timetable\n20:30 SGT\nin 6h 18m\nEst. arrival 20:20 WIB\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Sekupang\nOfficial operator timetable\n20:40 SGT\nin 6h 28m\nEst. arrival 20:30 WIB\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n20:45 SGT\nin 6h 33m\nEst. arrival 20:45 WIB\nMajestic Fast Ferry\nSCHEDULED\nTanah Merah SG ➔ Batam Centre\nOfficial operator timetable\n20:45 SGT\nin 6h 33m\nEst. arrival 20:40 WIB\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ Tanah Merah SG\nOfficial operator timetable\n19:50 WIB\nin 6h 38m\nEst. arrival 21:45 SGT\nBatamFast\nSCHEDULED\nNongsa Pura ➔ Tanah Merah SG\nOfficial operator timetable\n20:00 WIB\nin 6h 48m\nEst. arrival 21:45 SGT\nSindo Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n20:20 WIB\nin 7h 8m\nEst. arrival 22:20 SGT\nMajestic Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n21:20 SGT\nin 7h 8m\nEst. arrival 21:15 WIB\nBatamFast\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n20:30 WIB\nin 7h 18m\nEst. arrival 22:25 SGT\nSindo Ferry\nSCHEDULED\nSekupang ➔ HarbourFront SG\nOfficial operator timetable\n20:30 WIB\nin 7h 18m\nEst. arrival 22:20 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourBay ➔ HarbourFront SG\nOfficial operator timetable\n20:30 WIB\nin 7h 18m\nEst. arrival 22:20 SGT\nMajestic Fast Ferry\nSCHEDULED\nBatam Centre ➔ HarbourFront SG\nOfficial operator timetable\n20:35 WIB\nin 7h 23m\nEst. arrival 22:30 SGT\nHorizon Fast Ferry\nSCHEDULED\nHarbourFront SG ➔ HarbourBay\nOfficial operator timetable\n21:35 SGT\nin 7h 23m\nEst. arrival 21:25 WIB\nBatamFast\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n21:40 SGT\nin 7h 28m\nEst. arrival 21:35 WIB\nSindo Ferry\nSCHEDULED\nHarbourFront SG ➔ Batam Centre\nOfficial operator timetable\n21:50 SGT\nin 7h 38m\nEst. arrival 21:50 WIB",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Ports",
+        "Departures"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator Ports Cargo",
+      "alerts": [],
+      "at": "2026-10-24T06:12:18.404Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Cross-Border Ferry & Port Intelligence",
+        "Batam-SG Cargo Monitor"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:11:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nCross-Border Ferry & Port Intelligence\n\nTerminal references and published departures across the Singapore–Batam strait.\n\nLast verified\n24 Oct 2026, 13:12 WIB\n\n6 official sources checked.\n\nAll\nBatam Centre\nHarbourBay\nSekupang\nNongsa Pura\nCheck Schedules\nTerminals\nDepartures\nCargo\nBatam-SG Cargo Monitor\nNO LIVE CARGO FEED\n\nCargo tracking is unavailable because no shipment or customs feed is connected. There are no verified shipment positions, progress percentages or clearance events to display.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Ports",
+        "Cargo"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator Ports Terminals",
+      "alerts": [],
+      "at": "2026-10-24T06:12:18.814Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Cross-Border Ferry & Port Intelligence",
+        "Batam Centre",
+        "HarbourBay",
+        "Sekupang",
+        "Nongsa Pura"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:11:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nCross-Border Ferry & Port Intelligence\n\nTerminal references and published departures across the Singapore–Batam strait.\n\nLast verified\n24 Oct 2026, 13:12 WIB\n\n6 official sources checked.\n\nAll\nBatam Centre\nHarbourBay\nSekupang\nNongsa Pura\nCheck Schedules\nTerminals\nDepartures\nCargo\n\nPublished sailings. Live queues and berth occupancy are unavailable.\n\nBatam Centre\nTerminal BCT\nTIMETABLE\nNext departure\nin 8 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2007.\nPhoto by Masgatotkaca · CC BY-SA 3.0\n\nHarbourBay\nTerminal HBT\nTIMETABLE\nNext departure\nin 48 min\nHorizon Fast Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2018.\nPhoto by Exbeing · CC BY-SA 4.0\n\nSekupang\nTerminal SKP\nTIMETABLE\nNext departure\nin 38 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2011.\nPhoto by alantankenghoe · CC BY 2.0\n\nNongsa Pura\nTerminal NPT\nTIMETABLE\nNext departure\nin 1h 8m\nBatamFast\nBP Batam Terminal Reference\n\nNongsa area reference, 2014.\nPhoto by Lobster1 · CC BY-SA 3.0",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Ports",
+        "Terminals"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator analytics Trends initial",
+      "alerts": [],
+      "at": "2026-10-24T06:12:19.398Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Live traffic forecasts"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:11:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nLive traffic forecasts\n\nReal traffic inputs · 15, 30 and 60 minutes ahead\n\nCONNECTING\nChecking forecasts…\n\nLoading measured traffic, weather and model evidence…\n\nOpen observed history",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Trends"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator analytics Trends loaded",
+      "alerts": [],
+      "at": "2026-10-24T06:13:13.242Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Live traffic forecasts",
+        "Batam weather fresh",
+        "The next hour",
+        "Road points · now and +60m",
+        "Road coverage"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:12:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nLive traffic forecasts\n\nReal traffic inputs · 15, 30 and 60 minutes ahead\n\nBASELINE · PROVISIONAL\nRefresh forecast\n\nForecast snapshot 24 Oct, 2:12 pm SGT · 5 of 5 configured sampling points available · Latest measurement 24 Oct, 2:10 pm SGT\n\nCurrent mean\n3.4 / 100\n5 measured road points\nIn 15 minutes\n3.4 / 100\nLatest-observation baseline\nIn 30 minutes\n3.4 / 100\nLatest-observation baseline\nIn 60 minutes\n3.4 / 100\nLatest-observation baseline\nBatam weather\nFRESH\n\nRain · 31.0°C · 0.1 mm rain · 6.3 km/h wind\n\nOpen-Meteo · regional model grid · valid 24 Oct, 2:00 pm SGT\nThe next hour\n5 monitored points · mean index / 100\n0\n50\n100\nNow\n+15m\n+30m\n+60m\n\nLatest-observation baseline · provisional\n\nRoad points · now and +60m\nLatest observed versus forecast\nJalan Jenderal Ahmad Yani\n0.0 → 0.0\nJalan Yos Sudarso\n17.1 → 17.1\nJalan Jenderal Sudirman\n0.0 → 0.0\nJalan R.E. Martadinata\n0.0 → 0.0\nU Turn\n0.0 → 0.0\n\nIndices cover 5 monitored points, rather than every road in Batam.\n\nRoad coverage\nRoad\tClass\tMatch\tMeasured free flow\tMapped lanes\tPosted limit\nJalan Jenderal Ahmad Yani\ttrunk\t0.0 m\t47 km/h\t5\t72 km/h\nJalan Yos Sudarso\tprimary\t0.0 m\t41 km/h\tNot tagged\t72 km/h\nJalan Jenderal Sudirman\ttrunk\t0.0 m\t60 km/h\t3\t90 km/h\nJalan R.E. Martadinata\ttrunk\t0.0 m\t51 km/h\tNot tagged\t72 km/h\nU Turn\tservice\t0.0 m\t57 km/h\tNot tagged\t90 km/h\n\nNearby OpenStreetMap road context · TomTom speed references. The provider’s exact direction is unverified; missing tags and capacity stay unknown.\n\nProvisional: more measured coverage is needed\n\nNeeds at least seven days and broad hour-of-day coverage.\n\nInterval estimates are withheld while independent calibration evidence is sparse.\n\nOpen observed history",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Trends"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator analytics Alerts",
+      "alerts": [],
+      "at": "2026-10-24T06:13:13.708Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Observed Traffic Alerts"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:12:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Alerts\n0 ALERTS\nCheck traffic\n5 road points monitored\nAlert threshold >60 / 100\nHighest index 14.6 / 100\nNo congestion alerts right now\n\nMonitoring is active. None of the fresh measured points currently needs your attention.\n\nTraffic snapshot 24 Oct 2026, 2:12:22 pm SGT\nAcknowledged alerts\n0",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Alerts"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator History observed traffic",
+      "alerts": [],
+      "at": "2026-10-24T06:13:34.239Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Historical traffic evidence",
+        "Historical Congestion Analysis"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:13:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nHistorical traffic evidence\n\nExplore corridor observations and dated research, one dataset at a time.\n\nObserved traffic\nBatam speed survey\nIntersection study\nSingapore benchmark\nHistorical Congestion Analysis\nRefresh history\nOBSERVED HISTORY\nMeasured history\nSynthetic replay\nMukakuning Industrial\nBatu Ampar\nHang Nadim\nSekupang Ferry\nNongsa Digital\nToday\n7d\n14d\n30d\nPeak Hour\n6pm\navg 26\nQuietest\n12am\navg 0\nData Source\nObserved\n540 observed samples\n24-Hour Average Profile\n12am\n3am\n6am\n9am\n12pm\n3pm\n6pm\n9pm\nSmooth (<40)\nHeavy (40–70)\nCritical (≥70)\nCurrent hour\nDaily Trend\n10-23\navg 5\n10-24\nDaily average congestion index",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "History",
+        "Observed traffic"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator History Batam speed survey",
+      "alerts": [],
+      "at": "2026-10-24T06:13:34.620Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Historical traffic evidence",
+        "Batam · Published road-speed survey"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:13:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nHistorical traffic evidence\nCheck evidence\n\nExplore corridor observations and dated research, one dataset at a time.\n\nObserved traffic\nBatam speed survey\nIntersection study\nSingapore benchmark\nBatam · Published road-speed survey\n\nJalan Gajah Mada in front of Kemilau Bangsa School intersection, Tiban, Batam. 48 published interval observations; 3 survey days. 20.35–34.32 km/h.\n\nSurvey date\n2023-02-16\n2023-02-17\n2023-02-18\nPublished direction\nFrom east\nFrom west\n\n8 intervals selected · Mean of published speeds: 24.47 km/h.\n\nTable 11, printed page 487 (PDF page 9) · Survey clock WIB (UTC+7)\nInterval\tSpeed (km/h)\tTravel time (s)\tQuality note\n07:00–07:30\t21.16\t17.10\tPublished aggregate; raw samples unavailable\n07:30–08:00\t20.95\t17.18\tPublished aggregate; raw samples unavailable\n08:00–08:30\t23.48\t15.33\tPublished aggregate; raw samples unavailable\n08:30–09:00\t33.43\t10.77\tPublished aggregate; raw samples unavailable\n16:00–16:30\t26.79\t13.44\tPublished aggregate; raw samples unavailable\n16:30–17:00\t24.69\t14.58\tPublished aggregate; raw samples unavailable\n17:00–17:30\t23.48\t15.35\tPublished aggregate; raw samples unavailable\n17:30–18:00\t21.78\t16.53\tPublished aggregate; raw samples unavailable\nExploratory Batam site backtest · real published speeds\n\nExpanding training windows of 16 and 32 observations; 32 next-survey-day forecasts across two held-out days. 0 synthetic training rows. Errors below are in km/h.\n\nSingle-site diagnostic · forecast each survey day from midnight WIB\nModel / baseline\tMAE (km/h)\tRMSE (km/h)\nRandom forest\t2.638\t3.224\nPrevious survey day\t3.207\t3.819\nHistorical time-slot mean\t2.908\t3.416\n\nEvaluated 23/10/2026, 8:58:26 pm. Too few days and locations for operational model promotion; these are not 15/30/60-minute network accuracy scores.\n\nNo canonical corridor mapping verified. This survey has not replaced the serving model.\n\nJournal source · Original PDF · CC BY-SA 4.0 as displayed on article page\n\nResearch last checked 24/10/2026, 2:13:13 pm.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "History",
+        "Batam speed survey"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator History Intersection study",
+      "alerts": [],
+      "at": "2026-10-24T06:13:34.980Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Historical traffic evidence",
+        "Batam · Published intersection saturation"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:13:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nHistorical traffic evidence\nCheck evidence\n\nExplore corridor observations and dated research, one dataset at a time.\n\nObserved traffic\nBatam speed survey\nIntersection study\nSingapore benchmark\nBatam · Published intersection saturation\n\nTengku Sulung–Raja M. Saleh unsignalised intersection, Batam. 28 published hourly ratios over 7 survey days.\n\nDerived volume/capacity ratios (DS), not vehicle speeds. These records contribute 0 speed-training labels.\n\nIntersection survey date\n2023-06-12\n2023-06-13\n2023-06-14\n2023-06-15\n2023-06-16\n2023-06-17\n2023-06-18\nTable 4.3, printed page 445 (PDF page 7) · WIB (UTC+7)\nInterval\tPublished saturation ratio (DS)\n06:00–07:00\t0.833\n07:00–08:00\t0.947\n16:00–17:00\t0.994\n17:00–18:00\t1.075\n\nKept separate from measured speed history and the serving speed model.\n\nIntersection source, licence and limitations\n\nResearch last checked 24/10/2026, 2:13:13 pm.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "History",
+        "Intersection study"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator History Singapore benchmark",
+      "alerts": [],
+      "at": "2026-10-24T06:13:35.356Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Historical traffic evidence",
+        "Singapore · Historical ML backtest"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:13:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nHistorical traffic evidence\nCheck evidence\n\nExplore corridor observations and dated research, one dataset at a time.\n\nObserved traffic\nBatam speed survey\nIntersection study\nSingapore benchmark\nSingapore · Historical ML backtest\n\n53 road links · 27 calendar days · 397,341 speed-band observations. 2021-03-08 to 2021-04-03.\n\nLTA Traffic Speed Bands; ordinal integer labels 1–8, not exact km/h. Chronological training, calibration and held-out test; 0 synthetic training rows. This independent Singapore benchmark has not replaced the Batam serving model.\n\nHeld-out error in speed-band units (lower is better); no km/h accuracy claim\nForecast\tTest forecasts\tRandom forest MAE\tPersistence MAE\t80% interval coverage\n15 minutes\t77,539\t0.529\t0.549\t79.9%\n30 minutes\t77,539\t0.552\t0.625\t80.6%\n60 minutes\t77,539\t0.563\t0.659\t80.6%\n\nEvaluated: 23/10/2026, 7:03:30 pm. Overlapping forecasts are not independent samples.\n\nBenchmark source, licence and limitations\n\nResearch last checked 24/10/2026, 2:13:13 pm.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "History",
+        "Singapore benchmark"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator analytics Model via keyboard End",
+      "alerts": [],
+      "at": "2026-10-24T06:14:32.464Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Observed traffic engine"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:14:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved traffic engine\n\nReal traffic inputs · 15, 30 and 60 minutes ahead\n\nCONNECTING\nChecking forecasts…\n\nLoading measured traffic, weather and model evidence…",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Model"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator analytics Model loaded",
+      "alerts": [],
+      "at": "2026-10-24T06:15:55.712Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Observed traffic engine",
+        "Batam weather fresh",
+        "The next hour",
+        "Road points · now and +60m",
+        "Road coverage",
+        "Chronological development results",
+        "Testing against future traffic",
+        "Grand Batam surveyBatam, Indonesia",
+        "Guangzhou speed benchmarkGuangzhou, China"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:15:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved traffic engine\n\nReal traffic inputs · 15, 30 and 60 minutes ahead\n\nBASELINE · PROVISIONAL\nRefresh forecast\n\nForecast snapshot 24 Oct, 2:15 pm SGT · 5 of 5 configured sampling points available · Latest measurement 24 Oct, 2:14 pm SGT\n\nTraining archive\n2,634\nNo synthetic training rows\nRecorded coverage\n20.1 hours\n2 calendar days\nMonitored roads\n5 of 5 points\nMeasured representative road points\nForecast horizons\n15 · 30 · 60 min\nLatest-observation baseline\nBatam weather\nFRESH\n\nRain · 31.0°C · 0.1 mm rain · 6.3 km/h wind\n\nOpen-Meteo · regional model grid · valid 24 Oct, 2:00 pm SGT\nThe next hour\n5 monitored points · mean index / 100\n0\n50\n100\nNow\n+15m\n+30m\n+60m\n\nLatest-observation baseline · provisional\n\nRoad points · now and +60m\nLatest observed versus forecast\nJalan Jenderal Ahmad Yani\n0.0 → 0.0\nJalan Yos Sudarso\n14.6 → 14.6\nJalan Jenderal Sudirman\n0.0 → 0.0\nJalan R.E. Martadinata\n0.0 → 0.0\nU Turn\n0.0 → 0.0\n\nIndices cover 5 monitored points, rather than every road in Batam.\n\nRoad coverage\nRoad\tClass\tMatch\tMeasured free flow\tMapped lanes\tPosted limit\nJalan Jenderal Ahmad Yani\ttrunk\t0.0 m\t47 km/h\t5\t72 km/h\nJalan Yos Sudarso\tprimary\t0.0 m\t41 km/h\tNot tagged\t72 km/h\nJalan Jenderal Sudirman\ttrunk\t0.0 m\t60 km/h\t3\t90 km/h\nJalan R.E. Martadinata\ttrunk\t0.0 m\t51 km/h\tNot tagged\t72 km/h\nU Turn\tservice\t0.0 m\t57 km/h\tNot tagged\t90 km/h\n\nNearby OpenStreetMap road context · TomTom speed references. The provider’s exact direction is unverified; missing tags and capacity stay unknown.\n\nChronological development results\n\nUpdated 24 Oct, 1:48 pm SGT\n\nHorizon\tMean error\tTest measurements\n15 min\t2.91 points\t40\n30 min\t2.89 points\t40\n60 min\t2.71 points\t40\n\nMAE is in congestion-index points. These previously reviewed windows are development evidence; future observations provide the confirmation test.\n\nTesting against future traffic\n\n4,785 forecasts saved · 4,515 matched to later measurements · 2 test days\n\nHorizon\tML MAE\tPersistence MAE\tWithin ±5 index points\tMatched samples\n15 min\t1.65 points\t1.01 points\t92.5%\t1555\n30 min\t1.82 points\t1.26 points\t92.1%\t1515\n60 min\t1.58 points\t1.33 points\t90.0%\t1445\n\nPredictions and their model versions are saved before the target traffic arrives. Results remain provisional until enough days and traffic conditions have been measured.\n\nGrand Batam survey\nBATAM, INDONESIA\n\n66 source measurements · 4 source days · Original source\n\nHorizon\tML error\tPersistence error\tMAE improvement\tWithin ±5 km/h\tTest samples\tTest days\n60 min\t2.33 km/h\t2.50 km/h\t6.5%\t86.7%\t15\t1\n\nExploratory three-road survey; one test day. Not five-corridor or citywide validation.\n\n“Within ±5 km/h” counts predictions inside that tolerance. MAE improvement is error reduction against persistence, not percentage accuracy.\n\nGuangzhou speed benchmark\nGUANGZHOU, CHINA\n\n1,855,589 source measurements · 61 source days · Original source\n\nHorizon\tML error\tPersistence error\tMAE improvement\tWithin ±5 km/h\tTest samples\tTest days\n10 min\t2.01 km/h\t2.20 km/h\t8.7%\t92.4%\t429,926\t14\n30 min\t2.81 km/h\t3.25 km/h\t13.7%\t84.9%\t429,498\t14\n60 min\t3.26 km/h\t4.23 km/h\t23.0%\t80.7%\t428,856\t14\n\nIndependent methodology test on Chinese roads. Does not establish Batam accuracy.\n\n“Within ±5 km/h” counts predictions inside that tolerance. MAE improvement is error reduction against persistence, not percentage accuracy.\n\nProvisional: more measured coverage is needed\n\nNeeds at least seven days and broad hour-of-day coverage.\n\nInterval estimates are withheld while independent calibration evidence is sparse.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Model"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator analytics Overview via keyboard Home",
+      "alerts": [],
+      "at": "2026-10-24T06:15:56.093Z",
+      "charts": 2,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Road coverage",
+        "Road speeds at a glance",
+        "Traffic conditions",
+        "Current observed corridor points",
+        "Published operating records",
+        "Januari-Agustus 2026",
+        "Batam Authority Operating Context"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:15:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Index\n2.9 / 100\n\n5 fresh road points\n\nObserved Bottlenecks\n0\n\nNo measured points above threshold.\n\nPublished Departures\n86\n\nPublished timetable · next 12 hours\n\nMeasured Emissions Impact\nUnavailable\n\nAwaiting measured emissions data\n\nRoad coverage\nOpenStreetMap\nMapped roads & paths\n27,018\nMap nodes\n115,320\nDirected road links\n249,745\nLinks with current traffic estimates\nUnavailable\n\nMapped roads include paths. Live measurements cover selected locations.\n\nLocal congestion estimate\nAWAITING FRESH OBSERVATIONS\n\nA current local estimate is unavailable.\n\nRoad speeds at a glance\nMeasured speeds\n\nCurrent provider speed alongside its free-flow reference, in km/h.\n\n0 km/h\n15 km/h\n30 km/h\n45 km/h\n60 km/h\nMukakuningIndustrial\nBatu AmparFreight Port\nHang NadimAirport\nSekupang FerryTerminal\nNongsa DigitalPark\nMeasured speed\nFree-flow reference\nView speed values\nTraffic conditions\nObserved snapshot\n\n5 of 5 representative road points. Counts describe these points, not the whole island.\n\n5\nroad points\nSmooth\n5\nHeavy\n0\nCritical\n0\n\nCongestion index: smooth <40 · heavy 40–69 · critical ≥70.\n\nCurrent observed corridor points\nCorridor point\tMeasured speed\tFree-flow speed\tCongestion index\tSnapshot (SGT)\nMukakuning Industrial\t47 km/h\t47 km/h\t0 / 100\t24 Oct 2026, 2:14:23 pm SGT\nBatu Ampar Freight Port\t35 km/h\t41 km/h\t14.6 / 100\t24 Oct 2026, 2:14:23 pm SGT\nHang Nadim Airport\t60 km/h\t60 km/h\t0 / 100\t24 Oct 2026, 2:14:23 pm SGT\nSekupang Ferry Terminal\t51 km/h\t51 km/h\t0 / 100\t24 Oct 2026, 2:14:23 pm SGT\nNongsa Digital Park\t57 km/h\t57 km/h\t0 / 100\t24 Oct 2026, 2:14:23 pm SGT\nPublished operating records\n\nPublished period totals, not live terminal activity.\n\nCheck official report\nJanuari-Agustus 2026\nBP Batam Port Business Entity\nPassenger-vessel calls\n51,733 calls\nDomestic passenger movements\n3,075,059 people\nInternational passenger movements\n3,643,016 people\nPassenger movements\nShare of this reporting period\nDomestic passenger movements\n45.8%\nInternational passenger movements\n54.2%\nVERIFIED REPORT\nSource checked 24/10/2026, 2:11:49 pm\nBatam Authority Operating Context\nPRIMARY-SOURCE REFERENCES\n\nOpen the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.\n\nBP Batam Port Business Entity\nBatam City Transportation Agency",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Overview"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator cached ferry source refresh",
+      "alerts": [],
+      "at": "2026-10-24T06:16:27.616Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Cross-Border Ferry & Port Intelligence",
+        "Batam Centre",
+        "HarbourBay",
+        "Sekupang",
+        "Nongsa Pura"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:15:59 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nCross-Border Ferry & Port Intelligence\n\nTerminal references and published departures across the Singapore–Batam strait.\n\nLast verified\n24 Oct 2026, 13:12 WIB\n\n6 official sources checked.\n\nAll\nBatam Centre\nHarbourBay\nSekupang\nNongsa Pura\nCheck Schedules\nTerminals\nDepartures\nCargo\n\nPublished sailings. Live queues and berth occupancy are unavailable.\n\nBatam Centre\nTerminal BCT\nTIMETABLE\nNext departure\nin 4 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2007.\nPhoto by Masgatotkaca · CC BY-SA 3.0\n\nHarbourBay\nTerminal HBT\nTIMETABLE\nNext departure\nin 44 min\nHorizon Fast Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2018.\nPhoto by Exbeing · CC BY-SA 4.0\n\nSekupang\nTerminal SKP\nTIMETABLE\nNext departure\nin 34 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2011.\nPhoto by alantankenghoe · CC BY 2.0\n\nNongsa Pura\nTerminal NPT\nTIMETABLE\nNext departure\nin 1h 4m\nBatamFast\nBP Batam Terminal Reference\n\nNongsa area reference, 2014.\nPhoto by Lobster1 · CC BY-SA 3.0",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Ports",
+        "Terminals"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver fresh-code reload and expiry notice",
+      "alerts": [],
+      "at": "2026-10-24T06:16:28.311Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "The saved departure has passed.",
+        "Use this seven-character ID to retrieve the journey"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nSAVED JOURNEY\nThe saved departure has passed.\nDeparture 2026-10-24 · 13:09 WIB\n9.11 km\n19.6 min road time\n\nAsk dispatch for an updated departure plan before travelling. This map and timetable belong to the saved journey.\n\nDRIVER ROUTE ID\nUse this seven-character ID to retrieve the journey\nXK7RWH4\nRoad travel\n19.6 min\nRoad distance\n9.11 km\nTotal trip ETA\n54.4 min\nEstimated CO₂\n9.57 kg\n\nFewer than two sufficiently distinct routes satisfy the detour limit.",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Summary"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator forecast refresh after backend restart",
+      "alerts": [],
+      "at": "2026-10-24T06:20:18.585Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Live traffic forecasts",
+        "Batam weather fresh",
+        "The next hour",
+        "Road points · now and +60m",
+        "Road coverage"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:20:01 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nLive traffic forecasts\n\nReal traffic inputs · 15, 30 and 60 minutes ahead\n\nBASELINE · PROVISIONAL\nChecking forecasts…\n\nForecast snapshot 24 Oct, 2:19 pm SGT · 5 of 5 configured sampling points available · Latest measurement 24 Oct, 2:18 pm SGT\n\nCurrent mean\n3.4 / 100\n5 measured road points\nIn 15 minutes\n3.4 / 100\nLatest-observation baseline\nIn 30 minutes\n3.4 / 100\nLatest-observation baseline\nIn 60 minutes\n3.4 / 100\nLatest-observation baseline\nBatam weather\nFRESH\n\nRain · 30.7°C · 0.2 mm rain · 6.3 km/h wind\n\nOpen-Meteo · regional model grid · valid 24 Oct, 2:15 pm SGT\nThe next hour\n5 monitored points · mean index / 100\n0\n50\n100\nNow\n+15m\n+30m\n+60m\n\nLatest-observation baseline · provisional\n\nRoad points · now and +60m\nLatest observed versus forecast\nJalan Jenderal Ahmad Yani\n0.0 → 0.0\nJalan Yos Sudarso\n17.1 → 17.1\nJalan Jenderal Sudirman\n0.0 → 0.0\nJalan R.E. Martadinata\n0.0 → 0.0\nU Turn\n0.0 → 0.0\n\nIndices cover 5 monitored points, rather than every road in Batam.\n\nRoad coverage\nRoad\tClass\tMatch\tMeasured free flow\tMapped lanes\tPosted limit\nJalan Jenderal Ahmad Yani\ttrunk\t0.0 m\t47 km/h\t5\t72 km/h\nJalan Yos Sudarso\tprimary\t0.0 m\t41 km/h\tNot tagged\t72 km/h\nJalan Jenderal Sudirman\ttrunk\t0.0 m\t60 km/h\t3\t90 km/h\nJalan R.E. Martadinata\ttrunk\t0.0 m\t51 km/h\tNot tagged\t72 km/h\nU Turn\tservice\t0.0 m\t57 km/h\tNot tagged\t90 km/h\n\nNearby OpenStreetMap road context · TomTom speed references. The provider’s exact direction is unverified; missing tags and capacity stay unknown.\n\nProvisional: more measured coverage is needed\n\nNeeds at least seven days and broad hour-of-day coverage.\n\nInterval estimates are withheld while independent calibration evidence is sparse.\n\nOpen observed history",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Trends"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "driver dispatch lookup on restarted authenticated backend",
+      "alerts": [],
+      "at": "2026-10-24T06:21:29.304Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → Batam Centre Ferry Terminal",
+        "The saved departure has passed.",
+        "Use this seven-character ID to retrieve the journey"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → Batam Centre Ferry Terminal\nOBSERVED REFERENCE · PROVISIONAL\nSummary\nJourney map\nDirections\nComparison\nSAVED JOURNEY\nThe saved departure has passed.\nDeparture 2026-10-24 · 13:09 WIB\n9.11 km\n19.6 min road time\n\nAsk dispatch for an updated departure plan before travelling. This map and timetable belong to the saved journey.\n\nDRIVER ROUTE ID\nUse this seven-character ID to retrieve the journey\nXK7RWH4\nRoad travel\n19.6 min\nRoad distance\n9.11 km\nTotal trip ETA\n54.4 min\nEstimated CO₂\n9.57 kg\n\nFewer than two sufficiently distinct routes satisfy the detour limit.",
+      "maps": 0,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Summary"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "operator Overview refresh on audited backend",
+      "alerts": [],
+      "at": "2026-10-24T06:21:29.939Z",
+      "charts": 2,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Road coverage",
+        "Road speeds at a glance",
+        "Traffic conditions",
+        "Current observed corridor points",
+        "Published operating records",
+        "Januari-Agustus 2026",
+        "Batam Authority Operating Context"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:21:29 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Index\n3.5 / 100\n\n5 fresh road points\n\nObserved Bottlenecks\n0\n\nNo measured points above threshold.\n\nPublished Departures\n83\n\nPublished timetable · next 12 hours\n\nMeasured Emissions Impact\nUnavailable\n\nAwaiting measured emissions data\n\nRoad coverage\nOpenStreetMap\nMapped roads & paths\n27,018\nMap nodes\n115,320\nDirected road links\n249,745\nLinks with current traffic estimates\n0\n0% of mapped links\n\nMapped roads include paths. Live measurements cover selected locations.\n\nLocal congestion estimate\nPROVISIONAL\n\n22.6 / 100 across 3 current road views\n\n6 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:21:19 pm SGT\nRoad speeds at a glance\nMeasured speeds\n\nCurrent provider speed alongside its free-flow reference, in km/h.\n\n0 km/h\n15 km/h\n30 km/h\n45 km/h\n60 km/h\nMukakuningIndustrial\nBatu AmparFreight Port\nHang NadimAirport\nSekupang FerryTerminal\nNongsa DigitalPark\nMeasured speed\nFree-flow reference\nView speed values\nTraffic conditions\nObserved snapshot\n\n5 of 5 representative road points. Counts describe these points, not the whole island.\n\n5\nroad points\nSmooth\n5\nHeavy\n0\nCritical\n0\n\nCongestion index: smooth <40 · heavy 40–69 · critical ≥70.\n\nCurrent observed corridor points\nCorridor point\tMeasured speed\tFree-flow speed\tCongestion index\tSnapshot (SGT)\nMukakuning Industrial\t47 km/h\t47 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nBatu Ampar Freight Port\t33 km/h\t40 km/h\t17.5 / 100\t24 Oct 2026, 2:20:55 pm SGT\nHang Nadim Airport\t60 km/h\t60 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nSekupang Ferry Terminal\t51 km/h\t51 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nNongsa Digital Park\t57 km/h\t57 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nPublished operating records\n\nPublished period totals, not live terminal activity.\n\nCheck official report\nJanuari-Agustus 2026\nBP Batam Port Business Entity\nPassenger-vessel calls\n51,733 calls\nDomestic passenger movements\n3,075,059 people\nInternational passenger movements\n3,643,016 people\nPassenger movements\nShare of this reporting period\nDomestic passenger movements\n45.8%\nInternational passenger movements\n54.2%\nVERIFIED REPORT\nSource checked 24/10/2026, 2:19:49 pm\nBatam Authority Operating Context\nPRIMARY-SOURCE REFERENCES\n\nOpen the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.\n\nBP Batam Port Business Entity\nBatam City Transportation Agency",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Overview"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "final driver saved ferry map",
+      "alerts": [],
+      "at": "2026-10-24T06:22:20.046Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → HarbourFront Ferry Terminal Singapore",
+        "Route Overview"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nSummary\nJourney map\nDirections\nConnections\n1. Batamindo Industrial Park → Batam Centre\nMAPPED\n11.9 min\nRoad · 9.11 km\n2. Batam Centre → HarbourFront SG\nESTIMATE\n55 min + 43.1 min wait\nFerry · 30.77 km\n3. HarbourFront SG → HarbourFront Ferry Terminal Singapore\nESTIMATE\n1 min\nRoad · 0 km\n\nFreight note: the cited ferry sources are passenger-operator timetables. Cargo, dangerous-goods, and vehicle acceptance must be confirmed separately with the operator.\n\nA\nB\n67.9 min\n39.88 km\n+\n−\n Leaflet | © OpenStreetMap contributors\nRecommended\n39.88 km\n67.9 min\nRoute Overview\n\n39.88 km from Batamindo Industrial Park to HarbourFront Ferry Terminal Singapore, with a ferry crossing from Batam Centre to HarbourFront SG.",
+      "maps": 1,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Journey map"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "final operator live and historical analytics overview",
+      "alerts": [],
+      "at": "2026-10-24T06:22:20.170Z",
+      "charts": 2,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Road coverage",
+        "Road speeds at a glance",
+        "Traffic conditions",
+        "Current observed corridor points",
+        "Published operating records",
+        "Januari-Agustus 2026",
+        "Batam Authority Operating Context"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:22:01 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Index\n3.5 / 100\n\n5 fresh road points\n\nObserved Bottlenecks\n0\n\nNo measured points above threshold.\n\nPublished Departures\n83\n\nPublished timetable · next 12 hours\n\nMeasured Emissions Impact\nUnavailable\n\nAwaiting measured emissions data\n\nRoad coverage\nOpenStreetMap\nMapped roads & paths\n27,018\nMap nodes\n115,320\nDirected road links\n249,745\nLinks with current traffic estimates\nUnavailable\n\nMapped roads include paths. Live measurements cover selected locations.\n\nLocal congestion estimate\nAWAITING FRESH OBSERVATIONS\n\nA current local estimate is unavailable.\n\nRoad speeds at a glance\nMeasured speeds\n\nCurrent provider speed alongside its free-flow reference, in km/h.\n\n0 km/h\n15 km/h\n30 km/h\n45 km/h\n60 km/h\nMukakuningIndustrial\nBatu AmparFreight Port\nHang NadimAirport\nSekupang FerryTerminal\nNongsa DigitalPark\nMeasured speed\nFree-flow reference\nView speed values\nTraffic conditions\nObserved snapshot\n\n5 of 5 representative road points. Counts describe these points, not the whole island.\n\n5\nroad points\nSmooth\n5\nHeavy\n0\nCritical\n0\n\nCongestion index: smooth <40 · heavy 40–69 · critical ≥70.\n\nCurrent observed corridor points\nCorridor point\tMeasured speed\tFree-flow speed\tCongestion index\tSnapshot (SGT)\nMukakuning Industrial\t47 km/h\t47 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nBatu Ampar Freight Port\t33 km/h\t40 km/h\t17.5 / 100\t24 Oct 2026, 2:20:55 pm SGT\nHang Nadim Airport\t60 km/h\t60 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nSekupang Ferry Terminal\t51 km/h\t51 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nNongsa Digital Park\t57 km/h\t57 km/h\t0 / 100\t24 Oct 2026, 2:20:55 pm SGT\nPublished operating records\n\nPublished period totals, not live terminal activity.\n\nCheck official report\nJanuari-Agustus 2026\nBP Batam Port Business Entity\nPassenger-vessel calls\n51,733 calls\nDomestic passenger movements\n3,075,059 people\nInternational passenger movements\n3,643,016 people\nPassenger movements\nShare of this reporting period\nDomestic passenger movements\n45.8%\nInternational passenger movements\n54.2%\nVERIFIED REPORT\nSource checked 24/10/2026, 2:19:49 pm\nBatam Authority Operating Context\nPRIMARY-SOURCE REFERENCES\n\nOpen the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.\n\nBP Batam Port Business Entity\nBatam City Transportation Agency",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Overview"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "post-fix operator Overview restored session",
+      "alerts": [],
+      "at": "2026-10-24T06:34:00.803Z",
+      "charts": 2,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Road coverage",
+        "Road speeds at a glance",
+        "Traffic conditions",
+        "Current observed corridor points",
+        "Published operating records",
+        "Batam Authority Operating Context"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:34:00 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Index\n6.9 / 100\n\n5 fresh road points\n\nObserved Bottlenecks\n0\n\nNo measured points above threshold.\n\nPublished Departures\n81\n\nPublished timetable · next 12 hours\n\nMeasured Emissions Impact\nUnavailable\n\nAwaiting measured emissions data\n\nRoad coverage\nOpenStreetMap\nMapped roads & paths\n27,018\nMap nodes\n115,320\nDirected road links\n249,745\nLinks with current traffic estimates\n0\n0% of mapped links\n\nMapped roads include paths. Live measurements cover selected locations.\n\nLocal congestion estimate\nPROVISIONAL\n\n11.0 / 100 across 3 current road views\n\n5 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:33:52 pm SGT\nRoad speeds at a glance\nMeasured speeds\n\nCurrent provider speed alongside its free-flow reference, in km/h.\n\n0 km/h\n15 km/h\n30 km/h\n45 km/h\n60 km/h\nMukakuningIndustrial\nBatu AmparFreight Port\nHang NadimAirport\nSekupang FerryTerminal\nNongsa DigitalPark\nMeasured speed\nFree-flow reference\nView speed values\nTraffic conditions\nObserved snapshot\n\n5 of 5 representative road points. Counts describe these points, not the whole island.\n\n5\nroad points\nSmooth\n5\nHeavy\n0\nCritical\n0\n\nCongestion index: smooth <40 · heavy 40–69 · critical ≥70.\n\nCurrent observed corridor points\nCorridor point\tMeasured speed\tFree-flow speed\tCongestion index\tSnapshot (SGT)\nMukakuning Industrial\t47 km/h\t47 km/h\t0 / 100\t24 Oct 2026, 2:33:54 pm SGT\nBatu Ampar Freight Port\t31 km/h\t40 km/h\t22.5 / 100\t24 Oct 2026, 2:33:54 pm SGT\nHang Nadim Airport\t52 km/h\t59 km/h\t11.9 / 100\t24 Oct 2026, 2:33:54 pm SGT\nSekupang Ferry Terminal\t51 km/h\t51 km/h\t0 / 100\t24 Oct 2026, 2:33:54 pm SGT\nNongsa Digital Park\t57 km/h\t57 km/h\t0 / 100\t24 Oct 2026, 2:33:54 pm SGT\nPublished operating records\n\nPublished period totals, not live terminal activity.\n\nChecking report…\nCHECKING\nBatam Authority Operating Context\nPRIMARY-SOURCE REFERENCES\n\nOpen the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.\n\nBP Batam Port Business Entity\nBatam City Transportation Agency",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Overview"
+      ],
+      "videoElements": 0,
+      "phase": "earlier audit before final summary polling verification"
+    },
+    {
+      "name": "final post-fix analytics Ports",
+      "alerts": [],
+      "at": "2026-10-24T06:35:20.586Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Cross-Border Ferry & Port Intelligence",
+        "Batam Centre",
+        "HarbourBay",
+        "Sekupang",
+        "Nongsa Pura"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:35:10 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nCross-Border Ferry & Port Intelligence\n\nTerminal references and published departures across the Singapore–Batam strait.\n\nLast verified\n24 Oct 2026, 13:12 WIB\nAll\nBatam Centre\nHarbourBay\nSekupang\nNongsa Pura\nCheck Schedules\nTerminals\nDepartures\nCargo\n\nPublished sailings. Live queues and berth occupancy are unavailable.\n\nBatam Centre\nTerminal BCT\nTIMETABLE\nNext departure\nin 25 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2007.\nPhoto by Masgatotkaca · CC BY-SA 3.0\n\nHarbourBay\nTerminal HBT\nTIMETABLE\nNext departure\nin 25 min\nHorizon Fast Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2018.\nPhoto by Exbeing · CC BY-SA 4.0\n\nSekupang\nTerminal SKP\nTIMETABLE\nNext departure\nin 15 min\nSindo Ferry\nBP Batam Terminal Reference\n\nTerminal photo, 2011.\nPhoto by alantankenghoe · CC BY 2.0\n\nNongsa Pura\nTerminal NPT\nTIMETABLE\nNext departure\nin 45 min\nBatamFast\nBP Batam Terminal Reference\n\nNongsa area reference, 2014.\nPhoto by Lobster1 · CC BY-SA 3.0",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Ports",
+        "Terminals"
+      ],
+      "videoElements": 0
+    },
+    {
+      "name": "final post-fix analytics Trends",
+      "alerts": [],
+      "at": "2026-10-24T06:35:20.904Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Live traffic forecasts"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:35:20 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nLive traffic forecasts\n\nReal traffic inputs · 15, 30 and 60 minutes ahead\n\nCONNECTING\nChecking forecasts…\n\nLoading measured traffic, weather and model evidence…\n\nOpen observed history",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Trends"
+      ],
+      "videoElements": 0
+    },
+    {
+      "name": "final post-fix analytics Alerts",
+      "alerts": [],
+      "at": "2026-10-24T06:35:21.308Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Observed Traffic Alerts"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:35:20 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Alerts\n0 ALERTS\nCheck traffic\n5 road points monitored\nAlert threshold >60 / 100\nHighest index 22.5 / 100\nNo congestion alerts right now\n\nMonitoring is active. None of the fresh measured points currently needs your attention.\n\nTraffic snapshot 24 Oct 2026, 2:33:54 pm SGT\nAcknowledged alerts\n0",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Alerts"
+      ],
+      "videoElements": 0
+    },
+    {
+      "name": "final post-fix analytics History",
+      "alerts": [],
+      "at": "2026-10-24T06:35:21.656Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Historical traffic evidence",
+        "Historical Congestion Analysis"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:35:20 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nHistorical traffic evidence\n\nExplore corridor observations and dated research, one dataset at a time.\n\nObserved traffic\nBatam speed survey\nIntersection study\nSingapore benchmark\nHistorical Congestion Analysis\nRefresh history\nOBSERVED HISTORY\nMeasured history\nSynthetic replay\nMukakuning Industrial\nBatu Ampar\nHang Nadim\nSekupang Ferry\nNongsa Digital\nToday\n7d\n14d\n30d\nPeak Hour\n6pm\navg 26\nQuietest\n12am\navg 0\nData Source\nObserved\n548 observed samples\n24-Hour Average Profile\n12am\n3am\n6am\n9am\n12pm\n3pm\n6pm\n9pm\nSmooth (<40)\nHeavy (40–70)\nCritical (≥70)\nCurrent hour\nDaily Trend\n10-23\navg 5\n10-24\nDaily average congestion index",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "History",
+        "Observed traffic"
+      ],
+      "videoElements": 0
+    },
+    {
+      "name": "final post-fix analytics Model",
+      "alerts": [],
+      "at": "2026-10-24T06:35:22.048Z",
+      "charts": 0,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Observed traffic engine",
+        "Batam weather fresh",
+        "The next hour",
+        "Road points · now and +60m",
+        "Road coverage",
+        "Chronological development results",
+        "Testing against future traffic",
+        "Grand Batam surveyBatam, Indonesia",
+        "Guangzhou speed benchmarkGuangzhou, China"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:35:20 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved traffic engine\n\nReal traffic inputs · 15, 30 and 60 minutes ahead\n\nBASELINE · PROVISIONAL\nRefresh forecast\n\nForecast snapshot 24 Oct, 2:35 pm SGT · 5 of 5 configured sampling points available · Latest measurement 24 Oct, 2:33 pm SGT\n\nTraining archive\n2,729\nNo synthetic training rows\nRecorded coverage\n20.6 hours\n2 calendar days\nMonitored roads\n5 of 5 points\nMeasured representative road points\nForecast horizons\n15 · 30 · 60 min\nLatest-observation baseline\nBatam weather\nFRESH\n\nRain · 30.2°C · 0.2 mm rain · 6.5 km/h wind\n\nOpen-Meteo · regional model grid · valid 24 Oct, 2:30 pm SGT\nThe next hour\n5 monitored points · mean index / 100\n0\n50\n100\nNow\n+15m\n+30m\n+60m\n\nLatest-observation baseline · provisional\n\nRoad points · now and +60m\nLatest observed versus forecast\nJalan Jenderal Ahmad Yani\n0.0 → 0.0\nJalan Yos Sudarso\n22.5 → 22.5\nJalan Jenderal Sudirman\n11.9 → 11.9\nJalan R.E. Martadinata\n0.0 → 0.0\nU Turn\n0.0 → 0.0\n\nIndices cover 5 monitored points, rather than every road in Batam.\n\nRoad coverage\nRoad\tClass\tMatch\tMeasured free flow\tMapped lanes\tPosted limit\nJalan Jenderal Ahmad Yani\ttrunk\t0.0 m\t47 km/h\t5\t72 km/h\nJalan Yos Sudarso\tprimary\t0.0 m\t40 km/h\tNot tagged\t72 km/h\nJalan Jenderal Sudirman\ttrunk\t0.0 m\t59 km/h\t3\t90 km/h\nJalan R.E. Martadinata\ttrunk\t0.0 m\t51 km/h\tNot tagged\t72 km/h\nU Turn\tservice\t0.0 m\t57 km/h\tNot tagged\t90 km/h\n\nNearby OpenStreetMap road context · TomTom speed references. The provider’s exact direction is unverified; missing tags and capacity stay unknown.\n\nChronological development results\n\nUpdated 24 Oct, 2:31 pm SGT\n\nHorizon\tMean error\tTest measurements\n15 min\t2.87 points\t45\n30 min\t3.28 points\t45\n60 min\t2.88 points\t45\n\nMAE is in congestion-index points. These previously reviewed windows are development evidence; future observations provide the confirmation test.\n\nTesting against future traffic\n\n4,890 forecasts saved · 4,615 matched to later measurements · 2 test days\n\nHorizon\tML MAE\tPersistence MAE\tWithin ±5 index points\tMatched samples\n15 min\t1.72 points\t1.03 points\t91.6%\t1590\n30 min\t1.83 points\t1.28 points\t91.8%\t1550\n60 min\t1.57 points\t1.32 points\t90.2%\t1475\n\nPredictions and their model versions are saved before the target traffic arrives. Results remain provisional until enough days and traffic conditions have been measured.\n\nGrand Batam survey\nBATAM, INDONESIA\n\n66 source measurements · 4 source days · Original source\n\nHorizon\tML error\tPersistence error\tMAE improvement\tWithin ±5 km/h\tTest samples\tTest days\n60 min\t2.33 km/h\t2.50 km/h\t6.5%\t86.7%\t15\t1\n\nExploratory three-road survey; one test day. Not five-corridor or citywide validation.\n\n“Within ±5 km/h” counts predictions inside that tolerance. MAE improvement is error reduction against persistence, not percentage accuracy.\n\nGuangzhou speed benchmark\nGUANGZHOU, CHINA\n\n1,855,589 source measurements · 61 source days · Original source\n\nHorizon\tML error\tPersistence error\tMAE improvement\tWithin ±5 km/h\tTest samples\tTest days\n10 min\t2.01 km/h\t2.20 km/h\t8.7%\t92.4%\t429,926\t14\n30 min\t2.81 km/h\t3.25 km/h\t13.7%\t84.9%\t429,498\t14\n60 min\t3.26 km/h\t4.23 km/h\t23.0%\t80.7%\t428,856\t14\n\nIndependent methodology test on Chinese roads. Does not establish Batam accuracy.\n\n“Within ±5 km/h” counts predictions inside that tolerance. MAE improvement is error reduction against persistence, not percentage accuracy.\n\nProvisional: more measured coverage is needed\n\nNeeds at least seven days and broad hour-of-day coverage.\n\nInterval estimates are withheld while independent calibration evidence is sparse.",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Model"
+      ],
+      "videoElements": 0
+    },
+    {
+      "name": "final post-fix analytics Overview",
+      "alerts": [],
+      "at": "2026-10-24T06:35:22.431Z",
+      "charts": 2,
+      "headings": [
+        "Ferry & Operations Analytics",
+        "Road coverage",
+        "Road speeds at a glance",
+        "Traffic conditions",
+        "Current observed corridor points",
+        "Published operating records",
+        "Januari-Agustus 2026",
+        "Batam Authority Operating Context"
+      ],
+      "mainText": "Ferry & Operations Analytics\nTraffic, ferries and daily trends.\nBatam · Riau Islands\nObserved traffic snapshot\n\nLast checked 24 Oct 2026, 2:35:20 pm SGT\n\nRefresh data\nSources, coverage and refresh policy\nOverview\nPorts\nTrends\nAlerts\nHistory\nModel\nObserved Traffic Index\n6.9 / 100\n\n5 fresh road points\n\nObserved Bottlenecks\n0\n\nNo measured points above threshold.\n\nPublished Departures\n81\n\nPublished timetable · next 12 hours\n\nMeasured Emissions Impact\nUnavailable\n\nAwaiting measured emissions data\n\nRoad coverage\nOpenStreetMap\nMapped roads & paths\n27,018\nMap nodes\n115,320\nDirected road links\n249,745\nLinks with current traffic estimates\n0\n0% of mapped links\n\nMapped roads include paths. Live measurements cover selected locations.\n\nLocal congestion estimate\nPROVISIONAL\n\n6.2 / 100 across 5 current road views\n\n8 vehicle detections in current views; overlapping views may include the same vehicle.\n\nObserved 2:35:12 pm SGT\nRoad speeds at a glance\nMeasured speeds\n\nCurrent provider speed alongside its free-flow reference, in km/h.\n\n0 km/h\n15 km/h\n30 km/h\n45 km/h\n60 km/h\nMukakuningIndustrial\nBatu AmparFreight Port\nHang NadimAirport\nSekupang FerryTerminal\nNongsa DigitalPark\nMeasured speed\nFree-flow reference\nView speed values\nTraffic conditions\nObserved snapshot\n\n5 of 5 representative road points. Counts describe these points, not the whole island.\n\n5\nroad points\nSmooth\n5\nHeavy\n0\nCritical\n0\n\nCongestion index: smooth <40 · heavy 40–69 · critical ≥70.\n\nCurrent observed corridor points\nCorridor point\tMeasured speed\tFree-flow speed\tCongestion index\tSnapshot (SGT)\nMukakuning Industrial\t47 km/h\t47 km/h\t0 / 100\t24 Oct 2026, 2:33:54 pm SGT\nBatu Ampar Freight Port\t31 km/h\t40 km/h\t22.5 / 100\t24 Oct 2026, 2:33:54 pm SGT\nHang Nadim Airport\t52 km/h\t59 km/h\t11.9 / 100\t24 Oct 2026, 2:33:54 pm SGT\nSekupang Ferry Terminal\t51 km/h\t51 km/h\t0 / 100\t24 Oct 2026, 2:33:54 pm SGT\nNongsa Digital Park\t57 km/h\t57 km/h\t0 / 100\t24 Oct 2026, 2:33:54 pm SGT\nPublished operating records\n\nPublished period totals, not live terminal activity.\n\nCheck official report\nJanuari-Agustus 2026\nBP Batam Port Business Entity\nPassenger-vessel calls\n51,733 calls\nDomestic passenger movements\n3,075,059 people\nInternational passenger movements\n3,643,016 people\nPassenger movements\nShare of this reporting period\nDomestic passenger movements\n45.8%\nInternational passenger movements\n54.2%\nVERIFIED REPORT\nSource checked 24/10/2026, 2:34:00 pm\nBatam Authority Operating Context\nPRIMARY-SOURCE REFERENCES\n\nOpen the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.\n\nBP Batam Port Business Entity\nBatam City Transportation Agency",
+      "maps": 0,
+      "origin": "http://localhost:3000",
+      "selectedTabs": [
+        "AnalyticsFerry, port & operations",
+        "Overview"
+      ],
+      "videoElements": 0
+    },
+    {
+      "name": "final post-fix driver persisted ferry map",
+      "alerts": [],
+      "at": "2026-10-24T06:35:23.439Z",
+      "charts": 0,
+      "headings": [
+        "Assigned Routes",
+        "Assigned route",
+        "Batamindo Industrial Park → HarbourFront Ferry Terminal Singapore",
+        "Route Overview"
+      ],
+      "mainText": "Assigned Routes\nLoad your journey with a dispatch code.\nBatam · Riau Islands\nAssigned route\n\nEnter the code supplied by dispatch to load your journey.\n\n7-character route code\nLoad Route\nBatamindo Industrial Park → HarbourFront Ferry Terminal Singapore\nSummary\nJourney map\nDirections\nConnections\n1. Batamindo Industrial Park → Batam Centre\nMAPPED\n11.9 min\nRoad · 9.11 km\n2. Batam Centre → HarbourFront SG\nESTIMATE\n55 min + 43.1 min wait\nFerry · 30.77 km\n3. HarbourFront SG → HarbourFront Ferry Terminal Singapore\nESTIMATE\n1 min\nRoad · 0 km\n\nFreight note: the cited ferry sources are passenger-operator timetables. Cargo, dangerous-goods, and vehicle acceptance must be confirmed separately with the operator.\n\nA\nB\n67.9 min\n39.88 km\n+\n−\n Leaflet | © OpenStreetMap contributors\nRecommended\n39.88 km\n67.9 min\nRoute Overview\n\n39.88 km from Batamindo Industrial Park to HarbourFront Ferry Terminal Singapore, with a ferry crossing from Batam Centre to HarbourFront SG.",
+      "maps": 1,
+      "origin": "http://127.0.0.1:3000",
+      "selectedTabs": [
+        "RouteDispatch code lookup",
+        "Journey map"
+      ],
+      "videoElements": 0
+    }
+  ]
+}

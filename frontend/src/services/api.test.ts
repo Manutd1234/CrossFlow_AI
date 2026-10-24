@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { planWithBundledRoadGraph } from './offlineRoadRouter';
 import { routePreferenceProfile } from '../data/routePreferences';
+import { BUNDLED_RF_VALIDATION } from '../data/modelManifest';
+import { UNAVAILABLE_OPERATIONS } from '../data/unavailableOperations';
 import {
   MOCK_OPERATIONS,
   PUBLISHED_FERRY_TIMETABLE_METADATA,
@@ -16,6 +18,8 @@ import {
   fetchPortIntelligence,
   refreshOfficialFerrySources,
   requestFreeRouteOptimization,
+  requestMultiStopRouteOptimization,
+  requestPersistedRoute,
   requestModelRetrain,
   requestRouteBenchmark,
   requestRouteOptimization,
@@ -260,12 +264,13 @@ describe('opt-in route benchmark', () => {
     ));
     vi.stubGlobal('fetch', fetchMock);
 
-    const response = await requestRouteBenchmark(origin, destination, 'LOCAL');
+    const response = await requestRouteBenchmark(origin, destination, 'LOCAL', 'operator-session');
 
     const url = String(fetchMock.mock.calls[0]?.[0]);
     const requestInit = fetchMock.mock.calls[0]?.[1] as RequestInit;
     expect(url).toContain('/api/route-benchmark');
     expect(requestInit.cache).toBe('no-store');
+    expect(requestInit.headers).toMatchObject({ Authorization: 'Bearer operator-session' });
     expect(JSON.parse(String(requestInit.body))).toEqual({
       origin_lat: origin.lat,
       origin_lng: origin.lng,
@@ -297,6 +302,37 @@ describe('opt-in route benchmark', () => {
 });
 
 describe('free-route API fallback', () => {
+  it('normalizes UTC departure requests to Batam forecast time and retimes terminal connections', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));
+    planBundledRoute.mockResolvedValue(bundledPlan);
+    const departure = '2026-08-10T06:37:00Z';
+    const response = await requestFreeRouteOptimization(origin, destination, 'COMMUTER', 6, 0,
+      'BALANCED', { departure_at: departure });
+    expect(planBundledRoute).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.any(String),
+      expect.objectContaining({ hour: 13 }));
+    expect(response.data.planned_departure).toBe('2026-08-10T13:37:00.000+07:00');
+    expect(new Date(response.data.estimated_arrival!).getTime() - new Date(departure).getTime())
+      .toBeCloseTo(response.data.total_eta_mins * 60_000);
+    for (const ferry of response.data.next_matching_ferries) {
+      expect(new Date(ferry.departure_time).getTime()).toBeGreaterThan(
+        new Date(response.data.estimated_arrival!).getTime() + 15 * 60_000,
+      );
+    }
+  });
+
+  it('keeps an exact departure on its requested forecast rather than applying later timing', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));
+    planBundledRoute.mockResolvedValue({ ...bundledPlan, routes: [{
+      ...bundledPlan.routes[0], estimated_travel_time_mins: 30,
+      estimated_travel_time_after_30_mins: 20, congestion_delay_after_30_mins: 1,
+    }] });
+    const response = await requestFreeRouteOptimization(origin, destination, 'COMMUTER', 18, 0,
+      'BALANCED', { departure_at: '2026-08-10T18:37:00+07:00' });
+    expect(response.data.optimal_departure.recommended).toBe('DEPART_NOW');
+    expect(response.data.estimated_travel_time_mins).toBe(30);
+    expect(response.data.planned_departure).toBe('2026-08-10T18:37:00.000+07:00');
+  });
+
   it('keeps Singapore-Batam planning available without downloading the Batam-only graph', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));
     const singapore = {
@@ -729,6 +765,124 @@ describe('free-route API fallback', () => {
   });
 });
 
+describe('route run attribution', () => {
+  it.each([401, 403])('surfaces planner HTTP %i from all three APIs without an offline substitute', async (status) => {
+    const fetcher = vi.fn().mockImplementation(() => Promise.resolve(new Response('Gateway rejection', { status })));
+    vi.stubGlobal('fetch', fetcher);
+    const schedule = { departure_at: '2026-10-24T08:30:00+07:00' };
+    const requests = [
+      () => requestRouteOptimization('mukakuning', 'batam_centre', 'COMMUTER', 8, 0, 'BALANCED', schedule, 'user-session'),
+      () => requestFreeRouteOptimization(origin, destination, 'COMMUTER', 8, 0, 'BALANCED', schedule, 'user-session'),
+      () => requestMultiStopRouteOptimization([origin, destination], 'COMMUTER', { departureAt: schedule.departure_at }, 0, 'BALANCED', 'user-session'),
+    ];
+    for (const request of requests) {
+      await expect(request()).rejects.toMatchObject({
+        status,
+        message: status === 401 ? 'Sign in again before planning a route.'
+          : 'An authorized operator account is required to plan routes.',
+      });
+    }
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(planBundledRoute).not.toHaveBeenCalled();
+  });
+
+  it('forwards the session token for free, named, and multi-stop plans', async () => {
+    const fetcher = vi.fn().mockImplementation(() => Promise.resolve(new Response(
+      JSON.stringify({ ...liveApiRoute, route_code: '4KF9X2P' }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    )));
+    vi.stubGlobal('fetch', fetcher);
+    const schedule = { departure_at: '2026-08-10T08:30:00+07:00' };
+
+    await requestFreeRouteOptimization(origin, destination, 'COMMUTER', 8, 1, 'BALANCED', schedule, 'user-session');
+    await requestRouteOptimization('mukakuning', 'batam_centre', 'COMMUTER', 8, 1, 'BALANCED', schedule, 'user-session');
+    await requestMultiStopRouteOptimization([origin, destination], 'COMMUTER', {
+      departureAt: schedule.departure_at,
+    }, 1, 'BALANCED', 'user-session');
+
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    for (const [, init] of fetcher.mock.calls) {
+      expect(init.headers).toEqual({
+        'Content-Type': 'application/json', Authorization: 'Bearer user-session',
+      });
+      expect(JSON.parse(init.body).departure_at).toBe(schedule.departure_at);
+    }
+  });
+
+  it('keeps guest planning public and serializes multi-stop arrival constraints', async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ ...liveApiRoute, route_code: '4KF9X2P' }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    ));
+    vi.stubGlobal('fetch', fetcher);
+    await requestMultiStopRouteOptimization([
+      origin, { ...destination, dwell_mins: 15 }, destination,
+    ], 'LIGHT_TRUCK', { arriveBy: '2026-08-10T13:00:00+07:00' }, 2, 'EASY');
+    const init = fetcher.mock.calls[0][1];
+    expect(init.headers).toEqual({ 'Content-Type': 'application/json' });
+    expect(JSON.parse(init.body)).toMatchObject({
+      arrive_by: '2026-08-10T13:00:00+07:00', vehicle_type: 'LIGHT_TRUCK',
+      weather: 2, route_preference: 'EASY', optimize_order: false,
+      stops: [{ dwell_mins: 0 }, { dwell_mins: 15 }, { dwell_mins: 0 }],
+    });
+    expect(JSON.parse(init.body)).not.toHaveProperty('departure_at');
+  });
+});
+
+describe('assigned route API', () => {
+  it.each([null, 'driver-session'])('normalizes code case/whitespace and supports capability lookup (token: %s)', async (token) => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ ...liveApiRoute, route_code: '4KF9X2P' })));
+    vi.stubGlobal('fetch', fetcher);
+    const response = await requestPersistedRoute(' 4kf9x2p ', token);
+    expect(fetcher).toHaveBeenCalledWith(expect.stringMatching(/\/api\/routes\/4KF9X2P$/), expect.objectContaining({
+      headers: token ? { Authorization: 'Bearer driver-session' } : {},
+    }));
+    expect(response.data.route_code).toBe('4KF9X2P');
+    expect(planBundledRoute).not.toHaveBeenCalled();
+  });
+
+  it('rejects incomplete or invalid codes without a request', async () => {
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    for (const code of ['4KF', '0000000', '../path', '4KF9X2P8']) {
+      await expect(requestPersistedRoute(code, null)).rejects.toMatchObject({ status: 400 });
+    }
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [404, 'No assigned route matches that code.'],
+    [403, 'Your account is not authorized to retrieve this assigned route.'],
+    [503, 'The assigned route service is temporarily unavailable. Try again.'],
+  ])('keeps a non-JSON HTTP %i lookup error actionable', async (status, message) => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('Upstream error', { status: Number(status) })));
+    await expect(requestPersistedRoute('4KF9X2P', null)).rejects.toMatchObject({ status, message });
+    expect(planBundledRoute).not.toHaveBeenCalled();
+  });
+
+  it('rejects malformed success bodies and recovers on a fresh retry', async () => {
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(new Response('<html>upstream</html>'))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ...liveApiRoute, route_code: '4KF9X2P' })));
+    vi.stubGlobal('fetch', fetcher);
+    await expect(requestPersistedRoute('4KF9X2P', null)).rejects.toMatchObject({ status: 503, message: expect.stringContaining('incomplete') });
+    const response = await requestPersistedRoute('4KF9X2P', null);
+    expect(response.data.route_code).toBe('4KF9X2P');
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps a valid multi-stop preview when the server explicitly reports unavailable dispatch storage', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      ...liveApiRoute, route_code: null, dispatch_available: false,
+      route_storage: { source: 'unavailable', shared: false, durable: false, durability: 'unavailable', scope: 'unavailable' },
+    }))));
+    const response = await requestMultiStopRouteOptimization([origin, destination], 'COMMUTER', {});
+    expect(response.data.dispatch_available).toBe(false);
+    expect(response.data.route_code).toBeNull();
+    expect(response.data.navigation?.maneuvers.length).toBeGreaterThan(0);
+  });
+});
+
 describe('named-route API fallback', () => {
   it('routes named Batam locations through the same bundled road planner', async () => {
     const fetchMock = vi.fn().mockRejectedValue(new TypeError('offline'));
@@ -815,17 +969,12 @@ describe('model telemetry fallback', () => {
 
     const status = await fetchModelStatus();
     expect(status.source).toBe('offline');
-    expect(status.data).toMatchObject({
-      is_trained: true,
-      total_samples: 4000,
-      r2_score: 0.9486,
-      mae: 2.88,
-      rmse: 3.62,
-    });
+    expect(status.data.is_trained).toBe(false);
+    expect(status.data.feature_importances).toEqual({});
     await expect(requestModelRetrain()).rejects.toMatchObject({ status: 503 });
   });
 
-  it('rejects malformed successful telemetry and uses the versioned bundled manifest', async () => {
+  it('rejects malformed model telemetry without substituting bundled scores', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
       generated_at: '2026-08-10T12:00:00+07:00',
       data_source: 'simulated',
@@ -839,18 +988,30 @@ describe('model telemetry fallback', () => {
     const status = await fetchModelStatus();
 
     expect(status.source).toBe('offline');
-    expect(status.data).toMatchObject({
-      is_trained: true,
-      total_samples: 4000,
-      feature_importances: expect.objectContaining({
-        'Time of Day (Cyclical)': 0.559,
-      }),
-    });
+    expect(status.data.is_trained).toBe(false);
+    expect(status.data.feature_importances).toEqual({});
+  });
+
+  it('preserves the current API metrics and spatial provenance instead of substituting the bundled snapshot', async () => {
+    const currentMetrics = {
+      ...BUNDLED_RF_VALIDATION, r2_score: 0.64, mae: 5.25, total_samples: 150,
+      training_data_source: 'validated_spatial_observed',
+      validation_scope: 'chronological_spatial_holdout_observed',
+      observed_training_rows: 150, training_source_counts: { probe_gps: 150 },
+      calibration: { interval_coverage_target: 0.8, interval_coverage_observed: 0.7 },
+    };
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      generated_at: '2026-10-23T05:00:00Z', data_source: 'simulated', metrics: currentMetrics,
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } })));
+    const status = await fetchModelStatus();
+    expect(status.source).toBe('simulated');
+    expect(status.data).toEqual(currentMetrics);
+    expect(status.data.r2_score).not.toBe(BUNDLED_RF_VALIDATION.r2_score);
   });
 });
 
 describe('historical congestion continuity', () => {
-  it('returns a populated, explicitly unobserved browser baseline when the API fails', async () => {
+  it('returns empty unavailable history when the API fails without inventing past samples', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-08-10T05:00:00.000Z'));
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));
@@ -860,12 +1021,12 @@ describe('historical congestion continuity', () => {
     expect(response.source).toBe('offline');
     expect(response.data.hourly_profile).toHaveLength(24);
     expect(response.data.hourly_profile.every(bucket => (
-      bucket.avg_score !== null && bucket.sample_count === 0
+      bucket.avg_score === null && bucket.sample_count === 0
     ))).toBe(true);
-    expect(response.data.weekly_trend).toHaveLength(7);
+    expect(response.data.weekly_trend).toHaveLength(0);
     expect(response.data.history_metadata).toMatchObject({
       observed: false,
-      source: 'browser_modelled_baseline',
+      source: 'history_unavailable',
       model: 'crossflow_local_forecast_equation_v1',
     });
   });
@@ -925,7 +1086,25 @@ describe('historical congestion continuity', () => {
 });
 
 describe('operations provenance continuity', () => {
-  it('rejects a malformed success payload and returns the browser-modelled fallback', async () => {
+  it('preserves unavailable measurements and their actual source timestamp without substituting modelled totals', async () => {
+    const payload = { ...MOCK_OPERATIONS, generated_at: '2026-10-23T10:00:00Z',
+      average_congestion_index: null, active_bottlenecks: null, total_co2_reduced_today_kg: null,
+      active_ferry_sailings: 5, scheduled_ferry_departures_next_12h: 5, alerts: [],
+      operations_methodology: { observed: false, source: 'current_sources',
+        scopes: { network: 'provider_points', emissions: 'unavailable', ferries: 'published_schedule' } },
+      analytics_metadata: { generated_at: '2026-10-23T10:00:00Z', as_of: '2026-10-23T10:00:00Z',
+        input_snapshot_at: null, snapshot_age_seconds: null, traffic_observed: false, traffic_source: 'unavailable',
+        observed_corridor_count: 0, expected_corridor_count: 5, limitations: ['No observed traffic provider'] } };
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(payload))));
+    const response = await fetchOperationsSummary();
+    expect(response.data.average_congestion_index).toBeNull();
+    expect(response.data.active_bottlenecks).toBeNull();
+    expect(response.data.scheduled_ferry_departures_next_12h).toBe(5);
+    expect(response.fetchedAt).toBe(payload.generated_at);
+    expect(response.data.analytics_metadata?.traffic_observed).toBe(false);
+  });
+
+  it('rejects a malformed operations response without substituting demonstration metrics', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
       generated_at: '2026-08-10T12:00:00+07:00',
       data_source: 'simulated',
@@ -935,7 +1114,7 @@ describe('operations provenance continuity', () => {
     const response = await fetchOperationsSummary();
 
     expect(response.source).toBe('offline');
-    expect(response.data).toEqual(MOCK_OPERATIONS);
+    expect(response.data).toEqual(UNAVAILABLE_OPERATIONS);
   });
 });
 
@@ -1053,7 +1232,7 @@ describe('published ferry schedule continuity', () => {
     ))).toBe(true);
   });
 
-  it('derives schedule-informed terminal planning estimates without claiming observations', async () => {
+  it('derives the next published sailing while keeping unmeasured terminal operations unavailable', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-08-09T22:30:00.000Z'));
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));
@@ -1063,23 +1242,23 @@ describe('published ferry schedule continuity', () => {
 
     expect(response.source).toBe('offline');
     expect(harbourBay).toMatchObject({
-      passenger_queue_mins: 11,
-      customs_processing_mins: 9,
-      freight_clearance_mins: 23,
-      active_berths: 1,
-      total_berths: 4,
-      status: 'NORMAL',
+      passenger_queue_mins: null,
+      customs_processing_mins: null,
+      freight_clearance_mins: null,
+      active_berths: null,
+      total_berths: null,
+      status: null,
       next_operator: 'Horizon Fast Ferry',
-      data_source: 'browser_schedule_informed_estimate',
+      data_source: 'published_terminal_reference',
       observed: false,
-      estimate_basis: 'Published departure density × Batam time-of-day planning profile',
+      estimate_basis: 'Next published timetable departure only; operating conditions are not observed.',
       official_reference_url: 'https://batamport.bpbatam.go.id/harbour-bay/',
     });
     expect(harbourBay?.next_sailing_in_mins).toBe(30);
-    expect(harbourBay?.next_vessel).toBeUndefined();
+    expect(harbourBay?.next_vessel).toBeNull();
   });
 
-  it('exports an immediate complete terminal seed with numeric planning estimates', () => {
+  it('exports terminal references without fabricated queue or berth values', () => {
     const seed = scheduleInformedPortSeed(
       new Date('2026-08-09T22:30:00.000Z'),
     );
@@ -1088,13 +1267,13 @@ describe('published ferry schedule continuity', () => {
       'Batam Centre', 'HarbourBay', 'Sekupang', 'Nongsa Pura',
     ]);
     expect(seed.every(port => (
-      typeof port.passenger_queue_mins === 'number'
-      && typeof port.customs_processing_mins === 'number'
+      port.passenger_queue_mins === null
+      && port.customs_processing_mins === null
       && port.observed === false
     ))).toBe(true);
   });
 
-  it('merges partial API terminals and fills null queue fields from the seed', async () => {
+  it('retains unavailable terminal measurements even when an old API supplies unsupported estimates', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-08-09T22:30:00.000Z'));
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
@@ -1129,17 +1308,17 @@ describe('published ferry schedule continuity', () => {
     expect(response.data).toHaveLength(4);
     expect(response.data.some(port => port.port_name === 'Unknown Terminal')).toBe(false);
     expect(batamCentre).toMatchObject({
-      passenger_queue_mins: expect.any(Number),
-      customs_processing_mins: expect.any(Number),
-      freight_clearance_mins: 44,
-      status: 'BUSY',
-      data_source: 'browser_schedule_informed_estimate',
+      passenger_queue_mins: null,
+      customs_processing_mins: null,
+      freight_clearance_mins: null,
+      status: null,
+      data_source: 'published_terminal_reference',
       observed: false,
     });
-    expect(batamCentre?.estimate_basis).toContain('browser continuity');
+    expect(batamCentre?.estimate_basis).toContain('operating conditions are not observed');
     expect(response.data.every(port => (
-      port.passenger_queue_mins !== null
-      && port.customs_processing_mins !== null
+      port.passenger_queue_mins === null
+      && port.customs_processing_mins === null
     ))).toBe(true);
   });
 });

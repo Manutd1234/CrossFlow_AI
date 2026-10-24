@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-23T13:02:41.591625+00:00",
+  "engine_source_sha256": "b98c2fe5c41c9f9415008d7f2169bf4d8f8064a17e3678a92ed6675c1cc565b1",
+  "stress": {
+    "status": "passed",
+    "requested_scenarios": 1000000,
+    "evaluated_scenarios": 1000000,
+    "seed": 20261023,
+    "batch_size": 4096,
+    "elapsed_seconds": 19.416,
+    "scenarios_per_second": 51503.7,
+    "paired_checks": {
+      "risk_monotonicity": 166667,
+      "surge_monotonicity": 166667,
+      "surge_decay": 166666
+    },
+    "failures": {},
+    "scope": "randomized production-forest inference and router-cost invariants, not end-to-end journey solves",
+    "coverage": {
+      "corridors": 5,
+      "road_classes": [
+        "ferry",
+        "living_street",
+        "motorway",
+        "primary",
+        "residential",
+        "road",
+        "secondary",
+        "service",
+        "tertiary",
+        "track",
+        "trunk",
+        "unclassified"
+      ],
+      "days": 7,
+      "weather_states": 3,
+      "capacity_vph_range": [
+        100,
+        8000
+      ],
+      "free_flow_kph_range": [
+        5,
+        130
+      ],
+      "terminal_distance_km_range": [
+        0,
+        30
+      ],
+      "properties": [
+        "finite outputs",
+        "ordered quantiles",
+        "bounded speed ratios",
+        "nonnegative delays",
+        "risk monotonicity",
+        "ferry surge cap and decay",
+        "P90 downside no faster than expected speed"
+      ]
+    },
+    "measured_traffic_accuracy_established": false
+  },
+  "local_observed_backtest": {
+    "schema_version": 1,
+    "generated_at": "2026-10-23T13:03:01.564237+00:00",
+    "status": "complete",
+    "validation_scope": "observed_chronological_backtest",
+    "input_rows": 404,
+    "unique_rows": 404,
+    "eligible_rows": 404,
+    "observed_rows": 404,
+    "source_counts": {
+      "tomtom_live": 404
+    },
+    "requires_measured_data_for_accuracy_claim": true,
+    "model_replaced": false,
+    "assumptions": [
+      "weather=clear; ferry proximity unknown because observations do not persist these inputs",
+      "missing capacity and terminal distance use declared corridor defaults",
+      "speed-ratio congestion target is clipped to [0,95] points",
+      "observed timestamps are treated as availability timestamps; ingestion delays are unknown",
+      "current baselines require the same corridor and location rounded to 5 decimals (about 1m); this is not edge map matching"
+    ],
+    "horizons": [
+      {
+        "horizon_minutes": 15,
+        "status": "complete",
+        "skipped_missing_or_stale_current": 5,
+        "forest": {
+          "samples": 79,
+          "mae_points": 4.8725,
+          "rmse_points": 7.6569,
+          "bias_points": 4.8725
+        },
+        "persistence": {
+          "samples": 79,
+          "mae_points": 2.3035,
+          "rmse_points": 5.4209,
+          "bias_points": 1.749
+        },
+        "current_history_blend": {
+          "samples": 79,
+          "mae_points": 3.5175,
+          "rmse_points": 6.5055,
+          "bias_points": 3.4602
+        },
+        "p10_p90_coverage": 1.0,
+        "per_corridor": {
+          "corridor-1": {
+            "samples": 16,
+            "mae_points": 15.0912,
+            "rmse_points": 15.7694,
+            "bias_points": 15.0912
+          },
+          "corridor-2": {
+            "samples": 16,
+            "mae_points": 3.7853,
+            "rmse_points": 4.141,
+            "bias_points": 3.7853
+          },
+          "corridor-3": {
+            "samples": 16,
+            "mae_points": 4.858,
+            "rmse_points": 4.858,
+            "bias_points": 4.858
+          },
+          "corridor-4": {
+            "samples": 16,
+            "mae_points": 0.167,
+            "rmse_points": 0.167,
+            "bias_points": 0.167
+          },
+          "corridor-5": {
+            "samples": 15,
+            "mae_points": 0.167,
+            "rmse_points": 0.167,
+            "bias_points": 0.167
+          }
+        }
+      },
+      {
+        "horizon_minutes": 30,
+        "status": "complete",
+        "skipped_missing_or_stale_current": 44,
+        "forest": {
+          "samples": 40,
+          "mae_points": 5.1394,
+          "rmse_points": 7.9578,
+          "bias_points": 5.1394
+        },
+        "persistence": {
+          "samples": 40,
+          "mae_points": 3.2217,
+          "rmse_points": 6.3419,
+          "bias_points": 3.0997
+        },
+        "current_history_blend": {
+          "samples": 40,
+          "mae_points": 4.387,
+          "rmse_points": 7.5456,
+          "bias_points": 4.387
+        },
+        "p10_p90_coverage": 1.0,
+        "per_corridor": {
+          "corridor-1": {
+            "samples": 8,
+            "mae_points": 15.9867,
+            "rmse_points": 16.3901,
+            "bias_points": 15.9867
+          },
+          "corridor-2": {
+            "samples": 8,
+            "mae_points": 4.5181,
+            "rmse_points": 4.9338,
+            "bias_points": 4.5181
+          },
+          "corridor-3": {
+            "samples": 8,
+            "mae_points": 4.858,
+            "rmse_points": 4.858,
+            "bias_points": 4.858
+          },
+          "corridor-4": {
+            "samples": 8,
+            "mae_points": 0.167,
+            "rmse_points": 0.167,
+            "bias_points": 0.167
+          },
+          "corridor-5": {
+            "samples": 8,
+            "mae_points": 0.167,
+            "rmse_points": 0.167,
+            "bias_points": 0.167
+          }
+        }
+      },
+      {
+        "horizon_minutes": 60,
+        "status": "complete",
+        "skipped_missing_or_stale_current": 10,
+        "forest": {
+          "samples": 74,
+          "mae_points": 5.0395,
+          "rmse_points": 8.1652,
+          "bias_points": 5.0353
+        },
+        "persistence": {
+          "samples": 74,
+          "mae_points": 4.8606,
+          "rmse_points": 9.657,
+          "bias_points": 4.8606
+        },
+        "current_history_blend": {
+          "samples": 74,
+          "mae_points": 5.4807,
+          "rmse_points": 9.5957,
+          "bias_points": 5.4807
+        },
+        "p10_p90_coverage": 1.0,
+        "per_corridor": {
+          "corridor-1": {
+            "samples": 15,
+            "mae_points": 16.3792,
+            "rmse_points": 17.084,
+            "bias_points": 16.3792
+          },
+          "corridor-2": {
+            "samples": 15,
+            "mae_points": 3.3013,
+            "rmse_points": 3.6595,
+            "bias_points": 3.2808
+          },
+          "corridor-3": {
+            "samples": 15,
+            "mae_points": 4.858,
+            "rmse_points": 4.858,
+            "bias_points": 4.858
+          },
+          "corridor-4": {
+            "samples": 15,
+            "mae_points": 0.167,
+            "rmse_points": 0.167,
+            "bias_points": 0.167
+          },
+          "corridor-5": {
+            "samples": 14,
+            "mae_points": 0.167,
+            "rmse_points": 0.167,
+            "bias_points": 0.167
+          }
+        }
+      }
+    ],
+    "readiness": {
+      "eligible_rows": 404,
+      "minimum_unique_observations": 150,
+      "minimum_prior_training_observations": 100,
+      "synthetic_fallback_allowed": false,
+      "promotion_evaluated": false
+    },
+    "training_input_rows": 285,
+    "training_input_end_exclusive": "2026-10-23T11:29:32+00:00",
+    "training_input_last_at": "2026-10-23T11:29:17+00:00",
+    "outer_holdout_start": "2026-10-23T12:29:32+00:00",
+    "outer_holdout_rows": 84,
+    "candidate_calibration": {
+      "interval": "P10-P90 empirical tree quantiles",
+      "interval_coverage_target": 0.8,
+      "interval_coverage_observed": 0.9833,
+      "mean_interval_width_points": 6.601,
+      "empirical_crps": 1.865,
+      "empirical_crps_method": "mean|tree_prediction-y| - 0.5*mean|tree_prediction_i-tree_prediction_j|",
+      "holdout_order": "chronological_observed_at",
+      "holdout_samples": 60,
+      "mean_prediction": 12.121
+    },
+    "candidate_fit_rows": 228
+  }
+}

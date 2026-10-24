@@ -1,0 +1,55 @@
+{
+  "checked_at": "2026-10-23T13:36:36.106303+00:00",
+  "read_only": true,
+  "databases": [
+    {
+      "database": "congestion_history.db",
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_violations": 0
+    },
+    {
+      "database": "routes.db",
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_violations": 0
+    },
+    {
+      "database": "local_learning.db",
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_violations": 0
+    },
+    {
+      "database": "local_history.db",
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_violations": 0
+    },
+    {
+      "database": "route_learning.db",
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_violations": 0
+    },
+    {
+      "database": "authority_reports.db",
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_violations": 0
+    },
+    {
+      "database": "local_routes.db",
+      "quick_check": [
+        "ok"
+      ],
+      "foreign_key_violations": 0
+    }
+  ]
+}

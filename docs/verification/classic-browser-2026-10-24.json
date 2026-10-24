@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-24",
+  "environment": "Local frontend on port 3000 and FastAPI on port 8000",
+  "browser": "Codex in-app browser only",
+  "method": "Native UI interactions, accessibility observations, read-only DOM geometry and local API request logs",
+  "operator": { "role": "admin", "origin": "http://localhost:3000", "desktop_viewport": { "width": 1280, "height": 720 } },
+  "driver": { "role": "driver", "origin": "http://127.0.0.1:3000", "viewport": { "width": 1992, "height": 1716 } },
+  "checks": [
+    { "name": "All six analytics tabs load", "passed": true, "observed": ["Overview", "Ports", "Trends", "Alerts", "History", "Model"] },
+    { "name": "Four History subtabs show separate datasets", "passed": true, "observed": ["Observed traffic", "Batam speed survey", "Intersection study", "Singapore benchmark"] },
+    { "name": "Survey date survives subtab changes", "passed": true, "selected_date": "2023-02-17", "visible_dataset_count": 1, "mean_speed_kmh": 23.51 },
+    { "name": "Hotspot cards retain backend ranking and map selection", "passed": true, "card_count": 30, "attribution_links": 60, "selected_place": "Simpang Panbil / Muka Kuning", "selected_watch_score": 45.5 },
+    { "name": "Route header stays fixed while content scrolls", "passed": true, "header_top_before_px": 284, "header_top_after_px": 284, "body_scroll_top_after_px": 339.5, "outer_overflow": "hidden", "active_body_overflow": "auto" },
+    { "name": "Route choice cards and metric rows align", "passed": true, "heights_px": [112, 112, 112], "widths_px": [244.1328125, 244.1328125, 244.140625], "metric_row_top_px": [515.390625, 515.390625, 515.390625] },
+    { "name": "Selected alternative updates concise overview", "passed": true, "route_code": "QG7TDQJ", "alternative": "Alternative 2", "summary": "11.46 km from Harbour Bay Ferry Terminal to Batam Centre Ferry Terminal, mainly via Jalan Yos Sudarso and Ocarina.", "summary_characters": 114, "full_directions_retained": true, "dispatch_code_recommended_scope_retained": true },
+    { "name": "Ferry diagnostic sections removed", "passed": true, "source_dropdown_count": 0, "persistent_refresh_report_count": 0, "general_terminal_note_count": 0 },
+    { "name": "Official schedule refresh completes", "passed": true, "endpoint": "POST /api/ferry-refresh", "http_status": 200, "busy_after_completion": false },
+    { "name": "Port filtering and ferry subtabs work", "passed": true, "filter": "Sekupang", "visible_terminal_names": ["Sekupang"], "departure": "Sindo Ferry, Sekupang to HarbourFront SG, 06:00 WIB", "cargo_state": "Unavailable because no shipment or customs feed is connected" },
+    { "name": "Trends uses computed backend forecasts", "passed": true, "hourly_points": 24, "clear_to_rain_changed_curve": true, "endpoint": "POST /api/analytics/simulation", "http_status": 200 },
+    { "name": "Alerts and Model retain actual data semantics", "passed": true, "observed_unacknowledged_alerts": 0, "model_label": "BACKEND RF · SYNTHETIC", "training_rows": 4000, "observed_training_rows": 0, "model_status_http_status": 200 },
+    { "name": "Driver retrieves saved multimodal route", "passed": true, "route_code": "3B55FVN", "http_status": 200, "modes": ["ROAD", "FERRY", "ROAD"], "distance_km": 39.88, "movement_minutes": 67.9, "total_eta_minutes": 111, "summary": "39.88 km from Batamindo Industrial Park to HarbourFront Ferry Terminal Singapore, with a ferry crossing from Batam Centre to HarbourFront SG.", "directions_and_connections_checked": true },
+    { "name": "Driver role remains restricted", "passed": true, "analytics_navigation_count": 0 },
+    { "name": "No errors in checked browser consoles", "passed": true, "operator_error_count": 0, "driver_error_count": 0 }
+  ],
+  "automated_verification": { "frontend_tests_passed": 430, "frontend_test_files": 42, "eslint": "passed", "typescript": "passed", "production_build": "passed", "final_css_adjustment_build": "passed" },
+  "limits": [
+    "Existing Supabase operator and driver sessions were used; no credentials were changed or new OTP sent in this UI pass.",
+    "This pass did not retrain or promote the serving model. The sparse real Batam site and Singapore research benchmarks remain separate.",
+    "Backend and database runtime code was unchanged; their earlier test totals are not counted as rerun here.",
+    "No push or deployment was performed."
+  ]
+}

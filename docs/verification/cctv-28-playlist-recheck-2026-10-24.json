@@ -1,0 +1,823 @@
+{
+  "checked_at": "2026-10-24T05:56:16.248707+00:00",
+  "counts": {
+    "advancing_open_playlist": 5,
+    "ended_playlist": 22,
+    "not_advancing_during_check": 1
+  },
+  "rows": [
+    {
+      "camera_id": "1",
+      "name": "Atap Kantor Walikota",
+      "state": "advancing_open_playlist",
+      "first": {
+        "camera_id": "1",
+        "name": "Atap Kantor Walikota",
+        "checked_at": "2026-10-24T05:56:01.805227+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:24 GMT",
+        "media_sequence": 96521,
+        "source_clock": false,
+        "playlist_bytes": 254,
+        "elapsed_seconds": 0.598
+      },
+      "second": {
+        "camera_id": "1",
+        "name": "Atap Kantor Walikota",
+        "checked_at": "2026-10-24T05:56:11.752468+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:34 GMT",
+        "media_sequence": 96522,
+        "source_clock": false,
+        "playlist_bytes": 254,
+        "elapsed_seconds": 0.717
+      }
+    },
+    {
+      "camera_id": "13",
+      "name": "Gerbang Selatan Engku Putri",
+      "state": "advancing_open_playlist",
+      "first": {
+        "camera_id": "13",
+        "name": "Gerbang Selatan Engku Putri",
+        "checked_at": "2026-10-24T05:56:01.805556+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:18 GMT",
+        "media_sequence": 96075,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.598
+      },
+      "second": {
+        "camera_id": "13",
+        "name": "Gerbang Selatan Engku Putri",
+        "checked_at": "2026-10-24T05:56:11.753067+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:28 GMT",
+        "media_sequence": 96076,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.613
+      }
+    },
+    {
+      "camera_id": "51",
+      "name": "Depan Kantor DPRD",
+      "state": "advancing_open_playlist",
+      "first": {
+        "camera_id": "51",
+        "name": "Depan Kantor DPRD",
+        "checked_at": "2026-10-24T05:56:01.805649+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:26 GMT",
+        "media_sequence": 96524,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.6
+      },
+      "second": {
+        "camera_id": "51",
+        "name": "Depan Kantor DPRD",
+        "checked_at": "2026-10-24T05:56:11.753173+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:36 GMT",
+        "media_sequence": 96525,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.613
+      }
+    },
+    {
+      "camera_id": "15",
+      "name": "Simpang BI",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "15",
+        "name": "Simpang BI",
+        "checked_at": "2026-10-24T05:56:01.805715+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 24 Oct 2026 05:47:35 GMT",
+        "media_sequence": 96453,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.598
+      },
+      "second": {
+        "camera_id": "15",
+        "name": "Simpang BI",
+        "checked_at": "2026-10-24T05:56:11.753259+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 24 Oct 2026 05:47:35 GMT",
+        "media_sequence": 96453,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.613
+      }
+    },
+    {
+      "camera_id": "14",
+      "name": "Gerbang Utara Engku Putri",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "14",
+        "name": "Gerbang Utara Engku Putri",
+        "checked_at": "2026-10-24T05:56:02.403688+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Thu, 15 Oct 2026 04:48:21 GMT",
+        "media_sequence": 18337,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.627
+      },
+      "second": {
+        "camera_id": "14",
+        "name": "Gerbang Utara Engku Putri",
+        "checked_at": "2026-10-24T05:56:12.366335+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Thu, 15 Oct 2026 04:48:21 GMT",
+        "media_sequence": 18337,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.625
+      }
+    },
+    {
+      "camera_id": "31",
+      "name": "Depan Perumahan Sukajadi",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "31",
+        "name": "Depan Perumahan Sukajadi",
+        "checked_at": "2026-10-24T05:56:02.403876+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Wed, 21 Oct 2026 07:59:48 GMT",
+        "media_sequence": 71325,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.627
+      },
+      "second": {
+        "camera_id": "31",
+        "name": "Depan Perumahan Sukajadi",
+        "checked_at": "2026-10-24T05:56:12.366438+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Wed, 21 Oct 2026 07:59:48 GMT",
+        "media_sequence": 71325,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.625
+      }
+    },
+    {
+      "camera_id": "18",
+      "name": "Bundaran Madani Arah Sei Panas",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "18",
+        "name": "Bundaran Madani Arah Sei Panas",
+        "checked_at": "2026-10-24T05:56:02.404032+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:33:11 GMT",
+        "media_sequence": 244,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.627
+      },
+      "second": {
+        "camera_id": "18",
+        "name": "Bundaran Madani Arah Sei Panas",
+        "checked_at": "2026-10-24T05:56:12.366598+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:33:11 GMT",
+        "media_sequence": 244,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.625
+      }
+    },
+    {
+      "camera_id": "19",
+      "name": "Bundaran Madani Pancuran",
+      "state": "advancing_open_playlist",
+      "first": {
+        "camera_id": "19",
+        "name": "Bundaran Madani Pancuran",
+        "checked_at": "2026-10-24T05:56:02.405216+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:25 GMT",
+        "media_sequence": 91646,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.626
+      },
+      "second": {
+        "camera_id": "19",
+        "name": "Bundaran Madani Pancuran",
+        "checked_at": "2026-10-24T05:56:12.469709+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:35 GMT",
+        "media_sequence": 91647,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.594
+      }
+    },
+    {
+      "camera_id": "5",
+      "name": "Depan SP Plaza Batu Aji",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "5",
+        "name": "Depan SP Plaza Batu Aji",
+        "checked_at": "2026-10-24T05:56:03.031014+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 24 Oct 2026 04:24:00 GMT",
+        "media_sequence": 1,
+        "source_clock": false,
+        "playlist_bytes": 117,
+        "elapsed_seconds": 0.723
+      },
+      "second": {
+        "camera_id": "5",
+        "name": "Depan SP Plaza Batu Aji",
+        "checked_at": "2026-10-24T05:56:12.991808+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 24 Oct 2026 04:24:00 GMT",
+        "media_sequence": 1,
+        "source_clock": false,
+        "playlist_bytes": 117,
+        "elapsed_seconds": 0.645
+      }
+    },
+    {
+      "camera_id": "20",
+      "name": "Mata Kucing",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "20",
+        "name": "Mata Kucing",
+        "checked_at": "2026-10-24T05:56:03.031120+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:33:05 GMT",
+        "media_sequence": 243,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.731
+      },
+      "second": {
+        "camera_id": "20",
+        "name": "Mata Kucing",
+        "checked_at": "2026-10-24T05:56:12.991899+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:33:05 GMT",
+        "media_sequence": 243,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.612
+      }
+    },
+    {
+      "camera_id": "23",
+      "name": "Depan Pasar Jodoh",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "23",
+        "name": "Depan Pasar Jodoh",
+        "checked_at": "2026-10-24T05:56:03.031202+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Wed, 21 Oct 2026 01:26:45 GMT",
+        "media_sequence": 68967,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.616
+      },
+      "second": {
+        "camera_id": "23",
+        "name": "Depan Pasar Jodoh",
+        "checked_at": "2026-10-24T05:56:12.992050+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Wed, 21 Oct 2026 01:26:45 GMT",
+        "media_sequence": 68967,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.612
+      }
+    },
+    {
+      "camera_id": "36",
+      "name": "Simpang Sei Ladi",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "36",
+        "name": "Simpang Sei Ladi",
+        "checked_at": "2026-10-24T05:56:03.031359+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 38014,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.614
+      },
+      "second": {
+        "camera_id": "36",
+        "name": "Simpang Sei Ladi",
+        "checked_at": "2026-10-24T05:56:13.063311+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 38014,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.654
+      }
+    },
+    {
+      "camera_id": "35",
+      "name": "Pertigaan Sambau 1",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "35",
+        "name": "Pertigaan Sambau 1",
+        "checked_at": "2026-10-24T05:56:03.645412+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Fri, 09 Oct 2026 02:20:31 GMT",
+        "media_sequence": 350,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.674
+      },
+      "second": {
+        "camera_id": "35",
+        "name": "Pertigaan Sambau 1",
+        "checked_at": "2026-10-24T05:56:13.603545+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Fri, 09 Oct 2026 02:20:31 GMT",
+        "media_sequence": 350,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.641
+      }
+    },
+    {
+      "camera_id": "6",
+      "name": "Pertigaan Sambau 2",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "6",
+        "name": "Pertigaan Sambau 2",
+        "checked_at": "2026-10-24T05:56:03.647428+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Fri, 09 Oct 2026 02:20:31 GMT",
+        "media_sequence": 349,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.631
+      },
+      "second": {
+        "camera_id": "6",
+        "name": "Pertigaan Sambau 2",
+        "checked_at": "2026-10-24T05:56:13.603633+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Fri, 09 Oct 2026 02:20:31 GMT",
+        "media_sequence": 349,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.639
+      }
+    },
+    {
+      "camera_id": "10",
+      "name": "Depan Delta Villa Arah Mata Kucing",
+      "state": "not_advancing_during_check",
+      "first": {
+        "camera_id": "10",
+        "name": "Depan Delta Villa Arah Mata Kucing",
+        "checked_at": "2026-10-24T05:56:03.753973+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Fri, 05 Jun 2026 01:12:05 GMT",
+        "media_sequence": 13692,
+        "source_clock": false,
+        "playlist_bytes": 137,
+        "elapsed_seconds": 0.605
+      },
+      "second": {
+        "camera_id": "10",
+        "name": "Depan Delta Villa Arah Mata Kucing",
+        "checked_at": "2026-10-24T05:56:13.637138+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Fri, 05 Jun 2026 01:12:05 GMT",
+        "media_sequence": 13692,
+        "source_clock": false,
+        "playlist_bytes": 137,
+        "elapsed_seconds": 0.605
+      }
+    },
+    {
+      "camera_id": "27",
+      "name": "Simpang Casablanca",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "27",
+        "name": "Simpang Casablanca",
+        "checked_at": "2026-10-24T05:56:03.762151+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:33:05 GMT",
+        "media_sequence": 244,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.592
+      },
+      "second": {
+        "camera_id": "27",
+        "name": "Simpang Casablanca",
+        "checked_at": "2026-10-24T05:56:13.717681+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:33:05 GMT",
+        "media_sequence": 244,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.589
+      }
+    },
+    {
+      "camera_id": "2",
+      "name": "Nagoya Plaza",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "2",
+        "name": "Nagoya Plaza",
+        "checked_at": "2026-10-24T05:56:04.278332+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 13:06:48 GMT",
+        "media_sequence": 4042,
+        "source_clock": false,
+        "playlist_bytes": 271,
+        "elapsed_seconds": 0.583
+      },
+      "second": {
+        "camera_id": "2",
+        "name": "Nagoya Plaza",
+        "checked_at": "2026-10-24T05:56:14.242196+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 13:06:48 GMT",
+        "media_sequence": 4042,
+        "source_clock": false,
+        "playlist_bytes": 271,
+        "elapsed_seconds": 0.606
+      }
+    },
+    {
+      "camera_id": "25",
+      "name": "Depan Pura Sei Ladi",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "25",
+        "name": "Depan Pura Sei Ladi",
+        "checked_at": "2026-10-24T05:56:04.319484+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 38014,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.582
+      },
+      "second": {
+        "camera_id": "25",
+        "name": "Depan Pura Sei Ladi",
+        "checked_at": "2026-10-24T05:56:14.242391+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 38014,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.615
+      }
+    },
+    {
+      "camera_id": "28",
+      "name": "Simpang Kuda",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "28",
+        "name": "Simpang Kuda",
+        "checked_at": "2026-10-24T05:56:04.353816+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Wed, 21 Oct 2026 01:49:18 GMT",
+        "media_sequence": 69102,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.654
+      },
+      "second": {
+        "camera_id": "28",
+        "name": "Simpang Kuda",
+        "checked_at": "2026-10-24T05:56:14.245011+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Wed, 21 Oct 2026 01:49:18 GMT",
+        "media_sequence": 69102,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.612
+      }
+    },
+    {
+      "camera_id": "32",
+      "name": "Tanjakan Southlink",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "32",
+        "name": "Tanjakan Southlink",
+        "checked_at": "2026-10-24T05:56:04.358875+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 35191,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.649
+      },
+      "second": {
+        "camera_id": "32",
+        "name": "Tanjakan Southlink",
+        "checked_at": "2026-10-24T05:56:14.306947+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 35191,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.7
+      }
+    },
+    {
+      "camera_id": "43",
+      "name": "Tanjakan Southlink PTZ",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "43",
+        "name": "Tanjakan Southlink PTZ",
+        "checked_at": "2026-10-24T05:56:04.861411+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 38014,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.592
+      },
+      "second": {
+        "camera_id": "43",
+        "name": "Tanjakan Southlink PTZ",
+        "checked_at": "2026-10-24T05:56:14.847822+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:02 GMT",
+        "media_sequence": 38014,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.648
+      }
+    },
+    {
+      "camera_id": "24",
+      "name": "Pelabuhan Punggur",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "24",
+        "name": "Pelabuhan Punggur",
+        "checked_at": "2026-10-24T05:56:04.901194+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Thu, 23 Jul 2026 14:26:09 GMT",
+        "media_sequence": 212,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.635
+      },
+      "second": {
+        "camera_id": "24",
+        "name": "Pelabuhan Punggur",
+        "checked_at": "2026-10-24T05:56:14.857520+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Thu, 23 Jul 2026 14:26:09 GMT",
+        "media_sequence": 212,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.666
+      }
+    },
+    {
+      "camera_id": "3",
+      "name": "Pelabuhan Sekupang",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "3",
+        "name": "Pelabuhan Sekupang",
+        "checked_at": "2026-10-24T05:56:05.007964+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:27:54 GMT",
+        "media_sequence": 34851,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.645
+      },
+      "second": {
+        "camera_id": "3",
+        "name": "Pelabuhan Sekupang",
+        "checked_at": "2026-10-24T05:56:14.857676+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:27:54 GMT",
+        "media_sequence": 34851,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.658
+      }
+    },
+    {
+      "camera_id": "40",
+      "name": "Taman Dang Anom",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "40",
+        "name": "Taman Dang Anom",
+        "checked_at": "2026-10-24T05:56:05.008057+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:32:55 GMT",
+        "media_sequence": 243,
+        "source_clock": false,
+        "playlist_bytes": 149,
+        "elapsed_seconds": 0.645
+      },
+      "second": {
+        "camera_id": "40",
+        "name": "Taman Dang Anom",
+        "checked_at": "2026-10-24T05:56:15.007089+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:32:55 GMT",
+        "media_sequence": 243,
+        "source_clock": false,
+        "playlist_bytes": 149,
+        "elapsed_seconds": 0.662
+      }
+    },
+    {
+      "camera_id": "42",
+      "name": "Taman Dang Anom Arah Jalan",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "42",
+        "name": "Taman Dang Anom Arah Jalan",
+        "checked_at": "2026-10-24T05:56:05.453914+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:32:55 GMT",
+        "media_sequence": 243,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.583
+      },
+      "second": {
+        "camera_id": "42",
+        "name": "Taman Dang Anom Arah Jalan",
+        "checked_at": "2026-10-24T05:56:15.495375+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 13 Oct 2026 02:32:55 GMT",
+        "media_sequence": 243,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.644
+      }
+    },
+    {
+      "camera_id": "37",
+      "name": "Engku Hamidah",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "37",
+        "name": "Engku Hamidah",
+        "checked_at": "2026-10-24T05:56:05.536157+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 22 Sep 2026 01:50:48 GMT",
+        "media_sequence": 6510,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.64
+      },
+      "second": {
+        "camera_id": "37",
+        "name": "Engku Hamidah",
+        "checked_at": "2026-10-24T05:56:15.515943+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Tue, 22 Sep 2026 01:50:48 GMT",
+        "media_sequence": 6510,
+        "source_clock": false,
+        "playlist_bytes": 150,
+        "elapsed_seconds": 0.623
+      }
+    },
+    {
+      "camera_id": "46",
+      "name": "Depan Stadion Temenggung",
+      "state": "ended_playlist",
+      "first": {
+        "camera_id": "46",
+        "name": "Depan Stadion Temenggung",
+        "checked_at": "2026-10-24T05:56:05.653299+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:15 GMT",
+        "media_sequence": 38016,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.593
+      },
+      "second": {
+        "camera_id": "46",
+        "name": "Depan Stadion Temenggung",
+        "checked_at": "2026-10-24T05:56:15.523166+00:00",
+        "http_status": 200,
+        "endlist": true,
+        "last_modified": "Sat, 17 Oct 2026 11:28:15 GMT",
+        "media_sequence": 38016,
+        "source_clock": false,
+        "playlist_bytes": 152,
+        "elapsed_seconds": 0.616
+      }
+    },
+    {
+      "camera_id": "48",
+      "name": "Depan Stadion Temenggung Arah Batu Aji",
+      "state": "advancing_open_playlist",
+      "first": {
+        "camera_id": "48",
+        "name": "Depan Stadion Temenggung Arah Batu Aji",
+        "checked_at": "2026-10-24T05:56:05.653399+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:30 GMT",
+        "media_sequence": 58391,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.593
+      },
+      "second": {
+        "camera_id": "48",
+        "name": "Depan Stadion Temenggung Arah Batu Aji",
+        "checked_at": "2026-10-24T05:56:15.669342+00:00",
+        "http_status": 200,
+        "endlist": false,
+        "last_modified": "Sat, 24 Oct 2026 05:59:40 GMT",
+        "media_sequence": 58392,
+        "source_clock": false,
+        "playlist_bytes": 138,
+        "elapsed_seconds": 0.579
+      }
+    }
+  ],
+  "scope": "Published HLS playlist text only; no segments, video, or images fetched. Sequence movement is separate from capture-clock freshness."
+}

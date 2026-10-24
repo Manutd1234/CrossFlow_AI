@@ -1,0 +1,70 @@
+{
+  "schema": "crossflow.batam_vehicle_selection.v1",
+  "generated_at": "2026-10-23T18:46:20.290550+00:00",
+  "split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+  "annotation_manifest_sha256": "5efd0896bd61aa57b9d4a68668f03b94895445b71586349777604e3745edde90",
+  "selected_model": "pretrained_COCO",
+  "architecture": "fasterrcnn_resnet50_fpn_v2",
+  "num_classes": 91,
+  "vehicle_classes": {
+    "2": "bicycle",
+    "3": "car",
+    "4": "motorcycle",
+    "6": "bus",
+    "8": "truck"
+  },
+  "score_threshold": 0.4,
+  "vehicle_nms_iou": 0.5,
+  "model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "validation": {
+    "partition": "validation",
+    "candidate": "pretrained_COCO",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 0.6666666666666666,
+        "macro_source_group_mae": 0.5,
+        "rmse_vehicles_per_frame": 1.1547005383792515,
+        "bias_vehicles_per_frame": -0.6666666666666666,
+        "exact_count_pct": 66.66666666666666,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 20
+      },
+      "detection_iou_50": {
+        "precision": 0.9,
+        "recall": 0.8181818181818182,
+        "f1": 0.8571428571428572,
+        "true_positive": 18,
+        "false_positive": 2,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 50.0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  "min_vehicle_long_side_px": 12,
+  "min_vehicle_short_side_px": 4,
+  "count_scope": "size_filtered_visible_vehicle_boxes_per_image",
+  "training_plan_sha256": "aa05eefc2c1e9ce5dbf51b9f093fa6b3b34103546ee82cda169ef314d439a464",
+  "selection_metric": "Lowest validation macro source-group count MAE; then highest IoU50 detection F1; then highest threshold; then lexical candidate name",
+  "test_labels_read_before_freeze": false,
+  "production_eligible": false,
+  "batam_validated": false,
+  "annotation_origin": "ai_visual_blind",
+  "human_certified": false,
+  "scope": "Small Batam visual-label pilot; native-pixel vehicle extent long side >=12px and short side >=4px, no certified human benchmark or production promotion",
+  "pretrained_weight_terms": "TorchVision warns of dataset-derived terms; original COCO image rights vary, production clearance not certified"
+}

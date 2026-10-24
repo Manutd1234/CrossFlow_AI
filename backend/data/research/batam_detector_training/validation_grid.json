@@ -1,0 +1,782 @@
+[
+  {
+    "partition": "validation",
+    "candidate": "pretrained_COCO",
+    "score_threshold": 0.2,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 2,
+        "rmse_vehicles_per_frame": 2.160246899469287,
+        "bias_vehicles_per_frame": 1.3333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 26
+      },
+      "detection_iou_50": {
+        "precision": 0.7307692307692307,
+        "recall": 0.8636363636363636,
+        "f1": 0.7916666666666666,
+        "true_positive": 19,
+        "false_positive": 7,
+        "false_negative": 3
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_COCO",
+    "score_threshold": 0.3,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 1,
+        "macro_source_group_mae": 0.75,
+        "rmse_vehicles_per_frame": 1.2909944487358056,
+        "bias_vehicles_per_frame": 0.3333333333333333,
+        "exact_count_pct": 33.33333333333333,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 23
+      },
+      "detection_iou_50": {
+        "precision": 0.782608695652174,
+        "recall": 0.8181818181818182,
+        "f1": 0.8,
+        "true_positive": 18,
+        "false_positive": 5,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 1.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_COCO",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 0.6666666666666666,
+        "macro_source_group_mae": 0.5,
+        "rmse_vehicles_per_frame": 1.1547005383792515,
+        "bias_vehicles_per_frame": -0.6666666666666666,
+        "exact_count_pct": 66.66666666666666,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 20
+      },
+      "detection_iou_50": {
+        "precision": 0.9,
+        "recall": 0.8181818181818182,
+        "f1": 0.8571428571428572,
+        "true_positive": 18,
+        "false_positive": 2,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 50.0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_COCO",
+    "score_threshold": 0.5,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 1.6666666666666667,
+        "macro_source_group_mae": 1.25,
+        "rmse_vehicles_per_frame": 2.3804761428476167,
+        "bias_vehicles_per_frame": -1.6666666666666667,
+        "exact_count_pct": 33.33333333333333,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 17
+      },
+      "detection_iou_50": {
+        "precision": 0.8823529411764706,
+        "recall": 0.6818181818181818,
+        "f1": 0.7692307692307693,
+        "true_positive": 15,
+        "false_positive": 2,
+        "false_negative": 7
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_COCO",
+    "score_threshold": 0.6,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2.3333333333333335,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 3.1091263510296048,
+        "bias_vehicles_per_frame": -2.3333333333333335,
+        "exact_count_pct": 33.33333333333333,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 15
+      },
+      "detection_iou_50": {
+        "precision": 0.9333333333333333,
+        "recall": 0.6363636363636364,
+        "f1": 0.7567567567567568,
+        "true_positive": 14,
+        "false_positive": 1,
+        "false_negative": 8
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 3.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_2",
+    "score_threshold": 0.2,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 1.6666666666666667,
+        "macro_source_group_mae": 1.5,
+        "rmse_vehicles_per_frame": 1.9148542155126762,
+        "bias_vehicles_per_frame": -1,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 19
+      },
+      "detection_iou_50": {
+        "precision": 0.8421052631578947,
+        "recall": 0.7272727272727273,
+        "f1": 0.7804878048780488,
+        "true_positive": 16,
+        "false_positive": 3,
+        "false_negative": 6
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_2",
+    "score_threshold": 0.3,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2.6666666666666665,
+        "macro_source_group_mae": 2.25,
+        "rmse_vehicles_per_frame": 3.559026084010437,
+        "bias_vehicles_per_frame": -2.6666666666666665,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 14
+      },
+      "detection_iou_50": {
+        "precision": 0.9285714285714286,
+        "recall": 0.5909090909090909,
+        "f1": 0.7222222222222223,
+        "true_positive": 13,
+        "false_positive": 1,
+        "false_negative": 9
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 3.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_2",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3.3333333333333335,
+        "macro_source_group_mae": 3,
+        "rmse_vehicles_per_frame": 4.242640687119285,
+        "bias_vehicles_per_frame": -3.3333333333333335,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 12
+      },
+      "detection_iou_50": {
+        "precision": 0.9166666666666666,
+        "recall": 0.5,
+        "f1": 0.6470588235294118,
+        "true_positive": 11,
+        "false_positive": 1,
+        "false_negative": 11
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_2",
+    "score_threshold": 0.5,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3.6666666666666665,
+        "macro_source_group_mae": 3.25,
+        "rmse_vehicles_per_frame": 4.358898943540674,
+        "bias_vehicles_per_frame": -3.6666666666666665,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 0,
+        "actual_total": 22,
+        "predicted_total": 11
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "true_positive": 11,
+        "false_positive": 0,
+        "false_negative": 11
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_2",
+    "score_threshold": 0.6,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 4,
+        "macro_source_group_mae": 3.5,
+        "rmse_vehicles_per_frame": 4.546060565661952,
+        "bias_vehicles_per_frame": -4,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 0,
+        "actual_total": 22,
+        "predicted_total": 10
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.45454545454545453,
+        "f1": 0.625,
+        "true_positive": 10,
+        "false_positive": 0,
+        "false_negative": 12
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_5",
+    "score_threshold": 0.2,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3.3333333333333335,
+        "macro_source_group_mae": 2.75,
+        "rmse_vehicles_per_frame": 4.69041575982343,
+        "bias_vehicles_per_frame": 3.3333333333333335,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 32
+      },
+      "detection_iou_50": {
+        "precision": 0.5625,
+        "recall": 0.8181818181818182,
+        "f1": 0.6666666666666666,
+        "true_positive": 18,
+        "false_positive": 14,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_5",
+    "score_threshold": 0.3,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2.6666666666666665,
+        "macro_source_group_mae": 2.25,
+        "rmse_vehicles_per_frame": 3.559026084010437,
+        "bias_vehicles_per_frame": 2,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 28
+      },
+      "detection_iou_50": {
+        "precision": 0.6428571428571429,
+        "recall": 0.8181818181818182,
+        "f1": 0.7200000000000001,
+        "true_positive": 18,
+        "false_positive": 10,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 3.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_5",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 2.449489742783178,
+        "bias_vehicles_per_frame": 1.3333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 26
+      },
+      "detection_iou_50": {
+        "precision": 0.6923076923076923,
+        "recall": 0.8181818181818182,
+        "f1": 0.7500000000000001,
+        "true_positive": 18,
+        "false_positive": 8,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_5",
+    "score_threshold": 0.5,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 2.160246899469287,
+        "bias_vehicles_per_frame": -0.6666666666666666,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 20
+      },
+      "detection_iou_50": {
+        "precision": 0.8,
+        "recall": 0.7272727272727273,
+        "f1": 0.761904761904762,
+        "true_positive": 16,
+        "false_positive": 4,
+        "false_negative": 6
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_5",
+    "score_threshold": 0.6,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 2.449489742783178,
+        "bias_vehicles_per_frame": -2,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 16
+      },
+      "detection_iou_50": {
+        "precision": 0.8125,
+        "recall": 0.5909090909090909,
+        "f1": 0.6842105263157896,
+        "true_positive": 13,
+        "false_positive": 3,
+        "false_negative": 9
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_10",
+    "score_threshold": 0.2,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 6.333333333333333,
+        "macro_source_group_mae": 5,
+        "rmse_vehicles_per_frame": 7.416198487095663,
+        "bias_vehicles_per_frame": 6.333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 41
+      },
+      "detection_iou_50": {
+        "precision": 0.43902439024390244,
+        "recall": 0.8181818181818182,
+        "f1": 0.5714285714285715,
+        "true_positive": 18,
+        "false_positive": 23,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 9,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_10",
+    "score_threshold": 0.3,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 5,
+        "macro_source_group_mae": 4,
+        "rmse_vehicles_per_frame": 5.802298395176403,
+        "bias_vehicles_per_frame": 5,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 37
+      },
+      "detection_iou_50": {
+        "precision": 0.4864864864864865,
+        "recall": 0.8181818181818182,
+        "f1": 0.6101694915254238,
+        "true_positive": 18,
+        "false_positive": 19,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 7,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_10",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3.3333333333333335,
+        "macro_source_group_mae": 2.75,
+        "rmse_vehicles_per_frame": 4.69041575982343,
+        "bias_vehicles_per_frame": 3.3333333333333335,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 32
+      },
+      "detection_iou_50": {
+        "precision": 0.5625,
+        "recall": 0.8181818181818182,
+        "f1": 0.6666666666666666,
+        "true_positive": 18,
+        "false_positive": 14,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_10",
+    "score_threshold": 0.5,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3,
+        "macro_source_group_mae": 2.5,
+        "rmse_vehicles_per_frame": 4.123105625617661,
+        "bias_vehicles_per_frame": 2.3333333333333335,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 29
+      },
+      "detection_iou_50": {
+        "precision": 0.6206896551724138,
+        "recall": 0.8181818181818182,
+        "f1": 0.7058823529411765,
+        "true_positive": 18,
+        "false_positive": 11,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "batam_head_epoch_10",
+    "score_threshold": 0.6,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 2.449489742783178,
+        "bias_vehicles_per_frame": 1.3333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 26
+      },
+      "detection_iou_50": {
+        "precision": 0.6923076923076923,
+        "recall": 0.8181818181818182,
+        "f1": 0.7500000000000001,
+        "true_positive": 18,
+        "false_positive": 8,
+        "false_negative": 4
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  }
+]

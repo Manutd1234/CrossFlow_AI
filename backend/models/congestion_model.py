@@ -2,6 +2,7 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import math
+import os
 import threading
 from itertools import islice
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
@@ -9,8 +10,10 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from services.congestion_math import speed_ratio_congestion_score
 
 from services.traffic_observations import (
+    ObservationConflictError,
     SpatialTrafficObservation,
     ferry_surge_factor,
     validate_spatial_observation,
@@ -35,6 +38,7 @@ FERRY_SURGE_AMPLITUDE_POINTS = 15.0
 FERRY_SURGE_DECAY_MINUTES = 45.0
 FERRY_SURGE_FEATURE_INDEX = 5
 MAX_SPATIAL_RETRAIN_SAMPLES = 100_000
+MAX_SPATIAL_PREDICTION_BATCH = 8_192
 
 _ROAD_CLASSES = (
     "motorway", "trunk", "primary", "secondary", "tertiary",
@@ -199,6 +203,13 @@ class SpatialCongestionPrediction:
         if not math.isfinite(free_flow_travel_seconds) \
                 or free_flow_travel_seconds < 0.0:
             raise ValueError("free_flow_travel_seconds must be finite and nonnegative.")
+        if self.model_id == 'crossflow_observed_short_horizon_v1' and 'missing_calibration_uses_full_support_bounds_and_std_upper_bound' in self.defaults_applied:
+            # Missing interval evidence is not a calibrated P90. Route costs
+            # use the observed mean reference and disclose absent uncertainty,
+            # rather than charging a fabricated quantile penalty.
+            return {'expected_speed_ratio': self.expected_speed_ratio, 'speed_ratio_std': 0.,
+                    'p90_speed_ratio': None, 'p90_delay_s': 0.,
+                    'source': f'{self.model_id}:{self.spatial_source}:forecast_interval_unavailable'}
         # A congestion P90 is a downside (slower) route bound. Keep this public
         # adapter defensive even for a directly constructed prediction whose
         # quantile is inconsistent with its mean.
@@ -277,11 +288,12 @@ class CongestionForecaster:
     dependency. It is not a GNN and does not claim topology-level learning.
     """
 
-    def __init__(self):
+    def __init__(self, *, train_baseline: bool = True):
         self._model_lock = threading.RLock()
         self._retrain_lock = threading.Lock()
         self.model = RandomForestRegressor(n_estimators=100, random_state=42)
         self.is_trained = False
+        self._interval_padding_points = 0.0
         self.metrics: Dict[str, Any] = {
             "is_trained": False,
             "total_samples": 0,
@@ -297,7 +309,22 @@ class CongestionForecaster:
             "calibration": {},
             "feature_importances": {},
         }
-        self._train_baseline_model()
+        if train_baseline:
+            self._train_baseline_model()
+
+    def runtime_info(self) -> Dict[str, Any]:
+        """Read actual fitted estimator metadata without modifying training state."""
+        if os.environ.get('CROSSFLOW_REAL_TRAFFIC_TRAINING') == '1':
+            from services.observed_runtime_adapter import runtime_info
+            return runtime_info()
+        with self._model_lock:
+            return {
+                "algorithm": type(self.model).__name__,
+                "estimator_count": len(getattr(self.model, "estimators_", [])),
+                "feature_count": int(getattr(self.model, "n_features_in_", 0)),
+                "is_trained": bool(self.is_trained),
+                "last_trained_at": self.metrics.get("last_trained_at"),
+            }
 
     @staticmethod
     def _context_features(context: SpatialPredictionContext) -> np.ndarray:
@@ -352,7 +379,7 @@ class CongestionForecaster:
                 float(importances[2] + importances[3]), 3,
             ),
             "Weather Condition": round(float(importances[4]), 3),
-            "Ferry Surge Proximity (Post-model Exponential)": round(
+            "Ferry Surge Feature (Training Forest)": round(
                 float(importances[FERRY_SURGE_FEATURE_INDEX]), 3,
             ),
             "Corridor Identity (One-hot)": round(
@@ -509,6 +536,8 @@ class CongestionForecaster:
             "last_trained_at": datetime.now(timezone.utc).isoformat(),
             "training_data_source": "synthetic_profile_generator",
             "validation_scope": "synthetic_holdout",
+            "evaluation_scope": "raw_forest_holdout_excludes_post_model_adjustment",
+            "feature_importance_scope": "raw_forest_impurity_importance",
             "training_source_counts": {"synthetic_profile_generator": n},
             "training_source_weight_totals": {
                 "synthetic_profile_generator": round(n * 0.15, 2),
@@ -551,8 +580,16 @@ class CongestionForecaster:
     def retrain_from_observations(
         self,
         records: Iterable[SpatialTrafficObservation],
+        *,
+        include_modelled: bool = False,
+        holdout_start: Optional[datetime] = None,
     ) -> Dict[str, Any]:
-        """Fit a bounded, canonical snapshot supplied by a persistence port."""
+        """Fit canonical observations; non-observed engineering inputs require opt-in.
+
+        This lower-level fit does not establish promotion eligibility. Production
+        callers use services.observed_training for independent baseline checks
+        and evidence gates before replacing a running model.
+        """
         materialized = tuple(islice(
             iter(records), MAX_SPATIAL_RETRAIN_SAMPLES + 1,
         ))
@@ -564,7 +601,10 @@ class CongestionForecaster:
             validate_spatial_observation(record) for record in materialized
         )
         with self._retrain_lock:
-            return self._retrain_from_observations_locked(canonical)
+            return self._retrain_from_observations_locked(
+                canonical, include_modelled=include_modelled,
+                holdout_start=holdout_start,
+            )
 
     def _retrain_from_history_locked(self) -> Dict[str, Any]:
         try:
@@ -579,8 +619,17 @@ class CongestionForecaster:
     def _retrain_from_observations_locked(
         self,
         records: Iterable[SpatialTrafficObservation],
+        *,
+        include_modelled: bool = False,
+        holdout_start: Optional[datetime] = None,
     ) -> Dict[str, Any]:
-        records = tuple(records)
+        unique: Dict[str, SpatialTrafficObservation] = {}
+        for item in records:
+            previous = unique.get(item.observation_key)
+            if previous is not None and previous.immutable_payload() != item.immutable_payload():
+                raise ObservationConflictError("Training snapshot contains conflicting observation identities.")
+            unique[item.observation_key] = item
+        records = tuple(unique.values())
 
         if len(records) < 100:
             return {
@@ -596,13 +645,13 @@ class CongestionForecaster:
         }
         accepted = [
             item for item in sorted(records, key=lambda item: item.observed_at)
-            if item.corridor_id in corridor_indexes
+            if item.corridor_id in corridor_indexes and (include_modelled or item.observed)
         ]
         if len(accepted) < 100:
             return {
                 **self.metrics,
                 "last_retrain_skipped_reason": (
-                    "fewer_than_100_supported_corridor_observations"
+                    "fewer_than_100_supported_observed_corridor_observations"
                 ),
                 "candidate_samples": len(records),
                 "supported_samples": len(accepted),
@@ -617,7 +666,7 @@ class CongestionForecaster:
         ]
         X_list = [self._context_features(context) for context in contexts]
         y_list = [
-            100.0 * (1.0 - min(1.0, max(0.05, item.speed_ratio)))
+            speed_ratio_congestion_score(item.speed_ratio)
             for item in accepted
         ]
         sample_weights = np.array([item.confidence for item in accepted])
@@ -626,7 +675,19 @@ class CongestionForecaster:
         y = np.array(y_list)
 
         n = len(X)
-        split = int(0.8 * n)
+        if holdout_start is not None:
+            if holdout_start.tzinfo is None or holdout_start.utcoffset() is None:
+                raise ValueError("holdout_start must include a timezone offset.")
+            split_at = holdout_start
+        else:
+            split_at = accepted[int(0.8 * n)].observed_at
+        split = sum(item.observed_at < split_at for item in accepted)
+        if split < 2 or n - split < 2:
+            return {
+                **self.metrics,
+                "last_retrain_skipped_reason": "insufficient_distinct_chronological_partitions",
+                "candidate_samples": n,
+            }
         X_train, X_test = X[:split], X[split:]
         y_train, y_test = y[:split], y[split:]
         weights_train = sample_weights[:split]
@@ -683,11 +744,16 @@ class CongestionForecaster:
             "last_trained_at": datetime.now(timezone.utc).isoformat(),
             "training_data_source": training_data_source,
             "validation_scope": validation_scope,
+            "evaluation_scope": "raw_forest_holdout_excludes_post_model_adjustment",
+            "feature_importance_scope": "raw_forest_impurity_importance",
             "training_source_counts": source_counts,
             "training_source_weight_totals": source_weight_totals,
             "fit_source_counts": fit_source_counts,
             "fit_source_weight_totals": fit_source_weight_totals,
             "holdout_source_counts": holdout_source_counts,
+            "fit_last_observed_at": fit_records[-1].observed_at.isoformat(),
+            "holdout_first_observed_at": holdout_records[0].observed_at.isoformat(),
+            "strict_timestamp_groups": True,
             "observed_training_rows": observed_rows,
             "observed_fit_rows": observed_fit_rows,
             "spatial_defaults_applied_counts": dict(Counter(
@@ -720,6 +786,7 @@ class CongestionForecaster:
             self.model = candidate_model
             self.metrics = updated_metrics
             self.is_trained = True
+            self._interval_padding_points = 0.0
         return updated_metrics
 
     def predict_spatial(
@@ -727,41 +794,80 @@ class CongestionForecaster:
         context: SpatialPredictionContext,
     ) -> SpatialCongestionPrediction:
         """Return tree-dispersion quantiles and a risk-adjusted route score."""
-        features = self._context_features(context)
+        return self.predict_spatial_batch((context,))[0]
+
+    def predict_spatial_batch(
+        self,
+        contexts: Iterable[SpatialPredictionContext],
+    ) -> List[SpatialCongestionPrediction]:
+        """Bounded vectorized inference using one consistent forest snapshot.
+
+        Batch jobs and request handlers share exactly the same calculations.
+        Only one tree traversal per estimator is needed for a whole chunk;
+        callers can stream arbitrary workloads without unbounded tree matrices.
+        """
+        batch = tuple(islice(iter(contexts), MAX_SPATIAL_PREDICTION_BATCH + 1))
+        if len(batch) > MAX_SPATIAL_PREDICTION_BATCH:
+            raise ValueError(
+                f"Spatial prediction batches are limited to {MAX_SPATIAL_PREDICTION_BATCH} rows."
+            )
+        if not batch:
+            return []
+        if any(not isinstance(item, SpatialPredictionContext) for item in batch):
+            raise TypeError("Every prediction input must be a SpatialPredictionContext.")
+        if os.environ.get('CROSSFLOW_REAL_TRAFFIC_TRAINING') == '1':
+            from services.observed_runtime_adapter import predict
+            return predict(batch, self._prediction_payload)
+        features = np.array([self._context_features(item) for item in batch])
         # Historical observations do not persist ferry proximity. Always ask
         # the forest for its no-sailing baseline, then apply the same published
         # timetable adjustment regardless of whether the forest is the bundled
         # synthetic baseline or has been retrained from real spatial history.
-        features[FERRY_SURGE_FEATURE_INDEX] = 0.0
-        raw_tree_predictions = self._tree_predictions(features)[:, 0]
-        surge_pressure = (
-            ferry_surge_factor(
-                context.minutes_until_ferry_departure,
+        features[:, FERRY_SURGE_FEATURE_INDEX] = 0.0
+        with self._model_lock:
+            raw_tree_predictions = self._tree_predictions(features)
+            interval_padding = self._interval_padding_points
+        surge_pressure = np.array([
+            (ferry_surge_factor(
+                item.minutes_until_ferry_departure,
                 amplitude=0.35,
                 decay_minutes=FERRY_SURGE_DECAY_MINUTES,
-            ) - 1.0
-        ) / 0.35
+            ) - 1.0) / 0.35
+            for item in batch
+        ])
         requested_adjustment = FERRY_SURGE_AMPLITUDE_POINTS * surge_pressure
         tree_predictions = np.clip(
             raw_tree_predictions + requested_adjustment,
             0.0,
             100.0,
         )
-        mean = float(np.mean(tree_predictions))
-        raw_mean = float(np.mean(raw_tree_predictions))
-        std = float(np.std(tree_predictions))
-        p10 = float(np.quantile(tree_predictions, 0.10))
-        p90 = float(np.quantile(tree_predictions, 0.90))
-        mean = min(100.0, max(0.0, mean))
+        means = np.clip(np.mean(tree_predictions, axis=0), 0.0, 100.0)
+        raw_means = np.mean(raw_tree_predictions, axis=0)
+        stds = np.std(tree_predictions, axis=0)
+        p10s, p90s = np.quantile(tree_predictions, (0.10, 0.90), axis=0)
         # Empirical quantiles can straddle the arithmetic mean asymmetrically.
         # Published lower/upper risk bounds must still contain the mean, or the
         # derived P90 speed ratio can incorrectly be faster than expectation.
-        p10 = min(mean, min(100.0, max(0.0, p10)))
-        p90 = max(mean, min(100.0, max(p10, p90)))
-        risk_adjusted = min(
-            100.0,
-            max(0.0, mean + context.risk_aversion * max(0.0, p90 - mean)),
-        )
+        p10s = np.minimum(means, np.clip(p10s - interval_padding, 0.0, 100.0))
+        p90s = np.maximum(means, np.clip(p90s + interval_padding, p10s, 100.0))
+        risks = np.array([item.risk_aversion for item in batch])
+        risk_adjusted = np.clip(means + risks * (p90s - means), 0.0, 100.0)
+        return [self._prediction_payload(
+            item, float(means[index]), float(raw_means[index]),
+            float(stds[index]), float(p10s[index]), float(p90s[index]),
+            float(risk_adjusted[index]),
+        ) for index, item in enumerate(batch)]
+
+    @staticmethod
+    def _prediction_payload(
+        context: SpatialPredictionContext,
+        mean: float,
+        raw_mean: float,
+        std: float,
+        p10: float,
+        p90: float,
+        risk_adjusted: float,
+    ) -> SpatialCongestionPrediction:
         status = classify_status(mean)
         return SpatialCongestionPrediction(
             mean_score=round(mean, 3),
@@ -800,9 +906,12 @@ class CongestionForecaster:
 
     def predict_continuous(self, hour_float: float, is_weekend: int, weather: int,
                            ferry_surge: int, corridor_idx: int) -> Dict[str, Any]:
-        current = self._score(hour_float, is_weekend, weather, ferry_surge, corridor_idx)
-        predicted_30 = self._score(hour_float + 0.5, is_weekend, weather, ferry_surge, corridor_idx)
-        predicted_60 = self._score(hour_float + 1.0, is_weekend, weather, ferry_surge, corridor_idx)
+        predictions = self.predict_spatial_batch(
+            SpatialPredictionContext.from_legacy(
+                hour_float + offset, is_weekend, weather, ferry_surge, corridor_idx,
+            ) for offset in (0.0, 0.5, 1.0)
+        )
+        current, predicted_30, predicted_60 = (item.mean_score for item in predictions)
 
         status = classify_status(current)
 
@@ -822,4 +931,4 @@ class CongestionForecaster:
 
 
 # Global singleton
-forecaster = CongestionForecaster()
+forecaster = CongestionForecaster(train_baseline=os.environ.get('CROSSFLOW_REAL_TRAFFIC_TRAINING') != '1')

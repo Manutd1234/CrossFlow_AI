@@ -1,0 +1,120 @@
+{
+  "checked_at": "2026-10-23T09:58:54.020773+00:00",
+  "environment": "local_only",
+  "route_code": "AHMKAQM",
+  "route_id": "dbcdc75a1f38a2d39096ce918314ad8cf12b15f81a22932d0f41bf373da74e6d",
+  "code_http_status": 200,
+  "full_id_http_status": 200,
+  "cache_control": "private, no-store",
+  "dispatch_available": true,
+  "route_storage": {
+    "source": "local_sqlite",
+    "shared": false,
+    "durable": true,
+    "durability": "persistent_local_file",
+    "scope": "single_host"
+  },
+  "geometry_points": 62,
+  "navigation_maneuvers": 12,
+  "leg_modes": [
+    "ROAD",
+    "FERRY",
+    "ROAD"
+  ],
+  "geometry_navigation_and_legs_identical_by_code_and_full_id": true,
+  "planned_departure": "2026-10-23T18:15:00+07:00",
+  "estimated_arrival": "2026-10-23T20:56:00+08:00",
+  "schedule_provenance": {
+    "freshness_durability": "process_memory_with_committed_snapshot_fallback",
+    "last_verified_at": "2026-08-13T00:30:50+07:00",
+    "latest_checked_at": null,
+    "limitations": "Published recurring departure slots are not a live feed for operations, cancellations, vessels, berths, gates, capacity or seat availability. Schedules may change without notice; verify with the operator before travel. This snapshot includes daily and weekend-safe slots; public-holiday, weekday-specific and conflicting operator exceptions are explicitly audited but excluded rather than guessed.",
+    "live": false,
+    "shared_freshness": false,
+    "snapshot_id": "published-batam-singapore-timetables-calendar-audited-2026-08-13-sindo-reviewed-2026-10-23",
+    "snapshot_verified_at": "2026-08-13T00:30:50+07:00",
+    "source": "committed_timetable_simulation"
+  },
+  "prior_routes_and_invalid_code": [
+    {
+      "route_code": "9H2WQHF",
+      "http_status": 200,
+      "cache_control": "private, no-store",
+      "dispatch_available": true,
+      "geometry_points": 55,
+      "storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": true,
+        "durability": "persistent_local_file",
+        "scope": "single_host"
+      }
+    },
+    {
+      "route_code": "V5D9FB8",
+      "http_status": 200,
+      "cache_control": "private, no-store",
+      "dispatch_available": true,
+      "geometry_points": 62,
+      "storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": true,
+        "durability": "persistent_local_file",
+        "scope": "single_host"
+      }
+    },
+    {
+      "route_code": "2222222",
+      "http_status": 404,
+      "cache_control": "private, no-store",
+      "dispatch_available": null,
+      "geometry_points": 0,
+      "storage": null
+    }
+  ],
+  "unauthenticated_planning_boundaries": [
+    {
+      "path": "/api/optimize-route",
+      "http_status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/optimize-route",
+      "http_status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/optimize-free-route",
+      "http_status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/optimize-free-route",
+      "http_status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/optimize-multi-stop-route",
+      "http_status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/optimize-multi-stop-route",
+      "http_status": 401,
+      "cache_control": "private, no-store"
+    }
+  ],
+  "browser_verification_reported_by_parent": {
+    "operator": "Google authenticated admin",
+    "driver": "NUS authenticated driver",
+    "input_normalization": "lowercase with spaces",
+    "loaded_route_code": "AHMKAQM",
+    "directions": 12,
+    "journey_map": true
+  },
+  "limitations": [
+    "Confirmed local SQLite persistence applies to this host, not shared serverless storage.",
+    "Published timetable simulation does not confirm seats, live departures, or terminal queues."
+  ]
+}

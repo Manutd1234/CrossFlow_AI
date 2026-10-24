@@ -1,0 +1,172 @@
+{
+  "verified_at": "2026-10-23T19:52:04.283633+00:00",
+  "frontend": {
+    "tests": 562,
+    "files": 51,
+    "lint": "passed",
+    "typescript": "passed",
+    "production_build": "passed"
+  },
+  "backend": {
+    "targeted_tests": 101,
+    "result": "passed",
+    "release_guards_module_run": 21
+  },
+  "browser": {
+    "surface": "Codex in-app browser",
+    "model_forecast_http_status": 200,
+    "benchmark_cards_rendered": true,
+    "console_errors": 0,
+    "screenshot": "historical-ml-baseline-comparison-2026-10-24.jpg"
+  },
+  "prospective_evaluation": {
+    "status": "collecting_prospective_evidence",
+    "issued": 120,
+    "matched": 0,
+    "matched_days": 0,
+    "horizons": [],
+    "metrics_window": "latest_100000_matched_predictions; counts_are_all_time; test_days_use_UTC",
+    "model_cohorts": [
+      {
+        "model_version": "c2f92225c1fa9337f3ffa402696c5e8169a97cecff8d881806aadcf205a3fe90",
+        "issued": 15,
+        "matched": 0
+      },
+      {
+        "model_version": "a46c7922c041cd55d6d22832430691fd97a2c11417461089a3438fba8b37f099",
+        "issued": 15,
+        "matched": 0
+      },
+      {
+        "model_version": "b6e3078c4bb3986d3db18f6a2b271858173ad4e7c419ce509279637691c67124",
+        "issued": 30,
+        "matched": 0
+      },
+      {
+        "model_version": "eff7c4489efd278441ddeb22f09e17ba49127d940b40dc2c0b99eb2e4c8f7e69",
+        "issued": 30,
+        "matched": 0
+      },
+      {
+        "model_version": "3a446d39dfdb400a1c93322937f19b3187d795a0f67863623a13055be2518ba4",
+        "issued": 30,
+        "matched": 0
+      }
+    ],
+    "evaluation_design": "prequential system evaluation across logged hourly model versions; never retroactively refit an issued prediction",
+    "target_tolerance_seconds": 180,
+    "field_accuracy_validated": false,
+    "scope": "Predictions saved before their future measurements; provider point speeds, not independent ground-truth sensors. At least seven days needed before judging improvement."
+  },
+  "historical_summaries": [
+    {
+      "id": "grand_batam_survey",
+      "name": "Grand Batam survey",
+      "geography": "Batam, Indonesia",
+      "source_rows": 66,
+      "source_days": 4,
+      "source_url": "https://repository.unrika.ac.id/xmlui/bitstream/handle/123456789/1023/REPOSITORY%20JURNAL%20FELANY%20FRISCA%20ULANDARI%20.pdf?sequence=1&isAllowed=y",
+      "scope": "Exploratory three-road survey; one test day. Not five-corridor or citywide validation.",
+      "horizons": [
+        {
+          "horizon_minutes": 60,
+          "candidate": {
+            "samples": 15,
+            "mae_kph": 2.3345088888888883,
+            "rmse_kph": 2.973275490240383,
+            "within_5_kph": 0.8666666666666667
+          },
+          "persistence": {
+            "samples": 15,
+            "mae_kph": 2.495999999999999,
+            "rmse_kph": 3.2350991741624644,
+            "within_5_kph": 0.8666666666666667
+          },
+          "mae_improvement_percent": 6.4699964387464295,
+          "test_days": 1,
+          "improvement_ci95_kph": null
+        }
+      ]
+    },
+    {
+      "id": "guangzhou_speed",
+      "name": "Guangzhou speed benchmark",
+      "geography": "Guangzhou, China",
+      "source_rows": 1855589,
+      "source_days": 61,
+      "source_url": "https://zenodo.org/records/1205229",
+      "scope": "Independent methodology test on Chinese roads. Does not establish Batam accuracy.",
+      "horizons": [
+        {
+          "horizon_minutes": 10,
+          "candidate": {
+            "samples": 429926,
+            "mae_kph": 2.007277496598856,
+            "rmse_kph": 2.952949545143248,
+            "within_5_kph": 0.9236891930239157
+          },
+          "persistence": {
+            "samples": 429926,
+            "mae_kph": 2.198838233947754,
+            "rmse_kph": 3.2229599952697754,
+            "within_5_kph": 0.9066118355251834
+          },
+          "mae_improvement_percent": 8.711906787475368,
+          "test_days": 14,
+          "improvement_ci95_kph": [
+            0.17939313055371622,
+            0.2038663756831238
+          ]
+        },
+        {
+          "horizon_minutes": 30,
+          "candidate": {
+            "samples": 429498,
+            "mae_kph": 2.806208028689043,
+            "rmse_kph": 4.242080295415799,
+            "within_5_kph": 0.8487070952600477
+          },
+          "persistence": {
+            "samples": 429498,
+            "mae_kph": 3.250694751739502,
+            "rmse_kph": 4.991197109222412,
+            "within_5_kph": 0.81167549092196
+          },
+          "mae_improvement_percent": 13.673591554931654,
+          "test_days": 14,
+          "improvement_ci95_kph": [
+            0.3877356286202243,
+            0.4956633910026168
+          ]
+        },
+        {
+          "horizon_minutes": 60,
+          "candidate": {
+            "samples": 428856,
+            "mae_kph": 3.2551922618415055,
+            "rmse_kph": 4.890447373813787,
+            "within_5_kph": 0.8074948234372377
+          },
+          "persistence": {
+            "samples": 428856,
+            "mae_kph": 4.228835105895996,
+            "rmse_kph": 6.540731430053711,
+            "within_5_kph": 0.7388377450706064
+          },
+          "mae_improvement_percent": 23.023901847035898,
+          "test_days": 14,
+          "improvement_ci95_kph": [
+            0.8554762035222191,
+            1.0755248793962482
+          ]
+        }
+      ]
+    }
+  ],
+  "reproduction_sha256": {
+    "scripts/backtest_historical_expansion.py": "7b52ce03fac43854638d8a487bf47b9a959732d0eff4f585eae74991e2ddb4c5",
+    "scripts/backtest_grand_batam.py": "8ab88214cc1f53ef49be8c5c19e7702bd17bdaa5ad6c733dc51cc435f01452b3",
+    "backend/services/traffic_candidate_selection.py": "dfcd552c111b6435e4235456201cd9f6c1c00b6b17a3f6309f9c74e720e0ddc9"
+  },
+  "scope": "Live five-point Batam field improvement remains unvalidated; Chinese benchmark is geographically separate; sparse Batam survey is exploratory."
+}

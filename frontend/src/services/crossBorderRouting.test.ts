@@ -9,6 +9,40 @@ import {
 } from './crossBorderRouting';
 
 describe('cross-border continuity routing', () => {
+  it('uses the exact departure instant for the published sailing and preserves terminal timezones', () => {
+    const departure = '2026-08-07T01:47:00Z';
+    const route = offlineCrossBorderOptimize(
+      { lat: 1.2840, lng: 103.8513, display_name: 'Raffles Place' },
+      { lat: 1.0605, lng: 104.0303, display_name: 'Batamindo' },
+      'COMMUTER', 1, 'BALANCED', new Date('2026-08-07T00:30:00Z'),
+      { departure_at: departure },
+    );
+    expect(route.planned_departure).toBe('2026-08-07T09:47:00.000+08:00');
+    const roadMins = route.route_legs![0].duration_mins;
+    expect(new Date(route.next_matching_ferries[0].departure_time).getTime())
+      .toBeGreaterThan(new Date(departure).getTime() + (roadMins + 15) * 60_000);
+    expect(new Date(route.estimated_arrival!).getTime() - new Date(departure).getTime())
+      .toBeCloseTo(route.total_eta_mins * 60_000);
+    expect(route.estimated_arrival).toMatch(/\+07:00$/);
+  });
+
+  it('meets an arrival deadline using a feasible published sailing and road access', () => {
+    const deadline = '2026-08-07T14:10:00+07:00';
+    const route = offlineCrossBorderOptimize(
+      { lat: 1.2840, lng: 103.8513, display_name: 'Raffles Place' },
+      { lat: 1.0605, lng: 104.0303, display_name: 'Batamindo' },
+      'COMMUTER', 9, 'BALANCED', new Date('2026-08-07T00:30:00Z'),
+      { arrive_by: deadline },
+    );
+    expect(route.scheduling?.mode).toBe('ARRIVE_BY');
+    expect(new Date(route.estimated_arrival!).getTime()).toBeLessThanOrEqual(new Date(deadline).getTime());
+    const sailing = route.next_matching_ferries[0];
+    const roadMins = route.route_legs![0].duration_mins;
+    expect(new Date(sailing.departure_time).getTime() - new Date(route.planned_departure!).getTime())
+      .toBeGreaterThan((roadMins + 15) * 60_000);
+    expect(route.scheduling?.deadline_slack_mins).toBeGreaterThanOrEqual(0);
+  });
+
   it('classifies Singapore and Batam without treating unrelated cities as local', () => {
     expect(locationRegion(1.2840, 103.8513)).toBe('SINGAPORE');
     expect(locationRegion(1.1318, 104.0554)).toBe('BATAM');

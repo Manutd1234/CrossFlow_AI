@@ -1,0 +1,24 @@
+{
+  "name": "Published hourly speed survey near Grand Batam Mall, June2023",
+  "source_url": "https://repository.unrika.ac.id/xmlui/bitstream/handle/123456789/1023/REPOSITORY%20JURNAL%20FELANY%20FRISCA%20ULANDARI%20.pdf?sequence=1&isAllowed=y",
+  "source_pdf_sha256": "ff67266fb0e1cb94dbfa8cf904486bf6e8ada3699b47c7b0fa5c0d79550064b0",
+  "csv_sha256": "906848f58568987127914a43999bc553e84ca7bce1bcfb20afd701d5855e4003",
+  "rows": 66,
+  "dates": [
+    "2023-06-20",
+    "2023-06-22",
+    "2023-06-24",
+    "2023-06-25"
+  ],
+  "roads": 3,
+  "license": "Public repository factual measurement table; no explicit dataset licence located",
+  "attribution": "Felany Frisca Ulandari et al., Analisis Kinerja Ruas Jalan di Sekitar Grand Batam Mall, Table5, PDFp6; dates PDFp4",
+  "canonical_corridor_mapping": null,
+  "synthetic_rows": 0,
+  "limitations": [
+    "Only four dated survey days and one final test day; no confidence interval or production promotion.",
+    "Source aggregates derive from measured segment travel time; sample sizes and direction breakdown are unreleased.",
+    "Adjacent intervals and road observations are dependent.",
+    "No invented free-flow speeds, coordinates or canonical corridor mapping."
+  ]
+}

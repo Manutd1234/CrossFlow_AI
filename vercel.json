@@ -5,7 +5,10 @@
     "CROSSFLOW_WARM_ROUTING_CACHES": "0",
     "CROSSFLOW_REQUIRE_DURABLE_FERRY_FRESHNESS": "1",
     "CROSSFLOW_FERRY_FRESHNESS_FALLBACK": "committed_snapshot",
-    "CROSSFLOW_AUTH_MODE": "supabase"
+    "CROSSFLOW_AUTH_MODE": "supabase",
+    "CROSSFLOW_REAL_TRAFFIC_TRAINING": "1",
+    "CROSSFLOW_REAL_MODEL_PATH": "backend/data/observed_runtime_model.json",
+    "CROSSFLOW_CCTV_STORE": "supabase"
   },
   "builds": [
     {

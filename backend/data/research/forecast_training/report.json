@@ -1,0 +1,541 @@
+{
+  "schema": "crossflow.research_forecasting.v1",
+  "created_at_utc": "2026-10-23T17:33:36.338376Z",
+  "status": "trained_and_held_out_evaluated",
+  "geography": "Paris, France: 24 deterministically selected road arcs",
+  "geography_is_batam": false,
+  "transfer_benchmark_only": true,
+  "production_eligible": false,
+  "target": "hourly_loop_flow_vehicles",
+  "forecast_horizon_hours": 1,
+  "not_validated_targets": [
+    "Batam traffic",
+    "road speed",
+    "travel time",
+    "congestion severity",
+    "camera vehicle counts",
+    "queues"
+  ],
+  "source": {
+    "path": "research/batam-traffic/datasets/round4_open/forecasting/normalized/paris_hourly.csv",
+    "sha256": "dc3db788c3937713d6d62c71a5f6cb9dcd3bc2b36724af74064f113b7e653583",
+    "publisher": "Direction de la Voirie et des Déplacements, Ville de Paris",
+    "url": "https://opendata.paris.fr/explore/dataset/comptages-routiers-permanents/",
+    "license": "ODbL",
+    "license_url": "https://opendatacommons.org/licenses/odbl/",
+    "source_rows": 35088,
+    "source_null_flow_rows": 2328,
+    "absent_hour_arc_keys": 48,
+    "explicit_grid_rows": 35136,
+    "arc_ids": [
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "21",
+      "22",
+      "23",
+      "24",
+      "27",
+      "28",
+      "29",
+      "30",
+      "31",
+      "32",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "arc_count": 24,
+    "grid_hours": 1464,
+    "first_target_end_utc": "2026-07-31T22:00:00Z",
+    "last_target_end_utc": "2026-09-30T21:00:00Z",
+    "timestamp_semantics": "End of preceding one-hour source loop elaboration interval"
+  },
+  "protocol": {
+    "mode": "Rolling one-hour-ahead prequential forecasting of existing arcs",
+    "prediction_time": "At target end minus one hour, assuming prior-hour count has already arrived",
+    "missing_targets": "Excluded from supervised fit/evaluation; never filled with zero",
+    "missing_features": "Native NaN for histogram boosting; fit-slice-only median and missing indicators for other estimators",
+    "warmup_hours_excluded_from_training": 168,
+    "train_local_dates": [
+      "2026-08-08",
+      "2026-08-31"
+    ],
+    "validation_local_dates": [
+      "2026-09-01",
+      "2026-09-16"
+    ],
+    "holdout_local_dates": [
+      "2026-09-17",
+      "2026-09-30"
+    ],
+    "calendar_timezone": "Europe/Paris",
+    "preprocessing_refit": "Train slice during selection; train + validation only during final fit",
+    "holdout_protocol": "One frozen final holdout, no feature or hyperparameter changes based on its scores",
+    "features_frozen_before_holdout": true,
+    "online_lag_updates": "Observed earlier validation/test counts may enter later predictions; no multi-day open-loop claim",
+    "same_holdout_targets_for_every_forecaster": true,
+    "source_state_and_reference_dates_used_as_features": false
+  },
+  "features": {
+    "names": [
+      "arc_category",
+      "hour_sin",
+      "hour_cos",
+      "weekday_sin",
+      "weekday_cos",
+      "is_weekend",
+      "q_lag_1h",
+      "q_lag_2h",
+      "q_lag_3h",
+      "q_lag_6h",
+      "q_lag_12h",
+      "q_lag_24h",
+      "q_lag_48h",
+      "q_lag_168h",
+      "q_prior_3h_mean",
+      "q_prior_3h_std",
+      "q_prior_3h_missing_fraction",
+      "q_prior_6h_mean",
+      "q_prior_6h_std",
+      "q_prior_6h_missing_fraction",
+      "q_prior_24h_mean",
+      "q_prior_24h_std",
+      "q_prior_24h_missing_fraction",
+      "q_prior_168h_mean",
+      "q_prior_168h_std",
+      "q_prior_168h_missing_fraction",
+      "q_lag_1h_minus_2h",
+      "q_lag_1h_minus_24h"
+    ],
+    "count": 28,
+    "lineage": "Only arc category, known target calendar and source flow observations at strictly earlier exact UTC hourly timestamps",
+    "count_lag_hours": [
+      1,
+      2,
+      3,
+      6,
+      12,
+      24,
+      48,
+      168
+    ],
+    "rolling_windows_hours": [
+      3,
+      6,
+      24,
+      168
+    ],
+    "rolling_window_closure": "[target - window hours, target), excluding target count",
+    "unused_source_fields": [
+      "occupancy_pct",
+      "source_traffic_state",
+      "source_arc_state",
+      "quality_status",
+      "reference date_debut/date_fin",
+      "geometries"
+    ]
+  },
+  "splits": {
+    "train": {
+      "observed_target_rows": 12926,
+      "first_target_end_utc": "2026-08-07T22:00:00Z",
+      "last_target_end_utc": "2026-08-31T21:00:00Z",
+      "ordered_target_keys_sha256": "96c4d9e5d2cf725ea37697fda258add64da11c04fe4a6f142c9ee5c4c8effec5"
+    },
+    "validation": {
+      "observed_target_rows": 8732,
+      "first_target_end_utc": "2026-08-31T22:00:00Z",
+      "last_target_end_utc": "2026-09-16T21:00:00Z",
+      "ordered_target_keys_sha256": "91a127413871bf0b7379c6e49558d87a89f35882f6287c3039e034b23f2bff09"
+    },
+    "test": {
+      "observed_target_rows": 7454,
+      "first_target_end_utc": "2026-09-16T22:00:00Z",
+      "last_target_end_utc": "2026-09-30T21:00:00Z",
+      "ordered_target_keys_sha256": "4fadc499761fba256cf70ec795835232865e1e7aca5ca1b69d413c0d6ab88c68"
+    }
+  },
+  "selection": {
+    "selection_metric": "validation MAE, then deterministic name tie-break",
+    "selected_forecaster": "hist_gradient_boosting_15_squared_error",
+    "best_trained_model": "hist_gradient_boosting_15_squared_error",
+    "best_validation_baseline": "weekly_seasonal",
+    "validation_rank_order": [
+      "hist_gradient_boosting_15_squared_error",
+      "hist_gradient_boosting_31_squared_error",
+      "extra_trees_128",
+      "hist_gradient_boosting_31_absolute_error",
+      "ridge_10",
+      "ridge_100",
+      "weekly_seasonal",
+      "persistence",
+      "daily_seasonal",
+      "training_calendar_profile"
+    ],
+    "test_used_for_selection": false,
+    "final_refit": "Refit only the best validation trained candidate on train + validation; holdout targets excluded; retain it even if a baseline wins selection"
+  },
+  "validation_scores": {
+    "persistence": {
+      "kind": "baseline",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 72.19743472285845,
+      "rmse_vehicles_per_hour": 104.61337321853858,
+      "wape_pct": 14.89073135658836,
+      "smape_pct": 20.557681140497497,
+      "bias_vehicles_per_hour": -0.8605130554283097,
+      "median_absolute_error": 49.0,
+      "p90_absolute_error": 165.0,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5
+    },
+    "daily_seasonal": {
+      "kind": "baseline",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 81.39693082913422,
+      "rmse_vehicles_per_hour": 130.09411829597997,
+      "wape_pct": 16.788128759423802,
+      "smape_pct": 22.33821938792421,
+      "bias_vehicles_per_hour": -3.4745762711864407,
+      "median_absolute_error": 49.0,
+      "p90_absolute_error": 184.0,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5
+    },
+    "weekly_seasonal": {
+      "kind": "baseline",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 69.55634448007329,
+      "rmse_vehicles_per_hour": 104.05490948003734,
+      "wape_pct": 14.346006111920229,
+      "smape_pct": 18.49342040947706,
+      "bias_vehicles_per_hour": -27.876316994961062,
+      "median_absolute_error": 46.0,
+      "p90_absolute_error": 156.0,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5
+    },
+    "training_calendar_profile": {
+      "kind": "baseline",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 106.70304626660558,
+      "rmse_vehicles_per_hour": 139.0311530999258,
+      "wape_pct": 22.007518729506668,
+      "smape_pct": 27.758148402978183,
+      "bias_vehicles_per_hour": -81.46404031149794,
+      "median_absolute_error": 84.0,
+      "p90_absolute_error": 225.0,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5
+    },
+    "hist_gradient_boosting_15_squared_error": {
+      "kind": "trained_model",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 50.18726690747459,
+      "rmse_vehicles_per_hour": 74.72815570569563,
+      "wape_pct": 10.351131060394732,
+      "smape_pct": 13.328242378462733,
+      "bias_vehicles_per_hour": -9.387481264993117,
+      "median_absolute_error": 33.426866109533194,
+      "p90_absolute_error": 114.08543584536346,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5,
+      "fit_and_validation_seconds": 0.373,
+      "configuration": "{'categorical_features': [0], 'early_stopping': False, 'interaction_cst': None, 'l2_regularization': 20, 'learning_rate': 0.06, 'loss': 'squared_error', 'max_bins': 255, 'max_depth': None, 'max_features': 1.0, 'max_iter': 220, 'max_leaf_nodes': 15, 'min_samples_leaf': 25, 'monotonic_cst': None, 'n_iter_no_change': 10, 'quantile': None, 'random_state': 20261024, 'scoring': 'loss', 'tol': 1e-07, 'validation_fraction': 0.1, 'verbose': 0, 'warm_start': False}"
+    },
+    "hist_gradient_boosting_31_squared_error": {
+      "kind": "trained_model",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 50.897325478371265,
+      "rmse_vehicles_per_hour": 75.82842376784113,
+      "wape_pct": 10.497580743368271,
+      "smape_pct": 13.347761623384052,
+      "bias_vehicles_per_hour": -10.627275086046119,
+      "median_absolute_error": 34.124754189149485,
+      "p90_absolute_error": 114.43445148151409,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5,
+      "fit_and_validation_seconds": 0.473,
+      "configuration": "{'categorical_features': [0], 'early_stopping': False, 'interaction_cst': None, 'l2_regularization': 20, 'learning_rate': 0.06, 'loss': 'squared_error', 'max_bins': 255, 'max_depth': None, 'max_features': 1.0, 'max_iter': 220, 'max_leaf_nodes': 31, 'min_samples_leaf': 25, 'monotonic_cst': None, 'n_iter_no_change': 10, 'quantile': None, 'random_state': 20261024, 'scoring': 'loss', 'tol': 1e-07, 'validation_fraction': 0.1, 'verbose': 0, 'warm_start': False}"
+    },
+    "hist_gradient_boosting_31_absolute_error": {
+      "kind": "trained_model",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 52.04309338882953,
+      "rmse_vehicles_per_hour": 78.20949548902584,
+      "wape_pct": 10.733895540661642,
+      "smape_pct": 13.641209139239722,
+      "bias_vehicles_per_hour": -9.84995674209152,
+      "median_absolute_error": 34.577482832275166,
+      "p90_absolute_error": 118.86275238012064,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5,
+      "fit_and_validation_seconds": 0.605,
+      "configuration": "{'categorical_features': [0], 'early_stopping': False, 'interaction_cst': None, 'l2_regularization': 20, 'learning_rate': 0.06, 'loss': 'absolute_error', 'max_bins': 255, 'max_depth': None, 'max_features': 1.0, 'max_iter': 220, 'max_leaf_nodes': 31, 'min_samples_leaf': 25, 'monotonic_cst': None, 'n_iter_no_change': 10, 'quantile': None, 'random_state': 20261024, 'scoring': 'loss', 'tol': 1e-07, 'validation_fraction': 0.1, 'verbose': 0, 'warm_start': False}"
+    },
+    "extra_trees_128": {
+      "kind": "trained_model",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 51.01532876240014,
+      "rmse_vehicles_per_hour": 75.88462707172324,
+      "wape_pct": 10.521918937771082,
+      "smape_pct": 13.377537231328168,
+      "bias_vehicles_per_hour": -9.61807181807891,
+      "median_absolute_error": 34.40424961903682,
+      "p90_absolute_error": 113.99013183199645,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5,
+      "fit_and_validation_seconds": 1.515,
+      "configuration": "{'memory': None, 'steps': [('features', ColumnTransformer(transformers=[('arc',\n                                 OneHotEncoder(handle_unknown='ignore',\n                                               sparse_output=False),\n                                 [0]),\n                                ('numeric',\n                                 Pipeline(steps=[('impute',\n                                                  SimpleImputer(add_indicator=True,\n                                                                keep_empty_features=True,\n                                                                strategy='median'))]),\n                                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,\n                                  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,\n                                  26, 27])])), ('regressor', ExtraTreesRegressor(max_depth=18, max_features=0.8, min_samples_leaf=3,\n                    n_estimators=128, n_jobs=2, random_state=20261024))], 'transform_input': None, 'verbose': False}"
+    },
+    "ridge_10": {
+      "kind": "trained_model",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 53.16189876578377,
+      "rmse_vehicles_per_hour": 77.6253209949429,
+      "wape_pct": 10.964649311519063,
+      "smape_pct": 15.023501805896068,
+      "bias_vehicles_per_hour": -6.413497418219916,
+      "median_absolute_error": 36.15381445527717,
+      "p90_absolute_error": 117.09853315090447,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5,
+      "fit_and_validation_seconds": 0.026,
+      "configuration": "{'memory': None, 'steps': [('features', ColumnTransformer(transformers=[('arc',\n                                 OneHotEncoder(handle_unknown='ignore',\n                                               sparse_output=False),\n                                 [0]),\n                                ('numeric',\n                                 Pipeline(steps=[('impute',\n                                                  SimpleImputer(add_indicator=True,\n                                                                keep_empty_features=True,\n                                                                strategy='median')),\n                                                 ('scale', StandardScaler())]),\n                                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,\n                                  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,\n                                  26, 27])])), ('regressor', Ridge(alpha=10.0))], 'transform_input': None, 'verbose': False}"
+    },
+    "ridge_100": {
+      "kind": "trained_model",
+      "rows": 8732,
+      "mae_vehicles_per_hour": 53.649277636548604,
+      "rmse_vehicles_per_hour": 78.10418851565845,
+      "wape_pct": 11.065171274124733,
+      "smape_pct": 15.038206510142762,
+      "bias_vehicles_per_hour": -7.626312535909707,
+      "median_absolute_error": 36.82020102846661,
+      "p90_absolute_error": 118.45727897620166,
+      "actual_mean_vehicles_per_hour": 484.8481447549244,
+      "measured_zero_target_rows": 5,
+      "fit_and_validation_seconds": 0.023,
+      "configuration": "{'memory': None, 'steps': [('features', ColumnTransformer(transformers=[('arc',\n                                 OneHotEncoder(handle_unknown='ignore',\n                                               sparse_output=False),\n                                 [0]),\n                                ('numeric',\n                                 Pipeline(steps=[('impute',\n                                                  SimpleImputer(add_indicator=True,\n                                                                keep_empty_features=True,\n                                                                strategy='median')),\n                                                 ('scale', StandardScaler())]),\n                                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,\n                                  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,\n                                  26, 27])])), ('regressor', Ridge(alpha=100.0))], 'transform_input': None, 'verbose': False}"
+    }
+  },
+  "artifact_reload_prediction_parity_passed": true,
+  "holdout_scores": {
+    "persistence": {
+      "kind": "baseline",
+      "rows": 7454,
+      "mae_vehicles_per_hour": 73.92943386101422,
+      "rmse_vehicles_per_hour": 106.93922880981714,
+      "wape_pct": 15.460021703001052,
+      "smape_pct": 21.33557190207511,
+      "bias_vehicles_per_hour": 0.5996780252213577,
+      "median_absolute_error": 50.0,
+      "p90_absolute_error": 175.0,
+      "actual_mean_vehicles_per_hour": 478.197477864234,
+      "measured_zero_target_rows": 0
+    },
+    "daily_seasonal": {
+      "kind": "baseline",
+      "rows": 7454,
+      "mae_vehicles_per_hour": 105.71397907163939,
+      "rmse_vehicles_per_hour": 174.64853049227875,
+      "wape_pct": 22.10676215687881,
+      "smape_pct": 27.177678395280452,
+      "bias_vehicles_per_hour": 3.5124765226723906,
+      "median_absolute_error": 55.0,
+      "p90_absolute_error": 264.0,
+      "actual_mean_vehicles_per_hour": 478.197477864234,
+      "measured_zero_target_rows": 0
+    },
+    "weekly_seasonal": {
+      "kind": "baseline",
+      "rows": 7454,
+      "mae_vehicles_per_hour": 78.27877649584116,
+      "rmse_vehicles_per_hour": 133.4051156161249,
+      "wape_pct": 16.369550263095583,
+      "smape_pct": 19.824812888761535,
+      "bias_vehicles_per_hour": 16.91762811913067,
+      "median_absolute_error": 44.0,
+      "p90_absolute_error": 168.0,
+      "actual_mean_vehicles_per_hour": 478.197477864234,
+      "measured_zero_target_rows": 0
+    },
+    "training_calendar_profile": {
+      "kind": "baseline",
+      "rows": 7454,
+      "mae_vehicles_per_hour": 90.1650120740542,
+      "rmse_vehicles_per_hour": 131.56269260237377,
+      "wape_pct": 18.855183527265098,
+      "smape_pct": 23.19177044710852,
+      "bias_vehicles_per_hour": -37.47518111081298,
+      "median_absolute_error": 65.0,
+      "p90_absolute_error": 190.3499999999999,
+      "actual_mean_vehicles_per_hour": 478.197477864234,
+      "measured_zero_target_rows": 0
+    },
+    "hist_gradient_boosting_15_squared_error": {
+      "kind": "trained_model",
+      "rows": 7454,
+      "mae_vehicles_per_hour": 56.33135082120127,
+      "rmse_vehicles_per_hour": 87.83157996687949,
+      "wape_pct": 11.779934740097984,
+      "smape_pct": 15.675366182594283,
+      "bias_vehicles_per_hour": 14.092189681299374,
+      "median_absolute_error": 34.8283631106338,
+      "p90_absolute_error": 125.39061609758105,
+      "actual_mean_vehicles_per_hour": 478.197477864234,
+      "measured_zero_target_rows": 0
+    }
+  },
+  "selected_holdout_metrics": {
+    "kind": "trained_model",
+    "rows": 7454,
+    "mae_vehicles_per_hour": 56.33135082120127,
+    "rmse_vehicles_per_hour": 87.83157996687949,
+    "wape_pct": 11.779934740097984,
+    "smape_pct": 15.675366182594283,
+    "bias_vehicles_per_hour": 14.092189681299374,
+    "median_absolute_error": 34.8283631106338,
+    "p90_absolute_error": 125.39061609758105,
+    "actual_mean_vehicles_per_hour": 478.197477864234,
+    "measured_zero_target_rows": 0
+  },
+  "selected_holdout_mae_improvement_pct_vs_baselines": {
+    "persistence": 23.803892605071173,
+    "daily_seasonal": 46.713432494081886,
+    "weekly_seasonal": 28.037517520225837,
+    "training_calendar_profile": 37.524157624539235
+  },
+  "selected_macro_arc_mae": 55.72903132133181,
+  "arcs_with_no_observed_holdout_targets": [
+    "13"
+  ],
+  "execution": {
+    "execution_attempt_number": 2,
+    "prior_frozen_selection_without_complete_report": true,
+    "protocol_or_hyperparameters_changed_after_holdout": false,
+    "status": "complete"
+  },
+  "baseline_coverage": {
+    "validation": {
+      "persistence": {
+        "primary_lag_available_rows": 8641,
+        "primary_lag_missing_rows": 91,
+        "all_declared_lags_missing_rows": 0,
+        "fallback_order_hours": [
+          1,
+          24,
+          168
+        ],
+        "last_resort": "fit-slice arc median, then fit-slice global median"
+      },
+      "daily_seasonal": {
+        "primary_lag_available_rows": 8647,
+        "primary_lag_missing_rows": 85,
+        "all_declared_lags_missing_rows": 0,
+        "fallback_order_hours": [
+          24,
+          168,
+          1
+        ],
+        "last_resort": "fit-slice arc median, then fit-slice global median"
+      },
+      "weekly_seasonal": {
+        "primary_lag_available_rows": 8699,
+        "primary_lag_missing_rows": 33,
+        "all_declared_lags_missing_rows": 0,
+        "fallback_order_hours": [
+          168,
+          24,
+          1
+        ],
+        "last_resort": "fit-slice arc median, then fit-slice global median"
+      },
+      "training_calendar_profile": {
+        "exact_arc_weekday_hour_profile_rows": 8732,
+        "fallback_rows": 0,
+        "fitted_rows": 12926
+      }
+    },
+    "holdout": {
+      "persistence": {
+        "primary_lag_available_rows": 7351,
+        "primary_lag_missing_rows": 103,
+        "all_declared_lags_missing_rows": 0,
+        "fallback_order_hours": [
+          1,
+          24,
+          168
+        ],
+        "last_resort": "fit-slice arc median, then fit-slice global median"
+      },
+      "daily_seasonal": {
+        "primary_lag_available_rows": 7172,
+        "primary_lag_missing_rows": 282,
+        "all_declared_lags_missing_rows": 0,
+        "fallback_order_hours": [
+          24,
+          168,
+          1
+        ],
+        "last_resort": "fit-slice arc median, then fit-slice global median"
+      },
+      "weekly_seasonal": {
+        "primary_lag_available_rows": 7270,
+        "primary_lag_missing_rows": 184,
+        "all_declared_lags_missing_rows": 0,
+        "fallback_order_hours": [
+          168,
+          24,
+          1
+        ],
+        "last_resort": "fit-slice arc median, then fit-slice global median"
+      },
+      "training_calendar_profile": {
+        "exact_arc_weekday_hour_profile_rows": 7454,
+        "fallback_rows": 0,
+        "fitted_rows": 21658
+      }
+    }
+  },
+  "interval90": {
+    "calibration_split": "validation only, before final train + validation refit",
+    "nominal_coverage_pct": 90,
+    "absolute_residual_quantile_vehicles_per_hour": 114.08543584536346,
+    "holdout_empirical_coverage_pct": 88.06010195867991,
+    "mean_interval_width_vehicles_per_hour": 226.3038872685235,
+    "guarantee": false,
+    "limitation": "Serial dependence, distribution shift and model refit invalidate an exchangeability-based coverage guarantee"
+  },
+  "limitations": [
+    "Foreign-city transfer benchmark; not a trained or validated Batam congestion predictor.",
+    "Only 61 calendar days and 24 smallest active arc IDs, not a representative city or seasonal sample.",
+    "No independently checked per-row detector fault flags; nonmissing source counts can still contain measurement error.",
+    "Zero publication latency is assumed because actual detector publication latency is unavailable.",
+    "Autocorrelated road-hour errors are not independent vehicle samples; no IID confidence claims.",
+    "No holidays, incidents, weather or road-change data were acquired for these measurements.",
+    "No generalization test to previously unseen roads; all holdout arcs occur in training.",
+    "The held-out period is now consumed for this fixed experiment; changing features after seeing these scores requires a new untouched holdout.",
+    "Interval calibration shares the model-selection validation slice and is not a separate conformal calibration set.",
+    "Hourly detector flow is neither exact camera vehicle count nor measured road speed, travel time, queue length or independently labeled congestion severity.",
+    "The serialized scikit-learn model is a local trusted research artifact; retain source attribution/license and exact environment when reusing it."
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.5.1",
+    "sklearn": "1.9.0",
+    "joblib": "1.6.0",
+    "random_seed": 20261024,
+    "max_compute_threads": 2,
+    "training_wall_seconds": 3.756
+  }
+}

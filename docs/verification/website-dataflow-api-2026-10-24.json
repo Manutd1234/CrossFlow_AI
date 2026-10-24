@@ -1,0 +1,251 @@
+{
+  "checked_at": "2026-10-24T06:19:47.077603+00:00",
+  "base": "http://127.0.0.1:8000",
+  "checks": {
+    "all_public_reads_http200": true,
+    "observed_mean_matches_current_samples": true,
+    "observed_point_count_matches_rows": true,
+    "emissions_not_invented": true,
+    "camera_estimate_not_labelled_measured_speed": true,
+    "camera_estimate_not_claimed_independently_validated": true,
+    "anonymous_operator_apis_rejected": true,
+    "protected_failures_not_cached": true
+  },
+  "public_requests": [
+    {
+      "path": "/api/operations",
+      "status": 200,
+      "seconds": 0.044,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/live-traffic",
+      "status": 200,
+      "seconds": 0.031,
+      "cache_control": null
+    },
+    {
+      "path": "/api/historical-congestion?corridor_id=corridor-1&days=7",
+      "status": 200,
+      "seconds": 0.092,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/analytics/research-history",
+      "status": 200,
+      "seconds": 0.032,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/model-status",
+      "status": 200,
+      "seconds": 0.014,
+      "cache_control": null
+    },
+    {
+      "path": "/api/ferries",
+      "status": 200,
+      "seconds": 0.016,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/port-intelligence",
+      "status": 200,
+      "seconds": 0.006,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/auth/status",
+      "status": 200,
+      "seconds": 0.007,
+      "cache_control": "private, no-store"
+    },
+    {
+      "path": "/api/routes/XK7RWH4",
+      "status": 200,
+      "seconds": 0.006,
+      "cache_control": "private, no-store"
+    }
+  ],
+  "protected_anonymous_requests": [
+    {
+      "method": "POST",
+      "path": "/api/optimize-route",
+      "status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "method": "POST",
+      "path": "/api/analytics/real-forecast",
+      "status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "method": "GET",
+      "path": "/api/routes",
+      "status": 401,
+      "cache_control": "private, no-store"
+    },
+    {
+      "method": "GET",
+      "path": "/api/analytics/cctv-status",
+      "status": 401,
+      "cache_control": "private, no-store"
+    }
+  ],
+  "operations": {
+    "generated_at": "2026-10-24T13:19:46+07:00",
+    "average_congestion_index": 3.4,
+    "camera_traffic_summary": {
+      "status": "active",
+      "configured_cameras": 6,
+      "fresh_cameras": 4,
+      "validated_cameras": 0,
+      "estimated_cameras": 4,
+      "mean_congestion_index": 21.2,
+      "vehicle_detections": 13,
+      "latest_observed_at": "2026-10-24T13:19:41+07:00",
+      "oldest_observed_at": "2026-10-24T13:19:34+07:00",
+      "valid_until": "2026-10-24T13:20:04+07:00",
+      "source": "registered_camera_aggregates",
+      "scope": "fresh_registered_camera_views_only",
+      "measured_road_speed": false,
+      "independently_validated": false
+    },
+    "road_network_coverage": {
+      "source": "OpenStreetMap",
+      "scope": "bundled_batam_routing_graph",
+      "mapped_nodes": 115320,
+      "mapped_source_ways": 27018,
+      "directed_edges": 249745,
+      "live_camera_edge_count": 0,
+      "live_camera_edge_coverage_percent": 0.0,
+      "complete_live_coverage": false
+    }
+  },
+  "history_metadata": {
+    "window_days": 7,
+    "window_basis": "Batam calendar days including the current day",
+    "window_start_at": "2026-10-18T00:00:00+07:00",
+    "window_end_at": "2026-10-24T06:19:46.994761+00:00",
+    "selection_scope": "observed_only",
+    "snapshot_selection": "latest_bounded_validated_spatial_rows_then_corridor_window_filter",
+    "snapshot_max_rows": 10000,
+    "snapshot_loaded_rows": 2719,
+    "snapshot_may_be_truncated": false,
+    "sample_count": 544,
+    "observed": true,
+    "contains_observed_samples": true,
+    "source_counts": {
+      "tomtom_live": 544
+    },
+    "sources": {
+      "tomtom_live": {
+        "sample_count": 544,
+        "observed": true
+      }
+    },
+    "latest_sample_at": "2026-10-24T06:18:53+00:00",
+    "latest_sample_age_seconds": 53,
+    "freshness": "current",
+    "freshness_basis": "latest observed sample in the selected Batam calendar-day window",
+    "storage": {
+      "engine": "sqlite",
+      "durability": "persistent_file",
+      "durable": true,
+      "shared_across_instances": false,
+      "fallback_to_memory": false,
+      "spatial_history": {
+        "schema_version": 3,
+        "typed": true,
+        "retention_days": 1825,
+        "default_retention_years": 5,
+        "max_ingest_batch_size": 2000,
+        "provenance_separates_observed_and_modelled": true
+      }
+    },
+    "synthetic_seed": {
+      "source": "synthetic",
+      "version": 2,
+      "days": 14,
+      "timezone": "WIB (UTC+07:00)",
+      "generated_for_date": null,
+      "observed": false,
+      "included": false
+    },
+    "archive": {
+      "active": true,
+      "collection_started_at": "2026-10-24T13:18:52+07:00",
+      "last_attempt_at": "2026-10-24T13:18:52+07:00",
+      "last_success_at": "2026-10-24T13:18:52+07:00",
+      "last_observation_at": "2026-10-24T13:18:53+07:00",
+      "inserted_total": 5,
+      "last_received": 5,
+      "last_inserted": 5,
+      "last_duplicates": 0,
+      "last_error_code": null,
+      "evaluation_status": "prospective_predictions_recorded",
+      "enabled": true,
+      "configuration_status": "enabled",
+      "interval_seconds": 120,
+      "storage_scope": "local_sqlite",
+      "source": "tomtom_live",
+      "observed_only": true,
+      "history_begins_at_collection": true,
+      "counter_scope": "current_process"
+    }
+  },
+  "serving_metrics": {
+    "selected_strategy": "persistence",
+    "metrics_scope": "serving_strategy_30min_chronological_holdout",
+    "mae": 3.2797925584510206,
+    "r2_score": 0.2870997435569286,
+    "candidate_metrics_scope": "forest_candidate_30min_chronological_holdout",
+    "training_data_source": "observed_traffic_archive"
+  },
+  "dispatch": {
+    "code": "XK7RWH4",
+    "http_status": 200
+  },
+  "limits": [
+    "No browser bearer token was read or exported.",
+    "Operator authorized forecast and history calls are exercised through existing app UI; driver role enforcement also has isolated HTTP/auth tests.",
+    "Source availability details remain operator-protected and backend-only."
+  ],
+  "final_detached_server_verification": {
+    "checked_at": "2026-10-24T06:36:26.660209+00:00",
+    "detached_backend_pid": 5526,
+    "api_http_status": 200,
+    "existing_dispatch_http_status": 200,
+    "observed_speed_point_count": 5,
+    "speed_based_mean": 8.3,
+    "camera_traffic_summary": {
+      "status": "active",
+      "configured_cameras": 6,
+      "fresh_cameras": 5,
+      "validated_cameras": 0,
+      "estimated_cameras": 5,
+      "mean_congestion_index": 4.4,
+      "vehicle_detections": 5,
+      "latest_observed_at": "2026-10-24T13:36:21+07:00",
+      "oldest_observed_at": "2026-10-24T13:36:09+07:00",
+      "valid_until": "2026-10-24T13:36:39+07:00",
+      "source": "registered_camera_aggregates",
+      "scope": "fresh_registered_camera_views_only",
+      "measured_road_speed": false,
+      "independently_validated": false
+    },
+    "road_network_coverage": {
+      "source": "OpenStreetMap",
+      "scope": "bundled_batam_routing_graph",
+      "mapped_nodes": 115320,
+      "mapped_source_ways": 27018,
+      "directed_edges": 249745,
+      "live_camera_edge_count": 0,
+      "live_camera_edge_coverage_percent": 0.0,
+      "complete_live_coverage": false
+    },
+    "selected_forecast_strategy": "persistence",
+    "metrics_scope": "serving_strategy_30min_chronological_holdout"
+  }
+}

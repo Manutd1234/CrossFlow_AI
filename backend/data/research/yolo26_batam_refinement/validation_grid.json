@@ -1,0 +1,821 @@
+[
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26n_640",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 5.333333333333333,
+        "macro_source_group_mae": 4.25,
+        "rmse_vehicles_per_frame": 6.27162924074226,
+        "bias_vehicles_per_frame": -5.333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 6
+      },
+      "detection_iou_50": {
+        "precision": 0.8333333333333334,
+        "recall": 0.22727272727272727,
+        "f1": 0.35714285714285715,
+        "true_positive": 5,
+        "false_positive": 1,
+        "false_negative": 17
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 7.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26n_640",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 5.666666666666667,
+        "macro_source_group_mae": 4.75,
+        "rmse_vehicles_per_frame": 6.3508529610858835,
+        "bias_vehicles_per_frame": -5.666666666666667,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 0,
+        "actual_total": 22,
+        "predicted_total": 5
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.22727272727272727,
+        "f1": 0.37037037037037035,
+        "true_positive": 5,
+        "false_positive": 0,
+        "false_negative": 17
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 7.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26n_640",
+    "score_threshold": 0.55,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 6.333333333333333,
+        "macro_source_group_mae": 5.5,
+        "rmse_vehicles_per_frame": 6.95221787153807,
+        "bias_vehicles_per_frame": -6.333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 0,
+        "actual_total": 22,
+        "predicted_total": 3
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.13636363636363635,
+        "f1": 0.24000000000000002,
+        "true_positive": 3,
+        "false_positive": 0,
+        "false_negative": 19
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 8,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 3,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26s_960",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 2.160246899469287,
+        "bias_vehicles_per_frame": -2,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 16
+      },
+      "detection_iou_50": {
+        "precision": 0.9375,
+        "recall": 0.6818181818181818,
+        "f1": 0.7894736842105263,
+        "true_positive": 15,
+        "false_positive": 1,
+        "false_negative": 7
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26s_960",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3,
+        "macro_source_group_mae": 2.5,
+        "rmse_vehicles_per_frame": 3.696845502136472,
+        "bias_vehicles_per_frame": -3,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 13
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.5909090909090909,
+        "f1": 0.7428571428571429,
+        "true_positive": 13,
+        "false_positive": 0,
+        "false_negative": 9
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26s_960",
+    "score_threshold": 0.55,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3.6666666666666665,
+        "macro_source_group_mae": 3,
+        "rmse_vehicles_per_frame": 4.795831523312719,
+        "bias_vehicles_per_frame": -3.6666666666666665,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 11
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6666666666666666,
+        "true_positive": 11,
+        "false_positive": 0,
+        "false_negative": 11
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26s_1280",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 1.3333333333333333,
+        "macro_source_group_mae": 1,
+        "rmse_vehicles_per_frame": 1.632993161855452,
+        "bias_vehicles_per_frame": -1.3333333333333333,
+        "exact_count_pct": 33.33333333333333,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 18
+      },
+      "detection_iou_50": {
+        "precision": 0.9444444444444444,
+        "recall": 0.7727272727272727,
+        "f1": 0.85,
+        "true_positive": 17,
+        "false_positive": 1,
+        "false_negative": 5
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26s_1280",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2.3333333333333335,
+        "macro_source_group_mae": 2,
+        "rmse_vehicles_per_frame": 2.6457513110645907,
+        "bias_vehicles_per_frame": -2.3333333333333335,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 15
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.6818181818181818,
+        "f1": 0.8108108108108109,
+        "true_positive": 15,
+        "false_positive": 0,
+        "false_negative": 7
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 3,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26s_1280",
+    "score_threshold": 0.55,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3,
+        "macro_source_group_mae": 2.5,
+        "rmse_vehicles_per_frame": 3.696845502136472,
+        "bias_vehicles_per_frame": -3,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 13
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.5909090909090909,
+        "f1": 0.7428571428571429,
+        "true_positive": 13,
+        "false_positive": 0,
+        "false_negative": 9
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26m_960",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 1.6666666666666667,
+        "macro_source_group_mae": 1.5,
+        "rmse_vehicles_per_frame": 1.7320508075688772,
+        "bias_vehicles_per_frame": -1.6666666666666667,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 17
+      },
+      "detection_iou_50": {
+        "precision": 0.9411764705882353,
+        "recall": 0.7272727272727273,
+        "f1": 0.8205128205128205,
+        "true_positive": 16,
+        "false_positive": 1,
+        "false_negative": 6
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26m_960",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2.3333333333333335,
+        "macro_source_group_mae": 2,
+        "rmse_vehicles_per_frame": 2.6457513110645907,
+        "bias_vehicles_per_frame": -2.3333333333333335,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 15
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.6818181818181818,
+        "f1": 0.8108108108108109,
+        "true_positive": 15,
+        "false_positive": 0,
+        "false_negative": 7
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 3,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26m_960",
+    "score_threshold": 0.55,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3,
+        "macro_source_group_mae": 2.5,
+        "rmse_vehicles_per_frame": 3.696845502136472,
+        "bias_vehicles_per_frame": -3,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 13
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.5909090909090909,
+        "f1": 0.7428571428571429,
+        "true_positive": 13,
+        "false_positive": 0,
+        "false_negative": 9
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26m_1280",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 1.6666666666666667,
+        "macro_source_group_mae": 1.25,
+        "rmse_vehicles_per_frame": 2.0816659994661326,
+        "bias_vehicles_per_frame": -1.6666666666666667,
+        "exact_count_pct": 33.33333333333333,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 17
+      },
+      "detection_iou_50": {
+        "precision": 0.9411764705882353,
+        "recall": 0.7272727272727273,
+        "f1": 0.8205128205128205,
+        "true_positive": 16,
+        "false_positive": 1,
+        "false_negative": 6
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26m_1280",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.5,
+        "rmse_vehicles_per_frame": 2.581988897471611,
+        "bias_vehicles_per_frame": -2,
+        "exact_count_pct": 33.33333333333333,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 16
+      },
+      "detection_iou_50": {
+        "precision": 0.9375,
+        "recall": 0.6818181818181818,
+        "f1": 0.7894736842105263,
+        "true_positive": 15,
+        "false_positive": 1,
+        "false_negative": 7
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 3,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 0,
+          "exact_count_pct": 100
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "pretrained_yolo26m_1280",
+    "score_threshold": 0.55,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3.3333333333333335,
+        "macro_source_group_mae": 2.75,
+        "rmse_vehicles_per_frame": 4.242640687119285,
+        "bias_vehicles_per_frame": -3.3333333333333335,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 12
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.5454545454545454,
+        "f1": 0.7058823529411764,
+        "true_positive": 12,
+        "false_positive": 0,
+        "false_negative": 10
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "nano_nbs3_best_val_map_640",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 2.449489742783178,
+        "bias_vehicles_per_frame": -2,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 16
+      },
+      "detection_iou_50": {
+        "precision": 0.8125,
+        "recall": 0.5909090909090909,
+        "f1": 0.6842105263157896,
+        "true_positive": 13,
+        "false_positive": 3,
+        "false_negative": 9
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "nano_nbs3_best_val_map_640",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3,
+        "macro_source_group_mae": 2.5,
+        "rmse_vehicles_per_frame": 3.696845502136472,
+        "bias_vehicles_per_frame": -3,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 13
+      },
+      "detection_iou_50": {
+        "precision": 0.9230769230769231,
+        "recall": 0.5454545454545454,
+        "f1": 0.6857142857142856,
+        "true_positive": 12,
+        "false_positive": 1,
+        "false_negative": 10
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "nano_nbs3_best_val_map_640",
+    "score_threshold": 0.55,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 5.333333333333333,
+        "macro_source_group_mae": 4.75,
+        "rmse_vehicles_per_frame": 5.715476066494082,
+        "bias_vehicles_per_frame": -5.333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 0,
+        "actual_total": 22,
+        "predicted_total": 6
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.2727272727272727,
+        "f1": 0.42857142857142855,
+        "true_positive": 6,
+        "false_positive": 0,
+        "false_negative": 16
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 6.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 3,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "nano_nbs3_last_640",
+    "score_threshold": 0.25,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 2,
+        "macro_source_group_mae": 1.75,
+        "rmse_vehicles_per_frame": 2.449489742783178,
+        "bias_vehicles_per_frame": -2,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 66.66666666666666,
+        "actual_total": 22,
+        "predicted_total": 16
+      },
+      "detection_iou_50": {
+        "precision": 0.8125,
+        "recall": 0.5909090909090909,
+        "f1": 0.6842105263157896,
+        "true_positive": 13,
+        "false_positive": 3,
+        "false_negative": 9
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 2.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "nano_nbs3_last_640",
+    "score_threshold": 0.4,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 3,
+        "macro_source_group_mae": 2.5,
+        "rmse_vehicles_per_frame": 3.696845502136472,
+        "bias_vehicles_per_frame": -3,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 33.33333333333333,
+        "actual_total": 22,
+        "predicted_total": 13
+      },
+      "detection_iou_50": {
+        "precision": 0.9230769230769231,
+        "recall": 0.5454545454545454,
+        "f1": 0.6857142857142856,
+        "true_positive": 12,
+        "false_positive": 1,
+        "false_negative": 10
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 4,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 1,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  },
+  {
+    "partition": "validation",
+    "candidate": "nano_nbs3_last_640",
+    "score_threshold": 0.55,
+    "metrics": {
+      "count": {
+        "frames": 3,
+        "source_groups": 2,
+        "mae_vehicles_per_frame": 5.333333333333333,
+        "macro_source_group_mae": 4.75,
+        "rmse_vehicles_per_frame": 5.715476066494082,
+        "bias_vehicles_per_frame": -5.333333333333333,
+        "exact_count_pct": 0,
+        "within_one_vehicle_pct": 0,
+        "actual_total": 22,
+        "predicted_total": 6
+      },
+      "detection_iou_50": {
+        "precision": 1.0,
+        "recall": 0.2727272727272727,
+        "f1": 0.42857142857142855,
+        "true_positive": 6,
+        "false_positive": 0,
+        "false_negative": 16
+      },
+      "per_source_group": {
+        "Cun Cun": {
+          "frames": 2,
+          "mae_vehicles_per_frame": 6.5,
+          "exact_count_pct": 0
+        },
+        "Husip": {
+          "frames": 1,
+          "mae_vehicles_per_frame": 3,
+          "exact_count_pct": 0
+        }
+      }
+    }
+  }
+]

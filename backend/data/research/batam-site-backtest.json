@@ -1,0 +1,96 @@
+{
+  "scope": "exploratory_single_batam_site_next_survey_day",
+  "evaluated_at": "2026-10-23T12:58:26.033647+00:00",
+  "source_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642",
+  "source_pdf_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/download/5642/3819",
+  "csv_sha256": "8dceaa2b73169ff33aded53fc9ca7a86274f3aa72cdd4ec60f4236b3cae68e44",
+  "source_license": "CC BY-SA 4.0 as displayed on article page",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, decimal commas normalized, explicit interval offsets and quality diagnostics added. No author endorsement.",
+  "source_rows": 48,
+  "source_calendar_days": 3,
+  "synthetic_training_rows": 0,
+  "serving_model_replaced": false,
+  "application_history_modified": false,
+  "canonical_corridor_mapping": null,
+  "unit": "km/h",
+  "model_parameters": {
+    "n_estimators": 80,
+    "max_depth": 3,
+    "min_samples_leaf": 2,
+    "random_state": 42,
+    "n_jobs": 1
+  },
+  "folds": [
+    {
+      "test_date": "2023-02-17",
+      "forecast_origin": "2023-02-17T00:00:00+07:00",
+      "latest_training_interval_end": "2023-02-16T18:00:00+07:00",
+      "training_rows": 16,
+      "test_rows": 16,
+      "random_forest": {
+        "samples": 16,
+        "mae_kph": 1.9203747302827336,
+        "rmse_kph": 2.3319047732672145
+      },
+      "previous_survey_day": {
+        "samples": 16,
+        "mae_kph": 2.279375,
+        "rmse_kph": 2.7310311697232605
+      },
+      "historical_slot_mean": {
+        "samples": 16,
+        "mae_kph": 2.279375,
+        "rmse_kph": 2.7310311697232605
+      }
+    },
+    {
+      "test_date": "2023-02-18",
+      "forecast_origin": "2023-02-18T00:00:00+07:00",
+      "latest_training_interval_end": "2023-02-17T18:00:00+07:00",
+      "training_rows": 32,
+      "test_rows": 16,
+      "random_forest": {
+        "samples": 16,
+        "mae_kph": 3.355438755734668,
+        "rmse_kph": 3.918395107569964
+      },
+      "previous_survey_day": {
+        "samples": 16,
+        "mae_kph": 4.135,
+        "rmse_kph": 4.659914162299558
+      },
+      "historical_slot_mean": {
+        "samples": 16,
+        "mae_kph": 3.536562499999999,
+        "rmse_kph": 3.9854244206232283
+      }
+    }
+  ],
+  "random_forest": {
+    "samples": 32,
+    "mae_kph": 2.637906743008701,
+    "rmse_kph": 3.224251858231197
+  },
+  "previous_survey_day": {
+    "samples": 32,
+    "mae_kph": 3.2071875,
+    "rmse_kph": 3.8192493536034013
+  },
+  "historical_slot_mean": {
+    "samples": 32,
+    "mae_kph": 2.9079687499999993,
+    "rmse_kph": 3.4162947079035786
+  },
+  "beats_previous_survey_day": true,
+  "promotion_eligible": false,
+  "limitations": [
+    "48 published means, one 100m site, two directions, three days and peak windows only; no vehicle-level samples.",
+    "Two expanding-day folds; 32 held-out interval means are correlated, not independent vehicle samples.",
+    "Fixed model parameters; no tuning on either test day and no test data used during fitting.",
+    "Reported speeds are retained, including one flagged speed/inverse-mean-time discrepancy; raw samples cannot resolve it.",
+    "Forecasts are made at midnight for the next survey day, not 15/30/60-minute operational predictions.",
+    "Exact geometry and canonical corridor mapping remain unverified. No network accuracy, uncertainty coverage or deployment claim.",
+    "Insufficient geographic and temporal coverage for serving-model promotion, regardless of benchmark score."
+  ]
+}

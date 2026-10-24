@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-10-24T12:54:16+07:00",
+  "camera_traffic_summary": {
+    "status": "active",
+    "configured_cameras": 6,
+    "fresh_cameras": 5,
+    "validated_cameras": 0,
+    "estimated_cameras": 5,
+    "mean_congestion_index": 11.2,
+    "vehicle_detections": 10,
+    "latest_observed_at": "2026-10-24T12:54:04+07:00",
+    "oldest_observed_at": "2026-10-24T12:53:59+07:00",
+    "valid_until": "2026-10-24T12:54:29+07:00",
+    "source": "registered_camera_aggregates",
+    "scope": "fresh_registered_camera_views_only",
+    "measured_road_speed": false,
+    "independently_validated": false
+  },
+  "road_network_coverage": {
+    "source": "OpenStreetMap",
+    "scope": "bundled_batam_routing_graph",
+    "mapped_nodes": 115320,
+    "mapped_source_ways": 27018,
+    "directed_edges": 249745,
+    "live_camera_edge_count": 0,
+    "live_camera_edge_coverage_percent": 0.0,
+    "complete_live_coverage": false
+  }
+}

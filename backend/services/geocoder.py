@@ -13,14 +13,15 @@ Usage policy:
 No API key is required.
 """
 
-import json
+import copy
+import math
 import threading
 import time
 import urllib.parse
 import urllib.request
 from typing import Any, Dict, List, Optional
 
-from services import multimodal_router, router, tls
+from services import multimodal_router, router, tls, provider_json
 
 # Corridor bounding box covering Singapore and Batam. Results outside the
 # supported island classifier are retained with ``supported_region = None`` so
@@ -37,6 +38,7 @@ _USER_AGENT = "CrossFlowAI/2.0 (batam-singapore-hackathon-2026)"
 
 # Minimum seconds between outbound Nominatim requests.
 _RATE_LIMIT_S = 1.1
+_MAX_RESPONSE_BYTES = 512 * 1024
 _last_request_at: float = 0.0
 _request_lock = threading.Lock()
 
@@ -62,7 +64,7 @@ class _TTLCache:
             if time.monotonic() > self._expiry[key]:
                 del self._store[key], self._expiry[key]
                 return None
-            return self._store[key]
+            return copy.deepcopy(self._store[key])
 
     def set(self, key: str, value: Any) -> None:
         with self._lock:
@@ -70,7 +72,7 @@ class _TTLCache:
                 # Evict the oldest entry.
                 oldest = min(self._expiry, key=self._expiry.get)  # type: ignore[arg-type]
                 del self._store[oldest], self._expiry[oldest]
-            self._store[key] = value
+            self._store[key] = copy.deepcopy(value)
             self._expiry[key] = time.monotonic() + self._ttl
 
 
@@ -100,9 +102,9 @@ def _nominatim_get(url: str) -> Optional[Any]:
             with urllib.request.urlopen(
                 req, timeout=5, context=tls.default_context(),
             ) as resp:
-                return json.loads(resp.read())
+                return provider_json.read_json(resp, max_bytes=_MAX_RESPONSE_BYTES)
         except Exception as err:  # noqa: BLE001
-            print(f"[geocoder] Nominatim unreachable: {err}")
+            print(f"[geocoder] Nominatim unreachable ({type(err).__name__})")
             return None
 
 
@@ -129,18 +131,40 @@ def geocode(query: str, limit: int = 5) -> List[Dict[str, Any]]:
     url = f"{_NOMINATIM_BASE}?{params}"
     raw = _nominatim_get(url)
 
-    if not raw:
-        result: List[Dict[str, Any]] = []
-        _cache.set(cache_key, result)
-        return result
+    # A transport failure or an upstream error object is not a successful
+    # empty search. Do not cache either for an hour: the next explicit retry
+    # should be able to recover as soon as the provider does.
+    if not isinstance(raw, list):
+        return []
 
     out = []
     for item in raw:
+        if not isinstance(item, dict):
+            continue
         try:
             lat = float(item["lat"])
             lng = float(item["lon"])
-        except (KeyError, ValueError):
+        except (KeyError, TypeError, ValueError, OverflowError):
             continue
+        if not (
+            math.isfinite(lat) and math.isfinite(lng)
+            and -90 <= lat <= 90 and -180 <= lng <= 180
+        ):
+            continue
+
+        try:
+            importance = float(item.get("importance", 0))
+        except (TypeError, ValueError, OverflowError):
+            importance = 0.0
+        if not math.isfinite(importance):
+            importance = 0.0
+
+        display_name = item.get("display_name")
+        if not isinstance(display_name, str) or not display_name.strip():
+            display_name = f"{lat:.5f}, {lng:.5f}"
+        result_type = item.get("type")
+        if not isinstance(result_type, str) or not result_type.strip():
+            result_type = "place"
 
         region = multimodal_router.location_region(lat, lng)
         node_id, snap_m = router.snap_to_graph(lat, lng)
@@ -154,15 +178,15 @@ def geocode(query: str, limit: int = 5) -> List[Dict[str, Any]]:
             node_id = None
 
         out.append({
-            "display_name": item.get("display_name", f"{lat:.5f}, {lng:.5f}"),
-            "type": item.get("type", "place"),
+            "display_name": display_name,
+            "type": result_type,
             "lat": lat,
             "lng": lng,
             "node_id": node_id,
             "snap_distance_m": round(snap_m, 1),
             "snapped_lat": round(snapped_lat, 6),
             "snapped_lng": round(snapped_lng, 6),
-            "importance": float(item.get("importance", 0)),
+            "importance": importance,
             "supported_region": region,
         })
 
@@ -203,10 +227,10 @@ def reverse_geocode(lat: float, lng: float) -> Dict[str, Any]:
     url = f"{_NOMINATIM_REVERSE}?{params}"
     raw = _nominatim_get(url)
 
-    display = (
-        raw.get("display_name", f"{lat:.5f}, {lng:.5f}")
-        if isinstance(raw, dict) else f"{lat:.5f}, {lng:.5f}"
-    )
+    display = raw.get("display_name") if isinstance(raw, dict) else None
+    resolved_name = isinstance(display, str) and bool(display.strip())
+    if not resolved_name:
+        display = f"{lat:.5f}, {lng:.5f}"
 
     result = {
         "display_name": display,
@@ -217,5 +241,6 @@ def reverse_geocode(lat: float, lng: float) -> Dict[str, Any]:
         "snapped_lng": round(snapped_lng, 6),
         "supported_region": region,
     }
-    _cache.set(cache_key, result)
+    if resolved_name:
+        _cache.set(cache_key, result)
     return result

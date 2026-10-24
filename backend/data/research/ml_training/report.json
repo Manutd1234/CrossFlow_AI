@@ -1,0 +1,2679 @@
+{
+  "schema_version": 1,
+  "schema": "crossflow.ml_training_run.v1",
+  "generated_at": "2026-10-23T17:41:45.822908+00:00",
+  "training_authorized_on_local": "2026-10-24",
+  "experiments": {
+    "batam_site_speed": {
+      "schema_version": 1,
+      "generated_at": "2026-10-23T17:34:40.667715+00:00",
+      "target": "road_speed_kph",
+      "scope": "retrospective_single_site_next_survey_day_speed_diagnostic",
+      "training_performed": true,
+      "selected_model": "extra_trees_depth_2",
+      "test_metrics": {
+        "samples": 16,
+        "mae_kph": 3.234259982638889,
+        "rmse_kph": 3.971420433929562
+      },
+      "test_metrics_per_direction": {
+        "from_east": {
+          "samples": 8,
+          "mae_kph": 2.5798480902777774,
+          "rmse_kph": 3.1251740826647993
+        },
+        "from_west": {
+          "samples": 8,
+          "mae_kph": 3.888671875000001,
+          "rmse_kph": 4.666652706073891
+        }
+      },
+      "baseline_metrics": {
+        "previous_survey_day_slot": {
+          "samples": 16,
+          "mae_kph": 4.135,
+          "rmse_kph": 4.659914162299558
+        },
+        "historical_slot_mean": {
+          "samples": 16,
+          "mae_kph": 3.536562499999999,
+          "rmse_kph": 3.9854244206232283
+        },
+        "direction_mean": {
+          "samples": 16,
+          "mae_kph": 3.284140624999999,
+          "rmse_kph": 4.140325342930491
+        }
+      },
+      "baseline_metrics_per_direction": {
+        "previous_survey_day_slot": {
+          "from_east": {
+            "samples": 8,
+            "mae_kph": 3.4037499999999996,
+            "rmse_kph": 3.6041590558686503
+          },
+          "from_west": {
+            "samples": 8,
+            "mae_kph": 4.866249999999999,
+            "rmse_kph": 5.517212838018848
+          }
+        },
+        "historical_slot_mean": {
+          "from_east": {
+            "samples": 8,
+            "mae_kph": 3.2812499999999987,
+            "rmse_kph": 3.618556341968437
+          },
+          "from_west": {
+            "samples": 8,
+            "mae_kph": 3.7918749999999997,
+            "rmse_kph": 4.321257412490026
+          }
+        },
+        "direction_mean": {
+          "from_east": {
+            "samples": 8,
+            "mae_kph": 2.6696875000000007,
+            "rmse_kph": 3.1782520254850786
+          },
+          "from_west": {
+            "samples": 8,
+            "mae_kph": 3.8985937499999976,
+            "rmse_kph": 4.917652077274782
+          }
+        }
+      },
+      "improvement_over_previous_day_mae_percent": 21.783313600026865,
+      "production_eligible": false,
+      "serving_model_replaced": false,
+      "application_history_modified": false,
+      "source": {
+        "site_id": "batam-gajah-mada-kemilau-bangsa-published-2023",
+        "location": "Jalan Gajah Mada in front of Kemilau Bangsa School intersection, Tiban, Batam",
+        "rows": 48,
+        "survey_days": 3,
+        "csv_sha256": "8dceaa2b73169ff33aded53fc9ca7a86274f3aa72cdd4ec60f4236b3cae68e44",
+        "pdf_sha256": "2e37e52e90ea8450359e3d5391e7a1626a304b85d3c8cf59808e1513d4eeb681",
+        "url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642",
+        "pdf_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/download/5642/3819",
+        "license": "CC BY-SA 4.0 as displayed on article page",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, decimal commas normalized, explicit interval offsets and quality diagnostics added. No author endorsement."
+      },
+      "license": {
+        "name": "CC BY-SA 4.0 as displayed on article page",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, decimal commas normalized, explicit interval offsets and quality diagnostics added. No author endorsement."
+      },
+      "splits": {
+        "fit": {
+          "role": "candidate_fit",
+          "rows": 16,
+          "survey_dates": [
+            "2023-02-16"
+          ],
+          "first_interval_start": "2023-02-16T07:00:00+07:00",
+          "last_interval_end": "2023-02-16T18:00:00+07:00",
+          "whole_day_and_both_directions_grouped": true
+        },
+        "validation": {
+          "role": "fixed_preset_selection",
+          "rows": 16,
+          "survey_dates": [
+            "2023-02-17"
+          ],
+          "first_interval_start": "2023-02-17T07:00:00+07:00",
+          "last_interval_end": "2023-02-17T18:00:00+07:00",
+          "whole_day_and_both_directions_grouped": true
+        },
+        "final_refit": {
+          "role": "frozen_winner_refit",
+          "rows": 32,
+          "survey_dates": [
+            "2023-02-16",
+            "2023-02-17"
+          ],
+          "first_interval_start": "2023-02-16T07:00:00+07:00",
+          "last_interval_end": "2023-02-17T18:00:00+07:00",
+          "whole_day_and_both_directions_grouped": true
+        },
+        "test": {
+          "role": "final_retrospective_diagnostic",
+          "rows": 16,
+          "survey_dates": [
+            "2023-02-18"
+          ],
+          "first_interval_start": "2023-02-18T07:00:00+07:00",
+          "last_interval_end": "2023-02-18T18:00:00+07:00",
+          "whole_day_and_both_directions_grouped": true
+        }
+      },
+      "selection": {
+        "criterion": "validation_MAE_then_RMSE_then_name",
+        "validation_scores": [
+          {
+            "model": "previous_survey_day_slot",
+            "parameters": {},
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 2.279375,
+              "rmse_kph": 2.7310311697232605
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 2.2425000000000006,
+                "rmse_kph": 2.404423007708919
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 2.3162499999999997,
+                "rmse_kph": 3.0225506612793103
+              }
+            }
+          },
+          {
+            "model": "historical_slot_mean",
+            "parameters": {},
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 2.279375,
+              "rmse_kph": 2.7310311697232605
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 2.2425000000000006,
+                "rmse_kph": 2.404423007708919
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 2.3162499999999997,
+                "rmse_kph": 3.0225506612793103
+              }
+            }
+          },
+          {
+            "model": "direction_mean",
+            "parameters": {},
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 2.6267187499999993,
+              "rmse_kph": 3.1039608013391526
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 2.484999999999999,
+                "rmse_kph": 3.127191231760539
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 2.768437499999999,
+                "rmse_kph": 3.080555195496421
+              }
+            }
+          },
+          {
+            "model": "ridge_alpha_1",
+            "parameters": {
+              "alpha": 1.0
+            },
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 2.515409519501464,
+              "rmse_kph": 2.865961849620513
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 2.5104926002398575,
+                "rmse_kph": 2.984397365116851
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 2.520326438763071,
+                "rmse_kph": 2.742416272932332
+              }
+            }
+          },
+          {
+            "model": "ridge_alpha_10",
+            "parameters": {
+              "alpha": 10.0
+            },
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 2.622826910235826,
+              "rmse_kph": 3.0362931245625777
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 2.8135858388072545,
+                "rmse_kph": 3.301246745675848
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 2.4320679816643977,
+                "rmse_kph": 2.745891804258971
+              }
+            }
+          },
+          {
+            "model": "random_forest_depth_2",
+            "parameters": {
+              "max_depth": 2
+            },
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 1.893309984142015,
+              "rmse_kph": 2.2873889632827122
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 1.963114047844516,
+                "rmse_kph": 2.274266211446849
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 1.8235059204395139,
+                "rmse_kph": 2.300436858113328
+              }
+            }
+          },
+          {
+            "model": "random_forest_depth_3",
+            "parameters": {
+              "max_depth": 3
+            },
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 1.927543139260912,
+              "rmse_kph": 2.3539535660366484
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 1.975400917658729,
+                "rmse_kph": 2.3443488833484327
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 1.8796853608630948,
+                "rmse_kph": 2.3635192182963656
+              }
+            }
+          },
+          {
+            "model": "extra_trees_depth_2",
+            "parameters": {
+              "max_depth": 2
+            },
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 1.7702226562499994,
+              "rmse_kph": 2.054745237865537
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 1.7630885416666668,
+                "rmse_kph": 1.9031735645942767
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 1.777356770833332,
+                "rmse_kph": 2.1958794065457514
+              }
+            }
+          },
+          {
+            "model": "extra_trees_depth_3",
+            "parameters": {
+              "max_depth": 3
+            },
+            "metrics": {
+              "samples": 16,
+              "mae_kph": 1.86858984375,
+              "rmse_kph": 2.2110955847283966
+            },
+            "per_direction": {
+              "from_east": {
+                "samples": 8,
+                "mae_kph": 1.7777786458333336,
+                "rmse_kph": 2.171239844228076
+              },
+              "from_west": {
+                "samples": 8,
+                "mae_kph": 1.9594010416666663,
+                "rmse_kph": 2.2502455218147337
+              }
+            }
+          }
+        ],
+        "winner_frozen_before_test": true,
+        "test_used_for_tuning": false,
+        "candidate_count": 9,
+        "random_state": 42,
+        "ensemble_n_estimators": 48,
+        "ensemble_min_samples_leaf": 2,
+        "all_parameters_fixed_before_run": true
+      },
+      "feature_contract": {
+        "names": [
+          "hour_sin",
+          "hour_cos",
+          "direction_from_west"
+        ],
+        "known_at": "midnight_WIB_before_target_survey_day",
+        "lag_baselines": "same clock slot and direction from strictly earlier survey days",
+        "excluded_target_interval_fields": [
+          "travel_time",
+          "volume",
+          "density",
+          "reference_speed",
+          "speed",
+          "queue"
+        ]
+      },
+      "flagged_row_sensitivity": {
+        "selected_model_unchanged": "extra_trees_depth_2",
+        "retuned": false,
+        "removed_fit_rows": 1,
+        "removed_rows": [
+          {
+            "interval_start": "2023-02-16T17:30:00+07:00",
+            "direction": "from_west",
+            "flag": "speed_time_difference_over_0.5kph"
+          }
+        ],
+        "test_metrics": {
+          "samples": 16,
+          "mae_kph": 3.2835618649594798,
+          "rmse_kph": 4.008733087657347
+        },
+        "mae_change_kph": 0.04930188232059063
+      },
+      "synthetic_training_rows": 0,
+      "predictions": [
+        {
+          "interval_start": "2023-02-18T07:00:00+07:00",
+          "interval_end": "2023-02-18T07:30:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 28.55,
+          "selected_model_kph": 22.493861979166667,
+          "previous_survey_day_slot_kph": 24.02,
+          "historical_slot_mean_kph": 22.59,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T07:00:00+07:00",
+          "interval_end": "2023-02-18T07:30:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 26.57,
+          "selected_model_kph": 23.329361979166666,
+          "previous_survey_day_slot_kph": 20.35,
+          "historical_slot_mean_kph": 22.495,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T07:30:00+07:00",
+          "interval_end": "2023-02-18T08:00:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 26.07,
+          "selected_model_kph": 23.377421006944445,
+          "previous_survey_day_slot_kph": 22.25,
+          "historical_slot_mean_kph": 21.6,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T07:30:00+07:00",
+          "interval_end": "2023-02-18T08:00:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 24.21,
+          "selected_model_kph": 23.892087673611112,
+          "previous_survey_day_slot_kph": 23.65,
+          "historical_slot_mean_kph": 23.92,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T08:00:00+07:00",
+          "interval_end": "2023-02-18T08:30:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 26.79,
+          "selected_model_kph": 24.605243055555558,
+          "previous_survey_day_slot_kph": 24.44,
+          "historical_slot_mean_kph": 23.96,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T08:00:00+07:00",
+          "interval_end": "2023-02-18T08:30:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 28.41,
+          "selected_model_kph": 24.783263888888886,
+          "previous_survey_day_slot_kph": 21.42,
+          "historical_slot_mean_kph": 22.1,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T08:30:00+07:00",
+          "interval_end": "2023-02-18T09:00:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 28.19,
+          "selected_model_kph": 29.57657986111111,
+          "previous_survey_day_slot_kph": 30.56,
+          "historical_slot_mean_kph": 31.994999999999997,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T08:30:00+07:00",
+          "interval_end": "2023-02-18T09:00:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 31.69,
+          "selected_model_kph": 28.73657986111111,
+          "previous_survey_day_slot_kph": 28.19,
+          "historical_slot_mean_kph": 28.634999999999998,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T16:00:00+07:00",
+          "interval_end": "2023-02-18T16:30:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 29.2,
+          "selected_model_kph": 24.719513888888887,
+          "previous_survey_day_slot_kph": 23.58,
+          "historical_slot_mean_kph": 25.185,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T16:00:00+07:00",
+          "interval_end": "2023-02-18T16:30:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 34.32,
+          "selected_model_kph": 24.897534722222222,
+          "previous_survey_day_slot_kph": 25.05,
+          "historical_slot_mean_kph": 28.245,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T16:30:00+07:00",
+          "interval_end": "2023-02-18T17:00:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 24.05,
+          "selected_model_kph": 23.377421006944445,
+          "previous_survey_day_slot_kph": 21.54,
+          "historical_slot_mean_kph": 23.115000000000002,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T16:30:00+07:00",
+          "interval_end": "2023-02-18T17:00:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 28.32,
+          "selected_model_kph": 23.892087673611112,
+          "previous_survey_day_slot_kph": 23.42,
+          "historical_slot_mean_kph": 24.840000000000003,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T17:00:00+07:00",
+          "interval_end": "2023-02-18T17:30:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 25.07,
+          "selected_model_kph": 22.493861979166667,
+          "previous_survey_day_slot_kph": 21.16,
+          "historical_slot_mean_kph": 22.32,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T17:00:00+07:00",
+          "interval_end": "2023-02-18T17:30:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 28.89,
+          "selected_model_kph": 23.329361979166666,
+          "previous_survey_day_slot_kph": 23.5,
+          "historical_slot_mean_kph": 23.165,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T17:30:00+07:00",
+          "interval_end": "2023-02-18T18:00:00+07:00",
+          "direction": "from_east",
+          "actual_kph": 22.63,
+          "selected_model_kph": 22.04047222222222,
+          "previous_survey_day_slot_kph": 20.51,
+          "historical_slot_mean_kph": 21.145000000000003,
+          "direction_mean_kph": 23.98875,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        },
+        {
+          "interval_start": "2023-02-18T17:30:00+07:00",
+          "interval_end": "2023-02-18T18:00:00+07:00",
+          "direction": "from_west",
+          "actual_kph": 25.02,
+          "selected_model_kph": 23.46034722222222,
+          "previous_survey_day_slot_kph": 22.92,
+          "historical_slot_mean_kph": 23.695,
+          "direction_mean_kph": 24.636875000000003,
+          "source_quality_flag": "published_aggregate_raw_samples_unavailable"
+        }
+      ],
+      "limitations": [
+        "This 48-row published dataset was previously benchmarked in this repository. The split is retrospective and is not fresh prospective untouched evidence.",
+        "One 100m site, two published directions, three days and peak windows; 16 correlated means on the test day are not 16 independent vehicle samples.",
+        "Published means are not original vehicle-level speed records. One source speed/time discrepancy is retained and tested separately.",
+        "Exact survey geometry and canonical corridor mapping remain unverified. No network or current-time prediction is supported.",
+        "The selected family is frozen before day3, but model comparison on only one validation day has substantial selection uncertainty.",
+        "The calculated PKJI reference speed is not used as measured free flow; no severity or travel-time ground truth is manufactured.",
+        "No uncertainty-coverage, camera counting, queue inference or 15/30/60-minute operational accuracy claim follows from this diagnostic."
+      ],
+      "artifact": {
+        "sha256": "9e835d639dd9ff23a7b14d4564fba44064659fae04c685e48bf1b3da7a74757c",
+        "bytes": 18327,
+        "path": "model.json",
+        "format": "crossflow_survey_speed_numeric_v1",
+        "scope": "retrospective_single_site_next_survey_day_speed_diagnostic"
+      }
+    },
+    "foreign_hourly_counts": {
+      "schema": "crossflow.research_forecasting.v1",
+      "created_at_utc": "2026-10-23T17:33:36.338376Z",
+      "status": "trained_and_held_out_evaluated",
+      "geography": "Paris, France: 24 deterministically selected road arcs",
+      "geography_is_batam": false,
+      "transfer_benchmark_only": true,
+      "production_eligible": false,
+      "target": "hourly_loop_flow_vehicles",
+      "forecast_horizon_hours": 1,
+      "not_validated_targets": [
+        "Batam traffic",
+        "road speed",
+        "travel time",
+        "congestion severity",
+        "camera vehicle counts",
+        "queues"
+      ],
+      "source": {
+        "path": "research/batam-traffic/datasets/round4_open/forecasting/normalized/paris_hourly.csv",
+        "sha256": "dc3db788c3937713d6d62c71a5f6cb9dcd3bc2b36724af74064f113b7e653583",
+        "publisher": "Direction de la Voirie et des D\u00e9placements, Ville de Paris",
+        "url": "https://opendata.paris.fr/explore/dataset/comptages-routiers-permanents/",
+        "license": "ODbL",
+        "license_url": "https://opendatacommons.org/licenses/odbl/",
+        "source_rows": 35088,
+        "source_null_flow_rows": 2328,
+        "absent_hour_arc_keys": 48,
+        "explicit_grid_rows": 35136,
+        "arc_ids": [
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "21",
+          "22",
+          "23",
+          "24",
+          "27",
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44"
+        ],
+        "arc_count": 24,
+        "grid_hours": 1464,
+        "first_target_end_utc": "2026-07-31T22:00:00Z",
+        "last_target_end_utc": "2026-09-30T21:00:00Z",
+        "timestamp_semantics": "End of preceding one-hour source loop elaboration interval"
+      },
+      "protocol": {
+        "mode": "Rolling one-hour-ahead prequential forecasting of existing arcs",
+        "prediction_time": "At target end minus one hour, assuming prior-hour count has already arrived",
+        "missing_targets": "Excluded from supervised fit/evaluation; never filled with zero",
+        "missing_features": "Native NaN for histogram boosting; fit-slice-only median and missing indicators for other estimators",
+        "warmup_hours_excluded_from_training": 168,
+        "train_local_dates": [
+          "2026-08-08",
+          "2026-08-31"
+        ],
+        "validation_local_dates": [
+          "2026-09-01",
+          "2026-09-16"
+        ],
+        "holdout_local_dates": [
+          "2026-09-17",
+          "2026-09-30"
+        ],
+        "calendar_timezone": "Europe/Paris",
+        "preprocessing_refit": "Train slice during selection; train + validation only during final fit",
+        "holdout_protocol": "One frozen final holdout, no feature or hyperparameter changes based on its scores",
+        "features_frozen_before_holdout": true,
+        "online_lag_updates": "Observed earlier validation/test counts may enter later predictions; no multi-day open-loop claim",
+        "same_holdout_targets_for_every_forecaster": true,
+        "source_state_and_reference_dates_used_as_features": false
+      },
+      "features": {
+        "names": [
+          "arc_category",
+          "hour_sin",
+          "hour_cos",
+          "weekday_sin",
+          "weekday_cos",
+          "is_weekend",
+          "q_lag_1h",
+          "q_lag_2h",
+          "q_lag_3h",
+          "q_lag_6h",
+          "q_lag_12h",
+          "q_lag_24h",
+          "q_lag_48h",
+          "q_lag_168h",
+          "q_prior_3h_mean",
+          "q_prior_3h_std",
+          "q_prior_3h_missing_fraction",
+          "q_prior_6h_mean",
+          "q_prior_6h_std",
+          "q_prior_6h_missing_fraction",
+          "q_prior_24h_mean",
+          "q_prior_24h_std",
+          "q_prior_24h_missing_fraction",
+          "q_prior_168h_mean",
+          "q_prior_168h_std",
+          "q_prior_168h_missing_fraction",
+          "q_lag_1h_minus_2h",
+          "q_lag_1h_minus_24h"
+        ],
+        "count": 28,
+        "lineage": "Only arc category, known target calendar and source flow observations at strictly earlier exact UTC hourly timestamps",
+        "count_lag_hours": [
+          1,
+          2,
+          3,
+          6,
+          12,
+          24,
+          48,
+          168
+        ],
+        "rolling_windows_hours": [
+          3,
+          6,
+          24,
+          168
+        ],
+        "rolling_window_closure": "[target - window hours, target), excluding target count",
+        "unused_source_fields": [
+          "occupancy_pct",
+          "source_traffic_state",
+          "source_arc_state",
+          "quality_status",
+          "reference date_debut/date_fin",
+          "geometries"
+        ]
+      },
+      "splits": {
+        "train": {
+          "observed_target_rows": 12926,
+          "first_target_end_utc": "2026-08-07T22:00:00Z",
+          "last_target_end_utc": "2026-08-31T21:00:00Z",
+          "ordered_target_keys_sha256": "96c4d9e5d2cf725ea37697fda258add64da11c04fe4a6f142c9ee5c4c8effec5"
+        },
+        "validation": {
+          "observed_target_rows": 8732,
+          "first_target_end_utc": "2026-08-31T22:00:00Z",
+          "last_target_end_utc": "2026-09-16T21:00:00Z",
+          "ordered_target_keys_sha256": "91a127413871bf0b7379c6e49558d87a89f35882f6287c3039e034b23f2bff09"
+        },
+        "test": {
+          "observed_target_rows": 7454,
+          "first_target_end_utc": "2026-09-16T22:00:00Z",
+          "last_target_end_utc": "2026-09-30T21:00:00Z",
+          "ordered_target_keys_sha256": "4fadc499761fba256cf70ec795835232865e1e7aca5ca1b69d413c0d6ab88c68"
+        }
+      },
+      "selection": {
+        "selection_metric": "validation MAE, then deterministic name tie-break",
+        "selected_forecaster": "hist_gradient_boosting_15_squared_error",
+        "best_trained_model": "hist_gradient_boosting_15_squared_error",
+        "best_validation_baseline": "weekly_seasonal",
+        "validation_rank_order": [
+          "hist_gradient_boosting_15_squared_error",
+          "hist_gradient_boosting_31_squared_error",
+          "extra_trees_128",
+          "hist_gradient_boosting_31_absolute_error",
+          "ridge_10",
+          "ridge_100",
+          "weekly_seasonal",
+          "persistence",
+          "daily_seasonal",
+          "training_calendar_profile"
+        ],
+        "test_used_for_selection": false,
+        "final_refit": "Refit only the best validation trained candidate on train + validation; holdout targets excluded; retain it even if a baseline wins selection"
+      },
+      "validation_scores": {
+        "persistence": {
+          "kind": "baseline",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 72.19743472285845,
+          "rmse_vehicles_per_hour": 104.61337321853858,
+          "wape_pct": 14.89073135658836,
+          "smape_pct": 20.557681140497497,
+          "bias_vehicles_per_hour": -0.8605130554283097,
+          "median_absolute_error": 49.0,
+          "p90_absolute_error": 165.0,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5
+        },
+        "daily_seasonal": {
+          "kind": "baseline",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 81.39693082913422,
+          "rmse_vehicles_per_hour": 130.09411829597997,
+          "wape_pct": 16.788128759423802,
+          "smape_pct": 22.33821938792421,
+          "bias_vehicles_per_hour": -3.4745762711864407,
+          "median_absolute_error": 49.0,
+          "p90_absolute_error": 184.0,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5
+        },
+        "weekly_seasonal": {
+          "kind": "baseline",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 69.55634448007329,
+          "rmse_vehicles_per_hour": 104.05490948003734,
+          "wape_pct": 14.346006111920229,
+          "smape_pct": 18.49342040947706,
+          "bias_vehicles_per_hour": -27.876316994961062,
+          "median_absolute_error": 46.0,
+          "p90_absolute_error": 156.0,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5
+        },
+        "training_calendar_profile": {
+          "kind": "baseline",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 106.70304626660558,
+          "rmse_vehicles_per_hour": 139.0311530999258,
+          "wape_pct": 22.007518729506668,
+          "smape_pct": 27.758148402978183,
+          "bias_vehicles_per_hour": -81.46404031149794,
+          "median_absolute_error": 84.0,
+          "p90_absolute_error": 225.0,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5
+        },
+        "hist_gradient_boosting_15_squared_error": {
+          "kind": "trained_model",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 50.18726690747459,
+          "rmse_vehicles_per_hour": 74.72815570569563,
+          "wape_pct": 10.351131060394732,
+          "smape_pct": 13.328242378462733,
+          "bias_vehicles_per_hour": -9.387481264993117,
+          "median_absolute_error": 33.426866109533194,
+          "p90_absolute_error": 114.08543584536346,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5,
+          "fit_and_validation_seconds": 0.373,
+          "configuration": "{'categorical_features': [0], 'early_stopping': False, 'interaction_cst': None, 'l2_regularization': 20, 'learning_rate': 0.06, 'loss': 'squared_error', 'max_bins': 255, 'max_depth': None, 'max_features': 1.0, 'max_iter': 220, 'max_leaf_nodes': 15, 'min_samples_leaf': 25, 'monotonic_cst': None, 'n_iter_no_change': 10, 'quantile': None, 'random_state': 20261024, 'scoring': 'loss', 'tol': 1e-07, 'validation_fraction': 0.1, 'verbose': 0, 'warm_start': False}"
+        },
+        "hist_gradient_boosting_31_squared_error": {
+          "kind": "trained_model",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 50.897325478371265,
+          "rmse_vehicles_per_hour": 75.82842376784113,
+          "wape_pct": 10.497580743368271,
+          "smape_pct": 13.347761623384052,
+          "bias_vehicles_per_hour": -10.627275086046119,
+          "median_absolute_error": 34.124754189149485,
+          "p90_absolute_error": 114.43445148151409,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5,
+          "fit_and_validation_seconds": 0.473,
+          "configuration": "{'categorical_features': [0], 'early_stopping': False, 'interaction_cst': None, 'l2_regularization': 20, 'learning_rate': 0.06, 'loss': 'squared_error', 'max_bins': 255, 'max_depth': None, 'max_features': 1.0, 'max_iter': 220, 'max_leaf_nodes': 31, 'min_samples_leaf': 25, 'monotonic_cst': None, 'n_iter_no_change': 10, 'quantile': None, 'random_state': 20261024, 'scoring': 'loss', 'tol': 1e-07, 'validation_fraction': 0.1, 'verbose': 0, 'warm_start': False}"
+        },
+        "hist_gradient_boosting_31_absolute_error": {
+          "kind": "trained_model",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 52.04309338882953,
+          "rmse_vehicles_per_hour": 78.20949548902584,
+          "wape_pct": 10.733895540661642,
+          "smape_pct": 13.641209139239722,
+          "bias_vehicles_per_hour": -9.84995674209152,
+          "median_absolute_error": 34.577482832275166,
+          "p90_absolute_error": 118.86275238012064,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5,
+          "fit_and_validation_seconds": 0.605,
+          "configuration": "{'categorical_features': [0], 'early_stopping': False, 'interaction_cst': None, 'l2_regularization': 20, 'learning_rate': 0.06, 'loss': 'absolute_error', 'max_bins': 255, 'max_depth': None, 'max_features': 1.0, 'max_iter': 220, 'max_leaf_nodes': 31, 'min_samples_leaf': 25, 'monotonic_cst': None, 'n_iter_no_change': 10, 'quantile': None, 'random_state': 20261024, 'scoring': 'loss', 'tol': 1e-07, 'validation_fraction': 0.1, 'verbose': 0, 'warm_start': False}"
+        },
+        "extra_trees_128": {
+          "kind": "trained_model",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 51.01532876240014,
+          "rmse_vehicles_per_hour": 75.88462707172324,
+          "wape_pct": 10.521918937771082,
+          "smape_pct": 13.377537231328168,
+          "bias_vehicles_per_hour": -9.61807181807891,
+          "median_absolute_error": 34.40424961903682,
+          "p90_absolute_error": 113.99013183199645,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5,
+          "fit_and_validation_seconds": 1.515,
+          "configuration": "{'memory': None, 'steps': [('features', ColumnTransformer(transformers=[('arc',\n                                 OneHotEncoder(handle_unknown='ignore',\n                                               sparse_output=False),\n                                 [0]),\n                                ('numeric',\n                                 Pipeline(steps=[('impute',\n                                                  SimpleImputer(add_indicator=True,\n                                                                keep_empty_features=True,\n                                                                strategy='median'))]),\n                                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,\n                                  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,\n                                  26, 27])])), ('regressor', ExtraTreesRegressor(max_depth=18, max_features=0.8, min_samples_leaf=3,\n                    n_estimators=128, n_jobs=2, random_state=20261024))], 'transform_input': None, 'verbose': False}"
+        },
+        "ridge_10": {
+          "kind": "trained_model",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 53.16189876578377,
+          "rmse_vehicles_per_hour": 77.6253209949429,
+          "wape_pct": 10.964649311519063,
+          "smape_pct": 15.023501805896068,
+          "bias_vehicles_per_hour": -6.413497418219916,
+          "median_absolute_error": 36.15381445527717,
+          "p90_absolute_error": 117.09853315090447,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5,
+          "fit_and_validation_seconds": 0.026,
+          "configuration": "{'memory': None, 'steps': [('features', ColumnTransformer(transformers=[('arc',\n                                 OneHotEncoder(handle_unknown='ignore',\n                                               sparse_output=False),\n                                 [0]),\n                                ('numeric',\n                                 Pipeline(steps=[('impute',\n                                                  SimpleImputer(add_indicator=True,\n                                                                keep_empty_features=True,\n                                                                strategy='median')),\n                                                 ('scale', StandardScaler())]),\n                                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,\n                                  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,\n                                  26, 27])])), ('regressor', Ridge(alpha=10.0))], 'transform_input': None, 'verbose': False}"
+        },
+        "ridge_100": {
+          "kind": "trained_model",
+          "rows": 8732,
+          "mae_vehicles_per_hour": 53.649277636548604,
+          "rmse_vehicles_per_hour": 78.10418851565845,
+          "wape_pct": 11.065171274124733,
+          "smape_pct": 15.038206510142762,
+          "bias_vehicles_per_hour": -7.626312535909707,
+          "median_absolute_error": 36.82020102846661,
+          "p90_absolute_error": 118.45727897620166,
+          "actual_mean_vehicles_per_hour": 484.8481447549244,
+          "measured_zero_target_rows": 5,
+          "fit_and_validation_seconds": 0.023,
+          "configuration": "{'memory': None, 'steps': [('features', ColumnTransformer(transformers=[('arc',\n                                 OneHotEncoder(handle_unknown='ignore',\n                                               sparse_output=False),\n                                 [0]),\n                                ('numeric',\n                                 Pipeline(steps=[('impute',\n                                                  SimpleImputer(add_indicator=True,\n                                                                keep_empty_features=True,\n                                                                strategy='median')),\n                                                 ('scale', StandardScaler())]),\n                                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,\n                                  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,\n                                  26, 27])])), ('regressor', Ridge(alpha=100.0))], 'transform_input': None, 'verbose': False}"
+        }
+      },
+      "artifact_reload_prediction_parity_passed": true,
+      "holdout_scores": {
+        "persistence": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 73.92943386101422,
+          "rmse_vehicles_per_hour": 106.93922880981714,
+          "wape_pct": 15.460021703001052,
+          "smape_pct": 21.33557190207511,
+          "bias_vehicles_per_hour": 0.5996780252213577,
+          "median_absolute_error": 50.0,
+          "p90_absolute_error": 175.0,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        },
+        "daily_seasonal": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 105.71397907163939,
+          "rmse_vehicles_per_hour": 174.64853049227875,
+          "wape_pct": 22.10676215687881,
+          "smape_pct": 27.177678395280452,
+          "bias_vehicles_per_hour": 3.5124765226723906,
+          "median_absolute_error": 55.0,
+          "p90_absolute_error": 264.0,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        },
+        "weekly_seasonal": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 78.27877649584116,
+          "rmse_vehicles_per_hour": 133.4051156161249,
+          "wape_pct": 16.369550263095583,
+          "smape_pct": 19.824812888761535,
+          "bias_vehicles_per_hour": 16.91762811913067,
+          "median_absolute_error": 44.0,
+          "p90_absolute_error": 168.0,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        },
+        "training_calendar_profile": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 90.1650120740542,
+          "rmse_vehicles_per_hour": 131.56269260237377,
+          "wape_pct": 18.855183527265098,
+          "smape_pct": 23.19177044710852,
+          "bias_vehicles_per_hour": -37.47518111081298,
+          "median_absolute_error": 65.0,
+          "p90_absolute_error": 190.3499999999999,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        },
+        "hist_gradient_boosting_15_squared_error": {
+          "kind": "trained_model",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 56.33135082120127,
+          "rmse_vehicles_per_hour": 87.83157996687949,
+          "wape_pct": 11.779934740097984,
+          "smape_pct": 15.675366182594283,
+          "bias_vehicles_per_hour": 14.092189681299374,
+          "median_absolute_error": 34.8283631106338,
+          "p90_absolute_error": 125.39061609758105,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        }
+      },
+      "selected_holdout_metrics": {
+        "kind": "trained_model",
+        "rows": 7454,
+        "mae_vehicles_per_hour": 56.33135082120127,
+        "rmse_vehicles_per_hour": 87.83157996687949,
+        "wape_pct": 11.779934740097984,
+        "smape_pct": 15.675366182594283,
+        "bias_vehicles_per_hour": 14.092189681299374,
+        "median_absolute_error": 34.8283631106338,
+        "p90_absolute_error": 125.39061609758105,
+        "actual_mean_vehicles_per_hour": 478.197477864234,
+        "measured_zero_target_rows": 0
+      },
+      "selected_holdout_mae_improvement_pct_vs_baselines": {
+        "persistence": 23.803892605071173,
+        "daily_seasonal": 46.713432494081886,
+        "weekly_seasonal": 28.037517520225837,
+        "training_calendar_profile": 37.524157624539235
+      },
+      "selected_macro_arc_mae": 55.72903132133181,
+      "arcs_with_no_observed_holdout_targets": [
+        "13"
+      ],
+      "execution": {
+        "execution_attempt_number": 2,
+        "prior_frozen_selection_without_complete_report": true,
+        "protocol_or_hyperparameters_changed_after_holdout": false,
+        "status": "complete"
+      },
+      "baseline_coverage": {
+        "validation": {
+          "persistence": {
+            "primary_lag_available_rows": 8641,
+            "primary_lag_missing_rows": 91,
+            "all_declared_lags_missing_rows": 0,
+            "fallback_order_hours": [
+              1,
+              24,
+              168
+            ],
+            "last_resort": "fit-slice arc median, then fit-slice global median"
+          },
+          "daily_seasonal": {
+            "primary_lag_available_rows": 8647,
+            "primary_lag_missing_rows": 85,
+            "all_declared_lags_missing_rows": 0,
+            "fallback_order_hours": [
+              24,
+              168,
+              1
+            ],
+            "last_resort": "fit-slice arc median, then fit-slice global median"
+          },
+          "weekly_seasonal": {
+            "primary_lag_available_rows": 8699,
+            "primary_lag_missing_rows": 33,
+            "all_declared_lags_missing_rows": 0,
+            "fallback_order_hours": [
+              168,
+              24,
+              1
+            ],
+            "last_resort": "fit-slice arc median, then fit-slice global median"
+          },
+          "training_calendar_profile": {
+            "exact_arc_weekday_hour_profile_rows": 8732,
+            "fallback_rows": 0,
+            "fitted_rows": 12926
+          }
+        },
+        "holdout": {
+          "persistence": {
+            "primary_lag_available_rows": 7351,
+            "primary_lag_missing_rows": 103,
+            "all_declared_lags_missing_rows": 0,
+            "fallback_order_hours": [
+              1,
+              24,
+              168
+            ],
+            "last_resort": "fit-slice arc median, then fit-slice global median"
+          },
+          "daily_seasonal": {
+            "primary_lag_available_rows": 7172,
+            "primary_lag_missing_rows": 282,
+            "all_declared_lags_missing_rows": 0,
+            "fallback_order_hours": [
+              24,
+              168,
+              1
+            ],
+            "last_resort": "fit-slice arc median, then fit-slice global median"
+          },
+          "weekly_seasonal": {
+            "primary_lag_available_rows": 7270,
+            "primary_lag_missing_rows": 184,
+            "all_declared_lags_missing_rows": 0,
+            "fallback_order_hours": [
+              168,
+              24,
+              1
+            ],
+            "last_resort": "fit-slice arc median, then fit-slice global median"
+          },
+          "training_calendar_profile": {
+            "exact_arc_weekday_hour_profile_rows": 7454,
+            "fallback_rows": 0,
+            "fitted_rows": 21658
+          }
+        }
+      },
+      "interval90": {
+        "calibration_split": "validation only, before final train + validation refit",
+        "nominal_coverage_pct": 90,
+        "absolute_residual_quantile_vehicles_per_hour": 114.08543584536346,
+        "holdout_empirical_coverage_pct": 88.06010195867991,
+        "mean_interval_width_vehicles_per_hour": 226.3038872685235,
+        "guarantee": false,
+        "limitation": "Serial dependence, distribution shift and model refit invalidate an exchangeability-based coverage guarantee"
+      },
+      "limitations": [
+        "Foreign-city transfer benchmark; not a trained or validated Batam congestion predictor.",
+        "Only 61 calendar days and 24 smallest active arc IDs, not a representative city or seasonal sample.",
+        "No independently checked per-row detector fault flags; nonmissing source counts can still contain measurement error.",
+        "Zero publication latency is assumed because actual detector publication latency is unavailable.",
+        "Autocorrelated road-hour errors are not independent vehicle samples; no IID confidence claims.",
+        "No holidays, incidents, weather or road-change data were acquired for these measurements.",
+        "No generalization test to previously unseen roads; all holdout arcs occur in training.",
+        "The held-out period is now consumed for this fixed experiment; changing features after seeing these scores requires a new untouched holdout.",
+        "Interval calibration shares the model-selection validation slice and is not a separate conformal calibration set.",
+        "Hourly detector flow is neither exact camera vehicle count nor measured road speed, travel time, queue length or independently labeled congestion severity.",
+        "The serialized scikit-learn model is a local trusted research artifact; retain source attribution/license and exact environment when reusing it."
+      ],
+      "environment": {
+        "python": "3.12.14",
+        "numpy": "2.5.1",
+        "sklearn": "1.9.0",
+        "joblib": "1.6.0",
+        "random_seed": 20261024,
+        "max_compute_threads": 2,
+        "training_wall_seconds": 3.756
+      }
+    },
+    "foreign_visual_counts": {
+      "schema": "crossflow.visual_count_transfer.v1",
+      "schema_version": 1,
+      "generated_at": "2026-10-23T17:40:05.848473+00:00",
+      "training_performed": true,
+      "target": "static_image_vehicle_count",
+      "scope": "Non-Batam source-disjoint pixel-count transfer diagnostic",
+      "production_eligible": false,
+      "geography_is_batam": false,
+      "transfer_benchmark_only": true,
+      "selected_model": "ridge_1000",
+      "validation_preferred_strategy": "constant_training_median",
+      "test_metrics": {
+        "samples": 32,
+        "mae_vehicles_per_frame": 3.6139445488937274,
+        "rmse_vehicles_per_frame": 4.506918574180355,
+        "bias_vehicles_per_frame": -1.3448455505463885,
+        "actual_mean_vehicles_per_frame": 5.09375,
+        "predicted_mean_vehicles_per_frame": 3.7489044494536117,
+        "rounded_exact_count_pct": 9.375,
+        "within_one_vehicle_pct": 12.5
+      },
+      "baseline_metrics": {
+        "constant_training_mean": {
+          "samples": 32,
+          "mae_vehicles_per_frame": 2.46875,
+          "rmse_vehicles_per_frame": 2.966684222794495,
+          "bias_vehicles_per_frame": -0.30208333333333304,
+          "actual_mean_vehicles_per_frame": 5.09375,
+          "predicted_mean_vehicles_per_frame": 4.791666666666667,
+          "rounded_exact_count_pct": 9.375,
+          "within_one_vehicle_pct": 25.0
+        },
+        "constant_training_median": {
+          "samples": 32,
+          "mae_vehicles_per_frame": 2.46875,
+          "rmse_vehicles_per_frame": 2.952752952754429,
+          "bias_vehicles_per_frame": -0.09375,
+          "actual_mean_vehicles_per_frame": 5.09375,
+          "predicted_mean_vehicles_per_frame": 5.0,
+          "rounded_exact_count_pct": 9.375,
+          "within_one_vehicle_pct": 31.25
+        }
+      },
+      "test_mae_improvement_pct_vs_baselines": {
+        "constant_training_mean": -46.38762729696111,
+        "constant_training_median": -46.38762729696111
+      },
+      "model_beats_both_constant_baselines": false,
+      "split": {
+        "training_source": "Visaitech, South Asia (exact country/city undisclosed)",
+        "final_holdout_source": "TRANSSET, two North Carolina highway locations, USA",
+        "training_images": 48,
+        "training_vehicle_boxes": 230,
+        "training_nonvehicle_boxes_excluded": 6,
+        "original_training_video_groups": [
+          "V001",
+          "V002",
+          "V003",
+          "V004",
+          "V005",
+          "VEHICLES"
+        ],
+        "effective_validation_group_count": 6,
+        "holdout_images_available": 32,
+        "holdout_images_scored": 32,
+        "holdout_vehicle_boxes_scored": 163,
+        "source_disjoint": true,
+        "random_frame_split": false,
+        "holdout_session_provenance": "Not released; filename ordinals are not timestamps. Frames may be correlated.",
+        "author_split_handling": "All Visaitech frames are development data; leave-whole-video/duplicate-component-out validation replaces the author split without crossing video groups"
+      },
+      "validation": {
+        "selected_model": "ridge_1000",
+        "validation_preferred_strategy": "constant_training_median",
+        "selection_metric": "Mean MAE across whole source-video/duplicate-component held-out groups",
+        "hyperparameters_fixed_before_holdout": true,
+        "holdout_labels_used_for_selection": false,
+        "validation_scores": {
+          "ridge_10": {
+            "macro_group_mae_vehicles_per_frame": 2.392105478890532,
+            "pooled": {
+              "samples": 48,
+              "mae_vehicles_per_frame": 2.392105478890532,
+              "rmse_vehicles_per_frame": 2.8628625866230544,
+              "bias_vehicles_per_frame": 0.21803968499872053,
+              "actual_mean_vehicles_per_frame": 4.791666666666667,
+              "predicted_mean_vehicles_per_frame": 5.009706351665387,
+              "rounded_exact_count_pct": 8.333333333333332,
+              "within_one_vehicle_pct": 16.666666666666664
+            }
+          },
+          "ridge_100": {
+            "macro_group_mae_vehicles_per_frame": 2.136099961357107,
+            "pooled": {
+              "samples": 48,
+              "mae_vehicles_per_frame": 2.136099961357107,
+              "rmse_vehicles_per_frame": 2.597029370722329,
+              "bias_vehicles_per_frame": 0.1331334544133797,
+              "actual_mean_vehicles_per_frame": 4.791666666666667,
+              "predicted_mean_vehicles_per_frame": 4.924800121080046,
+              "rounded_exact_count_pct": 10.416666666666668,
+              "within_one_vehicle_pct": 20.833333333333336
+            }
+          },
+          "ridge_1000": {
+            "macro_group_mae_vehicles_per_frame": 1.8482735389173544,
+            "pooled": {
+              "samples": 48,
+              "mae_vehicles_per_frame": 1.8482735389173541,
+              "rmse_vehicles_per_frame": 2.349968365212405,
+              "bias_vehicles_per_frame": 0.054272987620259394,
+              "actual_mean_vehicles_per_frame": 4.791666666666667,
+              "predicted_mean_vehicles_per_frame": 4.845939654286926,
+              "rounded_exact_count_pct": 10.416666666666668,
+              "within_one_vehicle_pct": 25.0
+            }
+          },
+          "extra_trees_leaf_2": {
+            "macro_group_mae_vehicles_per_frame": 1.8738368421776797,
+            "pooled": {
+              "samples": 48,
+              "mae_vehicles_per_frame": 1.8738368421776797,
+              "rmse_vehicles_per_frame": 2.3366978310447784,
+              "bias_vehicles_per_frame": -0.008903295687823961,
+              "actual_mean_vehicles_per_frame": 4.791666666666667,
+              "predicted_mean_vehicles_per_frame": 4.782763370978842,
+              "rounded_exact_count_pct": 12.5,
+              "within_one_vehicle_pct": 27.083333333333332
+            }
+          },
+          "extra_trees_leaf_5": {
+            "macro_group_mae_vehicles_per_frame": 1.8608245365203375,
+            "pooled": {
+              "samples": 48,
+              "mae_vehicles_per_frame": 1.8608245365203373,
+              "rmse_vehicles_per_frame": 2.3279030646229435,
+              "bias_vehicles_per_frame": 0.018059624565972338,
+              "actual_mean_vehicles_per_frame": 4.791666666666667,
+              "predicted_mean_vehicles_per_frame": 4.809726291232639,
+              "rounded_exact_count_pct": 8.333333333333332,
+              "within_one_vehicle_pct": 25.0
+            }
+          },
+          "constant_training_mean": {
+            "macro_group_mae_vehicles_per_frame": 1.820833333333333,
+            "pooled": {
+              "samples": 48,
+              "mae_vehicles_per_frame": 1.820833333333333,
+              "rmse_vehicles_per_frame": 2.352790895936143,
+              "bias_vehicles_per_frame": 0.0,
+              "actual_mean_vehicles_per_frame": 4.791666666666667,
+              "predicted_mean_vehicles_per_frame": 4.791666666666667,
+              "rounded_exact_count_pct": 12.5,
+              "within_one_vehicle_pct": 31.25
+            }
+          },
+          "constant_training_median": {
+            "macro_group_mae_vehicles_per_frame": 1.6666666666666667,
+            "pooled": {
+              "samples": 48,
+              "mae_vehicles_per_frame": 1.6666666666666667,
+              "rmse_vehicles_per_frame": 2.23606797749979,
+              "bias_vehicles_per_frame": 0.20833333333333334,
+              "actual_mean_vehicles_per_frame": 4.791666666666667,
+              "predicted_mean_vehicles_per_frame": 5.0,
+              "rounded_exact_count_pct": 20.833333333333336,
+              "within_one_vehicle_pct": 58.333333333333336
+            }
+          }
+        },
+        "folds": [
+          {
+            "held_out_group": "V001",
+            "model": "ridge_10",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 3.2464342046520422,
+            "rmse_vehicles_per_frame": 3.721167967615552,
+            "bias_vehicles_per_frame": -3.2464342046520422,
+            "actual_mean_vehicles_per_frame": 6.5,
+            "predicted_mean_vehicles_per_frame": 3.2535657953479578,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 0.0
+          },
+          {
+            "held_out_group": "V001",
+            "model": "ridge_100",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.8858691000441823,
+            "rmse_vehicles_per_frame": 3.4860919608192487,
+            "bias_vehicles_per_frame": -2.8858691000441823,
+            "actual_mean_vehicles_per_frame": 6.5,
+            "predicted_mean_vehicles_per_frame": 3.6141308999558177,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "V001",
+            "model": "ridge_1000",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.3400193791796458,
+            "rmse_vehicles_per_frame": 3.1283024499834076,
+            "bias_vehicles_per_frame": -2.3400193791796458,
+            "actual_mean_vehicles_per_frame": 6.5,
+            "predicted_mean_vehicles_per_frame": 4.159980620820354,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "V001",
+            "model": "extra_trees_leaf_2",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.5932225787450394,
+            "rmse_vehicles_per_frame": 3.2718999239901154,
+            "bias_vehicles_per_frame": -2.5932225787450394,
+            "actual_mean_vehicles_per_frame": 6.5,
+            "predicted_mean_vehicles_per_frame": 3.9067774212549606,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 0.0
+          },
+          {
+            "held_out_group": "V001",
+            "model": "extra_trees_leaf_5",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.5975024026537703,
+            "rmse_vehicles_per_frame": 3.2427289036944122,
+            "bias_vehicles_per_frame": -2.5975024026537703,
+            "actual_mean_vehicles_per_frame": 6.5,
+            "predicted_mean_vehicles_per_frame": 3.9024975973462297,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 0.0
+          },
+          {
+            "held_out_group": "V001",
+            "model": "constant_training_mean",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.05,
+            "rmse_vehicles_per_frame": 2.9499999999999997,
+            "bias_vehicles_per_frame": -2.05,
+            "actual_mean_vehicles_per_frame": 6.5,
+            "predicted_mean_vehicles_per_frame": 4.45,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 50.0
+          },
+          {
+            "held_out_group": "V001",
+            "model": "constant_training_median",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.5,
+            "rmse_vehicles_per_frame": 2.598076211353316,
+            "bias_vehicles_per_frame": -1.5,
+            "actual_mean_vehicles_per_frame": 6.5,
+            "predicted_mean_vehicles_per_frame": 5.0,
+            "rounded_exact_count_pct": 50.0,
+            "within_one_vehicle_pct": 75.0
+          },
+          {
+            "held_out_group": "V002",
+            "model": "ridge_10",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.4028915185915123,
+            "rmse_vehicles_per_frame": 2.647740031367167,
+            "bias_vehicles_per_frame": 0.9371929384111549,
+            "actual_mean_vehicles_per_frame": 4.125,
+            "predicted_mean_vehicles_per_frame": 5.062192938411155,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 0.0
+          },
+          {
+            "held_out_group": "V002",
+            "model": "ridge_100",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.3326861386226208,
+            "rmse_vehicles_per_frame": 2.534460106740498,
+            "bias_vehicles_per_frame": 0.743215098729155,
+            "actual_mean_vehicles_per_frame": 4.125,
+            "predicted_mean_vehicles_per_frame": 4.868215098729156,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 0.0
+          },
+          {
+            "held_out_group": "V002",
+            "model": "ridge_1000",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.040369273516773,
+            "rmse_vehicles_per_frame": 2.431694025847137,
+            "bias_vehicles_per_frame": 0.7282858458711844,
+            "actual_mean_vehicles_per_frame": 4.125,
+            "predicted_mean_vehicles_per_frame": 4.853285845871184,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "V002",
+            "model": "extra_trees_leaf_2",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.9468925172050173,
+            "rmse_vehicles_per_frame": 2.2490667343551283,
+            "bias_vehicles_per_frame": 0.6036959823264971,
+            "actual_mean_vehicles_per_frame": 4.125,
+            "predicted_mean_vehicles_per_frame": 4.728695982326497,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "V002",
+            "model": "extra_trees_leaf_5",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.8909826853918648,
+            "rmse_vehicles_per_frame": 2.2780762101494787,
+            "bias_vehicles_per_frame": 0.7746182880704371,
+            "actual_mean_vehicles_per_frame": 4.125,
+            "predicted_mean_vehicles_per_frame": 4.899618288070437,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "V002",
+            "model": "constant_training_mean",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.89375,
+            "rmse_vehicles_per_frame": 2.4493621618699017,
+            "bias_vehicles_per_frame": 0.7999999999999998,
+            "actual_mean_vehicles_per_frame": 4.125,
+            "predicted_mean_vehicles_per_frame": 4.925,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "V002",
+            "model": "constant_training_median",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.875,
+            "rmse_vehicles_per_frame": 2.4748737341529163,
+            "bias_vehicles_per_frame": 0.875,
+            "actual_mean_vehicles_per_frame": 4.125,
+            "predicted_mean_vehicles_per_frame": 5.0,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 62.5
+          },
+          {
+            "held_out_group": "V003",
+            "model": "ridge_10",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.7928093071925353,
+            "rmse_vehicles_per_frame": 1.987344860979174,
+            "bias_vehicles_per_frame": -0.47626378075204895,
+            "actual_mean_vehicles_per_frame": 5.0,
+            "predicted_mean_vehicles_per_frame": 4.523736219247951,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "V003",
+            "model": "ridge_100",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.5372780492573286,
+            "rmse_vehicles_per_frame": 1.6936792335944384,
+            "bias_vehicles_per_frame": -0.24651547154706666,
+            "actual_mean_vehicles_per_frame": 5.0,
+            "predicted_mean_vehicles_per_frame": 4.753484528452933,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "V003",
+            "model": "ridge_1000",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.0404156617967995,
+            "rmse_vehicles_per_frame": 1.1523771520057364,
+            "bias_vehicles_per_frame": -0.10562346261229966,
+            "actual_mean_vehicles_per_frame": 5.0,
+            "predicted_mean_vehicles_per_frame": 4.8943765373877,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 37.5
+          },
+          {
+            "held_out_group": "V003",
+            "model": "extra_trees_leaf_2",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.3314635565038433,
+            "rmse_vehicles_per_frame": 1.41132617774255,
+            "bias_vehicles_per_frame": 0.02367383751540092,
+            "actual_mean_vehicles_per_frame": 5.0,
+            "predicted_mean_vehicles_per_frame": 5.023673837515401,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "V003",
+            "model": "extra_trees_leaf_5",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.2910753038194451,
+            "rmse_vehicles_per_frame": 1.351170664952968,
+            "bias_vehicles_per_frame": 0.08813476562500039,
+            "actual_mean_vehicles_per_frame": 5.0,
+            "predicted_mean_vehicles_per_frame": 5.088134765625,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "V003",
+            "model": "constant_training_mean",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 0.8125,
+            "rmse_vehicles_per_frame": 1.0307764064044151,
+            "bias_vehicles_per_frame": -0.25,
+            "actual_mean_vehicles_per_frame": 5.0,
+            "predicted_mean_vehicles_per_frame": 4.75,
+            "rounded_exact_count_pct": 37.5,
+            "within_one_vehicle_pct": 75.0
+          },
+          {
+            "held_out_group": "V003",
+            "model": "constant_training_median",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 0.75,
+            "rmse_vehicles_per_frame": 1.0,
+            "bias_vehicles_per_frame": 0.0,
+            "actual_mean_vehicles_per_frame": 5.0,
+            "predicted_mean_vehicles_per_frame": 5.0,
+            "rounded_exact_count_pct": 37.5,
+            "within_one_vehicle_pct": 87.5
+          },
+          {
+            "held_out_group": "V004",
+            "model": "ridge_10",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.8153574210898475,
+            "rmse_vehicles_per_frame": 2.474170626194328,
+            "bias_vehicles_per_frame": 0.7961911857940844,
+            "actual_mean_vehicles_per_frame": 5.125,
+            "predicted_mean_vehicles_per_frame": 5.921191185794084,
+            "rounded_exact_count_pct": 50.0,
+            "within_one_vehicle_pct": 50.0
+          },
+          {
+            "held_out_group": "V004",
+            "model": "ridge_100",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.6327441870069592,
+            "rmse_vehicles_per_frame": 2.0990572759563335,
+            "bias_vehicles_per_frame": 0.5596986548734331,
+            "actual_mean_vehicles_per_frame": 5.125,
+            "predicted_mean_vehicles_per_frame": 5.684698654873433,
+            "rounded_exact_count_pct": 25.0,
+            "within_one_vehicle_pct": 50.0
+          },
+          {
+            "held_out_group": "V004",
+            "model": "ridge_1000",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.6049087386664573,
+            "rmse_vehicles_per_frame": 1.8565006021842945,
+            "bias_vehicles_per_frame": -0.06211320806193987,
+            "actual_mean_vehicles_per_frame": 5.125,
+            "predicted_mean_vehicles_per_frame": 5.062886791938061,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "V004",
+            "model": "extra_trees_leaf_2",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.5074080513160244,
+            "rmse_vehicles_per_frame": 1.7377433739721686,
+            "bias_vehicles_per_frame": -0.39377329452869453,
+            "actual_mean_vehicles_per_frame": 5.125,
+            "predicted_mean_vehicles_per_frame": 4.731226705471306,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 37.5
+          },
+          {
+            "held_out_group": "V004",
+            "model": "extra_trees_leaf_5",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.4769349113343258,
+            "rmse_vehicles_per_frame": 1.7147617807981117,
+            "bias_vehicles_per_frame": -0.37689150855654824,
+            "actual_mean_vehicles_per_frame": 5.125,
+            "predicted_mean_vehicles_per_frame": 4.7481084914434515,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 37.5
+          },
+          {
+            "held_out_group": "V004",
+            "model": "constant_training_mean",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.94375,
+            "rmse_vehicles_per_frame": 2.0662465970933868,
+            "bias_vehicles_per_frame": -0.40000000000000036,
+            "actual_mean_vehicles_per_frame": 5.125,
+            "predicted_mean_vehicles_per_frame": 4.725,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 0.0
+          },
+          {
+            "held_out_group": "V004",
+            "model": "constant_training_median",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.875,
+            "rmse_vehicles_per_frame": 2.03100960115899,
+            "bias_vehicles_per_frame": -0.125,
+            "actual_mean_vehicles_per_frame": 5.125,
+            "predicted_mean_vehicles_per_frame": 5.0,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 37.5
+          },
+          {
+            "held_out_group": "V005",
+            "model": "ridge_10",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.9385962168491613,
+            "rmse_vehicles_per_frame": 2.1418413779120167,
+            "bias_vehicles_per_frame": 0.14100776622308037,
+            "actual_mean_vehicles_per_frame": 5.25,
+            "predicted_mean_vehicles_per_frame": 5.39100776622308,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "V005",
+            "model": "ridge_100",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.7411828547646235,
+            "rmse_vehicles_per_frame": 2.006890389949165,
+            "bias_vehicles_per_frame": -0.05856789397798895,
+            "actual_mean_vehicles_per_frame": 5.25,
+            "predicted_mean_vehicles_per_frame": 5.191432106022011,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "V005",
+            "model": "ridge_1000",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.4403464936028114,
+            "rmse_vehicles_per_frame": 1.9187245471264522,
+            "bias_vehicles_per_frame": -0.3616296886154856,
+            "actual_mean_vehicles_per_frame": 5.25,
+            "predicted_mean_vehicles_per_frame": 4.888370311384514,
+            "rounded_exact_count_pct": 37.5,
+            "within_one_vehicle_pct": 37.5
+          },
+          {
+            "held_out_group": "V005",
+            "model": "extra_trees_leaf_2",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.1531659032348371,
+            "rmse_vehicles_per_frame": 1.624592714528772,
+            "bias_vehicles_per_frame": -0.2844444910944132,
+            "actual_mean_vehicles_per_frame": 5.25,
+            "predicted_mean_vehicles_per_frame": 4.965555508905586,
+            "rounded_exact_count_pct": 37.5,
+            "within_one_vehicle_pct": 62.5
+          },
+          {
+            "held_out_group": "V005",
+            "model": "extra_trees_leaf_5",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.2316797650049598,
+            "rmse_vehicles_per_frame": 1.7201863819952254,
+            "bias_vehicles_per_frame": -0.15648677765376862,
+            "actual_mean_vehicles_per_frame": 5.25,
+            "predicted_mean_vehicles_per_frame": 5.093513222346231,
+            "rounded_exact_count_pct": 37.5,
+            "within_one_vehicle_pct": 62.5
+          },
+          {
+            "held_out_group": "V005",
+            "model": "constant_training_mean",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.575,
+            "rmse_vehicles_per_frame": 1.997498435543818,
+            "bias_vehicles_per_frame": -0.5499999999999998,
+            "actual_mean_vehicles_per_frame": 5.25,
+            "predicted_mean_vehicles_per_frame": 4.7,
+            "rounded_exact_count_pct": 25.0,
+            "within_one_vehicle_pct": 37.5
+          },
+          {
+            "held_out_group": "V005",
+            "model": "constant_training_median",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 1.5,
+            "rmse_vehicles_per_frame": 1.9364916731037085,
+            "bias_vehicles_per_frame": -0.25,
+            "actual_mean_vehicles_per_frame": 5.25,
+            "predicted_mean_vehicles_per_frame": 5.0,
+            "rounded_exact_count_pct": 25.0,
+            "within_one_vehicle_pct": 50.0
+          },
+          {
+            "held_out_group": "VEHICLES",
+            "model": "ridge_10",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 3.1565442049680947,
+            "rmse_vehicles_per_frame": 3.695907256721251,
+            "bias_vehicles_per_frame": 3.1565442049680947,
+            "actual_mean_vehicles_per_frame": 2.75,
+            "predicted_mean_vehicles_per_frame": 5.906544204968095,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "VEHICLES",
+            "model": "ridge_100",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.686839438446928,
+            "rmse_vehicles_per_frame": 3.254050443845987,
+            "bias_vehicles_per_frame": 2.686839438446928,
+            "actual_mean_vehicles_per_frame": 2.75,
+            "predicted_mean_vehicles_per_frame": 5.436839438446928,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 25.0
+          },
+          {
+            "held_out_group": "VEHICLES",
+            "model": "ridge_1000",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.6235816867416393,
+            "rmse_vehicles_per_frame": 2.996435278286589,
+            "bias_vehicles_per_frame": 2.466737818319743,
+            "actual_mean_vehicles_per_frame": 2.75,
+            "predicted_mean_vehicles_per_frame": 5.216737818319743,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "VEHICLES",
+            "model": "extra_trees_leaf_2",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.7108684460613173,
+            "rmse_vehicles_per_frame": 3.0571907254211883,
+            "bias_vehicles_per_frame": 2.5906507703993054,
+            "actual_mean_vehicles_per_frame": 2.75,
+            "predicted_mean_vehicles_per_frame": 5.340650770399305,
+            "rounded_exact_count_pct": 12.5,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "VEHICLES",
+            "model": "extra_trees_leaf_5",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.676772150917659,
+            "rmse_vehicles_per_frame": 3.0140940244232586,
+            "bias_vehicles_per_frame": 2.376485382564484,
+            "actual_mean_vehicles_per_frame": 2.75,
+            "predicted_mean_vehicles_per_frame": 5.126485382564484,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "VEHICLES",
+            "model": "constant_training_mean",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.6500000000000004,
+            "rmse_vehicles_per_frame": 3.031501278244824,
+            "bias_vehicles_per_frame": 2.45,
+            "actual_mean_vehicles_per_frame": 2.75,
+            "predicted_mean_vehicles_per_frame": 5.2,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 12.5
+          },
+          {
+            "held_out_group": "VEHICLES",
+            "model": "constant_training_median",
+            "fit_images": 40,
+            "validation_images": 8,
+            "samples": 8,
+            "mae_vehicles_per_frame": 2.5,
+            "rmse_vehicles_per_frame": 2.8722813232690143,
+            "bias_vehicles_per_frame": 2.25,
+            "actual_mean_vehicles_per_frame": 2.75,
+            "predicted_mean_vehicles_per_frame": 5.0,
+            "rounded_exact_count_pct": 0.0,
+            "within_one_vehicle_pct": 37.5
+          }
+        ]
+      },
+      "features": {
+        "count": 352,
+        "names": [
+          "cell_0_0_red_mean",
+          "cell_0_0_green_mean",
+          "cell_0_0_blue_mean",
+          "cell_0_0_red_std",
+          "cell_0_0_green_std",
+          "cell_0_0_blue_std",
+          "cell_0_0_gray_mean",
+          "cell_0_0_gray_std",
+          "cell_0_0_gradient_mean",
+          "cell_0_0_gradient_std",
+          "cell_0_0_saturation_mean",
+          "cell_0_0_edge_fraction",
+          "cell_0_0_black_fraction",
+          "cell_0_0_gradient_orientation_0",
+          "cell_0_0_gradient_orientation_1",
+          "cell_0_0_gradient_orientation_2",
+          "cell_0_0_gradient_orientation_3",
+          "cell_0_0_gradient_orientation_4",
+          "cell_0_0_gradient_orientation_5",
+          "cell_0_0_gradient_orientation_6",
+          "cell_0_0_gradient_orientation_7",
+          "cell_0_1_red_mean",
+          "cell_0_1_green_mean",
+          "cell_0_1_blue_mean",
+          "cell_0_1_red_std",
+          "cell_0_1_green_std",
+          "cell_0_1_blue_std",
+          "cell_0_1_gray_mean",
+          "cell_0_1_gray_std",
+          "cell_0_1_gradient_mean",
+          "cell_0_1_gradient_std",
+          "cell_0_1_saturation_mean",
+          "cell_0_1_edge_fraction",
+          "cell_0_1_black_fraction",
+          "cell_0_1_gradient_orientation_0",
+          "cell_0_1_gradient_orientation_1",
+          "cell_0_1_gradient_orientation_2",
+          "cell_0_1_gradient_orientation_3",
+          "cell_0_1_gradient_orientation_4",
+          "cell_0_1_gradient_orientation_5",
+          "cell_0_1_gradient_orientation_6",
+          "cell_0_1_gradient_orientation_7",
+          "cell_0_2_red_mean",
+          "cell_0_2_green_mean",
+          "cell_0_2_blue_mean",
+          "cell_0_2_red_std",
+          "cell_0_2_green_std",
+          "cell_0_2_blue_std",
+          "cell_0_2_gray_mean",
+          "cell_0_2_gray_std",
+          "cell_0_2_gradient_mean",
+          "cell_0_2_gradient_std",
+          "cell_0_2_saturation_mean",
+          "cell_0_2_edge_fraction",
+          "cell_0_2_black_fraction",
+          "cell_0_2_gradient_orientation_0",
+          "cell_0_2_gradient_orientation_1",
+          "cell_0_2_gradient_orientation_2",
+          "cell_0_2_gradient_orientation_3",
+          "cell_0_2_gradient_orientation_4",
+          "cell_0_2_gradient_orientation_5",
+          "cell_0_2_gradient_orientation_6",
+          "cell_0_2_gradient_orientation_7",
+          "cell_0_3_red_mean",
+          "cell_0_3_green_mean",
+          "cell_0_3_blue_mean",
+          "cell_0_3_red_std",
+          "cell_0_3_green_std",
+          "cell_0_3_blue_std",
+          "cell_0_3_gray_mean",
+          "cell_0_3_gray_std",
+          "cell_0_3_gradient_mean",
+          "cell_0_3_gradient_std",
+          "cell_0_3_saturation_mean",
+          "cell_0_3_edge_fraction",
+          "cell_0_3_black_fraction",
+          "cell_0_3_gradient_orientation_0",
+          "cell_0_3_gradient_orientation_1",
+          "cell_0_3_gradient_orientation_2",
+          "cell_0_3_gradient_orientation_3",
+          "cell_0_3_gradient_orientation_4",
+          "cell_0_3_gradient_orientation_5",
+          "cell_0_3_gradient_orientation_6",
+          "cell_0_3_gradient_orientation_7",
+          "cell_1_0_red_mean",
+          "cell_1_0_green_mean",
+          "cell_1_0_blue_mean",
+          "cell_1_0_red_std",
+          "cell_1_0_green_std",
+          "cell_1_0_blue_std",
+          "cell_1_0_gray_mean",
+          "cell_1_0_gray_std",
+          "cell_1_0_gradient_mean",
+          "cell_1_0_gradient_std",
+          "cell_1_0_saturation_mean",
+          "cell_1_0_edge_fraction",
+          "cell_1_0_black_fraction",
+          "cell_1_0_gradient_orientation_0",
+          "cell_1_0_gradient_orientation_1",
+          "cell_1_0_gradient_orientation_2",
+          "cell_1_0_gradient_orientation_3",
+          "cell_1_0_gradient_orientation_4",
+          "cell_1_0_gradient_orientation_5",
+          "cell_1_0_gradient_orientation_6",
+          "cell_1_0_gradient_orientation_7",
+          "cell_1_1_red_mean",
+          "cell_1_1_green_mean",
+          "cell_1_1_blue_mean",
+          "cell_1_1_red_std",
+          "cell_1_1_green_std",
+          "cell_1_1_blue_std",
+          "cell_1_1_gray_mean",
+          "cell_1_1_gray_std",
+          "cell_1_1_gradient_mean",
+          "cell_1_1_gradient_std",
+          "cell_1_1_saturation_mean",
+          "cell_1_1_edge_fraction",
+          "cell_1_1_black_fraction",
+          "cell_1_1_gradient_orientation_0",
+          "cell_1_1_gradient_orientation_1",
+          "cell_1_1_gradient_orientation_2",
+          "cell_1_1_gradient_orientation_3",
+          "cell_1_1_gradient_orientation_4",
+          "cell_1_1_gradient_orientation_5",
+          "cell_1_1_gradient_orientation_6",
+          "cell_1_1_gradient_orientation_7",
+          "cell_1_2_red_mean",
+          "cell_1_2_green_mean",
+          "cell_1_2_blue_mean",
+          "cell_1_2_red_std",
+          "cell_1_2_green_std",
+          "cell_1_2_blue_std",
+          "cell_1_2_gray_mean",
+          "cell_1_2_gray_std",
+          "cell_1_2_gradient_mean",
+          "cell_1_2_gradient_std",
+          "cell_1_2_saturation_mean",
+          "cell_1_2_edge_fraction",
+          "cell_1_2_black_fraction",
+          "cell_1_2_gradient_orientation_0",
+          "cell_1_2_gradient_orientation_1",
+          "cell_1_2_gradient_orientation_2",
+          "cell_1_2_gradient_orientation_3",
+          "cell_1_2_gradient_orientation_4",
+          "cell_1_2_gradient_orientation_5",
+          "cell_1_2_gradient_orientation_6",
+          "cell_1_2_gradient_orientation_7",
+          "cell_1_3_red_mean",
+          "cell_1_3_green_mean",
+          "cell_1_3_blue_mean",
+          "cell_1_3_red_std",
+          "cell_1_3_green_std",
+          "cell_1_3_blue_std",
+          "cell_1_3_gray_mean",
+          "cell_1_3_gray_std",
+          "cell_1_3_gradient_mean",
+          "cell_1_3_gradient_std",
+          "cell_1_3_saturation_mean",
+          "cell_1_3_edge_fraction",
+          "cell_1_3_black_fraction",
+          "cell_1_3_gradient_orientation_0",
+          "cell_1_3_gradient_orientation_1",
+          "cell_1_3_gradient_orientation_2",
+          "cell_1_3_gradient_orientation_3",
+          "cell_1_3_gradient_orientation_4",
+          "cell_1_3_gradient_orientation_5",
+          "cell_1_3_gradient_orientation_6",
+          "cell_1_3_gradient_orientation_7",
+          "cell_2_0_red_mean",
+          "cell_2_0_green_mean",
+          "cell_2_0_blue_mean",
+          "cell_2_0_red_std",
+          "cell_2_0_green_std",
+          "cell_2_0_blue_std",
+          "cell_2_0_gray_mean",
+          "cell_2_0_gray_std",
+          "cell_2_0_gradient_mean",
+          "cell_2_0_gradient_std",
+          "cell_2_0_saturation_mean",
+          "cell_2_0_edge_fraction",
+          "cell_2_0_black_fraction",
+          "cell_2_0_gradient_orientation_0",
+          "cell_2_0_gradient_orientation_1",
+          "cell_2_0_gradient_orientation_2",
+          "cell_2_0_gradient_orientation_3",
+          "cell_2_0_gradient_orientation_4",
+          "cell_2_0_gradient_orientation_5",
+          "cell_2_0_gradient_orientation_6",
+          "cell_2_0_gradient_orientation_7",
+          "cell_2_1_red_mean",
+          "cell_2_1_green_mean",
+          "cell_2_1_blue_mean",
+          "cell_2_1_red_std",
+          "cell_2_1_green_std",
+          "cell_2_1_blue_std",
+          "cell_2_1_gray_mean",
+          "cell_2_1_gray_std",
+          "cell_2_1_gradient_mean",
+          "cell_2_1_gradient_std",
+          "cell_2_1_saturation_mean",
+          "cell_2_1_edge_fraction",
+          "cell_2_1_black_fraction",
+          "cell_2_1_gradient_orientation_0",
+          "cell_2_1_gradient_orientation_1",
+          "cell_2_1_gradient_orientation_2",
+          "cell_2_1_gradient_orientation_3",
+          "cell_2_1_gradient_orientation_4",
+          "cell_2_1_gradient_orientation_5",
+          "cell_2_1_gradient_orientation_6",
+          "cell_2_1_gradient_orientation_7",
+          "cell_2_2_red_mean",
+          "cell_2_2_green_mean",
+          "cell_2_2_blue_mean",
+          "cell_2_2_red_std",
+          "cell_2_2_green_std",
+          "cell_2_2_blue_std",
+          "cell_2_2_gray_mean",
+          "cell_2_2_gray_std",
+          "cell_2_2_gradient_mean",
+          "cell_2_2_gradient_std",
+          "cell_2_2_saturation_mean",
+          "cell_2_2_edge_fraction",
+          "cell_2_2_black_fraction",
+          "cell_2_2_gradient_orientation_0",
+          "cell_2_2_gradient_orientation_1",
+          "cell_2_2_gradient_orientation_2",
+          "cell_2_2_gradient_orientation_3",
+          "cell_2_2_gradient_orientation_4",
+          "cell_2_2_gradient_orientation_5",
+          "cell_2_2_gradient_orientation_6",
+          "cell_2_2_gradient_orientation_7",
+          "cell_2_3_red_mean",
+          "cell_2_3_green_mean",
+          "cell_2_3_blue_mean",
+          "cell_2_3_red_std",
+          "cell_2_3_green_std",
+          "cell_2_3_blue_std",
+          "cell_2_3_gray_mean",
+          "cell_2_3_gray_std",
+          "cell_2_3_gradient_mean",
+          "cell_2_3_gradient_std",
+          "cell_2_3_saturation_mean",
+          "cell_2_3_edge_fraction",
+          "cell_2_3_black_fraction",
+          "cell_2_3_gradient_orientation_0",
+          "cell_2_3_gradient_orientation_1",
+          "cell_2_3_gradient_orientation_2",
+          "cell_2_3_gradient_orientation_3",
+          "cell_2_3_gradient_orientation_4",
+          "cell_2_3_gradient_orientation_5",
+          "cell_2_3_gradient_orientation_6",
+          "cell_2_3_gradient_orientation_7",
+          "cell_3_0_red_mean",
+          "cell_3_0_green_mean",
+          "cell_3_0_blue_mean",
+          "cell_3_0_red_std",
+          "cell_3_0_green_std",
+          "cell_3_0_blue_std",
+          "cell_3_0_gray_mean",
+          "cell_3_0_gray_std",
+          "cell_3_0_gradient_mean",
+          "cell_3_0_gradient_std",
+          "cell_3_0_saturation_mean",
+          "cell_3_0_edge_fraction",
+          "cell_3_0_black_fraction",
+          "cell_3_0_gradient_orientation_0",
+          "cell_3_0_gradient_orientation_1",
+          "cell_3_0_gradient_orientation_2",
+          "cell_3_0_gradient_orientation_3",
+          "cell_3_0_gradient_orientation_4",
+          "cell_3_0_gradient_orientation_5",
+          "cell_3_0_gradient_orientation_6",
+          "cell_3_0_gradient_orientation_7",
+          "cell_3_1_red_mean",
+          "cell_3_1_green_mean",
+          "cell_3_1_blue_mean",
+          "cell_3_1_red_std",
+          "cell_3_1_green_std",
+          "cell_3_1_blue_std",
+          "cell_3_1_gray_mean",
+          "cell_3_1_gray_std",
+          "cell_3_1_gradient_mean",
+          "cell_3_1_gradient_std",
+          "cell_3_1_saturation_mean",
+          "cell_3_1_edge_fraction",
+          "cell_3_1_black_fraction",
+          "cell_3_1_gradient_orientation_0",
+          "cell_3_1_gradient_orientation_1",
+          "cell_3_1_gradient_orientation_2",
+          "cell_3_1_gradient_orientation_3",
+          "cell_3_1_gradient_orientation_4",
+          "cell_3_1_gradient_orientation_5",
+          "cell_3_1_gradient_orientation_6",
+          "cell_3_1_gradient_orientation_7",
+          "cell_3_2_red_mean",
+          "cell_3_2_green_mean",
+          "cell_3_2_blue_mean",
+          "cell_3_2_red_std",
+          "cell_3_2_green_std",
+          "cell_3_2_blue_std",
+          "cell_3_2_gray_mean",
+          "cell_3_2_gray_std",
+          "cell_3_2_gradient_mean",
+          "cell_3_2_gradient_std",
+          "cell_3_2_saturation_mean",
+          "cell_3_2_edge_fraction",
+          "cell_3_2_black_fraction",
+          "cell_3_2_gradient_orientation_0",
+          "cell_3_2_gradient_orientation_1",
+          "cell_3_2_gradient_orientation_2",
+          "cell_3_2_gradient_orientation_3",
+          "cell_3_2_gradient_orientation_4",
+          "cell_3_2_gradient_orientation_5",
+          "cell_3_2_gradient_orientation_6",
+          "cell_3_2_gradient_orientation_7",
+          "cell_3_3_red_mean",
+          "cell_3_3_green_mean",
+          "cell_3_3_blue_mean",
+          "cell_3_3_red_std",
+          "cell_3_3_green_std",
+          "cell_3_3_blue_std",
+          "cell_3_3_gray_mean",
+          "cell_3_3_gray_std",
+          "cell_3_3_gradient_mean",
+          "cell_3_3_gradient_std",
+          "cell_3_3_saturation_mean",
+          "cell_3_3_edge_fraction",
+          "cell_3_3_black_fraction",
+          "cell_3_3_gradient_orientation_0",
+          "cell_3_3_gradient_orientation_1",
+          "cell_3_3_gradient_orientation_2",
+          "cell_3_3_gradient_orientation_3",
+          "cell_3_3_gradient_orientation_4",
+          "cell_3_3_gradient_orientation_5",
+          "cell_3_3_gradient_orientation_6",
+          "cell_3_3_gradient_orientation_7",
+          "global_gray_histogram_0",
+          "global_gray_histogram_1",
+          "global_gray_histogram_2",
+          "global_gray_histogram_3",
+          "global_gray_histogram_4",
+          "global_gray_histogram_5",
+          "global_gray_histogram_6",
+          "global_gray_histogram_7",
+          "global_gray_histogram_8",
+          "global_gray_histogram_9",
+          "global_gray_histogram_10",
+          "global_gray_histogram_11",
+          "global_gray_histogram_12",
+          "global_gray_histogram_13",
+          "global_gray_histogram_14",
+          "global_gray_histogram_15"
+        ],
+        "fixed_before_holdout": true,
+        "pixel_only": true,
+        "source_or_camera_ids_used_as_features": false,
+        "target_annotations_used_as_features": false,
+        "resize": "128x128 bilinear RGB feature input only; aspect ratio not preserved; no new image files",
+        "augmentation": false,
+        "pretrained_weights": false,
+        "preprocessing": "Ridge StandardScaler fit separately within each training fold, then full Visaitech development only; ExtraTrees sees raw fixed features"
+      },
+      "artifact_reload_prediction_parity_passed": true,
+      "sources": [
+        {
+          "native_id": "hf:visaitech/vehicle-mixed-traffic-detection",
+          "publisher": "Visaitech",
+          "url": "https://huggingface.co/datasets/visaitech/vehicle-mixed-traffic-detection",
+          "license": "CC-BY-4.0",
+          "data_license": {
+            "spdx": "CC-BY-4.0",
+            "scope": "Images and annotations, explicitly stated under the dataset README License section; separate from unrelated code licenses.",
+            "evidence_url": "https://huggingface.co/datasets/visaitech/vehicle-mixed-traffic-detection/blob/de35185262bda34c104a626f866bab9d9aaf67ed/README.md",
+            "local_evidence_path": "datasets/round4_open/vision/visaitech_mixed_traffic/README.md",
+            "attribution": "Visaitech(2026),Visaitech Mixed-Traffic Vehicle Detection Dataset(v0.1),HuggingFace,revisionde35185262bda34c104a626f866bab9d9aaf67ed,CC BY4.0.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          }
+        },
+        {
+          "native_id": "figshare:26082217",
+          "publisher": "Tewodros Gebre,Quincy Blackston,Leila Hashemi-Beni / Figshare",
+          "url": "https://figshare.com/articles/dataset/TRANSSET_A_Drone-Captured_Dataset_for_Enhancing_Vehicle_Detection_and_Traffic_Monitoring_Algorithms/26082217",
+          "license": "CC-BY-4.0",
+          "data_license": {
+            "spdx": "CC-BY-4.0",
+            "scope": "Dataset images and annotations, explicitly stated in Figshare metadata and author README.",
+            "evidence_url": "https://figshare.com/articles/dataset/TRANSSET_A_Drone-Captured_Dataset_for_Enhancing_Vehicle_Detection_and_Traffic_Monitoring_Algorithms/26082217",
+            "local_evidence_path": "datasets/round4_open/vision/TRANSSET_README.md",
+            "attribution": "Gebre,T.;Blackston,Q.;Hashemi-Beni,L.,TRANSSET,v5,Figshare,doi:10.6084/m9.figshare.26082217.v5,CC BY4.0. Bounded subset and repaired local COCO file paths supplied; original source files unchanged.",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/"
+          }
+        }
+      ],
+      "source_manifest_sha256": "b5732cfc37555426c25c1c9f56ad22b9b9e95afd1c25be31c092b3ad11d13bdd",
+      "limitations": [
+        "80 images form a tiny development/transfer diagnostic, not a robust learned vehicle detector.",
+        "Global/cell pixel summaries can learn background, viewpoint, illumination or redaction rather than vehicles; there are no predicted bounding boxes.",
+        "South Asian dashcam and US aerial highway views differ sharply; taxonomy also shifts from wheeler groups including bicycles to eight car/truck classes.",
+        "Targets count supplied vehicle boxes, not newly audited true vehicle counts or unique vehicles across frames.",
+        "Original Visaitech source videos may themselves share a capture session; video-disjoint and hash checks do not prove independence.",
+        "TRANSSET session/video mapping is unavailable; no IID confidence intervals or independent-frame statistical significance is claimed.",
+        "No Batam, queue, line-crossing flow, speed, travel time, tracking or congestion labels are used or validated.",
+        "No holdout-driven tuning is permitted; this TRANSSET subset is now consumed for the fixed experiment.",
+        "No network calls, pretrained downloads, synthetic photos, crops or augmentation were used."
+      ],
+      "environment": {
+        "python": "3.14.6",
+        "numpy": "2.5.3",
+        "sklearn": "1.9.1",
+        "pillow": "12.3.0",
+        "joblib": "1.6.0",
+        "random_seed": 20261024,
+        "max_threads": 2,
+        "wall_seconds": 1.079
+      }
+    }
+  },
+  "training_started": true,
+  "this_invocation_reused_completed_experiments": true,
+  "archive_diagnostics": [
+    {
+      "snapshot": {
+        "status": "read_only_snapshot",
+        "database_name": "local_history.db",
+        "loaded_rows": 819,
+        "total_stored_rows": 819,
+        "truncated": false,
+        "source_counts": {
+          "tomtom_live": 819
+        },
+        "first_observed_at": "2026-10-23T09:40:23+00:00",
+        "last_observed_at": "2026-10-23T17:39:58+00:00",
+        "span_hours": 7.993055555555555,
+        "distinct_WIB_dates": 2,
+        "distinct_WIB_hour_bins": 8,
+        "availability_timestamp_retained": true,
+        "raw_rows_exported": false,
+        "provider_training_authorized": false
+      },
+      "evaluation": {
+        "schema_version": 1,
+        "engine": "crossflow_causal_residual_rf_experimental_v1",
+        "generated_at": "2026-10-23T17:41:45.822908+00:00",
+        "status": "provider_training_not_authorized",
+        "training_performed": false,
+        "promotion_eligible": false,
+        "model_replaced": false,
+        "artifact_saved": false,
+        "reasons": [
+          "provider_rows_excluded_training_rights_not_authorized",
+          "observed_span_below_7_days",
+          "insufficient_distinct_local_days",
+          "insufficient_hour_of_day_coverage",
+          "insufficient_fit_rows",
+          "fit_does_not_cover_all_five_corridors",
+          "insufficient_validation_rows",
+          "validation_does_not_cover_all_five_corridors",
+          "insufficient_calibration_rows",
+          "calibration_does_not_cover_all_five_corridors",
+          "insufficient_holdout_rows",
+          "holdout_does_not_cover_all_five_corridors"
+        ],
+        "selection": {
+          "input_rows": 819,
+          "unique_rows": 819,
+          "duplicate_rows": 0,
+          "observed_supported_rows": 819,
+          "source_counts": {
+            "tomtom_live": 819
+          },
+          "eligible_rows": 0,
+          "selected_rows": 0,
+          "selected_source_counts": {},
+          "excluded": {
+            "provider_training_not_authorized": 819
+          },
+          "first_at": null,
+          "last_at": null,
+          "span_hours": 0.0,
+          "distinct_local_dates": 0,
+          "local_hour_bins": [],
+          "sampling": "first_original_per_location_per_15min_utc_bucket",
+          "location_identity": "corridor_and_coordinates_rounded_to_5_decimals_not_edge_map_matching",
+          "availability": "explicit_ingestion_times",
+          "provider_training_authorized_by_caller": false,
+          "identity_list_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "canonical_payload_and_availability_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "splits": {
+          "fit": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          },
+          "validation": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          },
+          "calibration": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          },
+          "holdout": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          }
+        },
+        "horizons": [],
+        "feature_names": [
+          "current_score",
+          "current_age_minutes",
+          "lag15_score",
+          "lag15_missing",
+          "lag30_score",
+          "lag30_missing",
+          "lag60_score",
+          "lag60_missing",
+          "trend_points_per_hour",
+          "recent30_mean",
+          "recent30_std",
+          "recent30_count",
+          "recent120_mean",
+          "recent120_std",
+          "recent120_count",
+          "target_hour_sin",
+          "target_hour_cos",
+          "target_weekday_sin",
+          "target_weekday_cos",
+          "forecast_horizon_minutes",
+          "prior_free_flow_speed_kph",
+          "is_corridor-1",
+          "is_corridor-2",
+          "is_corridor-3",
+          "is_corridor-4",
+          "is_corridor-5"
+        ],
+        "policy": {
+          "min_span_days": 7,
+          "min_local_dates": 7,
+          "min_hour_bins": 18,
+          "min_partition_rows": {
+            "fit": 100,
+            "validation": 50,
+            "calibration": 50,
+            "holdout": 100
+          },
+          "required_corridors": [
+            "corridor-1",
+            "corridor-2",
+            "corridor-3",
+            "corridor-4",
+            "corridor-5"
+          ],
+          "purge_minutes": 60,
+          "horizons_minutes": [
+            15,
+            30,
+            60
+          ],
+          "max_current_age_minutes": 30,
+          "min_horizon_samples": 30,
+          "min_corridor_horizon_samples": 5,
+          "min_mae_improvement_fraction": 0.05,
+          "max_corridor_mae_regression_fraction": 0.05,
+          "min_interval_coverage": 0.7,
+          "interval_target": 0.8,
+          "forest_trees": 40,
+          "forest_max_depth": 10,
+          "fit_workers": 1
+        },
+        "assumptions": [
+          "Experimental candidate only; no serving model or road cost is changed.",
+          "No synthetic/modelled rows; provider training requires caller-verified rights.",
+          "Timestamp groups are separated with 60-minute purges before the next forecast origins.",
+          "Validation alone selects model configuration; final fit uses fit plus validation labels only.",
+          "Calibration alone determines interval radius; final test labels do not select or calibrate models.",
+          "Current, lag, trend and history inputs require observation and availability times at/before origin.",
+          "Fit, validation and calibration labels must arrive strictly before the next partition's earliest forecast origin.",
+          "Bare observation timestamps are an unverified availability assumption and cannot support promotion.",
+          "Intervals have no coverage guarantee under temporal dependence.",
+          "Speed-ratio scores floor at .05 and cap at 95; speed error is also reported in km/h.",
+          "Travel-time and image vehicle-count/queue labels are absent; those tasks are not trained here.",
+          "Locations match rounded coordinates, not directed road edges; all-street coverage is not established."
+        ]
+      }
+    },
+    {
+      "snapshot": {
+        "status": "read_only_snapshot",
+        "database_name": "congestion_history.db",
+        "loaded_rows": 0,
+        "total_stored_rows": 0,
+        "truncated": false,
+        "source_counts": {},
+        "first_observed_at": null,
+        "last_observed_at": null,
+        "span_hours": 0,
+        "distinct_WIB_dates": 0,
+        "distinct_WIB_hour_bins": 0,
+        "availability_timestamp_retained": true,
+        "raw_rows_exported": false,
+        "provider_training_authorized": false
+      },
+      "evaluation": {
+        "schema_version": 1,
+        "engine": "crossflow_causal_residual_rf_experimental_v1",
+        "generated_at": "2026-10-23T17:41:45.822908+00:00",
+        "status": "insufficient_observations",
+        "training_performed": false,
+        "promotion_eligible": false,
+        "model_replaced": false,
+        "artifact_saved": false,
+        "reasons": [
+          "observed_span_below_7_days",
+          "insufficient_distinct_local_days",
+          "insufficient_hour_of_day_coverage",
+          "insufficient_fit_rows",
+          "fit_does_not_cover_all_five_corridors",
+          "insufficient_validation_rows",
+          "validation_does_not_cover_all_five_corridors",
+          "insufficient_calibration_rows",
+          "calibration_does_not_cover_all_five_corridors",
+          "insufficient_holdout_rows",
+          "holdout_does_not_cover_all_five_corridors"
+        ],
+        "selection": {
+          "input_rows": 0,
+          "unique_rows": 0,
+          "duplicate_rows": 0,
+          "observed_supported_rows": 0,
+          "source_counts": {},
+          "eligible_rows": 0,
+          "selected_rows": 0,
+          "selected_source_counts": {},
+          "excluded": {},
+          "first_at": null,
+          "last_at": null,
+          "span_hours": 0.0,
+          "distinct_local_dates": 0,
+          "local_hour_bins": [],
+          "sampling": "first_original_per_location_per_15min_utc_bucket",
+          "location_identity": "corridor_and_coordinates_rounded_to_5_decimals_not_edge_map_matching",
+          "availability": "explicit_ingestion_times",
+          "provider_training_authorized_by_caller": false,
+          "identity_list_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "canonical_payload_and_availability_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "splits": {
+          "fit": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          },
+          "validation": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          },
+          "calibration": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          },
+          "holdout": {
+            "rows": 0,
+            "start_at": null,
+            "end_at": null,
+            "corridors": []
+          }
+        },
+        "horizons": [],
+        "feature_names": [
+          "current_score",
+          "current_age_minutes",
+          "lag15_score",
+          "lag15_missing",
+          "lag30_score",
+          "lag30_missing",
+          "lag60_score",
+          "lag60_missing",
+          "trend_points_per_hour",
+          "recent30_mean",
+          "recent30_std",
+          "recent30_count",
+          "recent120_mean",
+          "recent120_std",
+          "recent120_count",
+          "target_hour_sin",
+          "target_hour_cos",
+          "target_weekday_sin",
+          "target_weekday_cos",
+          "forecast_horizon_minutes",
+          "prior_free_flow_speed_kph",
+          "is_corridor-1",
+          "is_corridor-2",
+          "is_corridor-3",
+          "is_corridor-4",
+          "is_corridor-5"
+        ],
+        "policy": {
+          "min_span_days": 7,
+          "min_local_dates": 7,
+          "min_hour_bins": 18,
+          "min_partition_rows": {
+            "fit": 100,
+            "validation": 50,
+            "calibration": 50,
+            "holdout": 100
+          },
+          "required_corridors": [
+            "corridor-1",
+            "corridor-2",
+            "corridor-3",
+            "corridor-4",
+            "corridor-5"
+          ],
+          "purge_minutes": 60,
+          "horizons_minutes": [
+            15,
+            30,
+            60
+          ],
+          "max_current_age_minutes": 30,
+          "min_horizon_samples": 30,
+          "min_corridor_horizon_samples": 5,
+          "min_mae_improvement_fraction": 0.05,
+          "max_corridor_mae_regression_fraction": 0.05,
+          "min_interval_coverage": 0.7,
+          "interval_target": 0.8,
+          "forest_trees": 40,
+          "forest_max_depth": 10,
+          "fit_workers": 1
+        },
+        "assumptions": [
+          "Experimental candidate only; no serving model or road cost is changed.",
+          "No synthetic/modelled rows; provider training requires caller-verified rights.",
+          "Timestamp groups are separated with 60-minute purges before the next forecast origins.",
+          "Validation alone selects model configuration; final fit uses fit plus validation labels only.",
+          "Calibration alone determines interval radius; final test labels do not select or calibrate models.",
+          "Current, lag, trend and history inputs require observation and availability times at/before origin.",
+          "Fit, validation and calibration labels must arrive strictly before the next partition's earliest forecast origin.",
+          "Bare observation timestamps are an unverified availability assumption and cannot support promotion.",
+          "Intervals have no coverage guarantee under temporal dependence.",
+          "Speed-ratio scores floor at .05 and cap at 95; speed error is also reported in km/h.",
+          "Travel-time and image vehicle-count/queue labels are absent; those tasks are not trained here.",
+          "Locations match rounded coordinates, not directed road edges; all-street coverage is not established."
+        ]
+      }
+    }
+  ],
+  "model_activated": false,
+  "citywide_Batam_accuracy_validated": false,
+  "camera_model_trained": false,
+  "batam_camera_model_trained": false,
+  "foreign_image_count_model_trained": true,
+  "camera_reason": "No sourced annotated Batam camera sessions; unlabelled photos/maps are not vehicle/queue ground truth.",
+  "speed_and_travel_time": "Single-site speed means only; no measured route travel-time forecast claim.",
+  "congestion_severity": "Causal residual engine implemented; rights and temporal coverage gates remain enforced.",
+  "synthetic_training_rows_added": 0,
+  "network_requests": 0,
+  "database_writes": 0,
+  "limitations": [
+    "Static graph edges are not independent observed traffic labels.",
+    "Foreign hourly counts do not establish Batam speed, severity, camera counts or queues.",
+    "Batam survey means are retrospective and previously inspected; no prospective validation claim.",
+    "Routing cost_s, speed-limit attributes and synthetic generator outputs are not training labels.",
+    "No model is automatically promoted or deployed."
+  ]
+}

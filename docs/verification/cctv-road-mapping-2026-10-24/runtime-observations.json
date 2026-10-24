@@ -1,0 +1,110 @@
+{
+  "schema": "crossflow.cctv.mapping_runtime.v1",
+  "checked_at": "2026-10-24T07:27:15.017797+00:00",
+  "registry_sha256": "c01bd38dc4d4fa4c3356676ff93ec7ccc986b0719dd6793320b4e0b254815aa7",
+  "read_only_local_numeric_store": true,
+  "media_retained": false,
+  "summary": {
+    "listed": 28,
+    "configured": 5,
+    "live": 0,
+    "estimated": 3,
+    "stale": 1,
+    "unavailable": 1,
+    "permission_pending": 22,
+    "calibration_pending": 0
+  },
+  "cameras": [
+    {
+      "camera_id": "1",
+      "status": "disabled",
+      "observed_at": null,
+      "congestion_score": null,
+      "routing_enabled": false,
+      "validation_status": "unavailable",
+      "vehicle_count": null,
+      "reason": "Camera analysis is disabled"
+    },
+    {
+      "camera_id": "13",
+      "status": "unavailable",
+      "observed_at": "2026-10-24T07:27:03.291148Z",
+      "congestion_score": null,
+      "routing_enabled": false,
+      "validation_status": "unavailable",
+      "vehicle_count": null,
+      "reason": "Camera temporal or image-quality evidence is not yet usable"
+    },
+    {
+      "camera_id": "51",
+      "status": "estimated",
+      "observed_at": "2026-10-24T07:26:56.842374Z",
+      "congestion_score": 0.0,
+      "routing_enabled": true,
+      "validation_status": "estimated",
+      "vehicle_count": 0,
+      "reason": "Live YOLO26 road-view estimate; independent camera accuracy and thresholds are unvalidated"
+    },
+    {
+      "camera_id": "15",
+      "status": "stale",
+      "observed_at": "2026-10-24T05:43:47.835697Z",
+      "congestion_score": null,
+      "routing_enabled": false,
+      "validation_status": "unavailable",
+      "vehicle_count": null,
+      "reason": "Camera observations are older than the configured freshness limit"
+    },
+    {
+      "camera_id": "19",
+      "status": "estimated",
+      "observed_at": "2026-10-24T07:27:04.627406Z",
+      "congestion_score": 50.245128301965735,
+      "routing_enabled": false,
+      "validation_status": "estimated",
+      "vehicle_count": 5,
+      "reason": "Live YOLO26 road-view estimate; independent camera accuracy and thresholds are unvalidated"
+    },
+    {
+      "camera_id": "48",
+      "status": "estimated",
+      "observed_at": "2026-10-24T07:27:04.268724Z",
+      "congestion_score": 8.3112113081511,
+      "routing_enabled": true,
+      "validation_status": "estimated",
+      "vehicle_count": 2,
+      "reason": "Live YOLO26 road-view estimate; independent camera accuracy and thresholds are unvalidated"
+    }
+  ],
+  "route_snapshot": {
+    "observed_at": "2026-10-24T07:27:15.015603+00:00",
+    "observations": [
+      {
+        "camera_id": "51",
+        "edge_key": [
+          856986734,
+          5291330620,
+          618
+        ],
+        "congestion_index": 0.0,
+        "observed_at": "2026-10-24T07:26:56.842374+00:00",
+        "age_seconds": 18.173229,
+        "validation_status": "estimated",
+        "timestamp_basis": "stream_observation"
+      },
+      {
+        "camera_id": "48",
+        "edge_key": [
+          5698748891,
+          702710855,
+          714
+        ],
+        "congestion_index": 8.3112113081511,
+        "observed_at": "2026-10-24T07:27:04.268724+00:00",
+        "age_seconds": 10.746879,
+        "validation_status": "estimated",
+        "timestamp_basis": "stream_observation"
+      }
+    ]
+  }
+}

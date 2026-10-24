@@ -1,0 +1,81 @@
+{
+  "schema": "crossflow.batam_vehicle_detector_artifacts.v1",
+  "files": [
+    {
+      "path": "batam_head_epoch_10.pt",
+      "bytes": 173423823,
+      "sha256": "4fb333298b2fd844388a3d2cecdfe74d2367fff0d489246eaadf25cab19846b1"
+    },
+    {
+      "path": "batam_head_epoch_2.pt",
+      "bytes": 173423413,
+      "sha256": "6606eff14b644c15bc345e6da60571fb8a377d816c498f27b78fc50869783d94"
+    },
+    {
+      "path": "batam_head_epoch_5.pt",
+      "bytes": 173423413,
+      "sha256": "11e3a08df90e63f4f843d4c1ac8c019cb8eff154dc88761bd853a5a3210fbac9"
+    },
+    {
+      "path": "model.pt",
+      "bytes": 175221657,
+      "sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+    },
+    {
+      "path": "qa.json",
+      "bytes": 887,
+      "sha256": "85f9b6e696e45fb7bb335a45339a8cc9c99678da7118eac3eb0de4a0bdd5a0b8"
+    },
+    {
+      "path": "report.json",
+      "bytes": 16293,
+      "sha256": "bcaaec144c479e5dfe5c23f7fe73e0b30902cd43b41f3db56f2500bdd85ecc48"
+    },
+    {
+      "path": "selection_frozen_before_batam_test.json",
+      "bytes": 2616,
+      "sha256": "5c3cf3cebb336290da61db404156c99d2c491bb736758a5f64ee60ce403ec63b"
+    },
+    {
+      "path": "selection_frozen_before_reused_diagnostic.json",
+      "bytes": 2616,
+      "sha256": "5c3cf3cebb336290da61db404156c99d2c491bb736758a5f64ee60ce403ec63b"
+    },
+    {
+      "path": "service_parity.json",
+      "bytes": 683,
+      "sha256": "6d09ff096bdaad5eb189dc9c26fc33694fb45715a87784c23f1d7f348b052b30"
+    },
+    {
+      "path": "test_opened.json",
+      "bytes": 329,
+      "sha256": "97468006eefcea6277a39fb86602b639ec41f6fee3b38ca6b9994f0cb34011e6"
+    },
+    {
+      "path": "test_predictions.json",
+      "bytes": 17599,
+      "sha256": "33f8692e221d713ca5dc428f4ffd809d00e188459662723f9ff83597267f00c1"
+    },
+    {
+      "path": "training_losses.json",
+      "bytes": 750,
+      "sha256": "c5e4d2eea3fe26cff857a5331fc7c70864e521085bd3ad0955358b264f080fdc"
+    },
+    {
+      "path": "training_plan.json",
+      "bytes": 2582,
+      "sha256": "aa05eefc2c1e9ce5dbf51b9f093fa6b3b34103546ee82cda169ef314d439a464"
+    },
+    {
+      "path": "validation_grid.json",
+      "bytes": 21032,
+      "sha256": "e5c59bb802f49e650bcc370c976797d2394e3f15cbf630a26cb46cffd51ad39a"
+    }
+  ],
+  "split_sha256": "9f00b7719a1c821beed512ae5d5277c86f586e92c44937589b6c912130eb8a63",
+  "annotation_manifest_sha256": "5efd0896bd61aa57b9d4a68668f03b94895445b71586349777604e3745edde90",
+  "script_sha256": "06801a7cff63d470f0fd2df62fa7b761f21766e1341ebfc2bb1c4bf7b973bf3c",
+  "model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "production_eligible": false,
+  "batam_validated": false
+}

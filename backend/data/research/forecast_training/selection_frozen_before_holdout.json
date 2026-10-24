@@ -1,0 +1,20 @@
+{
+  "selection_metric": "validation MAE, then deterministic name tie-break",
+  "selected_forecaster": "hist_gradient_boosting_15_squared_error",
+  "best_trained_model": "hist_gradient_boosting_15_squared_error",
+  "best_validation_baseline": "weekly_seasonal",
+  "validation_rank_order": [
+    "hist_gradient_boosting_15_squared_error",
+    "hist_gradient_boosting_31_squared_error",
+    "extra_trees_128",
+    "hist_gradient_boosting_31_absolute_error",
+    "ridge_10",
+    "ridge_100",
+    "weekly_seasonal",
+    "persistence",
+    "daily_seasonal",
+    "training_calendar_profile"
+  ],
+  "test_used_for_selection": false,
+  "final_refit": "Refit only the best validation trained candidate on train + validation; holdout targets excluded; retain it even if a baseline wins selection"
+}

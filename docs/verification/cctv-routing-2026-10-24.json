@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-23T19:40:37.519440+00:00",
+  "feature": "Backend CCTV exact-edge route costs; existing frontend layout preserved",
+  "engineering_checks": [
+    {
+      "runner": "pytest",
+      "scope": "CCTV routing, vehicle access and route cache regression",
+      "passed": 47,
+      "subtests_passed": 40
+    },
+    {
+      "runner": "pytest",
+      "scope": "CCTV routing including Depart now transport latency, fixed departure and route identity",
+      "passed": 28
+    },
+    {
+      "runner": "vitest",
+      "scope": "CCTV internal client/monitor tests, operations no-CCTV regression, route requests and alternatives",
+      "passed": 92
+    },
+    {
+      "scope": "focused ESLint",
+      "passed": true
+    },
+    {
+      "scope": "TypeScript and production build",
+      "passed": true
+    }
+  ],
+  "proved_fixture_behavior": [
+    "Busy mapped directed camera edge changes the chosen path from 240 metres to 320 metres.",
+    "The camera search penalty does not change physical ETA or emissions inputs for an unchanged path.",
+    "Stale, revoked, wrong graph, wrong direction and unmapped observations do not influence routes.",
+    "Private vehicle access remains enforced and Shortest retains its distance objective.",
+    "Live snapshots do not reuse or poison clear route cache entries.",
+    "Future departures beyond 120 seconds do not read current camera observations.",
+    "Existing Departure time control uses the current instant when its selected minute is current, preserving the original two-control layout.",
+    "Backend camera audit remains available in the route response while the current frontend renders no CCTV or surveillance text."
+  ],
+  "route_cost_formula": "min(2 * edge_free_flow_s, 2 * edge_free_flow_s * vehicle_congestion_sensitivity * (camera_index / 100)^2), then weighted by route preference",
+  "road_binding_format": "osm-edge:<source_node>:<target_node>:<road_index>",
+  "binding_scope": "Current graph revision; exact existing directed edge at most 750 metres long",
+  "camera_permission": "Read from current trusted camera registry and aggregate-store gates on every request.",
+  "claims_not_established": [
+    "Independent Batam counting accuracy",
+    "Physical road speed or delay from image occupancy",
+    "Google accuracy parity"
+  ],
+  "live_stream_verification": "Actual YOLO26s live-feed route audit and existing UI verified in backend-cctv-existing-ui.json.",
+  "final_frontend_requirement": "No camera panel, camera status, upload feature or additional time controls in the app."
+}

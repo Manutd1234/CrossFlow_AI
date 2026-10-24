@@ -1,18 +1,17 @@
-"""Modelled corridor telemetry, derived from the congestion model and clock.
+"""Corridor telemetry from the configured forecasting path.
 
-Everything here is modelled — the optional commercial live-flow adapter lives
-in ``services.live_traffic`` — but it is modelled *coherently*: values track
-the wall clock, alerts can only describe corridors that really are in the state
-claimed, and the daily CO2 figure is integrated from the model rather than
-being a constant.
+Observed-only mode uses measured point references without artificial drift.
+Legacy research mode retains its explicitly modelled operating scenarios.
 """
 
+import os
 import zlib
 from datetime import datetime, timedelta
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
 from models.congestion_model import (
+    SpatialPredictionContext,
     classify_status,
     delay_from_score,
     forecaster,
@@ -41,19 +40,20 @@ OPERATIONS_MODEL_ID = "crossflow_operations_scenario_v1"
 
 @lru_cache(maxsize=4096)
 def _cached_score(date_key: str, hour: int, is_weekend: int, weather: int,
-                  ferry_surge: int, corridor_idx: int) -> float:
+                  ferry_surge: int, corridor_idx: int,
+                  model_revision: str = "") -> float:
     """Hourly prediction, memoised.
 
     The daily CO2 integral walks 24 hours x 5 corridors on every request; at an
     8 second poll that is a lot of repeated forest traversal for values that
     cannot change within the hour.
 
-    `date_key` is deliberately unread: it is here purely to scope cache entries
-    to a calendar day so the cache rolls over at midnight. Do not remove it.
+    Date and model revision scope entries to the actual calculation inputs.
+    Retraining must invalidate the old model's emissions integral immediately.
     """
-    return forecaster.predict(hour, is_weekend, weather, ferry_surge, corridor_idx)[
-        "current_score"
-    ]
+    return round(forecaster.predict_spatial(SpatialPredictionContext.from_legacy(
+        float(hour), is_weekend, weather, ferry_surge, corridor_idx,
+    )).mean_score, 1)
 
 
 def get_live_corridor_telemetry(
@@ -101,8 +101,11 @@ def get_live_corridor_telemetry(
             corridor_idx=corridor["corridor_idx"],
         )
 
-        score = prediction["current_score"] + drift.corridor_drift(corridor["id"], now)
-        score = round(max(5.0, min(99.0, score)), 1)
+        if os.environ.get('CROSSFLOW_REAL_TRAFFIC_TRAINING') == '1':
+            score = round(prediction['current_score'], 1)
+        else:
+            score = prediction["current_score"] + drift.corridor_drift(corridor["id"], now)
+            score = round(max(5.0, min(99.0, score)), 1)
         status = classify_status(score)
 
         item = {
@@ -138,6 +141,7 @@ def co2_accrued_today(now: Optional[datetime] = None,
     now = now or clock.now()
     local = now.astimezone(clock.BATAM_TZ)
     date_key = local.date().isoformat()
+    model_revision = str(forecaster.metrics.get("last_trained_at") or "untrained")
     is_weekend = int(local.weekday() >= 5)
     elapsed_hours = local.hour + local.minute / 60.0
 
@@ -149,7 +153,7 @@ def co2_accrued_today(now: Optional[datetime] = None,
             if weight <= 0:
                 break
             score = _cached_score(date_key, hour, is_weekend, weather, 0,
-                                  corridor["corridor_idx"])
+                                  corridor["corridor_idx"], model_revision)
             delay = delay_from_score(score)
             total += (
                 ADVISED_TRIPS_PER_CORRIDOR_PER_HOUR
@@ -167,7 +171,7 @@ def co2_accrued_today(now: Optional[datetime] = None,
     for corridor in CORRIDORS:
         for hour in range(24):
             score = _cached_score(date_key, hour, is_weekend, weather, 0,
-                                  corridor["corridor_idx"])
+                                  corridor["corridor_idx"], model_revision)
             projected += (
                 ADVISED_TRIPS_PER_CORRIDOR_PER_HOUR
                 * (delay_from_score(score) / 60.0)

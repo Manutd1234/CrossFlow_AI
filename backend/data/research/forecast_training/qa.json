@@ -1,0 +1,20 @@
+{
+  "schema": "crossflow.research_forecasting.qa.v1",
+  "checked_at_utc": "2026-10-23T17:34:44.434198+00:00",
+  "passed": true,
+  "unit_tests_passed": 7,
+  "test_command": ".venv/bin/python -m unittest backend.tests.test_research_forecasting -v",
+  "source_hash_verified": true,
+  "artifact_reload_development_prediction_parity": true,
+  "saved_prediction_rows": 7454,
+  "saved_predictions_unique_keys": true,
+  "all_forecast_origins_exactly_one_hour_before_target": true,
+  "aggregate_metrics_recomputed_from_saved_predictions": 5,
+  "per_arc_metric_rows": 120,
+  "per_arc_weighted_mae_matches_aggregate": true,
+  "no_observed_holdout_arc_explicitly_null": "13",
+  "geography_is_batam": false,
+  "production_eligible": false,
+  "reporting_recovery_only": true,
+  "training_or_hyperparameter_changes_after_holdout": false
+}

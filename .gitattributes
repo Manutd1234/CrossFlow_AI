@@ -1,0 +1,6 @@
+# Reviewed research CSV checksums include their original CRLF bytes.
+backend/data/research/*.csv -text whitespace=cr-at-eol
+backend/data/research/**/*.csv -text whitespace=cr-at-eol
+# Preserve third-party license text verbatim.
+backend/data/research/**/evidence/*LICENSE.txt -whitespace
+frontend/src/assets/fonts/*OFL.txt -whitespace

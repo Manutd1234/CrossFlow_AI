@@ -20,11 +20,12 @@
     },
     "source_confidence": {
       "tomtom_live_policy": 0.9,
+      "cctv_camera_policy": 0.5,
       "simulated": 0.2
     },
     "tie_break": "selection_score_desc_then_zone_id_asc",
     "observed": false,
-    "limitations": "Candidate locations, recurring scores, criticality and demand exposure are modelled planning inputs. Corridor flow may include provider data, but no zone is a direct observation."
+    "limitations": "Candidate locations, recurring scores, criticality and demand exposure are modelled planning inputs. Fresh validated camera estimates describe their registered road view only; the 0.5 CCTV blend weight is a planning policy, not measured accuracy. Corridor flow may include provider data, but no zone is a direct observation."
   },
   "candidates": [
     {

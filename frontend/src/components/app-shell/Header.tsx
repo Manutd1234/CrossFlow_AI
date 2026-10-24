@@ -82,21 +82,7 @@ export function Header({
         </div>
 
         <section className="app-topbar app-header-topbar" aria-label="Batam mobility workspace controls">
-          <div className="app-topbar-place">
-            <span className="app-topbar-place-mark" aria-hidden="true">BTM</span>
-            <span>
-              <small>Island network</small>
-              <strong>Batam ↔ Singapore</strong>
-            </span>
-          </div>
           <Navigation activeTab={activeTab} setActiveTab={setActiveTab} allowedTabs={allowedTabs} />
-          <div className="app-topbar-scope">
-            <span className="app-topbar-scope-dot" aria-hidden="true" />
-            <span>
-              <small>Planning watch</small>
-              <strong>30 hotspot areas</strong>
-            </span>
-          </div>
         </section>
 
         <div className="app-header-actions">
@@ -119,22 +105,21 @@ export function Header({
             </span>
           </div>
 
-          {/* Hidden entirely when the server says sign-in is impossible, so
-              the demo never shows a control that cannot succeed. */}
-          {signInAvailable ? (
+          {signInAvailable || identity ? (
             <button
               type="button"
               className="app-signin-button"
               onClick={onOpenSignIn}
               aria-haspopup="dialog"
               aria-label={identity
-                ? `Signed in as ${identity.display_name || identity.user_id}, role Admin. Open account panel`
+                ? `Signed in as ${identity.display_name || identity.user_id}, role ${identity.role}. Open account panel`
                 : 'Sign in to CrossFlow'}
               title={identity ? 'Account' : 'Sign in'}
             >
               {identity
                 ? <ShieldCheck size={ICON_SIZE.medium} aria-hidden="true" />
                 : <LogIn size={ICON_SIZE.medium} aria-hidden="true" />}
+              <span>{identity ? 'Account' : 'Sign in'}</span>
             </button>
           ) : null}
         </div>

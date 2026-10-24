@@ -1,0 +1,212 @@
+{
+  "schema": "crossflow.vehicle_detector_training.v1",
+  "generated_at": "2026-10-23T18:07:17.723515+00:00",
+  "training_performed": true,
+  "training_updates": 96,
+  "architecture": "ssdlite320_mobilenet_v3_large",
+  "selected_model": "head_finetuned_epoch_8",
+  "selected_model_is_finetuned": true,
+  "score_threshold": 0.3,
+  "development_split": {
+    "schema": "crossflow.vehicle_detector_plan.v1",
+    "generated_at": "2026-10-23T18:06:50.101869+00:00",
+    "architecture": "ssdlite320_mobilenet_v3_large",
+    "seed": 20261024,
+    "device": "cpu",
+    "threads": 2,
+    "pretrained_sha256": "a79551df90c79834bcd3bb3845ef9d966b5449a3a9b2833ae8404778ca5d65d2",
+    "train_groups": [
+      "V001",
+      "V003",
+      "V004",
+      "V005"
+    ],
+    "validation_groups": [
+      "V002",
+      "VEHICLES"
+    ],
+    "train_images": 32,
+    "validation_images": 16,
+    "train_vehicle_boxes": 175,
+    "validation_vehicle_boxes": 55,
+    "epochs_to_compare": [
+      4,
+      8,
+      12
+    ],
+    "threshold_grid": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7
+    ],
+    "batch_size": 4,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "trainable": "classification and regression detection heads; backbone and all BatchNorm statistics frozen",
+    "augmentation": "deterministic seeded random horizontal flip on training only",
+    "selection": "lowest macro source-video count MAE, then highest detection F1 at IoU .5; candidate/threshold fixed before reused TRANSSET",
+    "previous_consumption": "Both local datasets were used in an earlier pixel-count experiment. This is not a fresh blind holdout or Batam benchmark.",
+    "geography_is_batam": false,
+    "production_eligible": false
+  },
+  "validation_selected_model": {
+    "count": {
+      "frames": 16,
+      "mae_vehicles_per_frame": 2.1875,
+      "macro_source_group_mae": 2.1875,
+      "rmse_vehicles_per_frame": 2.839454172900137,
+      "bias_vehicles_per_frame": -1.5625,
+      "exact_count_pct": 12.5,
+      "within_one_vehicle_pct": 50.0,
+      "actual_total": 55,
+      "predicted_total": 30
+    },
+    "detection_at_frozen_threshold_iou_50": {
+      "ap": 0.3312915276057897,
+      "precision": 0.7,
+      "recall": 0.38181818181818183,
+      "f1": 0.49411764705882355,
+      "true_positive": 21,
+      "false_positive": 9,
+      "false_negative": 34,
+      "ground_truth_boxes": 55,
+      "predicted_boxes": 30
+    },
+    "vehicle_AP50": 0.4460162460806876,
+    "vehicle_mAP50_95": 0.20983584048605614,
+    "AP_by_iou": {
+      "0.50": 0.4460162460806876,
+      "0.55": 0.4240135560433176,
+      "0.60": 0.4035581775373526,
+      "0.65": 0.3161442458428681,
+      "0.70": 0.2517229496454298,
+      "0.75": 0.1595511321981432,
+      "0.80": 0.0888189926809813,
+      "0.85": 0.007850277928401359,
+      "0.90": 0.0006828269033799932,
+      "0.95": 0.0
+    },
+    "AP_protocol": "Single generic vehicle class, all sizes, max 100, score floor .01, 101 recall points; no crowd annotations; not the complete COCO benchmark"
+  },
+  "validation_pretrained_reference_threshold_05": {
+    "count": {
+      "frames": 16,
+      "mae_vehicles_per_frame": 3.0625,
+      "macro_source_group_mae": 3.0625,
+      "rmse_vehicles_per_frame": 3.7332961307670196,
+      "bias_vehicles_per_frame": -3.0625,
+      "exact_count_pct": 12.5,
+      "within_one_vehicle_pct": 31.25,
+      "actual_total": 55,
+      "predicted_total": 6
+    },
+    "detection_at_frozen_threshold_iou_50": {
+      "ap": 0.10891089108910891,
+      "precision": 1.0,
+      "recall": 0.10909090909090909,
+      "f1": 0.19672131147540983,
+      "true_positive": 6,
+      "false_positive": 0,
+      "false_negative": 49,
+      "ground_truth_boxes": 55,
+      "predicted_boxes": 6
+    },
+    "vehicle_AP50": 0.24348104866489523,
+    "vehicle_mAP50_95": 0.10518191770643151,
+    "AP_by_iou": {
+      "0.50": 0.24348104866489523,
+      "0.55": 0.23641324410345937,
+      "0.60": 0.16073446835531996,
+      "0.65": 0.11963753084134321,
+      "0.70": 0.09066627719923244,
+      "0.75": 0.08219259564169597,
+      "0.80": 0.0661008958038661,
+      "0.85": 0.03892032060348892,
+      "0.90": 0.012729844413012729,
+      "0.95": 0.000942951438000943
+    },
+    "AP_protocol": "Single generic vehicle class, all sizes, max 100, score floor .01, 101 recall points; no crowd annotations; not the complete COCO benchmark"
+  },
+  "reused_cross_source_diagnostic": {
+    "count": {
+      "frames": 32,
+      "mae_vehicles_per_frame": 4.25,
+      "macro_source_group_mae": 4.25,
+      "rmse_vehicles_per_frame": 5.031152949374527,
+      "bias_vehicles_per_frame": -4.25,
+      "exact_count_pct": 0.0,
+      "within_one_vehicle_pct": 21.875,
+      "actual_total": 163,
+      "predicted_total": 27
+    },
+    "detection_at_frozen_threshold_iou_50": {
+      "ap": 0.10839160839160839,
+      "precision": 0.7407407407407407,
+      "recall": 0.12269938650306748,
+      "f1": 0.2105263157894737,
+      "true_positive": 20,
+      "false_positive": 7,
+      "false_negative": 143,
+      "ground_truth_boxes": 163,
+      "predicted_boxes": 27
+    },
+    "vehicle_AP50": 0.2260381802733027,
+    "vehicle_mAP50_95": 0.07329816900683858,
+    "AP_by_iou": {
+      "0.50": 0.2260381802733027,
+      "0.55": 0.1988155382235438,
+      "0.60": 0.14313631629422904,
+      "0.65": 0.0810172912913494,
+      "0.70": 0.045197041157973954,
+      "0.75": 0.020867665992571432,
+      "0.80": 0.012009431764021848,
+      "0.85": 0.005590819130799554,
+      "0.90": 0.0003094059405940594,
+      "0.95": 0.0
+    },
+    "AP_protocol": "Single generic vehicle class, all sizes, max 100, score floor .01, 101 recall points; no crowd annotations; not the complete COCO benchmark"
+  },
+  "baselines": {
+    "constant_training_median": 5.0,
+    "constant_training_median_test_mae": 2.46875,
+    "prior_pixel_regression_test_mae": 3.6139445488937274,
+    "prior_pixel_report_sha256": "91fb47b12f976c0d111b3df03d9b97e0b7780dc6b0f65acdced2610556375438",
+    "improvement_pct_vs_prior_pixel_regressor": -17.60003349528363,
+    "beats_training_constant_median": false
+  },
+  "cpu_latency_ms": {
+    "threads": 2,
+    "validation_median": 42.747562503791414,
+    "diagnostic_median": 44.20022949852864,
+    "diagnostic_p95": 51.06437894573901,
+    "scope": "Single image model forward CPU; excludes decode, initialization, network, service queue"
+  },
+  "duplicate_audit": {
+    "train_validation_duplicate_pairs": [],
+    "cross_source_excluded_images": [],
+    "within_diagnostic_pairs": [],
+    "rule": "Exact bytes/decoded RGB or both 64-bit dHash and pHash Hamming <=4; imperfect duplicate screen"
+  },
+  "production_eligible": false,
+  "batam_validated": false,
+  "google_comparison_performed": false,
+  "limitations": [
+    "No Batam ground-truth image labels; transfer diagnostics cannot establish app deployment accuracy.",
+    "Only six source videos; validation/diagnostic sources were consumed in the prior experiment.",
+    "Taxonomy merges all vehicles; per-frame visible boxes do not measure queue, flow, speed, or unique tracks.",
+    "COCO weights and fine-tune images have distinct data-derived terms; production licensing not certified.",
+    "No 99-100% accuracy claim or Google comparison is supported."
+  ],
+  "runtime": {
+    "torch": "2.10.0",
+    "torchvision": "0.25.0",
+    "numpy": "2.4.4",
+    "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]"
+  },
+  "elapsed_seconds": 27.764252083004976
+}

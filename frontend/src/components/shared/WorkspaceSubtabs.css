@@ -3,7 +3,7 @@
 }
 
 .workspace-subtabs__rail {
-  --workspace-subtabs-item-radius: 0.75rem;
+  --workspace-subtabs-item-radius: var(--control-radius);
 
   width: 100%;
   max-width: 100%;
@@ -11,9 +11,9 @@
   display: flex;
   align-items: center;
   gap: var(--navigation-rail-gap);
-  border: 1px solid rgba(9, 79, 91, 0.14);
+  border: 1px solid var(--border-color);
   border-radius: var(--navigation-rail-radius);
-  background: rgba(255, 252, 242, 0.76);
+  background: var(--navigation-rail-surface);
 }
 
 .workspace-subtabs__scroll-region {
@@ -34,25 +34,25 @@
   display: flex;
   width: 100%;
   min-width: max-content;
-  gap: 0.5rem;
+  gap: var(--space-1);
   background: transparent;
 }
 
 .workspace-subtabs__tab {
   display: inline-flex;
   min-width: 44px;
-  min-height: 44px;
+  min-height: var(--control-height);
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 0.1rem;
-  padding: 0.55rem 0.9rem;
+  padding: var(--space-2) var(--space-3);
   border: 1px solid transparent;
   border-radius: var(--workspace-subtabs-item-radius);
   background: transparent;
-  color: #315c63;
+  color: var(--text-secondary);
   font: inherit;
-  line-height: 1.2;
+  line-height: var(--leading-control);
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
@@ -61,41 +61,41 @@
 }
 
 .workspace-subtabs__tab:hover {
-  background: rgba(7, 128, 139, 0.08);
-  color: #073f4c;
+  background: var(--navigation-item-hover);
+  color: var(--text-primary);
 }
 
 .workspace-subtabs__tab[aria-selected='true'],
 .workspace-subtabs__tab[aria-pressed='true'] {
-  border-color: rgba(8, 117, 128, 0.3);
-  background: #dff3ee;
-  color: #074959;
-  box-shadow: 0 0.2rem 0.65rem rgba(9, 73, 83, 0.08);
+  border-color: var(--border-strong);
+  background: var(--navigation-item-selected);
+  color: var(--text-primary);
+  box-shadow: none;
 }
 
 .workspace-subtabs__tab:focus-visible {
-  outline: 3px solid rgba(16, 152, 162, 0.42);
-  outline-offset: 2px;
+  outline: var(--focus-ring);
+  outline-offset: 1px;
 }
 
 .workspace-subtabs__label {
-  font-size: 0.88rem;
-  font-weight: 750;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
 }
 
 .workspace-subtabs__description {
-  color: #607a7f;
-  font-size: 0.72rem;
-  font-weight: 550;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
 }
 
 .workspace-subtabs__panel {
   min-width: 0;
-  margin-top: 1rem;
+  margin-top: var(--space-4);
 }
 
 .workspace-subtabs__panel:focus-visible {
-  outline: 3px solid rgba(16, 152, 162, 0.32);
+  outline: var(--focus-ring);
   outline-offset: 4px;
 }
 

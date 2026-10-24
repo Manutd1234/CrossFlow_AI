@@ -1,0 +1,7 @@
+# Optional isolated YOLO26 runtime. Free AGPL-3.0 code/model route; see retained official license.
+ultralytics==8.4.184
+torch==2.14.1
+torchvision==0.29.1
+numpy==2.5.4
+pillow==13.0.0
+opencv-python==5.0.0.93

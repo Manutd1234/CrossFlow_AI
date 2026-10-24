@@ -1,0 +1,156 @@
+{
+  "schema": "crossflow.vehicle_detector_deployment.v1",
+  "generated_at": "2026-10-23T18:17:21.642226+00:00",
+  "selected_model": "fasterrcnn_pretrained_COCO",
+  "model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "model_bytes": 175221657,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6082,
+      "sha256": "03b763fcfe87344e9c205e4eacb87777a81839a634956790c032e36aecc0be4c"
+    },
+    {
+      "path": "deployment_qa.json",
+      "bytes": 928,
+      "sha256": "8e3c908c4c6cbce0be6babf976bb6d014218cf33467916dfe8a3418a244a1e7c"
+    },
+    {
+      "path": "development_frame_manifest.json",
+      "bytes": 64905,
+      "sha256": "940abaa455090ee28e6a6c7fe7a8cafc21c8cabb4681a989a673d4e7d629a243"
+    },
+    {
+      "path": "diagnostic_detections.json",
+      "bytes": 105089,
+      "sha256": "348bedc23828f0a65dec480233518540dfade2a4fd9b5545f187478d4f56b16c"
+    },
+    {
+      "path": "diagnostic_frame_manifest.json",
+      "bytes": 39841,
+      "sha256": "3a7ccc16e77a140f942579721558e697c4fd2eaf4be96adae6cb3a1ca2d74c44"
+    },
+    {
+      "path": "diagnostic_predictions.csv",
+      "bytes": 1272,
+      "sha256": "3cf664eba658f99c597d5834a639ed1c2f1755e98cdffede543b1d909af57aa4"
+    },
+    {
+      "path": "evidence/coco_termsofuse.htm",
+      "bytes": 2370,
+      "sha256": "bd019f88ee44c29b2f19c5b99888cf5bc2e7c16f57b6e52af8ed3a60462e8bdd"
+    },
+    {
+      "path": "evidence/pytorch_LICENSE.txt",
+      "bytes": 3464,
+      "sha256": "bd018feef8825e88181c84eb7e3aa4eafb8f08a20d9fd6ef948569610c4a3e43"
+    },
+    {
+      "path": "evidence/torchvision_LICENSE.txt",
+      "bytes": 1517,
+      "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+    },
+    {
+      "path": "evidence/torchvision_README.md",
+      "bytes": 4844,
+      "sha256": "1957ded1ad27eb0d373b6421a431112dfeba1e85b486807181fccf5d0133e034"
+    },
+    {
+      "path": "finalization.json",
+      "bytes": 751,
+      "sha256": "7b170c19d9cd4a4e113b96ceb8f76160314e19d73387c1d18b79802a625c5034"
+    },
+    {
+      "path": "licenses.json",
+      "bytes": 3535,
+      "sha256": "8a3425476207a205ce6c7b45d7b8f2a4cb52c41fecb40b15d5733f597294e3bb"
+    },
+    {
+      "path": "model.pt",
+      "bytes": 175221657,
+      "sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf"
+    },
+    {
+      "path": "qa.json",
+      "bytes": 623,
+      "sha256": "c765abd222b38ea2fd3c2573385458a32df80319ad158bfd23fe32daed16eedd"
+    },
+    {
+      "path": "report.json",
+      "bytes": 7778,
+      "sha256": "647107e60ea7b21c25a5726b5865d91b6ff2059d26f8db52d11e10b12d0c0727"
+    },
+    {
+      "path": "selected_overlay_file_00001.jpg",
+      "bytes": 103681,
+      "sha256": "48f9acc9daa3c5374f2007232d9691292635ad49cabee2a6cffca9a4df240dbd"
+    },
+    {
+      "path": "selected_overlay_file_00153.jpg",
+      "bytes": 145654,
+      "sha256": "0dc8f4807965d8793db491b152b4ac80009cafa93b59b9df27d2c77c9a7c274b"
+    },
+    {
+      "path": "selection_frozen_before_reused_diagnostic.json",
+      "bytes": 1549,
+      "sha256": "ab1e2c7b3b408eb48c042b0028bc12757d5459abd03e1956b7e8a505cf644195"
+    },
+    {
+      "path": "training_losses.json",
+      "bytes": 371,
+      "sha256": "da98f6cd86751bf352f7c4d9968289e82d783d6ae019861cbacd3d1e20304e0f"
+    },
+    {
+      "path": "training_plan.json",
+      "bytes": 1774,
+      "sha256": "7d9de87c5ab3f4dbdc403da6c1e189409f5c819ad542189cd964873c2348e14f"
+    },
+    {
+      "path": "validation_grid.json",
+      "bytes": 20497,
+      "sha256": "233fe57e6f6a4967dc86e6e67363ab33cdbf3a5fe2f89a5693b8f106c9c82be3"
+    }
+  ],
+  "code_files": [
+    {
+      "path": "scripts/train_vehicle_detector.py",
+      "sha256": "41c315d311b7bdcedc8dd18140398e6eaf1a9b9687f7d75cf1975f73119f8a8a"
+    },
+    {
+      "path": "scripts/train_vehicle_detector_strong.py",
+      "sha256": "34e11706df4baa30de481e70c27bd44043df555b311d829231a6ba0a431929d3"
+    },
+    {
+      "path": "scripts/requirements-detector-training.txt",
+      "sha256": "1b4408d23aa732284ab9b45d9c8bf646d9bd8b6b6937d2df48d258f0fda52521"
+    },
+    {
+      "path": "backend/services/vehicle_counter.py",
+      "sha256": "ff5a3934d085d96d3526d190aeb343873f3667d1abdd939bb022abccd777f4f7"
+    },
+    {
+      "path": "backend/tests/test_vehicle_counter.py",
+      "sha256": "9060c21078b2d5c311139c89859ac23a54eb0459a4eea03c27a0918414a1547f"
+    }
+  ],
+  "trial_manifests": [
+    {
+      "path": "ssdlite_trial/manifest.json",
+      "sha256": "d138b41eabd8079c9ffac141359c4ceb5f1cbd2bc335bf9eb6b426a507175cfd",
+      "payloads_retained_on_disk": true,
+      "deployment_archive_may_omit_trial_weights": true
+    },
+    {
+      "path": "fasterrcnn_trial/manifest.json",
+      "sha256": "3287d07ad5577da2d5f1acca8ea1aeb9a9ba172be2057fdd145e9c1cce0ec814",
+      "payloads_retained_on_disk": true,
+      "deployment_archive_may_omit_trial_weights": true
+    }
+  ],
+  "source_manifest_sha256": "b5732cfc37555426c25c1c9f56ad22b9b9e95afd1c25be31c092b3ad11d13bdd",
+  "production_eligible": false,
+  "batam_validated": false,
+  "google_comparison_performed": false,
+  "inference_requires_network": false,
+  "runtime_requirements": "scripts/requirements-detector-training.txt"
+}

@@ -1,0 +1,356 @@
+{
+  "schema": "crossflow.analytics_source_integration_audit.v1",
+  "audited_at": "2026-10-24T06:14:18.088404+00:00",
+  "audit_scope": "Backend historical/live source paths into congestion, analytics and forecasts; no frontend/auth/registry changes or training/restart performed by this audit.",
+  "public_runtime_receipts": [
+    {
+      "path": "/api/operations",
+      "status": 200,
+      "checked_at": "2026-10-24T06:11:17.131294+00:00"
+    },
+    {
+      "path": "/api/live-traffic",
+      "status": 200,
+      "checked_at": "2026-10-24T06:11:17.131729+00:00"
+    },
+    {
+      "path": "/api/model-status",
+      "status": 200,
+      "checked_at": "2026-10-24T06:11:17.131998+00:00"
+    },
+    {
+      "path": "/api/historical-congestion?corridor_id=corridor-1&days=7",
+      "status": 200,
+      "checked_at": "2026-10-24T06:11:17.158116+00:00"
+    },
+    {
+      "path": "/api/analytics/research-history",
+      "status": 200,
+      "checked_at": "2026-10-24T06:11:17.173723+00:00"
+    },
+    {
+      "path": "/api/analytics/real-model",
+      "status": 401,
+      "checked_at": "2026-10-24T06:11:17.175717+00:00"
+    }
+  ],
+  "runtime_snapshot": {
+    "generated_at": "2026-10-24T13:11:17+07:00",
+    "measured_provider_points": 5,
+    "speed_mean_index": 3.4,
+    "provider_samples": [
+      {
+        "id": "corridor-1",
+        "name": "Mukakuning Industrial -> Batam Centre Terminal",
+        "score": 0.0,
+        "as_of": "2026-10-24T13:10:21+07:00",
+        "age_seconds": 56,
+        "current_speed_kmh": 47.0,
+        "free_flow_speed_kmh": 47.0,
+        "provider_confidence": 1.0
+      },
+      {
+        "id": "corridor-2",
+        "name": "Batu Ampar Freight Port -> Batam Centre Ferry",
+        "score": 17.1,
+        "as_of": "2026-10-24T13:10:21+07:00",
+        "age_seconds": 56,
+        "current_speed_kmh": 34.0,
+        "free_flow_speed_kmh": 41.0,
+        "provider_confidence": 0.792312
+      },
+      {
+        "id": "corridor-3",
+        "name": "Hang Nadim Airport -> Nagoya City Centre",
+        "score": 0.0,
+        "as_of": "2026-10-24T13:10:21+07:00",
+        "age_seconds": 56,
+        "current_speed_kmh": 60.0,
+        "free_flow_speed_kmh": 60.0,
+        "provider_confidence": 1.0
+      },
+      {
+        "id": "corridor-4",
+        "name": "Sekupang Ferry Terminal -> Mukakuning Industrial",
+        "score": 0.0,
+        "as_of": "2026-10-24T13:10:21+07:00",
+        "age_seconds": 56,
+        "current_speed_kmh": 51.0,
+        "free_flow_speed_kmh": 51.0,
+        "provider_confidence": 1.0
+      },
+      {
+        "id": "corridor-5",
+        "name": "Nongsa Digital Park -> Batam Centre Terminal",
+        "score": 0.0,
+        "as_of": "2026-10-24T13:10:21+07:00",
+        "age_seconds": 56,
+        "current_speed_kmh": 57.0,
+        "free_flow_speed_kmh": 57.0,
+        "provider_confidence": 1.0
+      }
+    ],
+    "camera_traffic_summary": {
+      "status": "active",
+      "configured_cameras": 6,
+      "fresh_cameras": 5,
+      "validated_cameras": 0,
+      "estimated_cameras": 5,
+      "mean_congestion_index": 11.7,
+      "vehicle_detections": 16,
+      "latest_observed_at": "2026-10-24T13:11:09+07:00",
+      "oldest_observed_at": "2026-10-24T13:11:00+07:00",
+      "valid_until": "2026-10-24T13:11:30+07:00",
+      "source": "registered_camera_aggregates",
+      "scope": "fresh_registered_camera_views_only",
+      "measured_road_speed": false,
+      "independently_validated": false
+    },
+    "road_network_coverage": {
+      "source": "OpenStreetMap",
+      "scope": "bundled_batam_routing_graph",
+      "mapped_nodes": 115320,
+      "mapped_source_ways": 27018,
+      "directed_edges": 249745,
+      "live_camera_edge_count": 0,
+      "live_camera_edge_coverage_percent": 0.0,
+      "complete_live_coverage": false
+    },
+    "scheduled_departures_next_12h": 87,
+    "observed_history": {
+      "selection_scope": "observed_only",
+      "snapshot_loaded_rows": 2694,
+      "sample_count": 539,
+      "source_counts": {
+        "tomtom_live": 539
+      },
+      "latest_sample_at": "2026-10-24T06:10:21+00:00",
+      "latest_sample_age_seconds": 56,
+      "snapshot_may_be_truncated": false
+    },
+    "model": {
+      "trained_at": "2026-10-24T05:48:07.146425+00:00",
+      "raw_observed_rows": 2634,
+      "selected_original_rows": 370,
+      "fit_pairs": 215,
+      "quality_gate_eligible": false,
+      "serving_strategy": "persistence",
+      "synthetic_training_rows": 0
+    }
+  },
+  "source_matrix": [
+    {
+      "source": "TomTom current representative road points",
+      "classification": "current_measured_provider_speed",
+      "contributes_to": [
+        "/api/live-traffic measured segments",
+        "/api/operations speed-derived mean and alerts",
+        "local observed spatial archive",
+        "observed history charts",
+        "15/30/60-minute forecasting inputs and prospective evaluation"
+      ],
+      "implementation": [
+        "backend/services/live_traffic.py",
+        "backend/services/traffic_archiver.py",
+        "backend/services/analytics_history.py",
+        "backend/services/real_traffic_model.py"
+      ],
+      "scope": "Five configured representative points; not all roads or whole corridors. Observation time and ingestion availability are retained; current operations reject stale points."
+    },
+    {
+      "source": "Registered Matanya CCTV aggregate observations",
+      "classification": "provisional_current_image_view_estimate",
+      "contributes_to": [
+        "/api/operations.camera_traffic_summary",
+        "exact directed-edge route planning costs only when permission/config/quality/freshness/binding gates pass"
+      ],
+      "implementation": [
+        "backend/services/cctv_store.py",
+        "backend/services/cctv_routing.py",
+        "backend/services/operations_analytics.py"
+      ],
+      "scope": "Camera counts/occupancy are not measured speed, deduplicated fleet volume or delay. No stale camera rows enter live results; no camera rows are relabelled as speed-training targets. Current edge contribution is independently reported."
+    },
+    {
+      "source": "Bundled OpenStreetMap road graph",
+      "classification": "mapped_static_road_context",
+      "contributes_to": [
+        "routing topology and legal-access preferences",
+        "road context features for observed forecasts",
+        "mapped coverage counts"
+      ],
+      "implementation": [
+        "backend/services/router.py",
+        "backend/services/measured_road_features.py"
+      ],
+      "scope": "Mapped nodes/edges and nearest geometry are not live traffic observations, surveyed capacity, or verified lane/direction matching."
+    },
+    {
+      "source": "Captured Open-Meteo weather responses",
+      "classification": "regional_modelled_weather_context",
+      "contributes_to": [
+        "current weather analytics",
+        "causally available weather features for forecasts"
+      ],
+      "implementation": [
+        "backend/services/live_weather.py",
+        "backend/services/real_traffic_model.py"
+      ],
+      "scope": "Weather features select the captured response available at the forecast origin; regional grid weather is not a road sensor."
+    },
+    {
+      "source": "Published official operator ferry timetables",
+      "classification": "source_dated_scheduled_operations",
+      "contributes_to": [
+        "ports/services/sailing lists",
+        "next12h scheduled departure count",
+        "multimodal routing sailing constraints"
+      ],
+      "implementation": [
+        "backend/services/ferry_schedule.py",
+        "backend/services/operations_analytics.py"
+      ],
+      "scope": "Timetable slots are scheduled operations, not live vessel/AIS status or measured road congestion. Observed-only road forecasts do not add an assumed ferry-surge adjustment."
+    },
+    {
+      "source": "Batam Gajah Mada survey16–18February2023",
+      "classification": "dated_single_site_speed_research",
+      "rows": 48,
+      "days": 3,
+      "source_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/5642",
+      "contributes_to": [
+        "/api/analytics/research-history.survey",
+        "separate exploratory Batam site benchmark",
+        "offline site/date-restricted research experiments"
+      ],
+      "implementation": [
+        "backend/services/research_history.py",
+        "backend/services/survey_speed_model.py"
+      ],
+      "scope": "Exact canonical corridor/direction mapping is unverified; not imported into live speed history or promoted to citywide serving forecast."
+    },
+    {
+      "source": "Batam Tengku Sulung–RajaM.Saleh survey12–18June2023",
+      "classification": "dated_saturation_ratio_research",
+      "rows": 28,
+      "days": 7,
+      "source_url": "https://www.journal.unrika.ac.id/index.php/sigmateknika/article/view/6939",
+      "contributes_to": [
+        "/api/analytics/research-history.saturation_survey"
+      ],
+      "implementation": [
+        "backend/services/research_history.py"
+      ],
+      "scope": "Volume/capacity ratios remain saturation measurements; raw vehicle counts/speeds are absent and no synthetic km/h labels are manufactured."
+    },
+    {
+      "source": "Grand Batam Mall June2023 published survey",
+      "classification": "dated_three_road_speed_research",
+      "rows": 66,
+      "days": 4,
+      "contributes_to": [
+        "separate historical benchmark in observed forecast analytics"
+      ],
+      "implementation": [
+        "backend/services/historical_evaluation.py"
+      ],
+      "scope": "One final test day and no canonical five-corridor mapping; no production promotion or invented free-flow labels."
+    },
+    {
+      "source": "Batam published2024 regional speed ranges",
+      "classification": "undated_area_summary_research",
+      "rows": 6,
+      "contributes_to": [
+        "source-reviewed offline research archive"
+      ],
+      "implementation": [
+        "backend/data/research/batam-published-area-speed-ranges-2024.manifest.json"
+      ],
+      "scope": "No per-observation dates/raw speeds/free-flow or canonical road-direction mapping; zero eligible chronological speed-training rows. Not a current feed."
+    },
+    {
+      "source": "Singapore academic speed bands and Guangzhou speed benchmark",
+      "classification": "foreign_methodology_benchmarks",
+      "contributes_to": [
+        "separate research-history/observed-forecast benchmark sections"
+      ],
+      "implementation": [
+        "backend/services/research_history.py",
+        "backend/services/historical_evaluation.py"
+      ],
+      "scope": "Foreign-road evidence is labelled by geography and units. It does not validate Batam camera counts, current road speeds or citywide accuracy."
+    },
+    {
+      "source": "Legacy synthetic/modelled engineering preview",
+      "classification": "explicit_nonobserved_preview",
+      "contributes_to": [
+        "explicit include_modelled historical preview and permitted demo scenarios only"
+      ],
+      "implementation": [
+        "backend/services/historical_store.py",
+        "backend/services/simulator.py"
+      ],
+      "scope": "Excluded from observed history and real-traffic model training. Modelled hotspot areas remain labelled non-observed even when they consume real corridor signals."
+    }
+  ],
+  "fixes": [
+    {
+      "problem": "Public model-status exposed forest-candidate MAE/R2 even when the release gate serves persistence.",
+      "change": "Published metrics now use the actual gated30min serving strategy; forest-candidate holdout metrics/importances remain separately scoped.",
+      "files": [
+        "backend/main.py",
+        "backend/tests/test_analytics_source_audit.py"
+      ]
+    },
+    {
+      "problem": "Prospective evaluation summary opened the writer/schema initializer, requiring write access for a read-only analytics view.",
+      "change": "Summary now opens SQLite mode=ro/query_only with one consistent read transaction; missing/uninitialized ledgers are not created or silently populated.",
+      "files": [
+        "backend/services/forecast_evaluation.py",
+        "backend/tests/test_analytics_source_audit.py"
+      ]
+    },
+    {
+      "problem": "Complete real provider snapshots unnecessarily depended on forecasting/modelled telemetry twice, so a cold model could break the live congestion endpoint.",
+      "change": "Complete measured provider snapshots and explicitly supplied hotspot signals bypass forecast fallback; hotspots retain non-observed scope and their metadata identifies resolved inputs.",
+      "files": [
+        "backend/services/live_traffic.py",
+        "backend/tests/test_analytics_source_audit.py",
+        "backend/tests/test_traffic_upstream.py"
+      ]
+    }
+  ],
+  "runtime_change_status": "Source changes are tested locally but are not loaded by the running API until the parent coordinates its restart; no restart performed by this audit.",
+  "observed_runtime_metric_mismatch_before_reload": {
+    "public_mae": 3.010527684897423,
+    "forest_candidate_mae": 3.010527684897423,
+    "actual_serving_persistence_mae": 2.889140280157182
+  },
+  "validation": {
+    "status": "passed",
+    "tests_do_not_activate_models": true,
+    "production_training_triggered": false,
+    "operator_api_without_auth_status": 401,
+    "backend_tests_passed": 91,
+    "backend_subtests_passed": 113,
+    "backend_seconds": 6.24,
+    "isolated_test_storage": "in_memory_and_temporary_files",
+    "files": [
+      "test_analytics_source_audit.py",
+      "test_traffic_evaluation.py",
+      "test_analytics_history.py",
+      "test_research_history.py",
+      "test_operations_analytics.py",
+      "test_cctv_api.py",
+      "test_traffic_upstream.py",
+      "test_traffic_archiver.py",
+      "test_congestion_math.py"
+    ]
+  },
+  "limits": [
+    "This receipt is a timestamped source audit, not a claim that all44 catalogued cameras are public/live/authorized for processing.",
+    "Five sampled provider points and modelled hotspot areas do not establish whole-network measured coverage.",
+    "Release/validation, source geography, units, chronology and freshness gates remain enforced.",
+    "No new model, registry setting, camera mapping, credential, authentication rule, or email was created by this audit."
+  ]
+}

@@ -1,0 +1,296 @@
+{
+  "schema": "crossflow.yolo26_artifacts.v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3459,
+      "sha256": "5878afd1c856c35646b6ffc30b3264c565e6bca09be2e38838a67ed9d1f05415"
+    },
+    {
+      "path": "development_dataset/dataset.yaml",
+      "bytes": 229,
+      "sha256": "448517ec0a047e1de77300d330337213c421c150f35c3f29ea71e48ac9f902bb"
+    },
+    {
+      "path": "development_dataset/images/train/image_000.jpg",
+      "bytes": 431770,
+      "sha256": "79df599842981f654881979e24687ce3cfb12bd5239b44ab0f758079e5e50ed8"
+    },
+    {
+      "path": "development_dataset/images/train/image_001.jpg",
+      "bytes": 143139,
+      "sha256": "d21f63873c3c58a5c8c97b7baabf763af327c94afee2f7849279b78227280c81"
+    },
+    {
+      "path": "development_dataset/images/train/image_002.jpg",
+      "bytes": 138557,
+      "sha256": "5071e4cab334d6c39830d865a423893451085f4ac8ef8379fd41a2d1e5e83f44"
+    },
+    {
+      "path": "development_dataset/images/train/image_003.jpg",
+      "bytes": 83031,
+      "sha256": "656e18e0d35ab8dea7983b049dced6413add962f37b52b335a3dfc0fbb8552e4"
+    },
+    {
+      "path": "development_dataset/images/train/image_004.jpg",
+      "bytes": 83090,
+      "sha256": "fdbb13c989e0e67e4d3fe3b0eb2d59bff5e360baffb89562fb62f39a7ad30156"
+    },
+    {
+      "path": "development_dataset/images/train/image_005.jpg",
+      "bytes": 139068,
+      "sha256": "6fe315c31bad694216f2945a27620f7d19c0704ecef48c5aebbbf1ecaf54d6e8"
+    },
+    {
+      "path": "development_dataset/images/train/image_006.jpg",
+      "bytes": 114729,
+      "sha256": "b72aad6ca2b20400dee796dae750609be50be1c8993e0d0edcdf465d571becd9"
+    },
+    {
+      "path": "development_dataset/images/train/image_007.jpg",
+      "bytes": 737363,
+      "sha256": "2427425d79d5d8354c36e410babd4636b1eeaba40787204afa41d42fbbdc2f26"
+    },
+    {
+      "path": "development_dataset/images/train/image_008.jpg",
+      "bytes": 403037,
+      "sha256": "076f918bd072254a3e31c5813235c2a8c5adb34c9f8425f4cca36dd975f9765b"
+    },
+    {
+      "path": "development_dataset/images/validation/image_000.jpg",
+      "bytes": 150074,
+      "sha256": "3e565697e87195c80a09e4caa52fe797539bf91946fb9742823e38f170e6cf28"
+    },
+    {
+      "path": "development_dataset/images/validation/image_001.jpg",
+      "bytes": 187968,
+      "sha256": "264dce979d2be883074c3d332014c7645756c91571a7ed87eb890b55cbe8a60b"
+    },
+    {
+      "path": "development_dataset/images/validation/image_002.jpg",
+      "bytes": 108672,
+      "sha256": "5878971e0d68b56ef084d81a285aaa5d34748f51f9b69064e54301fdc8bbb39a"
+    },
+    {
+      "path": "development_dataset/labels/train/image_000.txt",
+      "bytes": 324,
+      "sha256": "7745882ed7fe72f350873c8cf8d1c8bb66841f5ed5f0f48fbd3344cc27ffa63c"
+    },
+    {
+      "path": "development_dataset/labels/train/image_001.txt",
+      "bytes": 270,
+      "sha256": "8fdb6d834cacd9bbb9badd26f50ea77985473036291911043f1e3c06ba580862"
+    },
+    {
+      "path": "development_dataset/labels/train/image_002.txt",
+      "bytes": 216,
+      "sha256": "0b94b98e79a8d42735d8c7187e6a1b45f3495dbc696975d7e5b04a3816c189f3"
+    },
+    {
+      "path": "development_dataset/labels/train/image_003.txt",
+      "bytes": 216,
+      "sha256": "56f00026c9ca9dd1c1e452cd5073858567ebfc72f8498aa303a904ecf805d4d6"
+    },
+    {
+      "path": "development_dataset/labels/train/image_004.txt",
+      "bytes": 540,
+      "sha256": "8693b6d8b1068ff0af9e8e534843be86e71340fd8a8fb29ae4c6f8668ba73c5a"
+    },
+    {
+      "path": "development_dataset/labels/train/image_005.txt",
+      "bytes": 594,
+      "sha256": "74bec75669ac6bf160192e0fe58be81d92ae174b0f6bb8ca46ff49a1a526fce7"
+    },
+    {
+      "path": "development_dataset/labels/train/image_006.txt",
+      "bytes": 486,
+      "sha256": "ce7019c8cf0eb7f9e39a73993c209953efa93e70a5b6b64aa4d328db47f6248f"
+    },
+    {
+      "path": "development_dataset/labels/train/image_007.txt",
+      "bytes": 216,
+      "sha256": "0e206bc52dfcef31353d62463ffff3c6566681508b57d3973098ed56aa011825"
+    },
+    {
+      "path": "development_dataset/labels/train/image_008.txt",
+      "bytes": 162,
+      "sha256": "9b0e2d8636d33c386f12524de1b07f6a10fcd7534ea530be32676d8fc8e3f061"
+    },
+    {
+      "path": "development_dataset/labels/validation/image_000.txt",
+      "bytes": 324,
+      "sha256": "2dfcc0b69f9335fd5acf01c11393eac2adb7fa7835e8105f64c3be10cb6054aa"
+    },
+    {
+      "path": "development_dataset/labels/validation/image_001.txt",
+      "bytes": 270,
+      "sha256": "ed992db3e34de1d48d7885d8216c5e39895cfebde3c87c58924b16807504f207"
+    },
+    {
+      "path": "development_dataset/labels/validation/image_002.txt",
+      "bytes": 594,
+      "sha256": "a1993a252853950e0e9558ec57abaaa6b7eae43c94c2bf2b6bb6199cf9a95803"
+    },
+    {
+      "path": "development_dataset_receipt.json",
+      "bytes": 8190,
+      "sha256": "278f5c0f9a43e352c6be490b5432e356a0722bcddc3678491677f65159f598bc"
+    },
+    {
+      "path": "model.pt",
+      "bytes": 20422725,
+      "sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+    },
+    {
+      "path": "nano_nbs3_best_val_map_640_latency.json",
+      "bytes": 111,
+      "sha256": "873eaecca242c833ca3f47cb5b018dd1d65db471d2680503abe299f3eb0c74f1"
+    },
+    {
+      "path": "nano_nbs3_last_640_latency.json",
+      "bytes": 111,
+      "sha256": "740ddc8a75bce19f141426f25a2b3fbc8c6092664abb90332969c6284b35256c"
+    },
+    {
+      "path": "pretrained_validation_grid.json",
+      "bytes": 15772,
+      "sha256": "d83822a8ac088acde33d0319511cbdf74c9a5520e2816549be9487dc153c5e90"
+    },
+    {
+      "path": "pretrained_yolo26m.pt",
+      "bytes": 44255705,
+      "sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7"
+    },
+    {
+      "path": "pretrained_yolo26m_1280_latency.json",
+      "bytes": 113,
+      "sha256": "9ce0ce1c99b36e097e0383baefda048cb3080e502d6c6af89e0b92de82d1a4b1"
+    },
+    {
+      "path": "pretrained_yolo26m_960_latency.json",
+      "bytes": 111,
+      "sha256": "af6ca84f34ba1d4863e488e034e3105e34dc1d573eaf98a469c8d24366010b25"
+    },
+    {
+      "path": "pretrained_yolo26n_640_latency.json",
+      "bytes": 112,
+      "sha256": "f629314bd98dceb1cf9a28ae1a87ae75be0263e7ffdecd7829545292f8ecd388"
+    },
+    {
+      "path": "pretrained_yolo26s.pt",
+      "bytes": 20422725,
+      "sha256": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+    },
+    {
+      "path": "pretrained_yolo26s_1280_latency.json",
+      "bytes": 114,
+      "sha256": "9c66b5620701c9c88eaf24b1066ea46a61a58b74c3c68c5625c4ba637a2cd512"
+    },
+    {
+      "path": "pretrained_yolo26s_960_latency.json",
+      "bytes": 111,
+      "sha256": "3214716e9dda7d43628fafcdd4d3b8dacbe931ef4c4bd7f5aff8481cee24a59d"
+    },
+    {
+      "path": "provenance/pip_install_receipt.json",
+      "bytes": 661482,
+      "sha256": "3b7624aec22ea49863aea679682a178f07aa18b09609dee7da9d087fdf606feb"
+    },
+    {
+      "path": "provenance/pretrained_yolo26m.json",
+      "bytes": 485,
+      "sha256": "c06196b8760d0d364fd53ee2e5030e1d3368932d8036ad894e67559771a3ead3"
+    },
+    {
+      "path": "provenance/pretrained_yolo26s.json",
+      "bytes": 485,
+      "sha256": "b2e03cc5a14fcb67b1f4431c8c86326f8e51b1909cae1117f39cb44901551b68"
+    },
+    {
+      "path": "provenance/ultralytics_LICENSE",
+      "bytes": 34523,
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+    },
+    {
+      "path": "provenance/ultralytics_license_page.html",
+      "bytes": 361133,
+      "sha256": "9531aa38b254168a8058204252329ace01b08a196f9a54b67f8568556c6fabcb"
+    },
+    {
+      "path": "provenance/yolo26_model_documentation.html",
+      "bytes": 472752,
+      "sha256": "a31a5fc63bd6e40bcfde10cf6e2fc2065d5db40630036979f6ea93d2e8f6c871"
+    },
+    {
+      "path": "qa.json",
+      "bytes": 1826,
+      "sha256": "8fcb0e4ea93a8b6b46e228dc32f6e44e0f7edd2f22db6da747ab38bbec5b741c"
+    },
+    {
+      "path": "report.json",
+      "bytes": 7305,
+      "sha256": "c3c96762c1e047d51502190104b120a29c1aee1e525aa7b4d2b10b961eb5ed3a"
+    },
+    {
+      "path": "reused_batam_test_predictions.json",
+      "bytes": 11888,
+      "sha256": "70261ea22d35ff0c0cbc82c402ab60c9035cb0495c581ba841d952c195bbc0ed"
+    },
+    {
+      "path": "selection_frozen_before_reused_batam_test.json",
+      "bytes": 2564,
+      "sha256": "5a34e2a2160289d1e2448b6a25b2042821c7b3970ed6439b06ca8b5231c01f3d"
+    },
+    {
+      "path": "serving_parity.json",
+      "bytes": 2253,
+      "sha256": "920f9c71eaa43ce1d82bea290b7be0200ec22850a155594bbeb5ba7794c75a81"
+    },
+    {
+      "path": "serving_policy.json",
+      "bytes": 1072,
+      "sha256": "c4a9cdbb79ea7bf2e2b7f9a7566fea16712ad834c0253c208f863cc7ca8b5448"
+    },
+    {
+      "path": "training/nano_nbs3_20/args.yaml",
+      "bytes": 2227,
+      "sha256": "e0f4e52a1c406f87b760db508a7a161357dabcc784e71167f361cf6fdbb2750b"
+    },
+    {
+      "path": "training/nano_nbs3_20/results.csv",
+      "bytes": 2468,
+      "sha256": "f82a7bc3e91f35f4ce17d42c527d4b06ae05e39da9ade9deb91daf1ade5f8d39"
+    },
+    {
+      "path": "training/nano_nbs3_20/weights/best.pt",
+      "bytes": 5455493,
+      "sha256": "93531ecc14c57514badd99eb59974d777e5ce6e86077f37df4585747ca2f845f"
+    },
+    {
+      "path": "training/nano_nbs3_20/weights/last.pt",
+      "bytes": 5455493,
+      "sha256": "340bd5c6f375b2d6dbac53e5f9de4b0ef49418e927aadf0da91c388cca1bd37a"
+    },
+    {
+      "path": "training_execution_receipt.json",
+      "bytes": 91,
+      "sha256": "0f6750513585645968b81e7a5a5c979d3d96fb49bf3094ffe07c5b5407e319f1"
+    },
+    {
+      "path": "training_plan.json",
+      "bytes": 2227,
+      "sha256": "e6519bfd1ba49f7a04f15eeef48d26cbf1ba910cd6527f48bc9243039c37ebd3"
+    },
+    {
+      "path": "validation_grid.json",
+      "bytes": 21996,
+      "sha256": "c445fc03deea36ca1d3e0857cd2c1cacd20174403f468c43a5af5e165f1e8169"
+    }
+  ],
+  "excluded_local_state": [
+    "runtime_config/",
+    "*.log",
+    "*.cache"
+  ],
+  "production_eligible": false
+}

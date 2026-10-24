@@ -33,6 +33,67 @@ afterEach(() => {
 });
 
 describe('LocationSearch keyboard navigation', () => {
+  it('keeps the floating menu selectable and closes it on outside click or Tab', () => {
+    const onChange = vi.fn();
+    const place: RouteLocation = { id: 'port', name: 'Batam Centre', category: 'Terminal', lat: 1.13, lng: 104.05 };
+    const container = renderIntoDom(<LocationSearch id="floating-place" label="From" value={null}
+      onChange={onChange} namedLocations={[place]} compactLayout savedPlacesOnly />);
+    const input = container.querySelector<HTMLInputElement>('input')!;
+    act(() => input.focus());
+    const menu = document.getElementById('floating-place-options')!;
+    expect(menu.parentElement).toBe(document.body);
+    expect(container.contains(menu)).toBe(false);
+    const option = menu.querySelector<HTMLButtonElement>('[role="option"]')!;
+    act(() => option.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })));
+    expect(input.getAttribute('aria-expanded')).toBe('true');
+    act(() => option.click());
+    expect(onChange).toHaveBeenCalledWith({ lat: place.lat, lng: place.lng, display_name: place.name });
+    press(input, 'ArrowDown');
+    act(() => document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })));
+    expect(input.getAttribute('aria-expanded')).toBe('false');
+    press(input, 'ArrowDown');
+    press(input, 'Tab');
+    expect(document.getElementById('floating-place-options')).toBeNull();
+  });
+
+  it('reopens matching suggestions when typing after the menu was dismissed', () => {
+    const place: RouteLocation = { id: 'port', name: 'Batam Centre', category: 'Terminal', lat: 1.13, lng: 104.05 };
+    const container = renderIntoDom(<LocationSearch id="edit-place" label="From" value={place}
+      onChange={vi.fn()} namedLocations={[place]} />);
+    const input = container.querySelector<HTMLInputElement>('input')!;
+    act(() => input.focus());
+    press(input, 'Escape');
+    expect(input.getAttribute('aria-expanded')).toBe('false');
+    act(() => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, 'Batam');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    expect(input.getAttribute('aria-expanded')).toBe('true');
+    expect(document.getElementById('edit-place-options')?.textContent).toContain('Batam Centre');
+  });
+
+  it('scrolls keyboard selection within the menu but never scrolls on pointer hover', () => {
+    const namedLocations: RouteLocation[] = [
+      { id: 'first', name: 'First port', category: 'Terminal', lat: 1.13, lng: 104.05 },
+      { id: 'second', name: 'Second port', category: 'Terminal', lat: 1.14, lng: 104.06 },
+    ];
+    const container = renderIntoDom(<LocationSearch id="scroll-place" label="From" value={null}
+      onChange={vi.fn()} namedLocations={namedLocations} savedPlacesOnly />);
+    const input = container.querySelector<HTMLInputElement>('input')!;
+    act(() => input.focus());
+    const menu = document.getElementById('scroll-place-options')!;
+    const options = menu.querySelectorAll<HTMLButtonElement>('[role="option"]');
+    menu.getBoundingClientRect = () => new DOMRect(0, 0, 240, 100);
+    options[0].getBoundingClientRect = () => new DOMRect(0, 150, 240, 30);
+    options[1].getBoundingClientRect = () => new DOMRect(0, 500, 240, 30);
+    press(input, 'ArrowDown');
+    expect(menu.scrollTop).toBe(80);
+    act(() => options[1].dispatchEvent(new MouseEvent('mouseover', { bubbles: true })));
+    expect(input.getAttribute('aria-activedescendant')).toBe(options[1].id);
+    expect(menu.scrollTop).toBe(80);
+    expect(container.scrollTop).toBe(0);
+  });
+
   it('reuses the location menu for read-only saved-place selection', () => {
     const onNamedLocationSelect = vi.fn();
     const namedLocations: RouteLocation[] = [
@@ -69,7 +130,7 @@ describe('LocationSearch keyboard navigation', () => {
     expect(input?.closest('.location-search-compact')).not.toBeNull();
 
     act(() => input?.focus());
-    const menu = container.querySelector('#saved-origin-options');
+    const menu = document.querySelector('#saved-origin-options');
     const options = Array.from(menu?.querySelectorAll<HTMLButtonElement>('[role="option"]') ?? []);
     expect(menu?.textContent).toContain('SAVED PLACES');
     expect(menu?.textContent).not.toContain('Use my current location');
@@ -100,7 +161,7 @@ describe('LocationSearch keyboard navigation', () => {
 
     const input = container.querySelector<HTMLInputElement>('#sidebar-location');
     act(() => input?.focus());
-    expect(container.querySelector('#sidebar-location-options-map-picker')).not.toBeNull();
+    expect(document.querySelector('#sidebar-location-options-map-picker')).not.toBeNull();
   });
 
   it('tracks an active option, selects it with Enter, and resets it with Escape', () => {

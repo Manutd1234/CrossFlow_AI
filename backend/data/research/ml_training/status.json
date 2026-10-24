@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "generated_at": "2026-10-23T17:41:45.822908+00:00",
+  "training_started": true,
+  "model_activated": false,
+  "citywide_Batam_accuracy_validated": false,
+  "camera_model_trained": false,
+  "batam_camera_model_trained": false,
+  "foreign_image_count_model_trained": true,
+  "provider_models_fitted": false,
+  "report": "report.json",
+  "experiments": [
+    {
+      "id": "batam_site_speed",
+      "target": "road_speed_kph",
+      "selected_model": "extra_trees_depth_2",
+      "test_metrics": {
+        "samples": 16,
+        "mae_kph": 3.234259982638889,
+        "rmse_kph": 3.971420433929562
+      },
+      "baseline_metrics": {
+        "previous_survey_day_slot": {
+          "samples": 16,
+          "mae_kph": 4.135,
+          "rmse_kph": 4.659914162299558
+        },
+        "historical_slot_mean": {
+          "samples": 16,
+          "mae_kph": 3.536562499999999,
+          "rmse_kph": 3.9854244206232283
+        },
+        "direction_mean": {
+          "samples": 16,
+          "mae_kph": 3.284140624999999,
+          "rmse_kph": 4.140325342930491
+        }
+      },
+      "beats_all_reported_baselines": true,
+      "validation_preferred_strategy": "extra_trees_depth_2",
+      "production_eligible": false,
+      "training_performed": true,
+      "scope": "single_Batam_survey_site"
+    },
+    {
+      "id": "foreign_hourly_counts",
+      "target": "hourly_loop_flow_vehicles",
+      "selected_model": "hist_gradient_boosting_15_squared_error",
+      "test_metrics": {
+        "kind": "trained_model",
+        "rows": 7454,
+        "mae_vehicles_per_hour": 56.33135082120127,
+        "rmse_vehicles_per_hour": 87.83157996687949,
+        "wape_pct": 11.779934740097984,
+        "smape_pct": 15.675366182594283,
+        "bias_vehicles_per_hour": 14.092189681299374,
+        "median_absolute_error": 34.8283631106338,
+        "p90_absolute_error": 125.39061609758105,
+        "actual_mean_vehicles_per_hour": 478.197477864234,
+        "measured_zero_target_rows": 0
+      },
+      "baseline_metrics": {
+        "persistence": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 73.92943386101422,
+          "rmse_vehicles_per_hour": 106.93922880981714,
+          "wape_pct": 15.460021703001052,
+          "smape_pct": 21.33557190207511,
+          "bias_vehicles_per_hour": 0.5996780252213577,
+          "median_absolute_error": 50.0,
+          "p90_absolute_error": 175.0,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        },
+        "daily_seasonal": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 105.71397907163939,
+          "rmse_vehicles_per_hour": 174.64853049227875,
+          "wape_pct": 22.10676215687881,
+          "smape_pct": 27.177678395280452,
+          "bias_vehicles_per_hour": 3.5124765226723906,
+          "median_absolute_error": 55.0,
+          "p90_absolute_error": 264.0,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        },
+        "weekly_seasonal": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 78.27877649584116,
+          "rmse_vehicles_per_hour": 133.4051156161249,
+          "wape_pct": 16.369550263095583,
+          "smape_pct": 19.824812888761535,
+          "bias_vehicles_per_hour": 16.91762811913067,
+          "median_absolute_error": 44.0,
+          "p90_absolute_error": 168.0,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        },
+        "training_calendar_profile": {
+          "kind": "baseline",
+          "rows": 7454,
+          "mae_vehicles_per_hour": 90.1650120740542,
+          "rmse_vehicles_per_hour": 131.56269260237377,
+          "wape_pct": 18.855183527265098,
+          "smape_pct": 23.19177044710852,
+          "bias_vehicles_per_hour": -37.47518111081298,
+          "median_absolute_error": 65.0,
+          "p90_absolute_error": 190.3499999999999,
+          "actual_mean_vehicles_per_hour": 478.197477864234,
+          "measured_zero_target_rows": 0
+        }
+      },
+      "beats_all_reported_baselines": true,
+      "validation_preferred_strategy": "hist_gradient_boosting_15_squared_error",
+      "production_eligible": false,
+      "training_performed": true,
+      "scope": "foreign_transfer_benchmark"
+    },
+    {
+      "id": "foreign_visual_counts",
+      "target": "static_image_vehicle_count",
+      "selected_model": "ridge_1000",
+      "test_metrics": {
+        "samples": 32,
+        "mae_vehicles_per_frame": 3.6139445488937274,
+        "rmse_vehicles_per_frame": 4.506918574180355,
+        "bias_vehicles_per_frame": -1.3448455505463885,
+        "actual_mean_vehicles_per_frame": 5.09375,
+        "predicted_mean_vehicles_per_frame": 3.7489044494536117,
+        "rounded_exact_count_pct": 9.375,
+        "within_one_vehicle_pct": 12.5
+      },
+      "baseline_metrics": {
+        "constant_training_mean": {
+          "samples": 32,
+          "mae_vehicles_per_frame": 2.46875,
+          "rmse_vehicles_per_frame": 2.966684222794495,
+          "bias_vehicles_per_frame": -0.30208333333333304,
+          "actual_mean_vehicles_per_frame": 5.09375,
+          "predicted_mean_vehicles_per_frame": 4.791666666666667,
+          "rounded_exact_count_pct": 9.375,
+          "within_one_vehicle_pct": 25.0
+        },
+        "constant_training_median": {
+          "samples": 32,
+          "mae_vehicles_per_frame": 2.46875,
+          "rmse_vehicles_per_frame": 2.952752952754429,
+          "bias_vehicles_per_frame": -0.09375,
+          "actual_mean_vehicles_per_frame": 5.09375,
+          "predicted_mean_vehicles_per_frame": 5.0,
+          "rounded_exact_count_pct": 9.375,
+          "within_one_vehicle_pct": 31.25
+        }
+      },
+      "beats_all_reported_baselines": false,
+      "validation_preferred_strategy": "constant_training_median",
+      "production_eligible": false,
+      "training_performed": true,
+      "scope": "foreign_image_count_transfer"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "stable_root_model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "current_service_sha256": "ff5a3934d085d96d3526d190aeb343873f3667d1abdd939bb022abccd777f4f7",
+  "three_image_parity": [
+    {
+      "image": "transset/images/file_00001.jpg",
+      "count": 0,
+      "latency_ms": 2635.7105419956497,
+      "same_offline_boxes_and_scores": true
+    },
+    {
+      "image": "transset/images/file_00153.jpg",
+      "count": 6,
+      "latency_ms": 1742.1875840009307,
+      "same_offline_boxes_and_scores": true
+    },
+    {
+      "image": "transset/images/file_00304.jpg",
+      "count": 6,
+      "latency_ms": 1849.3948329996783,
+      "same_offline_boxes_and_scores": true
+    }
+  ],
+  "whole_image_roi_count_matches": true,
+  "production_eligible": false,
+  "batam_validated": false,
+  "focused_tests": 10,
+  "runtime": "/private/tmp/crossflow-detector-runtime/bin/python"
+}

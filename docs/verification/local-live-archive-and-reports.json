@@ -1,0 +1,163 @@
+{
+  "verified_at": "2026-10-23T09:42:20.084880+00:00",
+  "scope": "Manual public-local API verification. No credentials or synthetic historical observations; dedupe replay uses a disposable separate SQLite file.",
+  "current_traffic_source": "tomtom_live",
+  "current_observed_corridor_count": 5,
+  "live_collector": {
+    "active": true,
+    "collection_started_at": "2026-10-23T16:40:23+07:00",
+    "last_attempt_at": "2026-10-23T16:40:23+07:00",
+    "last_success_at": "2026-10-23T16:40:23+07:00",
+    "last_observation_at": "2026-10-23T16:40:23+07:00",
+    "inserted_total": 5,
+    "last_received": 5,
+    "last_inserted": 5,
+    "last_duplicates": 0,
+    "last_error_code": null,
+    "enabled": true,
+    "configuration_status": "enabled",
+    "interval_seconds": 120,
+    "storage_scope": "local_sqlite",
+    "source": "tomtom_live",
+    "observed_only": true,
+    "history_begins_at_collection": true,
+    "counter_scope": "current_process"
+  },
+  "canonical_observed_history": [
+    {
+      "corridor_id": "corridor-1",
+      "sample_count": 1,
+      "source_counts": {
+        "tomtom_live": 1
+      },
+      "latest_sample_at": "2026-10-23T09:40:23+00:00",
+      "days_with_observations": 1
+    },
+    {
+      "corridor_id": "corridor-2",
+      "sample_count": 1,
+      "source_counts": {
+        "tomtom_live": 1
+      },
+      "latest_sample_at": "2026-10-23T09:40:23+00:00",
+      "days_with_observations": 1
+    },
+    {
+      "corridor_id": "corridor-3",
+      "sample_count": 1,
+      "source_counts": {
+        "tomtom_live": 1
+      },
+      "latest_sample_at": "2026-10-23T09:40:23+00:00",
+      "days_with_observations": 1
+    },
+    {
+      "corridor_id": "corridor-4",
+      "sample_count": 1,
+      "source_counts": {
+        "tomtom_live": 1
+      },
+      "latest_sample_at": "2026-10-23T09:40:23+00:00",
+      "days_with_observations": 1
+    },
+    {
+      "corridor_id": "corridor-5",
+      "sample_count": 1,
+      "source_counts": {
+        "tomtom_live": 1
+      },
+      "latest_sample_at": "2026-10-23T09:40:23+00:00",
+      "days_with_observations": 1
+    }
+  ],
+  "real_snapshot_dedupe_after_sqlite_reopen": {
+    "first": {
+      "status": "collected",
+      "received": 5,
+      "inserted": 5,
+      "duplicates": 0
+    },
+    "second": {
+      "status": "collected",
+      "received": 5,
+      "inserted": 0,
+      "duplicates": 5
+    },
+    "stored_observed_rows": 5,
+    "main_application_archive_mutated_by_this_replay": false
+  },
+  "published_authority_report": {
+    "status": "fresh",
+    "checked_at": "2026-10-23T16:41:40+07:00",
+    "fetched_at": "2026-10-23T16:41:40+07:00",
+    "report": {
+      "publisher": "BP Batam Port Business Entity",
+      "source_url": "https://batamport.bpbatam.go.id/pelabuhan-penumpang/",
+      "period_label": "Januari-Agustus 2026",
+      "period_start": "2026-01",
+      "period_end": "2026-08",
+      "metrics": [
+        {
+          "id": "vessel_calls",
+          "label": "Passenger-vessel calls",
+          "value": 51733,
+          "unit": "calls"
+        },
+        {
+          "id": "domestic_passengers",
+          "label": "Domestic passenger movements",
+          "value": 3075059,
+          "unit": "people"
+        },
+        {
+          "id": "international_passengers",
+          "label": "International passenger movements",
+          "value": 3643016,
+          "unit": "people"
+        }
+      ],
+      "content_sha256": "bbe4c9ba37ac29c7e53de44041264508c2eeedf920eb16364ef44ddc6d0dca98",
+      "fetched_at": "2026-10-23T16:41:40+07:00"
+    },
+    "storage": {
+      "durable": true,
+      "scope": "single_server",
+      "available": true
+    },
+    "limitations": [
+      "Official reporting-period aggregates, not current traffic speeds or live terminal occupancy.",
+      "Only successfully parsed source reports are retained; past periods are not fabricated.",
+      "The source is checked at most every five minutes, with a bounded two-attempt fetch."
+    ]
+  },
+  "dispatch_after_collector_and_scraper_restart": [
+    {
+      "route_code": "9H2WQHF",
+      "code_status": 200,
+      "full_id_status": 200,
+      "geometry_points": 55,
+      "route_type": "ROAD_ROUTE",
+      "route_storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": true,
+        "durability": "persistent_local_file",
+        "scope": "single_host"
+      }
+    },
+    {
+      "route_code": "V5D9FB8",
+      "code_status": 200,
+      "full_id_status": 200,
+      "geometry_points": 62,
+      "route_type": "MULTIMODAL_FERRY_ROUTE",
+      "route_storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": true,
+        "durability": "persistent_local_file",
+        "scope": "single_host"
+      }
+    }
+  ]
+}

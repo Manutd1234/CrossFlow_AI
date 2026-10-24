@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-10-23T18:13:47.539358+00:00",
+  "architecture": "fasterrcnn_resnet50_fpn_v2",
+  "num_classes": 91,
+  "selected_model": "fasterrcnn_pretrained_COCO",
+  "vehicle_classes": {
+    "2": "bicycle",
+    "3": "car",
+    "4": "motorcycle",
+    "6": "bus",
+    "8": "truck"
+  },
+  "score_threshold": 0.4,
+  "vehicle_nms_iou": 0.5,
+  "model_sha256": "dd69338a24b8d7381807e247652bdc356325bcbaf1cd3e092e00e0a1a58706bf",
+  "selection_metric": "lowest macro source-video validation count MAE then highest detection F1; compare pretrained plus epochs2/5 and previously selected SSDLite",
+  "validation": {
+    "candidate": "fasterrcnn_pretrained_COCO",
+    "score_threshold": 0.4,
+    "count": {
+      "frames": 16,
+      "mae_vehicles_per_frame": 1.5,
+      "macro_source_group_mae": 1.5,
+      "rmse_vehicles_per_frame": 2.0,
+      "bias_vehicles_per_frame": 0.25,
+      "exact_count_pct": 25.0,
+      "within_one_vehicle_pct": 62.5,
+      "actual_total": 55,
+      "predicted_total": 59
+    },
+    "detection": {
+      "ap": 0.35509916637839145,
+      "precision": 0.4745762711864407,
+      "recall": 0.509090909090909,
+      "f1": 0.49122807017543857,
+      "true_positive": 28,
+      "false_positive": 31,
+      "false_negative": 27,
+      "ground_truth_boxes": 55,
+      "predicted_boxes": 59
+    }
+  },
+  "diagnostic_labels_read_before_freeze": false,
+  "production_eligible": false,
+  "batam_validated": false,
+  "pretrained_weight_terms": "Official TorchVision warns of dataset-derived terms; no certified production clearance"
+}

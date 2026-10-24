@@ -1,0 +1,509 @@
+{
+  "body": {
+    "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+    "size": "14px"
+  },
+  "checkedAt": "2026-10-23T13:38:50.105Z",
+  "elements": [
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "20.8px",
+      "size": "16px",
+      "tag": "H4",
+      "text": "Batam · Published road-speed survey",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Jalan Gajah Mada in front of Kemilau Bangsa School intersection, Tiban, Batam. 48 published int",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "19.5px",
+      "size": "13px",
+      "tag": "SELECT",
+      "text": "2023-02-162023-02-172023-02-18",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "19.5px",
+      "size": "13px",
+      "tag": "SELECT",
+      "text": "From eastFrom west",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "8 intervals selected · Mean of published speeds: 24.47 km/h.",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Interval",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Speed (km/h)",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Travel time (s)",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Quality note",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "07:00–07:30",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "07:30–08:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "08:00–08:30",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "08:30–09:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "16:00–16:30",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "16:30–17:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "17:00–17:30",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "17:30–18:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "18.2px",
+      "size": "14px",
+      "tag": "H5",
+      "text": "Exploratory Batam site backtest · real published speeds",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Expanding training windows of 16 and 32 observations; 32 next-survey-day forecasts across two h",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Model / baseline",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "MAE (km/h)",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "RMSE (km/h)",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Random forest",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Previous survey day",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Historical time-slot mean",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Evaluated 23/10/2026, 8:58:26 pm. Too few days and locations for operational model promotion; t",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "SUMMARY",
+      "text": "Site backtest method and limitations",
+      "weight": "600"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "No canonical corridor mapping verified. This survey has not replaced the serving model.",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "SUMMARY",
+      "text": "Survey source, licence and limitations",
+      "weight": "600"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Kurniawan and Anwar (2023), Sigma Teknika6(2),479-492, Table11 p487; direct transcription, deci",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Journal article · Original PDF · CC BY-SA 4.0 as displayed on article page",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "20.8px",
+      "size": "16px",
+      "tag": "H4",
+      "text": "Batam · Published intersection saturation",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Tengku Sulung–Raja M. Saleh unsignalised intersection, Batam. 28 published hourly ratios over 7",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Derived volume/capacity ratios (DS), not vehicle speeds. These records contribute 0 speed-train",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "19.5px",
+      "size": "13px",
+      "tag": "SELECT",
+      "text": "2023-06-122023-06-132023-06-142023-06-152023-06-162023-06-172023-06-18",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Interval",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Published saturation ratio (DS)",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "06:00–07:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "07:00–08:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "16:00–17:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "17:00–18:00",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Kept separate from measured speed history and the serving speed model.",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "SUMMARY",
+      "text": "Intersection source, licence and limitations",
+      "weight": "600"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Bangun, Agustina and Kusmawan (2024), Sigma Teknika 7(2), 439–447, Table 4.3 p445. Direct trans",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Journal article · Original PDF · CC BY-SA 4.0 as displayed on article page",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "20.8px",
+      "size": "16px",
+      "tag": "H4",
+      "text": "Singapore · Historical ML backtest",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "53 road links · 27 calendar days · 397,341 speed-band observations. 2021-03-08 to 2021-04-03.",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "LTA Traffic Speed Bands; ordinal integer labels 1–8, not exact km/h. Chronological training, ca",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Forecast",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Test forecasts",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Random forest MAE",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "Persistence MAE",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "80% interval coverage",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "15 minutes",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "30 minutes",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "TH",
+      "text": "60 minutes",
+      "weight": "700"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Evaluated: 23/10/2026, 7:03:30 pm. Overlapping forecasts are not independent samples.",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "SUMMARY",
+      "text": "Benchmark source, licence and limitations",
+      "weight": "600"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Published SUTD research archive · Singapore Open Data Licence",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "LTA API datasets governed by Singapore Open Data Licence1.0; publisher code not reused. Contain",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Publisher directly copies SpeedBand from snapshots in inspected get_features; original API payl",
+      "weight": "400"
+    },
+    {
+      "family": "\"CrossFlow Inter\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "lineHeight": "21px",
+      "size": "14px",
+      "tag": "P",
+      "text": "Source filenames have no timezone; relative source-clock chronology retained; UTC/SGT offset no",
+      "weight": "400"
+    }
+  ],
+  "fontLoaded": true,
+  "pageWidth": 775,
+  "stylesheets": [],
+  "width": 775
+}

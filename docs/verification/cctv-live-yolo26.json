@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-23T19:44:44.904764+00:00",
+  "flow": "Matanya 15 live stream -> YOLO26n -> actual SQLite aggregate store -> FastAPI -> CctvMonitor / exact-edge route calculation -> journey map",
+  "api_url": "http://127.0.0.1:8007",
+  "frontend_url": "http://127.0.0.1:3007/.cctvcheck/",
+  "authentication_fixture": "Loopback-only test operator identity; real user account/session unchanged",
+  "camera_data_mocked": false,
+  "route_data_mocked": false,
+  "summary_at_receipt": {
+    "listed": 28,
+    "configured": 1,
+    "live": 0,
+    "estimated": 1,
+    "stale": 0,
+    "unavailable": 0,
+    "permission_pending": 27,
+    "calibration_pending": 0
+  },
+  "camera_at_receipt": {
+    "camera_id": "15",
+    "name": "Simpang BI",
+    "road_name": "Simpang BI \u2014 Jalan Engku Putri Timur approach",
+    "source_url": "https://matanya.batam.go.id/index.php/Streaming/live/15",
+    "status": "estimated",
+    "reason": "Live YOLO26 road-view estimate; independent camera accuracy and thresholds are unvalidated",
+    "observed_at": "2026-10-23T19:44:28.843567Z",
+    "window_seconds": 24.704825,
+    "vehicle_count": 0,
+    "moving_vehicles": 0,
+    "stopped_vehicles": 0,
+    "occupancy_ratio": 0.0,
+    "motion_score": null,
+    "queue_length_m": null,
+    "congestion_score": 0.0,
+    "severity": "low",
+    "operational_eligible": false,
+    "validation_status": "estimated",
+    "timestamp_basis": "stream_observation",
+    "detector_id": "yolo26s-batam-646f8bc3fe0a6568-1280",
+    "routing_enabled": true
+  },
+  "real_route": {
+    "route_code": "N9UZYUJ",
+    "route_id": "8a73e0750faffb50182377f10fc5bc796cf42e1d6a5b09fd565d8846b547c5f8",
+    "planned_departure": "2026-10-24T02:42:32+07:00",
+    "estimated_travel_time_mins": 0.2,
+    "total_eta_mins": 0.2,
+    "route_geometry": [
+      [
+        1.127626,
+        104.057335
+      ],
+      [
+        1.128982,
+        104.05698
+      ]
+    ],
+    "routing_cctv": {
+      "applied_to_objective": true,
+      "effect": "bounded_search_cost_only",
+      "limitations": "Image congestion is an estimate over the camera's mapped view. The penalty expresses a routing preference, not measured delay; unobserved roads retain the existing planning model.",
+      "maximum_penalty": "2 times existing edge free-flow seconds before objective weighting",
+      "measured_speed_or_eta": false,
+      "observations": [
+        {
+          "age_seconds": 12.505,
+          "camera_id": "15",
+          "congestion_index": 0.0,
+          "observed_at": "2026-10-23T19:42:19.890624+00:00",
+          "on_selected_path": true,
+          "road_segment_id": "osm-edge:5253032156:5394956319:619",
+          "timestamp_basis": "stream_observation",
+          "validation_status": "estimated"
+        }
+      ],
+      "scope": "explicitly_mapped_directed_camera_edges_only",
+      "snapshot_at": "2026-10-23T19:42:32.395280+00:00",
+      "source": "cctv_camera"
+    },
+    "distance_km": 0.16
+  },
+  "browser_checks": {
+    "live_estimates_when_pilot_running": 1,
+    "independently_validated_cameras": 0,
+    "vehicle_count_when_captured": 0,
+    "congestion_percentage_when_captured": 0,
+    "operational_eligible": false,
+    "source_clock_verified": false,
+    "timestamp_basis": "stream_observation",
+    "camera_source": "https://matanya.batam.go.id/index.php/Streaming/live/15",
+    "no_file_inputs": true,
+    "console_errors_or_warnings": 0,
+    "live_status_changed_to_stale_after_pilot_ended": true,
+    "route_header": "CCTV + modelled traffic",
+    "route_camera_notice_rendered": true,
+    "journey_map_rendered": true
+  },
+  "screenshots": [
+    "docs/verification/cctv-live-yolo26.png",
+    "docs/verification/cctv-live-routing.png"
+  ],
+  "limitations": [
+    "Night camera observation contained zero detections; this is not a labelled accuracy evaluation.",
+    "Road occupancy percentage is a provisional camera image estimate, not measured speed, capacity or physical delay.",
+    "Live stream clock is observation time; source capture clock remains unverified.",
+    "This temporary UI fixture uses actual production components and backend data, with authentication replaced only in the isolated test process."
+  ]
+}

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { identityKey, isDriverView } from './utils/access';
+import { useSessionRefresh } from './hooks/useSessionRefresh';
 import { Header } from './components/app-shell/Header';
 import type { AppTab } from './components/app-shell/Navigation';
 
@@ -9,7 +10,8 @@ import {
   RouteLocation, RouteOptimizationResult, StoredSession, VehicleType,
 } from './types';
 import {
-  fetchAuthStatus, fetchSession, readStoredSession, supabaseConfigured, validSession,
+  AuthError, SessionRejectedError, clearStoredSession, completeOAuthSignIn, fetchAuthStatus, fetchSession,
+  hasOAuthCallback, readStoredSession, sessionGeneration, supabaseConfigured, validSession,
 } from './services/auth';
 import {
   fetchCorridorRoutes, fetchCorridors, fetchFerries, fetchOperationsSummary,
@@ -17,12 +19,37 @@ import {
   refreshOfficialFerrySources, scheduleInformedPortSeed,
 } from './services/api';
 import {
-  INITIAL_CORRIDORS, INITIAL_FERRIES, MOCK_OPERATIONS,
+  INITIAL_CORRIDORS, INITIAL_FERRIES,
   PUBLISHED_FERRY_TIMETABLE_METADATA, ROUTE_LOCATIONS,
 } from './data/mockData';
+import { UNAVAILABLE_OPERATIONS } from './data/unavailableOperations';
 
 const POLL_INTERVAL_MS = 30_000;
+const OPERATIONS_POLL_INTERVAL_MS = 10_000;
+const OPERATIONS_EXPIRY_MARGIN_MS = 2_000;
+const OPERATIONS_MIN_POLL_INTERVAL_MS = 1_000;
 const DRIVER_TABS: readonly AppTab[] = ['map', 'route'];
+
+function operationsRefreshDelay(snapshot: Fetched<OperationsSummary> | null): number {
+  const deadline = snapshot?.data.camera_traffic_summary?.valid_until;
+  const remaining = deadline ? Date.parse(deadline) - Date.now() : NaN;
+  // A frame may already be old when its numeric summary reaches the browser.
+  // Check before that deadline, then back off normally once it has expired.
+  return remaining > 0
+    ? Math.min(OPERATIONS_POLL_INTERVAL_MS,
+      Math.max(OPERATIONS_MIN_POLL_INTERVAL_MS, remaining - OPERATIONS_EXPIRY_MARGIN_MS))
+    : OPERATIONS_POLL_INTERVAL_MS;
+}
+
+function rememberGuest(value?: boolean): boolean {
+  try {
+    if (value === true) window.sessionStorage.setItem('crossflow.guest', '1');
+    if (value === false) window.sessionStorage.removeItem('crossflow.guest');
+    return window.sessionStorage.getItem('crossflow.guest') === '1';
+  } catch {
+    return false;
+  }
+}
 
 const MapView = lazy(() => import('./components/corridor-map/MapView').then(module => ({ default: module.MapView })));
 const RouteOptimizer = lazy(() => import('./components/route-planner/RouteOptimizer').then(module => ({ default: module.RouteOptimizer })));
@@ -30,11 +57,11 @@ const SignInPanel = lazy(() => import('./components/auth/SignInPanel').then(modu
 const FerryPortTracker = lazy(() => import('./components/ferry-port/FerryPortTracker').then(module => ({ default: module.FerryPortTracker })));
 const OperationsAnalytics = lazy(() => import('./components/operations/OperationsAnalytics').then(module => ({ default: module.OperationsAnalytics })));
 
-function LoadingPanel() {
+function LoadingPanel({ message = 'Loading workspace…' }: { message?: string }) {
   return (
     <div className="glass-panel app-loading-panel" role="status" aria-live="polite">
       <span className="app-loading-spinner" aria-hidden="true" />
-      <span>Loading workspace…</span>
+      <span>{message}</span>
     </div>
   );
 }
@@ -42,15 +69,15 @@ function LoadingPanel() {
 const VIEW_META: Record<AppTab, { title: string; description: string }> = {
   map: {
     title: 'Batam Congestion Watch',
-    description: 'Scan 30 photo-backed planning hotspots and move directly from an area to route planning.',
+    description: 'Explore 30 planning hotspots across Batam.',
   },
   route: {
     title: 'Cross-Border Route Planner',
-    description: 'Compose local roads, a published ferry crossing, and onward roads between Singapore and Batam.',
+    description: 'Plan your road and ferry journey.',
   },
   analytics: {
-    title: 'Ferry, Port & Operations Analytics',
-    description: 'Track terminal activity and review network performance, bottlenecks, and decision-support indicators.',
+    title: 'Ferry & Operations Analytics',
+    description: 'Traffic, ferries and daily trends.',
   },
 };
 
@@ -60,13 +87,45 @@ export function App() {
   const [isSignInOpen, setIsSignInOpen] = useState<boolean>(false);
   const [authStatus, setAuthStatus] = useState<AuthStatus | null>(null);
   const [session, setSession] = useState<StoredSession | null>(() => readStoredSession());
+  const currentCredentialRef = useRef({ session, generation: sessionGeneration() });
+  const handleSessionChange = useCallback((next: StoredSession | null) => {
+    // Storage may be blocked, so keep the accepted/rotated credential for this
+    // mounted app. Bind it to the account generation to prevent resurrection
+    // after sign-out or a different sign-in attempt.
+    currentCredentialRef.current = { session: next, generation: sessionGeneration() };
+    setSession(next);
+  }, []);
   const [identity, setIdentity] = useState<AuthSession | null>(null);
   const [authResolved, setAuthResolved] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authRecoveryPending, setAuthRecoveryPending] = useState(false);
+  const [authRestoreVersion, setAuthRestoreVersion] = useState(0);
   // Remembered for the tab only: a guest should not be re-prompted on every
   // reload, but a new visit starts at the sign-in screen again.
   const [isGuest, setIsGuest] = useState<boolean>(
-    () => window.sessionStorage?.getItem('crossflow.guest') === '1',
+    () => rememberGuest(),
   );
+  const handleIdentityChange = useCallback((next: AuthSession | null) => {
+    setIdentity(next);
+    if (next) {
+      setAuthRecoveryPending(false);
+      rememberGuest(false);
+      setIsGuest(false);
+      setIsSignInOpen(false);
+      setAuthError(null);
+    }
+  }, []);
+  const retrySavedSession = useCallback(() => {
+    setAuthError(null);
+    setAuthResolved(false);
+    setAuthRestoreVersion(version => version + 1);
+  }, []);
+  const handleSessionRecovery = useCallback(() => {
+    setIdentity(null);
+    setAuthRecoveryPending(true);
+    retrySavedSession();
+  }, [retrySavedSession]);
+  useSessionRefresh(authResolved && identity ? session : null, handleSessionChange, handleIdentityChange, handleSessionRecovery);
   const [routes, setRoutes] = useState<CorridorRoute[]>([]);
   const [routesLoading, setRoutesLoading] = useState(true);
   const [corridors, setCorridors] = useState<Corridor[]>(INITIAL_CORRIDORS);
@@ -80,6 +139,8 @@ export function App() {
   const [portsError, setPortsError] = useState<string | null>(null);
   const [isFerryRefreshing, setIsFerryRefreshing] = useState(false);
   const [operationsSnapshot, setOperationsSnapshot] = useState<Fetched<OperationsSummary> | null>(null);
+  const [operationsCheckedAt, setOperationsCheckedAt] = useState<string | null>(null);
+  const [portsCheckedAt, setPortsCheckedAt] = useState<string | null>(null);
   const [routeLocations, setRouteLocations] = useState<RouteLocation[]>(ROUTE_LOCATIONS);
   const [trafficSnapshot, setTrafficSnapshot] = useState<Fetched<LiveTrafficData> | null>(null);
 
@@ -101,17 +162,56 @@ export function App() {
   const [departureHour, setDepartureHour] = useState<number>(() => new Date().getHours());
   const ferryRefreshInFlightRef = useRef(false);
   const ferryRequestEpochRef = useRef(0);
+  const dataRequestEpochRef = useRef(0);
+  const operationsRequestEpochRef = useRef(0);
+  const operationsRequestRef = useRef<Promise<void> | null>(null);
+
+  const loadOperations = useCallback((): Promise<void> => {
+    // Timer, focus, and manual refreshes share one numeric-summary request.
+    if (operationsRequestRef.current) return operationsRequestRef.current;
+    const requestEpoch = ++operationsRequestEpochRef.current;
+    const request = fetchOperationsSummary().then(snapshot => {
+      if (requestEpoch !== operationsRequestEpochRef.current) return;
+      setOperationsSnapshot(snapshot);
+      setOperationsCheckedAt(new Date().toISOString());
+    }).finally(() => {
+      if (operationsRequestRef.current === request) operationsRequestRef.current = null;
+    });
+    operationsRequestRef.current = request;
+    return request;
+  }, []);
+
+  useEffect(() => {
+    void loadOperations();
+    return () => {
+      operationsRequestEpochRef.current += 1;
+      operationsRequestRef.current = null;
+    };
+  }, [loadOperations]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      // Browser timers can be throttled in background tabs. The existing
+      // focus/visibility refresh resumes this cadence on foreground return.
+      if (document.visibilityState !== 'hidden') void loadOperations();
+    }, operationsRefreshDelay(operationsSnapshot));
+    return () => window.clearTimeout(timer);
+  }, [loadOperations, operationsSnapshot, operationsCheckedAt]);
 
   const loadData = useCallback(async () => {
+    const dataRequestEpoch = ++dataRequestEpochRef.current;
     // Parallel, not sequential: a slow provider must not delay unrelated
-    // ferry, operations, and corridor requests one after another.
+    // ferry and corridor requests one after another. Numeric summaries have
+    // their own cadence so provider latency cannot delay local observations.
     const ferryRequestEpoch = ferryRequestEpochRef.current;
     const ferryRequest = ferryRefreshInFlightRef.current
       ? Promise.resolve(null)
       : fetchFerries();
-    const [c, f, o, traffic] = await Promise.all([
-      fetchCorridors(), ferryRequest, fetchOperationsSummary(), fetchLiveTraffic(),
+    const [c, f, traffic] = await Promise.all([
+      fetchCorridors(), ferryRequest, fetchLiveTraffic(),
     ]);
+
+    if (dataRequestEpoch !== dataRequestEpochRef.current) return;
 
     setCorridors(c.data);
     // A poll that began before a manual official-source refresh must not write
@@ -123,7 +223,6 @@ export function App() {
       setFerryTimetable(f.timetable);
       setFerrySource(f.source);
     }
-    setOperationsSnapshot(o);
     setTrafficSnapshot(traffic);
     // The global badge describes road traffic. Ferry schedules and operations
     // identify their own modelled/offline state inside their respective views.
@@ -131,7 +230,7 @@ export function App() {
     // while the ferry timetable remains modelled.
     const roadSource = traffic.source === 'offline' ? c.source : traffic.source;
     setDataSource(roadSource);
-    setProvenance(traffic.provenance ?? c.provenance ?? o.provenance);
+    setProvenance(traffic.provenance ?? c.provenance);
     setLastUpdated(traffic.source === 'offline' ? c.fetchedAt : traffic.fetchedAt);
   }, []);
 
@@ -164,6 +263,7 @@ export function App() {
             setPorts(response.data);
             setPortSource(response.source);
             setPortsError(null);
+            setPortsCheckedAt(new Date().toISOString());
           }
         } catch (error) {
           if (!cancelled && requestEpoch === ferryRequestEpochRef.current) {
@@ -209,38 +309,95 @@ export function App() {
   /**
    * Restore a stored session on load and ask the server who it belongs to.
    *
-   * Every failure here is silent by design: auth is optional, so an expired
-   * token or an unreachable Supabase must leave the public corridor, ferry and
-   * analytics views exactly as usable as they are signed out.
+   * A backend outage is not a rejected credential. Keep saved tokens while
+   * roles are unverified, retry briefly, and leave the workspace gated.
    */
   useEffect(() => {
     let cancelled = false;
+    const waits = new Map<number, () => void>();
+    const waitBeforeRetry = (delay: number) => new Promise<void>(resolve => {
+      const timer = window.setTimeout(() => { waits.delete(timer); resolve(); }, delay);
+      waits.set(timer, resolve);
+    });
     fetchAuthStatus().then(status => {
       if (!cancelled) setAuthStatus(status);
     });
 
     const stored = readStoredSession();
+    const oauthCallback = hasOAuthCallback();
+    let generation = sessionGeneration();
+    const memoryCredential = authRestoreVersion > 0 && currentCredentialRef.current.generation === generation
+      ? currentCredentialRef.current.session : null;
+    let credential = stored ?? memoryCredential;
     // Always resolve through a promise so the gate's readiness flag is never
     // set synchronously inside the effect, which would cascade renders.
     Promise.resolve()
       .then(async () => {
-        if (!stored) return;
-        const fresh = await validSession(stored);
-        const resolved = await fetchSession(fresh);
-        if (cancelled) return;
-        setSession(fresh);
-        setIdentity(resolved);
+        if (credential || oauthCallback) {
+          setAuthResolved(false);
+          setIdentity(null);
+        }
+        if (oauthCallback) {
+          credential = null;
+          const completion = completeOAuthSignIn();
+          generation = sessionGeneration();
+          credential = await completion;
+        }
+        if (!credential) {
+          if (!cancelled && generation === sessionGeneration() && authRestoreVersion > 0) {
+            handleSessionChange(null);
+            setAuthRecoveryPending(false);
+          }
+          return;
+        }
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          if (cancelled || generation !== sessionGeneration()) return;
+          try {
+            const fresh = await validSession(credential);
+            if (cancelled || generation !== sessionGeneration()) return;
+            credential = fresh;
+            handleSessionChange(fresh);
+            const resolved = await fetchSession(fresh);
+            if (cancelled || generation !== sessionGeneration()) return;
+            setAuthRecoveryPending(false);
+            setAuthError(null);
+            handleIdentityChange(resolved);
+            return;
+          } catch (error) {
+            if (cancelled || generation !== sessionGeneration()) return;
+            if (error instanceof SessionRejectedError || attempt === 2) throw error;
+            setAuthRecoveryPending(true);
+            await waitBeforeRetry(attempt === 0 ? 1000 : 3000);
+          }
+        }
       })
-      .catch(() => {
-        if (cancelled) return;
-        setSession(null);
+      .catch((error: unknown) => {
+        if (cancelled || generation !== sessionGeneration()) return;
         setIdentity(null);
+        if (error instanceof SessionRejectedError || !credential) {
+          clearStoredSession();
+          handleSessionChange(null);
+          setAuthRecoveryPending(false);
+          setAuthError(error instanceof AuthError ? error.message : 'Sign-in could not be completed. Please try again.');
+        } else {
+          handleSessionChange(readStoredSession() ?? credential);
+          setAuthRecoveryPending(true);
+          setAuthError(`Your account could not be verified right now. Your saved sign-in is preserved. Retry when the service is available. ${error instanceof Error ? error.message : ''}`);
+        }
+        if (oauthCallback || credential) {
+          setIsGuest(false);
+          rememberGuest(false);
+        }
       })
       .finally(() => {
         if (!cancelled) setAuthResolved(true);
       });
-    return () => { cancelled = true; };
-  }, []);
+    return () => {
+      cancelled = true;
+      waits.forEach((resolve, timer) => { window.clearTimeout(timer); resolve(); });
+      waits.clear();
+    };
+  }, [handleIdentityChange, handleSessionChange, authRestoreVersion]);
 
   // Offering sign-in needs both halves configured: the browser needs the
   // Supabase project to authenticate against, and the API needs to be able to
@@ -252,6 +409,34 @@ export function App() {
   const visibleActiveTab: AppTab = driverAccess && activeTab === 'analytics'
     ? 'map'
     : activeTab;
+
+  const refreshAnalyticsData = useCallback(async () => {
+    const epoch = ferryRequestEpochRef.current;
+    const [, response] = await Promise.all([loadData(), fetchPortIntelligence(), loadOperations()]);
+    if (epoch === ferryRequestEpochRef.current && !ferryRefreshInFlightRef.current) {
+      setPorts(response.data);
+      setPortSource(response.source);
+      setPortsCheckedAt(new Date().toISOString());
+      setPortsError(null);
+      setPortsLoading(false);
+    }
+  }, [loadData, loadOperations]);
+
+  useEffect(() => {
+    if (identity || visibleActiveTab === 'analytics') void refreshAnalyticsData();
+  }, [identity, visibleActiveTab, refreshAnalyticsData]);
+
+  useEffect(() => {
+    const refreshOnReturn = () => {
+      if (document.visibilityState !== 'hidden') void refreshAnalyticsData();
+    };
+    window.addEventListener('focus', refreshOnReturn);
+    document.addEventListener('visibilitychange', refreshOnReturn);
+    return () => {
+      window.removeEventListener('focus', refreshOnReturn);
+      document.removeEventListener('visibilitychange', refreshOnReturn);
+    };
+  }, [refreshAnalyticsData]);
 
   // Changing who is signed in — including signing out — must not leave the
   // previous account's route on screen. Undefined marks the first run, so
@@ -267,17 +452,6 @@ export function App() {
     identityKeyRef.current = key;
     setRouteResult(null);
     setActiveTab('map');
-  }, [identity]);
-
-  // A resolved account supersedes the remembered guest flag outright, so clear
-  // it rather than leaving two disagreeing sources of truth behind. Signing in
-  // also dismisses the panel: leaving it open parked a "Signed in" dialog on
-  // top of the workspace, which reads as though sign-in had not finished.
-  useEffect(() => {
-    if (!identity) return;
-    window.sessionStorage?.removeItem('crossflow.guest');
-    setIsGuest(false);
-    setIsSignInOpen(false);
   }, [identity]);
 
   // Entering or leaving the driver view must start from a clean pane. The
@@ -297,13 +471,16 @@ export function App() {
   }, [driverAccess]);
 
   const continueAsGuest = useCallback(() => {
-    window.sessionStorage?.setItem('crossflow.guest', '1');
+    rememberGuest(true);
     setIsGuest(true);
+    setIsSignInOpen(false);
+    setAuthError(null);
   }, []);
+  const closeSignIn = useCallback(() => setIsSignInOpen(false), []);
 
   // Show the sign-in screen first. Waiting for authResolved avoids flashing it
   // at someone whose stored session is about to restore.
-  const showAuthGate = signInAvailable && authResolved && !identity && !isGuest;
+  const showAuthGate = (signInAvailable || Boolean(authError)) && authResolved && !identity && !isGuest;
 
   const handleSelectCorridorAndSolve = useCallback((corridorId: string) => {
     const corridor = corridors.find(item => item.id === corridorId);
@@ -332,6 +509,7 @@ export function App() {
       setFerrySource(response.source);
       setPorts(response.ports);
       setPortSource(response.source);
+      setPortsCheckedAt(new Date().toISOString());
       return response.refresh;
     } finally {
       ferryRefreshInFlightRef.current = false;
@@ -340,26 +518,39 @@ export function App() {
     }
   }, []);
 
-  const activeView = VIEW_META[visibleActiveTab];
-  const operations = operationsSnapshot?.data ?? MOCK_OPERATIONS;
+  const activeView = visibleActiveTab === 'route' && driverAccess
+    ? {
+      title: 'Assigned Routes',
+      description: 'Load your journey with a dispatch code.',
+    }
+    : VIEW_META[visibleActiveTab];
+  const operations = operationsSnapshot?.data ?? UNAVAILABLE_OPERATIONS;
+
+  if (!authResolved && supabaseConfigured()) return <LoadingPanel message={authRecoveryPending
+    ? 'Restoring saved sign-in… The service is unavailable; retrying without discarding your session.' : undefined} />;
+
+  if (showAuthGate) {
+    return (
+      <Suspense fallback={<LoadingPanel />}>
+        <SignInPanel
+          variant="page"
+          status={authStatus}
+          session={session}
+          identity={identity}
+          onSessionChange={handleSessionChange}
+          onIdentityChange={handleIdentityChange}
+          onClose={continueAsGuest}
+          onContinueAsGuest={continueAsGuest}
+          initialError={authError}
+          onRetrySession={authRecoveryPending ? retrySavedSession : undefined}
+        />
+      </Suspense>
+    );
+  }
 
   return (
     <>
-      {showAuthGate ? (
-        <Suspense fallback={<LoadingPanel />}>
-          <SignInPanel
-            variant="page"
-            status={authStatus}
-            session={session}
-            identity={identity}
-            onSessionChange={setSession}
-            onIdentityChange={setIdentity}
-            onClose={continueAsGuest}
-            onContinueAsGuest={continueAsGuest}
-          />
-        </Suspense>
-      ) : null}
-
+      <div style={{ display: 'contents' }} {...(isSignInOpen ? { inert: '' } : {})} aria-hidden={isSignInOpen || undefined}>
       <a className="app-skip-link" href="#main-content">Skip to main content</a>
 
       <Header
@@ -398,12 +589,14 @@ export function App() {
                   routes={routes}
                   routesLoading={routesLoading}
                   trafficSnapshot={trafficSnapshot}
+                  canPlanRoutes={!driverAccess}
                   onSelectCorridor={handleSelectCorridorAndSolve}
                 />
               )}
 
               {visibleActiveTab === 'route' && (
                 <RouteOptimizer
+                  key={identityKey(identity) ?? (isGuest ? 'guest' : 'public')}
                   locations={routeLocations}
                   originId={routeOriginId}
                   setOriginId={setRouteOriginId}
@@ -429,6 +622,9 @@ export function App() {
                   <OperationsAnalytics
                     operations={operations}
                     operationsSnapshot={operationsSnapshot}
+                    checkedAt={operationsCheckedAt}
+                    onRefresh={refreshAnalyticsData}
+                    accessToken={session?.accessToken ?? null}
                     corridors={corridors}
                     ferryAndPortsContent={(
                       <FerryPortTracker
@@ -438,6 +634,7 @@ export function App() {
                         ports={ports}
                         portSource={portSource}
                         portsLoading={portsLoading}
+                        portsCheckedAt={portsCheckedAt}
                         portsError={portsError}
                         isRefreshingOfficialSources={isFerryRefreshing}
                         onRefreshOfficialSources={handleRefreshOfficialFerrySources}
@@ -451,15 +648,18 @@ export function App() {
         </main>
       </div>
 
+      </div>
       <Suspense fallback={null}>
         {isSignInOpen && (
           <SignInPanel
             status={authStatus}
             session={session}
             identity={identity}
-            onSessionChange={setSession}
-            onIdentityChange={setIdentity}
-            onClose={() => setIsSignInOpen(false)}
+            onSessionChange={handleSessionChange}
+            onIdentityChange={handleIdentityChange}
+            onClose={closeSignIn}
+            initialError={authError}
+            onRetrySession={authRecoveryPending ? retrySavedSession : undefined}
           />
         )}
       </Suspense>

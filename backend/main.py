@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import secrets
@@ -6,6 +7,8 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
+from itertools import islice
+from pathlib import Path as FilePath
 from typing import Any, Dict, List, Literal, Optional, Tuple
 
 
@@ -18,17 +21,22 @@ if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
 
-from fastapi import FastAPI, Header, HTTPException, Path, Query, Response
+from fastapi import FastAPI, Header, HTTPException, Path, Query, Request, Response
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from auth import identity
 from auth.routes import router as auth_router
 from models.congestion_model import forecaster
+from services.congestion_validation import backtest_congestion
+from services import observed_training_runtime
 from services import clock, ferry_freshness_store, ferry_refresh, ferry_schedule, router
 from services import geocoder, google_routes_benchmark, live_traffic, historical_store
 from services import routing_intelligence_store, shortcut_ingestion
-from services import route_run_store, route_store
+from services import route_run_store, route_store, runtime_status, traffic_archiver
+from services import live_weather, real_traffic_model, real_traffic_training, cctv_runtime
 from services.route_identity import route_id as make_route_id, short_route_code
 from services.service_contracts import ApprovedGraphOverrideSnapshot
 from services.traffic_observations import (
@@ -51,7 +59,12 @@ from services.route_solver import (
     optimize_route,
 )
 from services.route_solver import optimize_free_route, optimize_multi_stop_route
-from services.simulator import get_live_corridor_telemetry, get_operations_summary
+from services.operations_analytics import get_operations_analytics
+from services.analytics_history import get_observed_history, AnalyticsHistoryUnavailable
+from services.authority_reports import STORE as AUTHORITY_REPORTS
+from services.research_history import load_research_history, ResearchHistoryUnavailable
+from services.analytics_simulation import simulate_analytics, SimulationUnavailable
+from services.simulator import get_live_corridor_telemetry
 
 
 route_learning_store = DEFAULT_ROUTE_LEARNING_STORE
@@ -68,6 +81,34 @@ _SHORTCUT_GRAPH_INDEX: Optional[shortcut_ingestion.GraphIndex] = None
 _ROUTE_STORE = route_store.DEFAULT_ROUTE_STORE
 
 _LOGGER = logging.getLogger(__name__)
+_OBSERVED_ARTIFACT_STATUS = {"configured": False, "status": "disabled", "restored": False}
+
+
+def _configured_observed_model_path():
+    configured = os.environ.get("CROSSFLOW_OBSERVED_MODEL_PATH", "").strip()
+    if not configured:
+        return None
+    path = FilePath(configured).expanduser()
+    return path if path.is_absolute() else FilePath(BACKEND_DIR).parent / path
+
+
+def _restore_observed_model_if_configured():
+    """Only a server-configured, validated data-only artifact can be restored."""
+    global _OBSERVED_ARTIFACT_STATUS
+    path = _configured_observed_model_path()
+    _OBSERVED_ARTIFACT_STATUS = {
+        "configured": path is not None, "restored": False,
+        "status": "disabled" if path is None else "waiting_for_eligible_model",
+    }
+    if path is None or not path.is_file():
+        return
+    try:
+        from services.observed_model_artifact import restore_observed_model
+        restored = restore_observed_model(forecaster, path)
+        _OBSERVED_ARTIFACT_STATUS = {"configured": True, "status": "restored", **restored}
+    except Exception as error:
+        _OBSERVED_ARTIFACT_STATUS["status"] = "restore_failed_previous_model_retained"
+        _LOGGER.warning("[observed_model] configured artifact could not be restored (%s)", type(error).__name__)
 
 # Set to "0" for a serverless deployment, where a background thread cannot
 # outlive the invocation that started it and would only steal its CPU.
@@ -85,6 +126,7 @@ async def _lifespan(_app: "FastAPI"):
     keeps startup instant and lets early requests fall back to building their
     own profile as before.
     """
+    _restore_observed_model_if_configured()
     if _WARM_ROUTING_CACHES:
         def _warm() -> None:
             # Resolve the snapshot exactly as the route handlers do; it is part
@@ -101,7 +143,15 @@ async def _lifespan(_app: "FastAPI"):
         threading.Thread(
             target=_warm, name="crossflow-routing-warmup", daemon=True,
         ).start()
-    yield
+    traffic_archiver.ARCHIVER.start()
+    real_traffic_training.TRAINER.start()
+    cctv_runtime.RUNTIME.start()
+    try:
+        yield
+    finally:
+        traffic_archiver.ARCHIVER.stop()
+        real_traffic_training.TRAINER.stop()
+        cctv_runtime.RUNTIME.stop()
 
 
 app = FastAPI(
@@ -127,9 +177,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Human sign-in for admins and drivers. Every corridor, ferry, model and
-# routing endpoint below stays public and unauthenticated: auth is a per-route
-# dependency, never middleware, so an unreachable Supabase cannot blank the app.
+# Human sign-in is enforced per route. Public telemetry and dispatch retrieval
+# remain available; planning and operator simulations verify the current role.
 app.include_router(auth_router)
 
 
@@ -482,9 +531,20 @@ class RouteResponse(BaseModel):
         max_length=7,
         pattern=r"^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{7}$",
         description=(
-            "Seven-character human-safe route code for driver retrieval; it is "
-            "a lookup alias for route_id, not an access credential."
+            "Seven-character human-safe dispatch code. Anyone holding it can "
+            "retrieve this route; it grants no route-listing or account access."
         ),
+    )
+    dispatch_available: Optional[bool] = Field(
+        default=None,
+        description=(
+            "Whether at least one route store confirmed this journey is retrievable. "
+            "False means a preview with no dispatch code."
+        ),
+    )
+    route_storage: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Confirmed retrieval source, scope and storage durability.",
     )
     route_type: Optional[str] = Field(
         default=None,
@@ -613,7 +673,7 @@ class SpatialTrafficObservationInput(BaseModel):
     observed_at: datetime
     latitude: float = Field(ge=-90, le=90)
     longitude: float = Field(ge=-180, le=180)
-    actual_speed_kph: float = Field(gt=0, le=250)
+    actual_speed_kph: float = Field(ge=0, le=250)
     free_flow_speed_kph: float = Field(gt=0, le=250)
     road_class: TrafficRoadClass = "unclassified"
     capacity_vph: Optional[float] = Field(default=None, gt=0, le=100_000)
@@ -640,6 +700,28 @@ class SpatialTrafficObservationBatch(BaseModel):
         min_length=1,
         max_length=2_000,
     )
+
+
+class CongestionBacktestRequest(BaseModel):
+    """Evaluation inputs and options are server-owned; only an empty body is allowed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class AnalyticsSimulationRequest(BaseModel):
+    """Small scenario selectors; model records, clock and work bounds are server-owned."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    weather: int = Field(default=0, ge=0, le=2)
+    corridor_ids: Optional[List[str]] = Field(default=None, min_length=1, max_length=5)
+
+    @field_validator("corridor_ids")
+    @classmethod
+    def validate_simulation_corridors(cls, value):
+        if value is not None and (len(set(value)) != len(value) or any(item not in _CORRIDOR_IDS for item in value)):
+            raise ValueError("Select unique known corridor IDs.")
+        return value
 
 
 class ShortcutDocumentInput(BaseModel):
@@ -728,10 +810,13 @@ def _require_admin(
     """Authorize mutation/diagnostic endpoints without timing-leaky equality."""
     expected = os.environ.get("CROSSFLOW_ADMIN_TOKEN", "")
     if not expected or not x_crossflow_admin_token or not secrets.compare_digest(
-        x_crossflow_admin_token,
-        expected,
+        x_crossflow_admin_token.encode("utf-8"),
+        expected.encode("utf-8"),
     ):
-        raise HTTPException(status_code=403, detail=detail)
+        raise HTTPException(
+            status_code=403, detail=detail,
+            headers={"Cache-Control": "private, no-store", "Pragma": "no-cache"},
+        )
 
 
 _ROUTING_INTELLIGENCE_NO_STORE_HEADERS = {
@@ -739,6 +824,22 @@ _ROUTING_INTELLIGENCE_NO_STORE_HEADERS = {
     "Pragma": "no-cache",
 }
 MAX_SHORTCUT_FETCH_URLS_PER_REQUEST = 8
+CONGESTION_BACKTEST_PATH = "/api/routing-intelligence/congestion-backtest"
+MAX_CONGESTION_BACKTEST_ROWS = 2_000
+OBSERVED_ANALYTICS_BACKTEST_PATH = "/api/analytics/backtest"
+MAX_OBSERVED_ANALYTICS_ROWS = 50_000
+ANALYTICS_SIMULATION_PATH = "/api/analytics/simulation"
+
+
+@app.exception_handler(RequestValidationError)
+async def _private_backtest_validation_error(request: Request, error: RequestValidationError):
+    """Keep FastAPI's validation behavior while preventing private error caching."""
+    response = await request_validation_exception_handler(request, error)
+    if request.url.path in {CONGESTION_BACKTEST_PATH, ANALYTICS_SIMULATION_PATH,
+                             OBSERVED_ANALYTICS_BACKTEST_PATH,
+                             "/api/retrain-model", "/retrain-model"}:
+        response.headers.update(_ROUTING_INTELLIGENCE_NO_STORE_HEADERS)
+    return response
 
 
 def _routing_intelligence_http_error(
@@ -919,6 +1020,8 @@ def envelope(
         "No cross-border live traffic applied; per-leg provider durations only"
         if is_multimodal
         else "TomTom Traffic Flow API (Live Flow)" if tomtom_active
+        else "Registered CCTV road-view estimates; per-camera eligibility and per-corridor fallbacks are explicit"
+        if data_source == "cctv_traffic_observations"
         else "Historical & Telemetry Model"
     )
     return {
@@ -941,19 +1044,18 @@ _ROUTE_NO_STORE_HEADERS = {
 }
 
 
-def _optional_user_id(authorization: Optional[str]) -> Optional[str]:
-    """Resolve the caller's account id, or None for a guest.
-
-    Route planning is public, so an absent, expired or malformed credential
-    must never fail the request; it only means the run is recorded without
-    attribution.
-    """
-    if not authorization or not identity.auth_enabled():
-        return None
-    try:
-        return identity.require_user(authorization).id
-    except Exception:  # noqa: BLE001 - attribution is never worth a 4xx here
-        return None
+def _route_storage_metadata(*, local_saved: bool, shared_saved: bool) -> Dict[str, Any]:
+    if shared_saved:
+        return {
+            "source": "shared_supabase", "shared": True, "durable": True,
+            "durability": "persistent_shared_store", "scope": "shared",
+        }
+    if local_saved:
+        return _ROUTE_STORE.storage_metadata()
+    return {
+        "source": "unavailable", "shared": False, "durable": False,
+        "durability": "unavailable", "scope": "unavailable",
+    }
 
 
 def _persist_route_response(
@@ -1002,6 +1104,9 @@ def _persist_route_response(
         route_code = short_route_code(identity)
     result["route_id"] = identity
     result["route_code"] = route_code
+    # A stored envelope is retrievable by definition. The response below is
+    # downgraded to a preview unless a write actually confirms that fact.
+    result["dispatch_available"] = True
     schedule_provenance = result.get("schedule_provenance")
     provenance_overrides = None
     if isinstance(schedule_provenance, dict):
@@ -1024,34 +1129,61 @@ def _persist_route_response(
         now,
         provenance_overrides=provenance_overrides,
     )
+    origin = result.get("requested_origin") or {}
+    destination = result.get("requested_destination") or {}
+    origin_name = request_payload.get("origin_name") or (
+        origin.get("name") if isinstance(origin, dict) else None
+    )
+    destination_name = request_payload.get("destination_name") or (
+        destination.get("name") if isinstance(destination, dict) else None
+    )
+    stops = result.get("stops") or []
+    if stops and isinstance(stops[0], dict) and isinstance(stops[-1], dict):
+        origin_name = origin_name or stops[0].get("name")
+        destination_name = destination_name or stops[-1].get("name")
+    local_saved = False
     try:
-        _ROUTE_STORE.save(
+        saved_code = _ROUTE_STORE.save(
             identity,
             payload,
             request=identity_payload,
             route_kind=route_kind,
             route_code=route_code,
+            created_by=created_by,
+            origin_name=origin_name,
+            destination_name=destination_name,
+            vehicle_type=request_payload.get("vehicle_type"),
         )
+        local_saved = saved_code == route_code
     except Exception as error:  # pragma: no cover - defensive storage boundary
         print(f"[route_store] persistence skipped ({type(error).__name__})")
     # Mirror the run into the shared table when one is configured. SQLite alone
     # is per-instance on serverless, so without this a code issued by one
     # worker cannot be retrieved from another. Failures here are logged inside
     # the store and never affect the response.
+    shared_saved = False
     try:
-        route_run_store.save(
+        shared_saved = route_run_store.save(
             identity,
             route_code,
             route_kind,
             identity_payload,
             payload,
-            origin_name=request_payload.get("origin_name"),
-            destination_name=request_payload.get("destination_name"),
+            origin_name=origin_name,
+            destination_name=destination_name,
             vehicle_type=request_payload.get("vehicle_type"),
             created_by=created_by,
-        )
+        ) is True
     except Exception as error:  # pragma: no cover - defensive storage boundary
         print(f"[route_runs] persistence skipped ({type(error).__name__})")
+    payload["dispatch_available"] = local_saved or shared_saved
+    payload["route_storage"] = _route_storage_metadata(
+        local_saved=local_saved, shared_saved=shared_saved,
+    )
+    if not payload["dispatch_available"]:
+        # Keep the calculated journey available as a preview, but never issue
+        # a code that neither route store confirmed it can retrieve.
+        payload["route_code"] = None
     return payload
 
 
@@ -1149,13 +1281,18 @@ def _benchmark_http_error(status_code: int, detail: str) -> HTTPException:
 
 
 @app.post("/api/route-benchmark")
-def api_route_benchmark(req: RouteBenchmarkRequest, response: Response):
+def api_route_benchmark(
+    req: RouteBenchmarkRequest,
+    response: Response,
+    authorization: Optional[str] = Header(default=None),
+):
     """Return ephemeral Google route metrics without geometry or persistence."""
     for header, value in _BENCHMARK_NO_STORE_HEADERS.items():
         response.headers[header] = value
 
     if not google_routes_benchmark.is_enabled():
         raise _benchmark_http_error(404, "Route benchmark is disabled.")
+    identity.require_route_operator(authorization)
     if not google_routes_benchmark.get_api_key():
         raise _benchmark_http_error(503, "Route benchmark is unavailable.")
 
@@ -1226,6 +1363,7 @@ def api_optimize_route(
     ``estimated_arrival``, a ``scheduling`` explanation, and stable route
     identifiers for later driver retrieval.
     """
+    caller = identity.require_route_operator(authorization)
     now = clock.now()
     schedule_verified_at, schedule_provenance = _route_schedule_authority()
     approved_snapshot, snapshot_source = _approved_override_snapshot_for_route()
@@ -1250,7 +1388,7 @@ def api_optimize_route(
     _routing_intelligence_audit(result, approved_snapshot, snapshot_source)
     return _persist_route_response(
         req, "optimize-route", result, now,
-        created_by=_optional_user_id(authorization),
+        created_by=caller.id if caller else None,
     )
 
 
@@ -1277,6 +1415,7 @@ def api_optimize_free_route(
     contains ``estimated_arrival``, ``scheduling``, ``route_id``, and
     ``route_code``.
     """
+    caller = identity.require_route_operator(authorization)
     now = clock.now()
     schedule_verified_at, schedule_provenance = _route_schedule_authority()
     approved_snapshot, snapshot_source = _approved_override_snapshot_for_route()
@@ -1304,7 +1443,7 @@ def api_optimize_free_route(
     _routing_intelligence_audit(result, approved_snapshot, snapshot_source)
     return _persist_route_response(
         req, "optimize-free-route", result, now,
-        created_by=_optional_user_id(authorization),
+        created_by=caller.id if caller else None,
     )
 
 
@@ -1336,6 +1475,7 @@ def api_optimize_multi_stop_route(
     includes the ordered ``stops``, per-leg ``legs``, ``estimated_arrival``,
     ``scheduling``, ``route_id``, and ``route_code``.
     """
+    caller = identity.require_route_operator(authorization)
     now = clock.now()
     schedule_verified_at, schedule_provenance = _route_schedule_authority()
     approved_snapshot, snapshot_source = _approved_override_snapshot_for_route()
@@ -1359,7 +1499,7 @@ def api_optimize_multi_stop_route(
     _routing_intelligence_audit(result, approved_snapshot, snapshot_source)
     return _persist_route_response(
         req, "optimize-multi-stop-route", result, now,
-        created_by=_optional_user_id(authorization),
+        created_by=caller.id if caller else None,
     )
 
 
@@ -1401,14 +1541,49 @@ def api_get_route(
     if response is not None:
         for header, value in _ROUTE_NO_STORE_HEADERS.items():
             response.headers[header] = value
-    stored = _ROUTE_STORE.get(route_id)
+    read_failed = False
+    shared_hit = False
+    try:
+        stored = _ROUTE_STORE.get(route_id)
+    except Exception as error:
+        # The local cache is optional when shared persistence is healthy. In
+        # particular, a locked/corrupt SQLite file must not mask a route held
+        # by another worker. Never log a response, route code or storage URL.
+        _LOGGER.warning(
+            "[route_lookup] local read failed (%s)", type(error).__name__,
+        )
+        stored = None
+        read_failed = True
+    if stored is None and route_run_store.configured():
+        try:
+            # Keep availability scoped to this operation: another worker
+            # thread can change the store's global diagnostic state meanwhile.
+            stored, shared_available = route_run_store.get_lookup_result(route_id)
+            shared_hit = stored is not None
+            read_failed = read_failed or not shared_available
+        except Exception as error:
+            _LOGGER.warning(
+                "[route_lookup] shared read failed (%s)", type(error).__name__,
+            )
+            read_failed = True
     if stored is None:
-        # The local SQLite file is per-instance on serverless, so a code issued
-        # by another worker is only findable in the shared table.
-        stored = route_run_store.get(route_id)
-    if stored is None:
-        raise HTTPException(status_code=404, detail="Route not found.")
-    return stored
+        if read_failed:
+            raise HTTPException(
+                status_code=503,
+                detail="Route storage is temporarily unavailable. Please retry.",
+                headers={**_ROUTE_NO_STORE_HEADERS, "Retry-After": "5"},
+            )
+        raise HTTPException(
+            status_code=404, detail="Route not found.",
+            headers=_ROUTE_NO_STORE_HEADERS,
+        )
+    return {
+        **stored,
+        "dispatch_available": True,
+        "route_storage": _route_storage_metadata(
+            local_saved=not shared_hit, shared_saved=shared_hit,
+        ),
+    }
 
 
 @app.get(
@@ -1431,10 +1606,10 @@ def api_route_history(
 ):
     """Return recent route-solver runs from the shared history table.
 
-    History is only meaningful across instances, so it is served solely from
-    the shared table; the per-instance SQLite file is deliberately not merged
-    in, which would make the same list differ per worker. An administrator
-    sees every account's runs, any signed-in account sees its own.
+    Shared deployments read only the shared table. Local development can
+    explicitly enable single-host SQLite history; its response declares that
+    storage boundary. An administrator sees every account's runs, while any
+    other signed-in account sees only its own.
     """
     if not identity.auth_enabled():
         raise HTTPException(
@@ -1445,7 +1620,27 @@ def api_route_history(
             ),
         )
     user = identity.require_user(authorization)
+    created_by = None if user.is_admin and not mine else user.id
     if not route_run_store.configured():
+        if _local_route_history_enabled():
+            try:
+                runs = _ROUTE_STORE.recent(limit, created_by=created_by)
+            except Exception as error:
+                _LOGGER.warning(
+                    "[route_history] local read failed (%s)", type(error).__name__,
+                )
+                raise HTTPException(
+                    status_code=503,
+                    detail="Local route history is temporarily unavailable.",
+                    headers=_ROUTE_NO_STORE_HEADERS,
+                ) from error
+            if response is not None:
+                response.headers.update(_ROUTE_NO_STORE_HEADERS)
+            return envelope({
+                "runs": runs,
+                "scope": "all_accounts" if created_by is None else "own_account",
+                "history_storage": _ROUTE_STORE.storage_metadata(),
+            }, clock.now())
         raise HTTPException(
             status_code=503,
             detail=(
@@ -1454,7 +1649,6 @@ def api_route_history(
             ),
         )
     # Only an administrator may see other accounts' runs.
-    created_by = None if user.is_admin and not mine else user.id
     runs = route_run_store.recent(limit, created_by=created_by)
     # The store fails soft, so a project that is configured but whose table is
     # missing returns an empty list indistinguishable from "nothing planned
@@ -1476,8 +1670,22 @@ def api_route_history(
         {
             "runs": runs,
             "scope": "all_accounts" if created_by is None else "own_account",
+            "history_storage": {
+                "source": "shared_supabase", "shared": True,
+                "durable": True, "durability": "shared_database",
+                "scope": "all_instances",
+            },
         },
         clock.now(),
+    )
+
+
+def _local_route_history_enabled() -> bool:
+    """Require an explicit local opt-in; never hide a serverless setup gap."""
+    return (
+        os.environ.get("CROSSFLOW_LOCAL_ROUTE_HISTORY", "").strip() == "1"
+        and not os.environ.get("VERCEL")
+        and not os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
     )
 
 
@@ -1588,15 +1796,16 @@ def api_reverse_geocode(
 @app.get("/api/live-traffic")
 @app.get("/live-traffic")
 def api_live_traffic():
-    """Per-corridor speed and congestion index from TomTom or the simulator.
+    """Fresh validated CCTV congestion, with labelled provider/demo fallbacks.
 
-    When TOMTOM_API_KEY is set, returns real traffic data. Otherwise, the
-    simulator provides synthetic speeds consistent with the congestion model.
-    Responses are cached for 2 minutes to stay within free-tier rate limits.
+    Camera estimates describe their registered road view and do not imply
+    measured speed. Provider responses retain their separate cache policy.
     """
-    now = clock.now()
     data = live_traffic.get_live_traffic()
-    source = "live" if data.get("overall_source") == "tomtom_live" else "simulated"
+    now = clock.now()
+    source = {
+        "tomtom_live": "live", "cctv_camera": "cctv_traffic_observations",
+    }.get(data.get("overall_source"), "simulated")
     return envelope(data, now, data_source=source)
 
 
@@ -1605,6 +1814,8 @@ def api_live_traffic():
 def api_historical_congestion(
     corridor_id: str = Query(..., description="e.g. corridor-1"),
     days: int = Query(7, ge=1, le=30, description="History window in days"),
+    include_modelled: bool = False,
+    response: Response = None,
 ):
     """Historical congestion profile for one corridor.
 
@@ -1612,9 +1823,9 @@ def api_historical_congestion(
       - hourly_profile: avg score by hour-of-day over the past `days` days.
       - weekly_trend: daily avg score for the last 30 days.
       - history_metadata: explicit provenance, freshness, and storage durability.
-    The initial Batam-time seed and collected model snapshots are non-observed.
-    `history_metadata.observed` is true only when every sample in the requested
-    window is observed; `contains_observed_samples` also identifies mixed data.
+    By default reads only validated measured spatial observations. Missing
+    observations produce empty buckets. ``include_modelled`` explicitly opts
+    into the legacy synthetic engineering preview, labelled non-observed.
     """
     if corridor_id not in _CORRIDOR_IDS:
         raise HTTPException(
@@ -1623,6 +1834,23 @@ def api_historical_congestion(
         )
 
     now = clock.now()
+    if response is not None:
+        response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    if not include_modelled:
+        try:
+            history = get_observed_history(
+                corridor_id, days, now, shared_store=_SHARED_ROUTING_INTELLIGENCE,
+            )
+        except AnalyticsHistoryUnavailable as error:
+            raise HTTPException(
+                status_code=503,
+                detail="Observed traffic history is temporarily unavailable.",
+                headers=_ROUTE_NO_STORE_HEADERS,
+            ) from error
+        history["history_metadata"]["archive"] = traffic_archiver.ARCHIVER.status()
+        return envelope(history, now, data_source="observed_history", provenance_overrides={
+            "traffic": "Validated measured spatial observations only; no synthetic history",
+        })
     hourly = historical_store.get_hourly_profile(corridor_id, days=days, now=now)
     weekly = historical_store.get_weekly_trend(corridor_id, days=30, now=now)
     metadata = historical_store.get_history_metadata(
@@ -1630,6 +1858,7 @@ def api_historical_congestion(
         days=days,
         now=now,
     )
+    metadata["selection_scope"] = "legacy_modelled_preview"
     return envelope({
         "corridor_id": corridor_id,
         "hourly_profile": hourly,
@@ -2012,7 +2241,93 @@ def api_routing_intelligence_status(
                 "local_osm_without_overrides",
             ],
         },
+        "integration_status": runtime_status.snapshot(
+            route_store=_ROUTE_STORE,
+            route_learning_store=route_learning_store,
+            graph_revision=router.GRAPH_REVISION,
+            graph_meta=router.GRAPH_META,
+            model_metrics=forecaster.metrics,
+            intelligence_status=store_status,
+        ),
     }, now)
+
+
+@app.post(CONGESTION_BACKTEST_PATH)
+def api_congestion_backtest(
+    response: Response,
+    req: Optional[CongestionBacktestRequest] = None,
+    x_crossflow_admin_token: Optional[str] = Header(default=None),
+):
+    """Read-only observed-data backtest for fixed 15/30/60-minute horizons.
+
+    Reads the newest bounded validated spatial snapshot from the configured
+    persistence adapter. Request records and modelled-data opt-ins are not
+    accepted. The evaluator fits a private candidate and never replaces the
+    live forecaster; insufficient measured history is an explicit result.
+    """
+    response.headers.update(_ROUTING_INTELLIGENCE_NO_STORE_HEADERS)
+    try:
+        _require_admin(x_crossflow_admin_token)
+    except HTTPException as error:
+        error.headers = {
+            **(error.headers or {}), **_ROUTING_INTELLIGENCE_NO_STORE_HEADERS,
+        }
+        raise
+    now = clock.now()
+    try:
+        if routing_intelligence_store.shared_store_enabled():
+            records = _shared_routing_store_required().get_spatial_training_dataset(
+                limit=MAX_CONGESTION_BACKTEST_ROWS,
+            )
+            durability = "shared_supabase"
+        else:
+            records = historical_store.get_spatial_training_dataset(
+                limit=MAX_CONGESTION_BACKTEST_ROWS, now=now,
+            )
+            durability = "local_sqlite"
+        # Defend the HTTP resource bound even if a future adapter accidentally
+        # returns an unbounded iterator or ignores its requested limit.
+        observations = tuple(islice(iter(records), MAX_CONGESTION_BACKTEST_ROWS + 1))
+        if len(observations) > MAX_CONGESTION_BACKTEST_ROWS:
+            raise RuntimeError("spatial_snapshot_limit_exceeded")
+    except (ObservationValidationError, ValueError) as error:
+        raise _routing_intelligence_http_error(
+            409, "The spatial backtest snapshot failed validation.",
+        ) from error
+    except Exception as error:
+        _LOGGER.warning(
+            "[congestion_backtest] snapshot unavailable (%s)", type(error).__name__,
+        )
+        raise _routing_intelligence_http_error(
+            503, "The spatial backtest snapshot is temporarily unavailable.",
+        ) from error
+    try:
+        report = backtest_congestion(
+            observations, horizons_minutes=(15, 30, 60), include_modelled=False,
+        )
+    except (ObservationValidationError, ValueError) as error:
+        raise _routing_intelligence_http_error(
+            409, "The spatial backtest snapshot failed validation.",
+        ) from error
+    except Exception as error:
+        _LOGGER.warning(
+            "[congestion_backtest] evaluation unavailable (%s)", type(error).__name__,
+        )
+        raise _routing_intelligence_http_error(
+            503, "The congestion backtest is temporarily unavailable.",
+        ) from error
+    return envelope({
+        "backtest": report,
+        "evaluation_snapshot": {
+            "durability": durability,
+            "selection": "latest_validated_spatial_rows_then_observed_only",
+            "loaded_rows": len(observations),
+            "bounded_max_rows": MAX_CONGESTION_BACKTEST_ROWS,
+            "excluded_modelled_rows": sum(not item.observed for item in observations),
+            "horizons_minutes": [15, 30, 60],
+            "model_replaced": False,
+        },
+    }, now, data_source="observed_chronological_backtest")
 
 
 @app.get("/api/model-status")
@@ -2020,11 +2335,297 @@ def api_routing_intelligence_status(
 def api_model_status():
     """Return metrics plus the model's declared training and holdout scope."""
     now = clock.now()
+    if os.environ.get('CROSSFLOW_REAL_TRAFFIC_TRAINING') == '1':
+        value = real_traffic_model.status()
+        report = value.get('report')
+        evidence = next((row for row in report['horizons'] if row['horizon_minutes'] == 30), None) if report else None
+        serving_strategy = (evidence['selected_strategy'] if report['quality_gate']['eligible'] and not real_traffic_model.serverless_persistence() else 'persistence') if evidence else None
+        serving_metrics = evidence['forest_test' if serving_strategy == 'random_forest' else 'persistence_test'] if evidence else None
+        metrics = {'is_trained': bool(report), 'training_data_source': 'observed_traffic_archive',
+                   'validation_scope': 'chronological_provisional_observed', 'synthetic_training_rows': 0,
+                   'last_trained_at': report['trained_at'] if report else None,
+                   'total_samples': report['selected_rows'] if report else 0,
+                   'observed_training_rows': report['training_pairs'] if report else 0,
+                   'r2_score': serving_metrics['r2'] if serving_metrics else None,
+                   'mae': serving_metrics['mae_points'] if serving_metrics else None,
+                   'rmse': serving_metrics['rmse_points'] if serving_metrics else None,
+                   'metrics_scope': 'serving_strategy_30min_chronological_holdout',
+                   'candidate_metrics': dict(evidence['forest_test']) if evidence else None,
+                   'candidate_metrics_scope': 'forest_candidate_30min_chronological_holdout',
+                   'feature_importances': evidence['feature_importances'] if evidence else {},
+                   'feature_importances_scope': 'forest_candidate',
+                   'selected_strategy': serving_strategy,
+                   'quality_gate': report['quality_gate'] if report else None,
+                   'engine': value.get('engine'), 'retraining_enabled': not real_traffic_model.serverless_persistence()}
+        return envelope({'metrics': metrics}, now, data_source='observed_model_status')
     metrics = {
         **forecaster.metrics,
         "retraining_enabled": bool(os.environ.get("CROSSFLOW_ADMIN_TOKEN", "")),
+        "observed_artifact_status": dict(_OBSERVED_ARTIFACT_STATUS),
     }
     return envelope({"metrics": metrics}, now)
+
+
+@app.get("/api/analytics/training-results")
+def api_training_experiment_results(
+    response: Response,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Inspect offline research models separately from the serving model."""
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    try:
+        identity.require_route_operator(authorization)
+        from services.training_experiments import training_experiment_status
+        result = training_experiment_status()
+    except HTTPException as error:
+        error.headers = {**(error.headers or {}), **_ROUTE_NO_STORE_HEADERS}
+        raise
+    except (ValueError, OSError, TypeError, KeyError) as error:
+        raise _routing_intelligence_http_error(
+            503, "The offline training summary is unavailable.",
+        ) from error
+    return envelope({"training_results": result}, clock.now(), data_source="offline_research_training")
+
+
+@app.get("/api/analytics/vehicle-count-preview/status")
+def api_vehicle_count_preview_status(response: Response, authorization: Optional[str] = Header(default=None)):
+    """Retired product feature; offline detector experiments remain reproducible."""
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    try:
+        identity.require_route_operator(authorization)
+        raise _routing_intelligence_http_error(
+            410, "Image upload has been retired. Use the CCTV observations monitor.",
+        )
+    except HTTPException as error:
+        error.headers = {**(error.headers or {}), **_ROUTE_NO_STORE_HEADERS}
+        raise
+
+
+@app.post("/api/analytics/vehicle-count-preview")
+async def api_vehicle_count_preview(request: Request, response: Response, authorization: Optional[str] = Header(default=None)):
+    """Reject retired uploads before reading bytes or starting the detector."""
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    try:
+        identity.require_route_operator(authorization)
+        raise _routing_intelligence_http_error(
+            410, "Image upload has been retired. Use the CCTV observations monitor.",
+        )
+    except HTTPException as error:
+        error.headers = {**(error.headers or {}), **_ROUTE_NO_STORE_HEADERS}
+        raise
+
+
+@app.get("/api/analytics/cctv-status")
+def api_cctv_status(response: Response, authorization: Optional[str] = Header(default=None)):
+    """Read numeric camera observations without fetching feeds or loading a model."""
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    try:
+        identity.require_route_operator(authorization)
+        from services import cctv_store
+        now = clock.now()
+        monitor = cctv_store.camera_status(now=now)
+        return envelope({"camera_monitor": monitor}, now, data_source="cctv_traffic_observations")
+    except HTTPException as error:
+        error.headers = {**(error.headers or {}), **_ROUTE_NO_STORE_HEADERS}
+        raise
+    except (OSError, ValueError, RuntimeError) as error:
+        raise _routing_intelligence_http_error(503, "CCTV observations are unavailable.") from error
+
+
+MAX_CCTV_EVIDENCE_BYTES = 128 * 1024
+
+
+def _require_cctv_collector(cctv_token: Optional[str], legacy_admin_token: Optional[str]) -> None:
+    """A scoped collector credential cannot authorize any other admin action."""
+    expected = os.environ.get("CROSSFLOW_CCTV_INGEST_TOKEN", "")
+    if expected and cctv_token and secrets.compare_digest(cctv_token.encode("utf-8"), expected.encode("utf-8")):
+        return
+    _require_admin(legacy_admin_token)
+
+
+@app.post("/api/internal/cctv-observations")
+async def api_cctv_observations(
+    request: Request, response: Response,
+    x_crossflow_admin_token: Optional[str] = Header(default=None),
+    x_crossflow_cctv_token: Optional[str] = Header(default=None),
+):
+    """Accept bounded numeric evidence from a trusted registered-camera worker.
+
+    The machine credential is server-side only. This endpoint accepts no camera
+    URL, media upload, registration, calibration or model-promotion command.
+    """
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    _require_cctv_collector(x_crossflow_cctv_token, x_crossflow_admin_token)
+    from services import cctv_store
+    from starlette.concurrency import run_in_threadpool
+    if request.headers.get("content-type", "").split(";", 1)[0].strip().lower() != "application/json":
+        raise _routing_intelligence_http_error(415, "CCTV evidence must be numeric JSON.")
+    length = request.headers.get("content-length")
+    if length is not None:
+        try:
+            size = int(length)
+        except ValueError as error:
+            raise _routing_intelligence_http_error(400, "Invalid CCTV evidence size.") from error
+        if size < 1 or size > MAX_CCTV_EVIDENCE_BYTES:
+            raise _routing_intelligence_http_error(413, "CCTV evidence exceeds the request limit.")
+    chunks, size = [], 0
+    async for chunk in request.stream():
+        size += len(chunk)
+        if size > MAX_CCTV_EVIDENCE_BYTES:
+            raise _routing_intelligence_http_error(413, "CCTV evidence exceeds the request limit.")
+        chunks.append(chunk)
+    try:
+        def reject_constant(value):
+            raise ValueError("Non-finite JSON number")
+        def unique_fields(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("Duplicate CCTV evidence field")
+                result[key] = value
+            return result
+        payload = json.loads(b"".join(chunks), parse_constant=reject_constant, object_pairs_hook=unique_fields)
+        if not isinstance(payload, dict):
+            raise ValueError("Evidence must be an object")
+        now = clock.now()
+        result = await run_in_threadpool(cctv_store.ingest_evidence, payload, now=now)
+    except cctv_store.CCTVConflictError as error:
+        raise _routing_intelligence_http_error(409, "CCTV evidence conflicts with a stored observation.") from error
+    except (ValueError, UnicodeError, TypeError, KeyError, RecursionError) as error:
+        raise _routing_intelligence_http_error(422, "CCTV evidence failed camera or measurement validation.") from error
+    except (cctv_store.CCTVStoreUnavailable, OSError) as error:
+        raise _routing_intelligence_http_error(503, "CCTV observation storage is unavailable.") from error
+    return envelope({"cctv_observation": result}, now, data_source="cctv_traffic_observations")
+
+
+@app.post(OBSERVED_ANALYTICS_BACKTEST_PATH)
+def api_observed_analytics_backtest(
+    response: Response,
+    req: Optional[CongestionBacktestRequest] = None,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Evaluate genuine stored measurements without changing the serving model.
+
+    The caller cannot supply records, alter thresholds, select synthetic data,
+    or make the read-only operator action activate a candidate model.
+    """
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    identity.require_route_operator(authorization)
+    from services.observed_training import evaluate_observed_training
+
+    shared = routing_intelligence_store.shared_store_enabled()
+    cache_key = "shared" if shared else f"local:{id(historical_store._store)}"
+
+    def evaluate():
+        now = clock.now()
+        try:
+            if shared:
+                records = _shared_routing_store_required().get_spatial_training_dataset(
+                    limit=MAX_OBSERVED_ANALYTICS_ROWS,
+                )
+            else:
+                records = historical_store.get_spatial_training_dataset(
+                    limit=MAX_OBSERVED_ANALYTICS_ROWS, now=now,
+                )
+            observations = tuple(islice(iter(records), MAX_OBSERVED_ANALYTICS_ROWS + 1))
+            if len(observations) > MAX_OBSERVED_ANALYTICS_ROWS:
+                raise RuntimeError("spatial_snapshot_limit_exceeded")
+            report = evaluate_observed_training(
+                observations, now=now, max_rows=MAX_OBSERVED_ANALYTICS_ROWS,
+            )
+            return envelope({
+                "backtest": report,
+                "evaluation_snapshot": {
+                    "durability": "shared_supabase" if shared else "local_sqlite",
+                    "loaded_rows": len(observations),
+                    "bounded_max_rows": MAX_OBSERVED_ANALYTICS_ROWS,
+                    "excluded_modelled_rows": report["selection"]["excluded_non_observed_rows"],
+                    "model_replaced": False,
+                    "cache_ttl_seconds": 60,
+                },
+            }, now, data_source="observed_chronological_backtest")
+        except (ObservationValidationError, ValueError) as error:
+            raise _routing_intelligence_http_error(
+                409, "The measured evaluation snapshot failed validation.",
+            ) from error
+        except HTTPException:
+            raise
+        except Exception as error:
+            _LOGGER.warning("[observed_backtest] evaluation unavailable (%s)", type(error).__name__)
+            raise _routing_intelligence_http_error(
+                503, "The observed backtest is temporarily unavailable.",
+            ) from error
+
+    try:
+        return observed_training_runtime.RUNTIME.evaluate(cache_key, evaluate)
+    except observed_training_runtime.EvaluationBusy as error:
+        raise HTTPException(
+            status_code=429, detail="An observed backtest is already running. Try again shortly.",
+            headers={**_ROUTE_NO_STORE_HEADERS, "Retry-After": "5"},
+        ) from error
+
+
+@app.get('/api/analytics/real-model')
+def api_real_model(response: Response, authorization: Optional[str] = Header(default=None)):
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    identity.require_route_operator(authorization)
+    from services import forecast_evaluation
+    return envelope({**real_traffic_model.status(), 'training_runtime': real_traffic_training.TRAINER.status(),
+                     'prospective_evaluation': forecast_evaluation.summary()}, clock.now(), data_source='observed_model_status')
+
+
+@app.post('/api/analytics/real-forecast')
+def api_real_forecast(response: Response, authorization: Optional[str] = Header(default=None)):
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    identity.require_route_operator(authorization)
+    now = clock.now()
+    try:
+        value = real_traffic_model.forecast(now)
+    except Exception as error:
+        _LOGGER.warning('[real_forecast] unavailable (%s)', type(error).__name__)
+        raise HTTPException(status_code=503, detail='Real traffic forecast unavailable. Check that the observed model and fresh measurements are available; no synthetic forecast is substituted.', headers=_ROUTE_NO_STORE_HEADERS) from error
+    return envelope({'forecast': value}, clock.now(), data_source='observed_traffic_model')
+
+
+@app.get('/api/weather')
+def api_weather(response: Response):
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    now = clock.now()
+    return envelope({'weather': live_weather.get_weather(now)}, now, data_source='weather_feed')
+
+
+@app.post(ANALYTICS_SIMULATION_PATH)
+def api_analytics_simulation(
+    response: Response,
+    req: Optional[AnalyticsSimulationRequest] = None,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Read-only operator scenario, bounded to 24 hours and five corridors."""
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    identity.require_route_operator(authorization)
+    if os.environ.get('CROSSFLOW_REAL_TRAFFIC_TRAINING') == '1':
+        raise HTTPException(status_code=409, detail='Observed-only mode supports measured-data forecasts up to 60 minutes via /api/analytics/real-forecast. The synthetic 24-hour scenario is disabled.', headers=_ROUTE_NO_STORE_HEADERS)
+    now = clock.now()
+    request = req or AnalyticsSimulationRequest()
+    try:
+        simulation = simulate_analytics(
+            now, weather=request.weather, corridor_ids=request.corridor_ids,
+        )
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400, detail="The forecast scenario inputs are invalid.",
+            headers=_ROUTE_NO_STORE_HEADERS,
+        ) from error
+    except Exception as error:
+        _LOGGER.warning("[analytics_simulation] unavailable (%s)", type(error).__name__)
+        raise HTTPException(
+            status_code=503, detail="Forecast simulation is temporarily unavailable.",
+            headers=_ROUTE_NO_STORE_HEADERS,
+        ) from error
+    return envelope({"observed": False, "simulation": simulation}, now, data_source="simulation", provenance_overrides={
+        "traffic": "Modelled serving-ensemble scenario, not observed traffic history",
+        "ferry_schedule": "Published timetable proximity; not live operations",
+    })
 
 
 def _route_learning_envelope(payload: Dict[str, Any], now: datetime) -> Dict[str, Any]:
@@ -2156,12 +2757,18 @@ def api_route_learning_status(
 
 @app.post("/api/retrain-model")
 @app.post("/retrain-model")
-def api_retrain_model(x_crossflow_admin_token: Optional[str] = Header(default=None)):
-    """Retrain from one bounded, canonical spatial-history snapshot."""
+def api_retrain_model(
+    x_crossflow_admin_token: Optional[str] = Header(default=None),
+    response: Response = None,
+):
+    """Activate only an observed candidate that passes temporal/baseline gates."""
+    if response is not None:
+        response.headers.update(_ROUTING_INTELLIGENCE_NO_STORE_HEADERS)
     _require_admin(
         x_crossflow_admin_token,
         detail="Model retraining is admin-only.",
     )
+    from services.observed_training import retrain_observed_model, ObservedTrainingBusy
     now = clock.now()
     try:
         if routing_intelligence_store.shared_store_enabled():
@@ -2172,7 +2779,14 @@ def api_retrain_model(x_crossflow_admin_token: Optional[str] = Header(default=No
         else:
             observations = historical_store.get_spatial_training_dataset(now=now)
             durability = "local_sqlite"
-        updated_metrics = forecaster.retrain_from_observations(observations)
+        observations = tuple(islice(iter(observations), 100_001))
+        if len(observations) > 100_000:
+            raise RuntimeError("spatial_snapshot_limit_exceeded")
+        artifact_path = _configured_observed_model_path()
+        options = {"artifact_path": artifact_path} if artifact_path is not None else {}
+        training_report = retrain_observed_model(forecaster, observations, now=now, **options)
+        updated_metrics = dict(forecaster.metrics)
+        observed_training_runtime.RUNTIME.invalidate()
     except routing_intelligence_store.RoutingIntelligenceStoreUnavailable as error:
         raise _routing_intelligence_http_error(
             503,
@@ -2183,18 +2797,29 @@ def api_retrain_model(x_crossflow_admin_token: Optional[str] = Header(default=No
             409,
             "The spatial training snapshot failed validation.",
         ) from error
+    except ObservedTrainingBusy as error:
+        raise HTTPException(
+            status_code=503, detail="A model evaluation is already running. Try again shortly.",
+            headers={**_ROUTING_INTELLIGENCE_NO_STORE_HEADERS, "Retry-After": "5"},
+        ) from error
+    except Exception as error:
+        _LOGGER.warning("[observed_retrain] evaluation unavailable (%s)", type(error).__name__)
+        raise _routing_intelligence_http_error(
+            503, "The observed training evaluation is temporarily unavailable.",
+        ) from error
     return envelope({
         "metrics": {**updated_metrics, "retraining_enabled": True},
+        "observed_training": training_report,
         "training_snapshot": {
             "durability": durability,
             "candidate_rows": len(observations),
             "bounded_max_rows": 100_000,
-            "validation": "canonical_spatial_observations",
+            "validation": "observed_only_chronological_baseline_gated",
         },
         "message": (
-            "Model retraining evaluated the validated spatial history snapshot; "
-            "inspect last_retrain_skipped_reason and validation metrics before "
-            "interpreting the result."
+            "The measured-data candidate was evaluated against chronological "
+            "holdouts and prior-only baselines. Inspect observed_training.model_replaced "
+            "and activation.reasons before interpreting this as a model change."
         ),
     }, now)
 
@@ -2284,7 +2909,7 @@ def refresh_ferry_sources(response: Response):
         horizon_hours=12,
         schedule_verified_at=timetable["last_verified_at"],
     )
-    ports = ferry_schedule.get_port_intelligence(now)
+    ports = ferry_schedule.get_published_port_status(now)
     return envelope(
         {
             "refresh": refresh,
@@ -2301,7 +2926,7 @@ def refresh_ferry_sources(response: Response):
                 "timetable; per-source outcomes and restrictions included"
             ),
             "operations": (
-                "Schedule-informed planning estimates; not observed passenger queues"
+                "Terminal references and published departures only; live operating measures unavailable"
             ),
         },
     )
@@ -2309,37 +2934,64 @@ def refresh_ferry_sources(response: Response):
 
 @app.get("/api/port-intelligence")
 @app.get("/port-intelligence")
-def get_port_intelligence():
-    """Schedule-informed terminal planning estimates with official references."""
+def get_port_intelligence(response: Response = None):
+    """Published terminal references and upcoming sailings; no invented live status."""
     now = clock.now()
-    ports = ferry_schedule.get_port_intelligence(now)
+    if response is not None:
+        response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    ports = ferry_schedule.get_published_port_status(now)
     return envelope(
         {"ports": ports},
         now,
-        data_source="simulated",
+        data_source="published_schedule",
         provenance_overrides={
             "operations": (
-                "Schedule-informed planning estimate; not an observed passenger queue"
+                "Terminal references and published departures; queues, processing and occupancy unavailable"
             ),
             "ferry_schedule": "Source-dated official operator timetable snapshot",
         },
     )
 
 
+@app.get("/api/analytics/research-history")
+def get_research_history(response: Response):
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    try:
+        evidence = load_research_history()
+    except ResearchHistoryUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc), headers=_ROUTE_NO_STORE_HEADERS) from exc
+    return envelope(evidence, clock.now(), data_source="published_research",
+                    provenance_overrides={"operations": "Dated academic road observations and a separate Singapore speed-band backtest; not live Batam telemetry"})
+
+
+@app.get("/api/authority-reports")
+def get_authority_reports(response: Response):
+    now = clock.now()
+    response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    return envelope(
+        AUTHORITY_REPORTS.get(now), now, data_source="published_report",
+        provenance_overrides={"operations": "BP Batam official reporting-period aggregates, parsed from its public source page"},
+    )
+
+
 @app.get("/api/operations")
 @app.get("/operations")
-def get_ops():
-    """Modelled operator analytics, bottlenecks and dispatch alerts."""
+def get_ops(response: Response = None):
+    """Current provider-derived analytics; missing measurements stay unavailable."""
     now = clock.now()
+    if response is not None:
+        response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    summary = get_operations_analytics(now)
+    summary["analytics_metadata"]["archive"] = traffic_archiver.ARCHIVER.status()
     return envelope(
-        get_operations_summary(now),
+        summary,
         now,
-        data_source="simulated",
+        data_source="live" if summary["analytics_metadata"]["traffic_observed"] else "unavailable",
         provenance_overrides={
             "operations": (
-                "CrossFlow modelled operations scenario; not observed or measured"
+                "Measured representative traffic points; no measured fleet or emissions reduction"
             ),
-            "traffic": "CrossFlow synthetic Batam-shaped congestion model",
+            "traffic": summary["analytics_metadata"]["traffic_source"],
             "ferry_schedule": (
                 "Source-dated published timetable snapshot; scheduled "
                 "departures only"

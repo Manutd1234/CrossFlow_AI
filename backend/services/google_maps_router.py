@@ -9,7 +9,6 @@ geometry cannot be rendered on CrossFlow's CARTO/OpenStreetMap map under
 Google's display policy. Runtime routing therefore remains on the OSM graph.
 """
 
-import json
 import html
 import os
 import re
@@ -17,7 +16,7 @@ import urllib.parse
 import urllib.request
 from typing import Any, Dict, List, Optional
 
-from services import tls
+from services import tls, provider_json
 
 _USER_AGENT = "CrossFlowAI/3.0 (batam-singapore-hackathon-2026)"
 
@@ -195,10 +194,10 @@ def get_google_route(origin: str, destination: str) -> Optional[Dict[str, Any]]:
         with urllib.request.urlopen(
             req, timeout=5, context=tls.default_context(),
         ) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
+            data = provider_json.read_json(resp, max_bytes=2 * 1024 * 1024)
 
         if data.get("status") != "OK" or not data.get("routes"):
-            print(f"[google_maps] Status: {data.get('status')}, Error: {data.get('error_message')}")
+            print("[google_maps] Provider returned no usable route")
             return None
 
         parsed = [
@@ -220,5 +219,5 @@ def get_google_route(origin: str, destination: str) -> Optional[Dict[str, Any]]:
         ]
         return primary
     except Exception as err:
-        print(f"[google_maps] Unreachable/Failed: {err}")
+        print(f"[google_maps] Unavailable ({type(err).__name__})")
         return None

@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-10-23T10:42:10.843282+00:00",
+  "purpose": "Assess alternative sources for actual dated Batam road-speed training data",
+  "here": {
+    "trial_registration_confirmed": true,
+    "trial_ends_at": "2026-11-22T10:38:09.131Z",
+    "usable_access_verified": false,
+    "batam_coverage_verified": false,
+    "specific_ml_rights_verified": false,
+    "export_acquired": false,
+    "status_reference": "here-trial-status.json"
+  },
+  "osm_batam": {
+    "urls": [
+      "https://api.openstreetmap.org/api/0.6/trackpoints?bbox=103.90,1.00,104.15,1.20&page=0",
+      "https://api.openstreetmap.org/api/0.6/trackpoints?bbox=103.90,1.00,104.15,1.20&page=1"
+    ],
+    "http_statuses": [
+      200,
+      200
+    ],
+    "total_timestamped_points": 10000,
+    "year_span": [
+      2015,
+      2026
+    ],
+    "source_checksums": [
+      "5509502270b404bcc8f764d39ea922c8b7de3d2df04051d736949afeec54d7b2",
+      "6405e4d6fcdce572c601ed317edb1edbd8c42ee86236396738fcde9b63d41582"
+    ],
+    "suitability": "Not verified motor-vehicle road-congestion labels: mixed cycling/loop-ride/ferry traces, excessive inferred speeds and unknown modes.",
+    "raw_traces_persisted_in_repo": false,
+    "imported_records": 0
+  },
+  "worldtrace": {
+    "source_url": "https://huggingface.co/datasets/OpenTrace/WorldTrace/resolve/main/Meta.zip",
+    "downloaded_bytes": 589824,
+    "metadata_archive_bytes": 7800430228,
+    "directory_entries_sampled": 4717,
+    "batam_coverage": "unknown",
+    "not_evidence_of_absence": true,
+    "remote_code_or_pickle_executed": false,
+    "full_dataset_downloaded": false,
+    "imported_records": 0
+  },
+  "observed_model_activated": false,
+  "source_review": "../HISTORICAL_TRAFFIC_SOURCES.md"
+}

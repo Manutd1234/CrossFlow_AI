@@ -1,23 +1,22 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
-  Anchor, CircleCheck, CircleMinus, CircleX, Clock, ExternalLink, ImageOff,
+  Anchor, ExternalLink, ImageOff,
   PackageCheck, RefreshCw, ShieldCheck, Ship, TriangleAlert,
 } from 'lucide-react';
 
-import { DEMO_SHIPMENTS } from '../../data/mockData';
 import { TERMINAL_MEDIA, type TerminalMedia } from '../../data/terminalMedia';
-import { scheduleInformedPortSeed } from '../../services/api';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import {
-  DataSource, FerryRefreshReport, FerryRefreshSourceStatus, FerrySchedule,
+  DataSource, FerryRefreshReport, FerrySchedule,
   FerryTimetableMetadata, PortStatus,
 } from '../../types';
 import {
-  ferryBadgeClass, formatScheduleVerifiedAt, formatTime, prettyStatus,
-  relativeDeparture, shipmentBadgeClass,
+  ferryBadgeClass, formatScheduleVerifiedAt, formatFerryTime, prettyStatus,
+  relativeDeparture,
 } from '../../utils/format';
 import { batamParts } from '../../utils/batamTime';
 import { WorkspaceSubtabs } from '../shared/WorkspaceSubtabs';
+import './FerrySourceCheck.css';
 
 
 interface FerryPortTrackerProps {
@@ -28,52 +27,13 @@ interface FerryPortTrackerProps {
   portSource: DataSource;
   portsLoading: boolean;
   portsError: string | null;
+  portsCheckedAt?: string | null;
   isRefreshingOfficialSources: boolean;
   onRefreshOfficialSources: () => Promise<FerryRefreshReport>;
 }
 
 const PORT_FILTERS = ['ALL', 'Batam Centre', 'HarbourBay', 'Sekupang', 'Nongsa Pura'] as const;
-const INITIAL_PORT_ESTIMATES = scheduleInformedPortSeed();
 type FerryWorkspaceTab = 'terminals' | 'departures' | 'cargo';
-
-interface RefreshFeedback {
-  tone: 'success' | 'partial' | 'failure';
-  message: string;
-  report?: FerryRefreshReport;
-}
-
-const SOURCE_STATUS_LABELS: Record<FerryRefreshSourceStatus, string> = {
-  verified_structure: 'Page checked',
-  unavailable_or_invalid: 'Needs review',
-  skipped_permission_required: 'Permission required',
-};
-
-const SOURCE_STATUS_ORDER: FerryRefreshSourceStatus[] = [
-  'verified_structure',
-  'skipped_permission_required',
-  'unavailable_or_invalid',
-];
-
-const SourceStatusIcon: React.FC<{
-  status: FerryRefreshSourceStatus;
-  labelled?: boolean;
-}> = ({ status, labelled = false }) => {
-  const Icon = status === 'verified_structure'
-    ? CircleCheck
-    : status === 'skipped_permission_required'
-      ? CircleMinus
-      : CircleX;
-  const label = SOURCE_STATUS_LABELS[status];
-
-  return (
-    <span
-      className={`ferry-port-source-status-icon ferry-port-source-status-icon--${status}`}
-      title={labelled ? label : undefined}
-    >
-      <Icon aria-label={labelled ? label : undefined} size={ICON_SIZE.big} strokeWidth={2.2} />
-    </span>
-  );
-};
 
 function wasVerifiedToday(value?: string, now: Date = new Date()): boolean {
   if (!value) return false;
@@ -84,36 +44,6 @@ function wasVerifiedToday(value?: string, now: Date = new Date()): boolean {
   return verifiedDate.year === currentDate.year
     && verifiedDate.month === currentDate.month
     && verifiedDate.day === currentDate.day;
-}
-
-function feedbackForRefresh(report: FerryRefreshReport): RefreshFeedback {
-  const { verified, failed, permission_gated: permissionGated } = report.summary;
-  if (report.status === 'checked') {
-    return {
-      tone: 'success',
-      message: `Checked ${verified} official sources. ${permissionGated} ${permissionGated === 1 ? 'source was' : 'sources were'} skipped.`,
-      report,
-    };
-  }
-  if (report.status === 'cached') {
-    return {
-      tone: 'success',
-      message: `Reused the recent official-source check (${verified} pages checked).`,
-      report,
-    };
-  }
-  if (report.status === 'partial') {
-    return {
-      tone: 'partial',
-      message: `Checked ${verified} official source ${verified === 1 ? 'page' : 'pages'}; ${failed} could not be validated. The last-known-good planning schedule was retained.`,
-      report,
-    };
-  }
-  return {
-    tone: 'failure',
-    message: 'Official pages could not be validated. No timetable was replaced; the last-known-good planning schedule remains active.',
-    report,
-  };
 }
 
 interface TerminalPhotoProps {
@@ -174,7 +104,6 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
   dataSource,
   timetable,
   ports,
-  portSource,
   portsLoading,
   portsError,
   isRefreshingOfficialSources,
@@ -183,30 +112,34 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
   const [selectedPort, setSelectedPort] = useState<string>('ALL');
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<FerryWorkspaceTab>('terminals');
   const [refreshPending, setRefreshPending] = useState(false);
-  const [refreshFeedback, setRefreshFeedback] = useState<RefreshFeedback | null>(null);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
+  const [refreshConfirmation, setRefreshConfirmation] = useState<string | null>(null);
+  const refreshInFlight = useRef(false);
   const refreshBusy = refreshPending || isRefreshingOfficialSources;
   const verifiedToday = wasVerifiedToday(timetable.last_verified_at);
-  const refreshFeedbackClassName = [
-    'ferry-port-refresh-feedback',
-    !refreshBusy && !refreshFeedback ? 'is-hidden' : '',
-    refreshFeedback?.tone ? `is-${refreshFeedback.tone}` : '',
-  ].filter(Boolean).join(' ');
 
   const handleOfficialRefresh = async () => {
-    if (refreshBusy) return;
+    if (refreshBusy || refreshInFlight.current) return;
+    refreshInFlight.current = true;
     setRefreshPending(true);
-    setRefreshFeedback(null);
+    setRefreshError(null);
+    setRefreshConfirmation(null);
     try {
       const report = await onRefreshOfficialSources();
-      setRefreshFeedback(feedbackForRefresh(report));
-    } catch (error) {
-      setRefreshFeedback({
-        tone: 'failure',
-        message: error instanceof Error
-          ? error.message
-          : 'Official ferry sources could not be refreshed.',
-      });
+      // The cooldown marks prior reports "cached", including failed checks.
+      // Their retained outcome must not become a successful confirmation.
+      if (report.status === 'failed_using_last_known_good'
+        || (report.summary.failed > 0 && report.summary.verified === 0)) {
+        setRefreshError('Schedules could not be refreshed. The last verified timetable is still shown.');
+      } else if (report.status === 'partial' || report.summary.failed > 0) {
+        setRefreshError('Some schedules could not be checked. The last verified timetable is still shown.');
+      } else {
+        setRefreshConfirmation(`${report.summary.verified} official sources checked.`);
+      }
+    } catch {
+      setRefreshError('Schedules could not be refreshed. Please try again.');
     } finally {
+      refreshInFlight.current = false;
       setRefreshPending(false);
     }
   };
@@ -239,68 +172,23 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
               </h2>
             </div>
             <p className="ferry-port-overview__description">
-              Official terminal references, schedule-informed processing estimates, and published cross-strait departures.
+              Terminal references and published departures across the Singapore–Batam strait.
             </p>
           </div>
 
           <div className="ferry-port-overview__controls" aria-label="Ferry data controls">
-            <span
-              className="badge badge-neutral"
-              title={dataSource === 'offline'
-                ? 'Terminal estimates are using the bundled planning continuity data'
-                : 'Terminal estimates were returned by the planning API'}
-            >
-              {portsLoading && ports.length === 0
-                ? 'CHECKING TERMINAL DATA'
-                : portSource === 'offline'
-                  ? 'SCHEDULE-INFORMED CONTINUITY'
-                  : 'SCHEDULE-INFORMED ESTIMATE'}
-            </span>
-            <span className={`badge ferry-port-overview__verified-badge ${verifiedToday ? 'badge-smooth' : 'badge-heavy'}`}>
-              Last verified{' '}
+            <span className={`ferry-port-overview__verified-badge ${verifiedToday ? 'is-current' : 'is-stale'}`}>
+              <ShieldCheck aria-hidden="true" size={ICON_SIZE.medium} /> Last verified{' '}
               <time dateTime={timetable.last_verified_at}>
                 {formatScheduleVerifiedAt(timetable.last_verified_at)}
               </time>
             </span>
+
           </div>
         </div>
 
-        <div
-          className={refreshFeedbackClassName}
-          role={refreshFeedback?.tone === 'failure' ? 'alert' : 'status'}
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {refreshBusy
-            ? 'Checking reviewed official ferry and terminal sources…'
-            : refreshFeedback?.message ?? ''}
-          {refreshFeedback?.report ? (
-            <>
-              <ul className="ferry-port-source-results" aria-label="Official source check results">
-                {refreshFeedback.report.source_results.map(source => (
-                  <li key={source.source_id} className="ferry-port-source-results__item">
-                    {source.status === 'skipped_permission_required' ? (
-                      <span className="ferry-port-source-results__authority">{source.authority}</span>
-                    ) : (
-                      <a className="ferry-port-source-results__link" href={source.url} target="_blank" rel="noreferrer">
-                        {source.authority}
-                      </a>
-                    )}
-                    <SourceStatusIcon status={source.status} labelled />
-                  </li>
-                ))}
-              </ul>
-              <div className="ferry-port-source-legend" aria-label="Source result legend">
-                {SOURCE_STATUS_ORDER.map(status => (
-                  <span key={status} className="ferry-port-source-legend__item">
-                    <SourceStatusIcon status={status} />
-                    {SOURCE_STATUS_LABELS[status]}
-                  </span>
-                ))}
-              </div>
-            </>
-          ) : null}
-        </div>
+        {refreshError ? <p className="ferry-port-refresh-error" role="alert">{refreshError}</p> : null}
+        {refreshConfirmation ? <p className="ferry-port-refresh-confirmation" role="status">{refreshConfirmation}</p> : null}
 
         <div className="ferry-port-overview__footer">
           <div className="ferry-port-filter-list" role="group" aria-label="Filter by departure port">
@@ -350,31 +238,17 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
             id: 'terminals',
             label: 'Terminals',
             content: (
-      <section className="terminal-status" aria-label="Terminal access and processing outlook" aria-busy={portsLoading}>
+      <section className="terminal-status" aria-label="Terminal information and published departures" aria-busy={portsLoading}>
+        <p className="terminal-availability-note">Published sailings. Live queues and berth occupancy are unavailable.</p>
+
         {portsLoading && ports.length === 0 ? (
           <div className="ferry-port-empty-state ferry-port-empty-state--terminals" role="status">
-            Loading terminal queue and berth data…
+            Loading terminal references…
           </div>
         ) : filteredPorts.length > 0 ? (
           <div className="terminal-card-grid">
             {filteredPorts.map(port => {
               const media = TERMINAL_MEDIA[port.port_name];
-              const seed = INITIAL_PORT_ESTIMATES.find(
-                estimate => estimate.port_name === port.port_name,
-              );
-              const passengerQueueMins = port.passenger_queue_mins
-                ?? seed?.passenger_queue_mins
-                ?? 5;
-              const processingMins = port.customs_processing_mins
-                ?? seed?.customs_processing_mins
-                ?? 4;
-              const activeBerths = port.active_berths;
-              const hasBerthEstimate = activeBerths != null
-                && port.total_berths != null
-                && port.total_berths > 0;
-              const berthPercent = hasBerthEstimate
-                ? Math.round(((activeBerths ?? 0) / (port.total_berths ?? 1)) * 100)
-                : 0;
               return (
                 <article key={port.port_name} className="ui-white-card-hover terminal-intelligence-card terminal-card-content">
                   <header className="terminal-card-heading">
@@ -385,64 +259,19 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
                           <h4 className="terminal-card-title">{port.port_name}</h4>
                           <span className="terminal-card-code">Terminal {port.terminal_code}</span>
                         </div>
-                        {port.status ? (
-                          <span className={`badge terminal-card-status ${port.status === 'CONGESTED' ? 'badge-critical' : port.status === 'BUSY' ? 'badge-heavy' : 'badge-neutral'}`}>
-                            EST. {port.status}
-                          </span>
-                        ) : (
-                          <span className="badge badge-neutral terminal-card-status">
-                            NOT OBSERVED
-                          </span>
-                        )}
+                        <span className="badge badge-neutral terminal-card-status">Timetable</span>
                       </div>
                     </div>
                   </header>
 
-                  <div className="terminal-card-metrics">
-                    <div className="terminal-card-metric">
-                      <div className="terminal-card-metric__label">
-                        <Clock aria-hidden="true" size={ICON_SIZE.small} color="var(--accent-amber)" /> Passenger Queue
-                      </div>
-                      <strong className="terminal-card-metric__value terminal-card-metric__value--queue">
-                        {passengerQueueMins} <span className="terminal-card-metric__unit">min</span>
-                      </strong>
-                    </div>
-                    <div className="terminal-card-metric">
-                      <div className="terminal-card-metric__label">
-                        <ShieldCheck aria-hidden="true" size={ICON_SIZE.small} color="var(--accent-cyan)" /> Processing
-                      </div>
-                      <strong className="terminal-card-metric__value terminal-card-metric__value--processing">
-                        {processingMins} <span className="terminal-card-metric__unit">min</span>
-                      </strong>
-                    </div>
-                  </div>
-
-                  {hasBerthEstimate ? <div className="terminal-card-berths">
-                    <div className="terminal-card-berths__header">
-                      <span>Estimated active berths</span>
-                      <strong>{activeBerths}/{port.total_berths}</strong>
-                    </div>
-                    <div className="ui-progress-track" role="progressbar" aria-label={`${port.port_name} modelled active berth capacity`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={berthPercent}>
-                      <div className="ui-progress-fill" style={{ width: `${berthPercent}%` }} />
-                    </div>
-                  </div> : (
-                    <div className="terminal-card-berths__unavailable">
-                      Berth configuration and active occupancy are unavailable.
-                    </div>
-                  )}
-
-                  <div className="terminal-card-details">
-                    {port.freight_clearance_mins != null ? (
-                      <span>Freight clearance estimate: <strong className="terminal-card-details__value">{port.freight_clearance_mins} min</strong></span>
-                    ) : null}
+                  <div className="terminal-next-sailing">
+                    <span className="terminal-next-sailing__label">Next departure</span>
                     {port.next_sailing_in_mins != null ? (
-                      <span>
-                        Next departure: <strong className="terminal-card-details__value terminal-card-details__value--departure">{port.next_sailing_in_mins} min</strong>
-                        {port.next_operator || port.next_vessel
-                          ? ` · ${port.next_operator ?? port.next_vessel}`
-                          : ''}
-                      </span>
-                    ) : null}
+                      <>
+                        <strong className="terminal-next-sailing__time">{relativeDeparture(port.next_sailing_in_mins)}</strong>
+                        {port.next_operator || port.next_vessel ? <span>{port.next_operator ?? port.next_vessel}</span> : null}
+                      </>
+                    ) : <span>No published sailing in this window.</span>}
                   </div>
                   <div className="terminal-card-links">
                     <a
@@ -475,6 +304,7 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
             <h3 id="sailings-title" className="ferry-departures__title">
               <Ship aria-hidden="true" size={ICON_SIZE.large} color="var(--accent-cyan)" /> Upcoming Departures
             </h3>
+            <span className="badge badge-neutral">{dataSource === 'offline' ? 'BUNDLED TIMETABLE' : 'PUBLISHED TIMETABLE'}</span>
             <span className="badge badge-neutral">{filteredFerries.length} shown</span>
           </div>
 
@@ -507,12 +337,12 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
 
                     <div className="ferry-departure-card__timing">
                       <time className="ferry-departure-card__departure-time" dateTime={ferry.departure_time}>
-                        {formatTime(ferry.departure_time)}
+                        {formatFerryTime(ferry.departure_time)}
                       </time>
                       <div className="ferry-departure-card__relative-time">{relativeDeparture(ferry.minutes_until_departure)}</div>
                       {ferry.arrival_time ? (
                         <div className="ferry-departure-card__arrival-time">
-                          Est. arrival {formatTime(ferry.arrival_time)}
+                          Est. arrival {formatFerryTime(ferry.arrival_time)}
                         </div>
                       ) : null}
                       {ferry.available_seats != null ? (
@@ -542,33 +372,12 @@ export const FerryPortTracker: React.FC<FerryPortTrackerProps> = ({
             <h3 id="cargo-title" className="cargo-monitor__title">
               <PackageCheck aria-hidden="true" size={ICON_SIZE.large} color="var(--accent-emerald)" /> Batam-SG Cargo Monitor
             </h3>
-            <span className="badge badge-neutral cargo-monitor__dataset-badge">DEMO DATASET</span>
+            <span className="badge badge-neutral cargo-monitor__dataset-badge">NO LIVE CARGO FEED</span>
           </div>
-
-          <div className="cargo-monitor__list">
-            {DEMO_SHIPMENTS.map(shipment => (
-              <article key={shipment.id} className="cargo-shipment-card">
-                <div className="cargo-shipment-card__header">
-                  <span className="cargo-shipment-card__id">{shipment.id}</span>
-                  <span className={`badge ${shipmentBadgeClass(shipment.status)} cargo-shipment-card__status`}>
-                    {prettyStatus(shipment.status)}
-                  </span>
-                </div>
-                <h4 className="cargo-shipment-card__route">
-                  {shipment.origin} ➔ {shipment.destination}
-                </h4>
-                <div className="cargo-shipment-card__progress">
-                  <div className="cargo-shipment-card__details">
-                    <span>{shipment.carrier} · {shipment.vessel}</span>
-                    <span>ETA {shipment.eta}</span>
-                  </div>
-                  <div className="ui-progress-track" role="progressbar" aria-label={`${shipment.id} shipment progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={shipment.progress}>
-                    <div className="ui-progress-fill" style={{ width: `${shipment.progress}%` }} />
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          <p className="cargo-monitor__description" role="status">
+            Cargo tracking is unavailable because no shipment or customs feed is connected.
+            {' '}There are no verified shipment positions, progress percentages or clearance events to display.
+          </p>
         </section>
             ),
           },

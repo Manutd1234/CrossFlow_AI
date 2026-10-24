@@ -1,0 +1,5 @@
+# Isolated optional detector runtime; backend import does not require these.
+torch==2.10.0
+torchvision==0.25.0
+Pillow==12.3.0
+numpy==2.4.4
