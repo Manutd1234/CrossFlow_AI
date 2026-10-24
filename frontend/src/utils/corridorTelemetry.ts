@@ -1,5 +1,4 @@
-import type { Corridor, CorridorObservedTraffic } from '../types';
-import { classifyStatus } from '../services/localForecast';
+import type { Corridor, CorridorObservedCondition, CorridorObservedTraffic } from '../types';
 import { corridorColor } from './format';
 
 function timestamp(value: unknown): number | null {
@@ -19,7 +18,9 @@ function count(value: unknown): value is number {
 export interface CorridorLiveView {
   available: boolean;
   score: number | null;
-  status: Corridor['status'];
+  status: CorridorObservedCondition;
+  tone: 'smooth' | 'heavy' | 'critical' | 'neutral';
+  cameraWarning: boolean;
   color: string;
   coverage: string;
   observedAt: string | null;
@@ -32,7 +33,8 @@ export interface CorridorLiveView {
 /** Legacy planning numbers and bundled simulations are never live evidence. */
 export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): CorridorLiveView {
   const unknown: CorridorLiveView = {
-    available: false, score: null, status: 'UNAVAILABLE', color: corridorColor('UNAVAILABLE'),
+    available: false, score: null, status: 'UNAVAILABLE', tone: 'neutral', cameraWarning: false,
+    color: corridorColor('UNAVAILABLE'),
     coverage: 'No fresh measurements for this corridor.', observedAt: null,
     delay: null, forecast30: null, forecast60: null, forecastMethod: 'unavailable',
   };
@@ -54,7 +56,34 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
   const maximumAgeMs = provider ? 180_000 : 120_000;
   if (nowMs - observed >= maximumAgeMs || until > observed + maximumAgeMs) return unknown;
 
-  const status = classifyStatus(evidence.congestion_index);
+  const score = evidence.congestion_index;
+  if (provider) {
+    const speed = evidence.current_speed_kmh;
+    const freeFlow = evidence.free_flow_speed_kmh;
+    const confidence = evidence.provider_confidence;
+    const expectedCondition = score <= 5 ? 'FREE_FLOW' : score < 40 ? 'SLOWING' : score < 70 ? 'HEAVY' : 'CRITICAL';
+    if (evidence.condition_policy !== 'observed_speed_loss_bands_v1'
+      || evidence.condition !== expectedCondition
+      || typeof confidence !== 'number' || !Number.isFinite(confidence) || confidence < 0.5 || confidence > 1
+      || typeof speed !== 'number' || !Number.isFinite(speed) || speed < 0 || speed > 250
+      || typeof freeFlow !== 'number' || !Number.isFinite(freeFlow) || freeFlow <= 0 || freeFlow > 250
+      || speed / freeFlow > 1.5
+      // Validate the backend's rounded bounded speed-loss index, not a second
+      // congestion calculation or a substitute for missing evidence.
+      || Math.abs(score - 100 * (1 - Math.min(1, Math.max(0.05, speed / freeFlow)))) > 0.051) return unknown;
+  } else if (evidence.condition_policy !== 'mapped_camera_proxy_v1' || evidence.condition !== 'CAMERA_ESTIMATE') {
+    return unknown;
+  }
+  const status = evidence.condition;
+  const tone = status === 'FREE_FLOW' ? 'smooth' : status === 'CRITICAL' ? 'critical'
+    : status === 'SLOWING' || status === 'HEAVY' ? 'heavy' : 'neutral';
+  const color = corridorColor(tone === 'smooth' ? 'SMOOTH' : tone === 'heavy' ? 'HEAVY'
+    : tone === 'critical' ? 'CRITICAL' : 'UNAVAILABLE');
+  const cameraUntil = timestamp(evidence.camera_fresh_until);
+  const cameraWarning = provider && evidence.camera_warning === true && score < 40
+    && count(evidence.camera_count) && index(evidence.camera_congestion_index)
+    && evidence.camera_congestion_index >= 40 && evidence.camera_condition === 'LOCAL_CONGESTION_ESTIMATE'
+    && cameraUntil !== null && cameraUntil > nowMs && cameraUntil <= checked + 120_000;
   const forecastObserved = timestamp(evidence.forecast_observed_at);
   const forecastUntil = timestamp(evidence.forecast_fresh_until);
   const forecastAvailable = provider && index(evidence.forecast_30m) && index(evidence.forecast_60m)
@@ -63,9 +92,10 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
     && forecastUntil !== null && Math.min(forecastUntil, until) > nowMs
     && forecastUntil > forecastObserved
     && forecastUntil <= forecastObserved + 180_000
-    && (evidence.forecast_method !== 'persistence' || forecastObserved === observed);
+    && (evidence.forecast_method !== 'persistence' || (forecastObserved === observed
+      && evidence.forecast_30m === score && evidence.forecast_60m === score));
   return {
-    available: true, score: evidence.congestion_index, status, color: corridorColor(status),
+    available: true, score, status, tone, color, cameraWarning,
     coverage: provider
       ? `Partial coverage · ${evidence.provider_point_count} measured road point${evidence.provider_point_count === 1 ? '' : 's'}`
       : `Partial coverage · ${evidence.camera_count} mapped road view${evidence.camera_count === 1 ? '' : 's'} · Estimated`,

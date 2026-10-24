@@ -43,8 +43,8 @@ function modelledHistoryResult(corridor = 'corridor-1', days = 7): Fetched<Histo
       ...browserModeledHistoricalProfile(corridor, days, referenceTime),
       history_metadata: {
         selection_scope: 'modelled_only', window_days: days, observed: false, contains_observed_samples: false,
-        source_counts: { synthetic_profile_seed_v1: days * 24 },
-        sources: { synthetic_profile_seed_v1: { observed: false, sample_count: days * 24 } },
+        source_counts: { synthetic: days * 24 },
+        sources: { synthetic: { observed: false, sample_count: days * 24 } },
         latest_sample_at: referenceTime.toISOString(), latest_sample_age_seconds: 0,
         freshness: 'current', freshness_basis: 'latest modelled archive sample',
         storage: { engine: 'sqlite', durability: 'persistent_file', durable: true, shared_across_instances: false, fallback_to_memory: false },

@@ -20,6 +20,11 @@ from services.route_learning_store import LearningSnapshot
 from services.route_solver import CORRIDORS
 
 
+# Conservative card-level engineering gate, not a calibrated accuracy claim.
+# Other analytics/model domains retain their existing transport acceptance.
+MIN_PROVIDER_CONFIDENCE = 0.5
+
+
 def _instant(value: datetime | str) -> datetime:
     stamp = datetime.fromisoformat(value.replace("Z", "+00:00")) if isinstance(value, str) else value
     if not isinstance(stamp, datetime) or stamp.tzinfo is None or stamp.utcoffset() is None:
@@ -70,7 +75,7 @@ def _provider_observation(segment: Any, now: datetime):
     if not isinstance(segment, dict) or segment.get("source", "tomtom_live") != "tomtom_live":
         return None
     sample = _sample(segment, now)
-    if sample is None:
+    if sample is None or sample["provider_confidence"] < MIN_PROVIDER_CONFIDENCE:
         return None
     captured = _instant(sample["as_of"])
     expiry = captured + timedelta(seconds=MAX_SNAPSHOT_AGE_SECONDS)
@@ -86,13 +91,26 @@ def _empty_observation(now: datetime) -> dict[str, Any]:
         "status": "unavailable", "source": "unavailable", "scope": "unavailable",
         "checked_at": clock.iso(now), "observed_at": None, "fresh_until": None,
         "congestion_index": None, "delay_mins": None,
+        "condition": "UNAVAILABLE", "condition_policy": "unavailable",
+        "current_speed_kmh": None, "free_flow_speed_kmh": None,
+        "provider_confidence": None,
         "provider_point_count": 0, "camera_count": 0,
         "camera_congestion_index": None, "camera_fresh_until": None,
+        "camera_condition": None, "camera_warning": False,
         "corridor_wide": False,
         "forecast_30m": None, "forecast_60m": None,
         "forecast_method": "unavailable", "forecast_observed_at": None,
         "forecast_fresh_until": None,
     }
+
+
+def _provider_condition(score: float) -> str:
+    """Engineering speed-loss bands; these are not accuracy-calibrated LOS."""
+    if score <= 5:
+        return "FREE_FLOW"
+    if score < 40:
+        return "SLOWING"
+    return "CRITICAL" if score >= 70 else "HEAVY"
 
 
 def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
@@ -130,6 +148,10 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
         if matching:
             observation["camera_congestion_index"] = round(max(value.congestion_index for value, _, _ in matching), 1)
             observation["camera_fresh_until"] = clock.iso(min(expiry for _, _, expiry in matching))
+            observation["camera_condition"] = (
+                "LOCAL_CONGESTION_ESTIMATE" if observation["camera_congestion_index"] >= 40
+                else "LOW_PRESSURE_ESTIMATE"
+            )
         provider = _provider_observation(segments.get(corridor["id"]), instant)
         if provider is not None:
             sample, captured, expiry = provider
@@ -139,6 +161,12 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
                 # neither extend nor prematurely withdraw a provider point.
                 observed_at=clock.iso(captured), fresh_until=clock.iso(expiry),
                 congestion_index=sample["score"], provider_point_count=1,
+                condition=_provider_condition(sample["score"]),
+                condition_policy="observed_speed_loss_bands_v1",
+                current_speed_kmh=sample["current_speed_kmh"],
+                free_flow_speed_kmh=sample["free_flow_speed_kmh"],
+                provider_confidence=sample["provider_confidence"],
+                camera_warning=(sample["score"] < 40 and observation["camera_condition"] == "LOCAL_CONGESTION_ESTIMATE"),
                 forecast_30m=sample["score"], forecast_60m=sample["score"],
                 forecast_method="persistence", forecast_observed_at=clock.iso(captured),
                 forecast_fresh_until=clock.iso(expiry),
@@ -149,6 +177,7 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
                 observed_at=clock.iso(min(captured for _, captured, _ in matching)),
                 fresh_until=clock.iso(min(expiry for _, _, expiry in matching)),
                 congestion_index=observation["camera_congestion_index"],
+                condition="CAMERA_ESTIMATE", condition_policy="mapped_camera_proxy_v1",
             )
         score = observation["congestion_index"]
         status = "UNAVAILABLE" if score is None else "CRITICAL" if score >= 70 else "HEAVY" if score >= 40 else "SMOOTH"

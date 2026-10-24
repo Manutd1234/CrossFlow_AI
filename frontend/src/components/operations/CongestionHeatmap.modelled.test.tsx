@@ -20,8 +20,8 @@ function modelledResult(corridor = 'corridor-1', days = 7): Fetched<HistoricalPr
       weekly_trend: Array.from({ length: days }, (_, day) => ({ date: `2026-10-${String(day + 1).padStart(2, '0')}`, avg_score: day + 20, sample_count: 24 })),
       history_metadata: {
         selection_scope: 'modelled_only', window_days: days, observed: false, contains_observed_samples: false,
-        source_counts: { synthetic_profile_seed_v1: 24 * days },
-        sources: { synthetic_profile_seed_v1: { observed: false, sample_count: 24 * days } },
+        source_counts: { synthetic: 24 * days },
+        sources: { synthetic: { observed: false, sample_count: 24 * days } },
         latest_sample_at: '2026-10-24T08:00:00Z', latest_sample_age_seconds: 0,
         freshness: 'current', freshness_basis: 'latest modelled archive sample',
         storage: { engine: 'sqlite', durability: 'persistent_file', durable: true, shared_across_instances: false, fallback_to_memory: false },

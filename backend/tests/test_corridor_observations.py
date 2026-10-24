@@ -59,11 +59,55 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertFalse(busy["corridor_wide"])
         self.assertIsNone(busy["delay_mins"])
 
+    def test_observed_condition_distinguishes_free_flow_slowing_and_congested_bands(self):
+        for speed, score, condition in (
+            (50., 0., "FREE_FLOW"), (47.5, 5., "FREE_FLOW"),
+            (47.45, 5.1, "SLOWING"), (40., 20., "SLOWING"),
+            (30., 40., "HEAVY"), (15., 70., "CRITICAL"),
+            # Keep the established bounded congestion-index units: the raw
+            # stopped speed is0, while the finite routing index is95.
+            (0., 95., "CRITICAL"),
+        ):
+            with self.subTest(speed=speed):
+                self.provider_mock.return_value = {"corridor-1": provider(speed)}
+                value = self.current()["observed_traffic"]
+                self.assertEqual(value["congestion_index"], score)
+                self.assertEqual(value["condition"], condition)
+                self.assertEqual(value["condition_policy"], "observed_speed_loss_bands_v1")
+
+    def test_provider_condition_retains_the_validated_speed_and_confidence_for_audit(self):
+        self.provider_mock.return_value = {"corridor-1": provider(40., confidence=.87)}
+        value = self.current()["observed_traffic"]
+        self.assertEqual(value["current_speed_kmh"], 40.)
+        self.assertEqual(value["free_flow_speed_kmh"], 50.)
+        self.assertEqual(value["provider_confidence"], .87)
+        self.assertEqual(value["condition"], "SLOWING")
+        self.assertFalse(value["camera_warning"])
+
+    def test_low_confidence_provider_cannot_claim_free_flow(self):
+        for confidence, available in ((.499, False), (0., False), (.5, True), (1., True)):
+            with self.subTest(confidence=confidence):
+                self.provider_mock.return_value = {"corridor-1": provider(50., confidence=confidence)}
+                value = self.current()["observed_traffic"]
+                self.assertEqual(value["condition"], "FREE_FLOW" if available else "UNAVAILABLE")
+                self.assertEqual(value["provider_point_count"], int(available))
+                if not available:
+                    self.assertIsNone(value["congestion_index"])
+        self.provider_mock.return_value = {"corridor-1": provider(50., confidence=.49)}
+        self.camera_mock.return_value = cctv_routing.CameraRoutingSnapshot(NOW.isoformat(), (camera(score=80.),))
+        value = self.current()["observed_traffic"]
+        self.assertEqual(value["source"], "cctv_camera")
+        self.assertEqual(value["condition"], "CAMERA_ESTIMATE")
+        self.assertEqual(value["provider_point_count"], 0)
+        self.assertIsNone(value["provider_confidence"])
+
     def test_missing_provider_and_camera_evidence_is_null_never_clear(self):
         value = self.current()
         current = value["observed_traffic"]
         self.assertEqual(current["status"], "unavailable")
         self.assertEqual(current["source"], "unavailable")
+        self.assertEqual(current["condition"], "UNAVAILABLE")
+        self.assertEqual(current["condition_policy"], "unavailable")
         for key in ("congestion_index", "delay_mins", "observed_at", "fresh_until", "forecast_30m", "forecast_60m", "camera_fresh_until"):
             self.assertIsNone(current[key], key)
         self.assertIsNone(value["live_congestion_score"])
@@ -77,11 +121,20 @@ class CorridorObservationsTests(unittest.TestCase):
             provider(current_speed_kmh=True),
             provider(free_flow_speed_kmh=0.),
             provider(source="simulated"),
+            provider(confidence=math.nan),
+            provider(confidence=True),
+            provider(confidence=-.1),
             {"congestion_index": 0.},
         ):
             with self.subTest(item=item):
                 self.provider_mock.return_value = {"corridor-1": item}
-                self.assertIsNone(self.current()["observed_traffic"]["congestion_index"])
+                value = self.current()["observed_traffic"]
+                self.assertIsNone(value["congestion_index"])
+                self.assertEqual(value["condition"], "UNAVAILABLE")
+                self.assertEqual(value["condition_policy"], "unavailable")
+                self.assertIsNone(value["current_speed_kmh"])
+                self.assertIsNone(value["free_flow_speed_kmh"])
+                self.assertIsNone(value["provider_confidence"])
 
     def test_source_expiry_is_not_renewed_when_the_card_is_refreshed(self):
         captured = NOW - timedelta(seconds=100)
@@ -112,6 +165,11 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertIsNone(value["delay_mins"])
         self.assertIsNone(value["forecast_30m"])
         self.assertEqual(value["forecast_method"], "unavailable")
+        self.assertEqual(value["condition"], "CAMERA_ESTIMATE")
+        self.assertEqual(value["condition_policy"], "mapped_camera_proxy_v1")
+        self.assertEqual(value["camera_condition"], "LOCAL_CONGESTION_ESTIMATE")
+        self.assertIsNone(value["current_speed_kmh"])
+        self.assertIsNone(value["provider_confidence"])
         self.camera_mock.return_value = cctv_routing.CameraRoutingSnapshot(NOW.isoformat(), (camera(edge=(12, 11, 13)),))
         self.assertIsNone(self.current()["observed_traffic"]["congestion_index"])
 
@@ -152,6 +210,9 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertEqual(value["congestion_index"], 0.)
         self.assertEqual(value["camera_congestion_index"], 80.)
         self.assertEqual(value["camera_count"], 1)
+        self.assertEqual(value["condition"], "FREE_FLOW")
+        self.assertEqual(value["camera_condition"], "LOCAL_CONGESTION_ESTIMATE")
+        self.assertTrue(value["camera_warning"])
         self.assertEqual(value["fresh_until"], clock.iso(NOW + timedelta(seconds=180)))
         self.assertEqual(value["camera_fresh_until"], clock.iso(NOW + timedelta(seconds=30)))
         self.assertEqual(value["forecast_fresh_until"], clock.iso(NOW + timedelta(seconds=180)))
@@ -159,6 +220,28 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertEqual(refreshed["congestion_index"], 0.)
         self.assertEqual(refreshed["camera_count"], 0)
         self.assertIsNone(refreshed["camera_fresh_until"])
+        self.assertIsNone(refreshed["camera_condition"])
+        self.assertFalse(refreshed["camera_warning"])
+
+    def test_local_camera_warning_requires_fresh_directed_pressure_distinct_from_provider(self):
+        for score, edge, stamp, expected in (
+            (40., EDGE, NOW, True),
+            (39.9, EDGE, NOW, False),
+            (80., (12, 11, 13), NOW, False),
+            (80., EDGE, NOW - timedelta(seconds=31), False),
+        ):
+            with self.subTest(score=score, edge=edge, stamp=stamp):
+                self.provider_mock.return_value = {"corridor-1": provider(40.)}
+                self.camera_mock.return_value = cctv_routing.CameraRoutingSnapshot(
+                    NOW.isoformat(), (camera(score=score, edge=edge, stamp=stamp),),
+                )
+                value = self.current()["observed_traffic"]
+                self.assertEqual(value["congestion_index"], 20.)
+                self.assertEqual(value["condition"], "SLOWING")
+                self.assertEqual(value["camera_warning"], expected)
+        self.provider_mock.return_value = {"corridor-1": provider(30.)}
+        self.camera_mock.return_value = cctv_routing.CameraRoutingSnapshot(NOW.isoformat(), (camera(score=80.),))
+        self.assertFalse(self.current()["observed_traffic"]["camera_warning"])
 
     def test_api_read_never_uses_synthetic_model_or_writes_history(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {

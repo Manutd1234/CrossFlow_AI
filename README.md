@@ -83,6 +83,17 @@ hold-latest outlook is labelled **Latest-observation baseline**, and a point or
 camera view cannot establish a whole-corridor physical delay. These reads do
 not create historical records.
 
+Corridor conditions use the versioned `observed_speed_loss_bands_v1` policy:
+**Free flow** at an index up to 5, **Slowing** above 5 and below 40,
+**Heavy** from 40 to below 70, and **Critical** at 70 or above. These are
+engineering display bands, not independently calibrated traffic service levels.
+Only valid measured speeds with provider confidence of at least 0.5 qualify.
+Image-only evidence is labelled **Camera estimate**, including an empty view;
+it cannot establish measured free flow. A fresh mapped camera estimate at 40 or
+above produces a separate local-congestion warning when the provider point is
+below 40. Its own expiry withdraws the warning without extending the provider
+measurement. No rule forces a mix of conditions when all sampled points are clear.
+
 The simplified **History** workspace requests
 `/api/historical-congestion?modelled_only=true`. This mode selects only the
 identified synthetic scenario seed and excludes measured, unknown and ambiguous

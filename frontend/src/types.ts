@@ -59,6 +59,8 @@ export interface Envelope {
   model?: string;
 }
 
+export type CorridorObservedCondition = 'FREE_FLOW' | 'SLOWING' | 'HEAVY' | 'CRITICAL' | 'CAMERA_ESTIMATE' | 'UNAVAILABLE';
+
 export interface CorridorObservedTraffic {
   status: 'available' | 'unavailable';
   source: 'tomtom_live' | 'cctv_camera' | 'unavailable';
@@ -67,11 +69,18 @@ export interface CorridorObservedTraffic {
   observed_at: string | null;
   fresh_until: string | null;
   congestion_index: number | null;
+  condition: CorridorObservedCondition;
+  condition_policy: 'observed_speed_loss_bands_v1' | 'mapped_camera_proxy_v1' | 'unavailable';
+  current_speed_kmh: number | null;
+  free_flow_speed_kmh: number | null;
+  provider_confidence: number | null;
   delay_mins: number | null;
   provider_point_count: number;
   camera_count: number;
   camera_congestion_index: number | null;
   camera_fresh_until?: string | null;
+  camera_condition: 'LOCAL_CONGESTION_ESTIMATE' | 'LOW_PRESSURE_ESTIMATE' | null;
+  camera_warning: boolean;
   corridor_wide: false;
   forecast_30m: number | null;
   forecast_60m: number | null;

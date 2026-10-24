@@ -13,9 +13,13 @@ function freshObservation(score: number, at: number): CorridorObservedTraffic {
   const freshUntil = new Date(at + 60_000).toISOString();
   return {
     status: 'available', source: 'tomtom_live', scope: 'representative_provider_point',
+    condition: score <= 5 ? 'FREE_FLOW' : score < 40 ? 'SLOWING' : score < 70 ? 'HEAVY' : 'CRITICAL',
+    condition_policy: 'observed_speed_loss_bands_v1', provider_confidence: 0.9,
+    current_speed_kmh: 50 * (1 - score / 100), free_flow_speed_kmh: 50,
     checked_at: new Date(at).toISOString(), observed_at: observedAt, fresh_until: freshUntil,
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
-    camera_congestion_index: null, corridor_wide: false,
+    camera_congestion_index: null, camera_condition: null, camera_warning: false, camera_fresh_until: null,
+    corridor_wide: false,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
     forecast_observed_at: observedAt, forecast_fresh_until: freshUntil,
   };
@@ -65,6 +69,8 @@ describe('corridor telemetry API evidence boundary', () => {
     const now = Date.now();
     const observation: CorridorObservedTraffic = {
       ...freshObservation(0, now), status: 'unavailable', source: 'unavailable', scope: 'unavailable',
+      condition: 'UNAVAILABLE', condition_policy: 'unavailable',
+      provider_confidence: null, current_speed_kmh: null, free_flow_speed_kmh: null,
       observed_at: null, fresh_until: null, congestion_index: null, provider_point_count: 0,
       forecast_30m: null, forecast_60m: null, forecast_method: 'unavailable',
       forecast_observed_at: null, forecast_fresh_until: null,
@@ -93,7 +99,7 @@ describe('corridor telemetry API evidence boundary', () => {
     expect(result.source).toBe('live');
     expect(result.data[0].observed_traffic).toEqual(corridor.observed_traffic);
     expect(corridorLiveView(result.data[0], now)).toMatchObject({
-      available: true, status: 'SMOOTH', score: 0, delay: null,
+      available: true, status: 'FREE_FLOW', score: 0, delay: null,
       forecast30: 0, forecast60: 0, forecastMethod: 'persistence',
     });
   });

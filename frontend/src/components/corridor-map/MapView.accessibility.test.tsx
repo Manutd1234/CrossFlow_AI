@@ -74,9 +74,13 @@ function observedTraffic(score: number, at = Date.now(), secondsUntilExpiry = 60
   const freshUntil = new Date(at + secondsUntilExpiry * 1_000).toISOString();
   return {
     status: 'available', source: 'tomtom_live', scope: 'representative_provider_point',
+    condition: score <= 5 ? 'FREE_FLOW' : score < 40 ? 'SLOWING' : score < 70 ? 'HEAVY' : 'CRITICAL',
+    condition_policy: 'observed_speed_loss_bands_v1', provider_confidence: 0.9,
+    current_speed_kmh: 50 * (1 - score / 100), free_flow_speed_kmh: 50,
     checked_at: new Date(at).toISOString(), observed_at: observedAt, fresh_until: freshUntil,
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
-    camera_congestion_index: null, corridor_wide: false,
+    camera_congestion_index: null, camera_condition: null, camera_warning: false, camera_fresh_until: null,
+    corridor_wide: false,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
     forecast_observed_at: observedAt, forecast_fresh_until: freshUntil,
   };
@@ -406,7 +410,9 @@ describe('MapView traffic overlay controls', () => {
     // The unselected corridor is subdued and carries its own status colour, so
     // the map cannot disagree with the badge in the feed beneath it.
     const unselected = styles.find(style => style.weight === 4);
-    expect(unselected?.color).toBe(corridorColor('SMOOTH'));
+    // The provider reports speed loss even below the old HEAVY threshold:
+    // SLOWING is amber rather than the legacy SMOOTH/green label.
+    expect(unselected?.color).toBe(corridorColor('HEAVY'));
     expect(unselected?.opacity).toBe(0.75);
 
     // Clicking the feed frames the corridor the panel is describing.
@@ -502,6 +508,8 @@ describe('MapView traffic overlay controls', () => {
     expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/^0\s*\/ 100/);
     expect(container.querySelector('.corridor-feed-item')?.textContent).not.toContain('Idx: 72');
     expect(container.querySelector('.corridor-feed-item')?.getAttribute('aria-pressed')).toBe('true');
+    expect(container.querySelector('.corridor-feed-item')?.textContent).toMatch(/free.flow/i);
+    expect(container.querySelector('.corridor-feed-item')?.textContent).not.toContain('SMOOTH');
     expect(latestCorridorStyle()?.color).toBe(corridorColor('SMOOTH'));
     expect(latestCorridorTooltip()).toMatch(/index 0\b/i);
     expect(latestCorridorTooltip()).not.toMatch(/index 72\b/i);
@@ -566,5 +574,73 @@ describe('MapView traffic overlay controls', () => {
     expect(action?.getAttribute('aria-label')).toBe('View assigned routes');
     act(() => action?.click());
     expect(onSelectCorridor).toHaveBeenCalledWith('corridor-1');
+  });
+
+  it('shows moderate observed speed loss as slowing with amber road styling', () => {
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(20) };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel')?.textContent).toMatch(/slowing/i);
+    expect(container.querySelector('.corridor-feed-item')?.textContent).toMatch(/slowing/i);
+    expect(container.querySelector('.selected-corridor-panel')?.textContent).not.toContain('SMOOTH');
+    expect(latestCorridorStyle()?.color).toBe(corridorColor('HEAVY'));
+  });
+
+  it('withholds a low-confidence provider observation instead of showing legacy smooth flow', () => {
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: { ...observedTraffic(0), provider_confidence: 0.49 } };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toContain('Unavailable');
+    expect(container.querySelector('.corridor-feed-item')?.textContent).toContain('Unavailable');
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
+  });
+
+  it('keeps a zero camera proxy labelled as an estimate rather than free-flow evidence', () => {
+    const observed = observedTraffic(0);
+    const corridor: Corridor = {
+      ...TEST_CORRIDORS[0],
+      observed_traffic: {
+        ...observed, source: 'cctv_camera', scope: 'mapped_camera_road_views',
+        condition: 'CAMERA_ESTIMATE', condition_policy: 'mapped_camera_proxy_v1',
+        provider_confidence: null, current_speed_kmh: null, free_flow_speed_kmh: null,
+        provider_point_count: 0, camera_count: 1, camera_congestion_index: 0,
+        camera_condition: 'LOW_PRESSURE_ESTIMATE', camera_warning: false, camera_fresh_until: observed.fresh_until,
+        forecast_30m: null, forecast_60m: null, forecast_method: 'unavailable',
+        forecast_observed_at: null, forecast_fresh_until: null,
+      },
+    };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    const panel = container.querySelector('.selected-corridor-panel');
+    expect(panel?.textContent).toMatch(/camera.estimate/i);
+    expect(panel?.textContent).not.toMatch(/SMOOTH|FREE.FLOW/i);
+    expect(panel?.textContent).toContain('Forecast unavailable');
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
+  });
+
+  it('expires the local camera warning while retaining the fresh free-flow provider point', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-24T08:00:00Z'));
+    const corridor: Corridor = {
+      ...TEST_CORRIDORS[0],
+      observed_traffic: {
+        ...observedTraffic(0), camera_count: 1, camera_congestion_index: 75,
+        camera_condition: 'LOCAL_CONGESTION_ESTIMATE', camera_warning: true,
+        camera_fresh_until: new Date(Date.now() + 2_000).toISOString(),
+      },
+    };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel')?.textContent).toContain('Local congestion estimated');
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/^0\s*\/ 100/);
+
+    act(() => vi.advanceTimersByTime(3_000));
+
+    const panel = container.querySelector('.selected-corridor-panel');
+    expect(panel?.textContent).not.toContain('Local congestion estimated');
+    expect(panel?.textContent).toMatch(/free.flow/i);
+    expect(panel?.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/^0\s*\/ 100/);
+    expect(latestCorridorStyle()?.color).toBe(corridorColor('SMOOTH'));
+    expect(leafletTestState.map).toHaveBeenCalledTimes(1);
   });
 });

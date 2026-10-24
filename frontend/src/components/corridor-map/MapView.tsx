@@ -13,7 +13,7 @@ import {
   Radio,
   Sparkles,
 } from 'lucide-react';
-import { prettyArrow, shortCorridorName } from '../../utils/format';
+import { corridorColor, prettyArrow, shortCorridorName } from '../../utils/format';
 import { corridorLiveView, corridorObservationTime } from '../../utils/corridorTelemetry';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
@@ -272,10 +272,11 @@ export const MapView: React.FC<MapViewProps> = ({
       line.bindTooltip(linesTooltip([
         { text: prettyArrow(corridor.name), strong: true },
         {
-          text: traffic.available ? `Sampled index ${traffic.score} · ${traffic.status}` : 'Traffic unavailable',
+          text: traffic.available ? `Sampled index ${traffic.score} · ${traffic.status.replace(/_/g, ' ')}` : 'Traffic unavailable',
           color: traffic.color,
         },
         { text: traffic.coverage },
+        ...(traffic.cameraWarning ? [{ text: 'Local congestion estimated', color: corridorColor('HEAVY') }] : []),
         { text: corridor.distance_km === null ? 'Distance unavailable' : `${corridor.distance_km} km` },
       ]), { sticky: true });
     });
@@ -509,9 +510,10 @@ export const MapView: React.FC<MapViewProps> = ({
           {selectedCorridor && selectedTraffic ? (
           <section className="glass-panel selected-corridor-panel" aria-labelledby="selected-corridor-title">
             <div className="selected-corridor-panel__header">
-              <span className={`badge badge-${selectedTraffic.available ? selectedTraffic.status.toLowerCase() : 'neutral'}`}>
-                {selectedTraffic.available ? `${selectedTraffic.status} · SAMPLED` : 'TRAFFIC UNAVAILABLE'}
+              <span className={`badge badge-${selectedTraffic.tone}`}>
+                {selectedTraffic.available ? `${selectedTraffic.status.replace(/_/g, ' ')} · SAMPLED` : 'TRAFFIC UNAVAILABLE'}
               </span>
+              {selectedTraffic.cameraWarning && <span className="badge badge-heavy">Local congestion estimated</span>}
             </div>
 
             <h3 id="selected-corridor-title" className="selected-corridor-panel__title">
@@ -584,7 +586,7 @@ export const MapView: React.FC<MapViewProps> = ({
                 type="button"
                 className="ui-sand-interactive corridor-feed-item"
                 aria-pressed={activeSelectedId === c.id}
-                aria-label={`Select ${prettyArrow(c.name)}, ${traffic.available ? `sampled ${traffic.status.toLowerCase()} flow, congestion index ${traffic.score}` : 'traffic unavailable'}`}
+                aria-label={`Select ${prettyArrow(c.name)}, ${traffic.available ? `sampled ${traffic.status.replace(/_/g, ' ').toLowerCase()}, congestion index ${traffic.score}${traffic.cameraWarning ? ', local congestion estimated' : ''}` : 'traffic unavailable'}`}
                 onClick={() => {
                   focusSelectedTabOnOpenRef.current = true;
                   setSelectedId(c.id);
@@ -594,8 +596,9 @@ export const MapView: React.FC<MapViewProps> = ({
               >
                 <div className="corridor-feed-item__heading">
                   <strong>{shortCorridorName(c.name)}</strong>
-                  <span className={`badge badge-${traffic.available ? traffic.status.toLowerCase() : 'neutral'}`}>{traffic.status}</span>
+                  <span className={`badge badge-${traffic.tone}`}>{traffic.status.replace(/_/g, ' ')}</span>
                 </div>
+                {traffic.cameraWarning && <span className="badge badge-heavy">Local congestion estimated</span>}
                 <div className="corridor-feed-item__metrics">
                   <span>{c.distance_km === null ? 'Distance unavailable' : `Dist: ${c.distance_km} km`}</span>
                   <span>{traffic.delay === null ? 'Delay: Unavailable' : `Delay: +${traffic.delay}m`}</span>
