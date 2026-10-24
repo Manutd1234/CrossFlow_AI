@@ -24,7 +24,9 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.13.0
+          # Match the tested Node 24 LTS runtime. jsdom 30/undici require
+          # newer platform APIs than the old Node 22.13 runner provides.
+          node-version: 24.19.0
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - name: Install locked dependencies
@@ -75,7 +77,7 @@ jobs:
       - name: Set up Node.js for PostgreSQL policy tests
         uses: actions/setup-node@v4
         with:
-          node-version: 22.13.0
+          node-version: 24.19.0
           cache: npm
           cache-dependency-path: backend/auth/package-lock.json
       - name: Test authentication schema and row-level security

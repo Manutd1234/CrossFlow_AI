@@ -1,0 +1,130 @@
+{
+  "schema": "crossflow.production_real_dispatch_cctv.v1",
+  "checked_at": "2026-10-24T07:37:38.939656+00:00",
+  "route_code": "253J6NV",
+  "route_id": "6ca7b3a80618129b21edf547a43ef01999a21d6253ce365e9f7c8932cc08663e",
+  "production_commit": "1f5e198",
+  "driver_lookup_is_public": true,
+  "reads": {
+    "production": {
+      "url": "https://cross-flow-ai.vercel.app/api/routes/253J6NV",
+      "http_status": 200,
+      "route_storage": {
+        "source": "shared_supabase",
+        "shared": true,
+        "durable": true,
+        "durability": "persistent_shared_store",
+        "scope": "shared"
+      },
+      "canonical_body_sha256": "524df2fc95bab3ee7b34af38ea1237683e8b3407e75ce0ed5baf388c8409c733",
+      "raw_body_sha256": "ae5f3b7073e9a6d41865f947c26fe2f41c038ad499f3bf2e1785e3901e849d88"
+    },
+    "protected_deployment": {
+      "url": "https://cross-flow-p8kjj1ndq-ianwangsa2-8990s-projects.vercel.app/api/routes/253J6NV",
+      "deployment_id": "dpl_DNdvZwGVdjqcMB9EsGvbmQdhZMGo",
+      "access_method": "Existing authenticated Vercel CLI; protection unchanged; no browser-token export",
+      "http_status": 200,
+      "route_storage": {
+        "source": "local_sqlite",
+        "shared": false,
+        "durable": false,
+        "durability": "ephemeral_file",
+        "scope": "single_host"
+      },
+      "canonical_body_sha256": "265e50add3ef56513dda8939f634a37264d42a24d731b540b633f72de45d109b",
+      "raw_body_sha256": "fdd15efc4c14c31ca3a00c6d4d2a73962189e8e8e344ba3cc9f7347908f1bdfe"
+    }
+  },
+  "comparison": {
+    "different_fields": [
+      "route_storage"
+    ],
+    "same_route_content_except_lookup_storage": true,
+    "stable_content_sha256": "5239f7b9b8f0dfa5ae8826194f516fdf1ca0bceca87b02915b4c323c10c61e78",
+    "same_route_geometry": true,
+    "geometry_sha256": "6a4513a037c578d4023711629ebaad85dcc04c7e56c27d97ed2c2eb48bbb158c",
+    "geometry_points": 62,
+    "same_navigation": true,
+    "navigation_sha256": "be374eee90bd26878e803e6c5c56b1cc237429dc74e420ead7435e567b106a36",
+    "maneuver_count": 12,
+    "same_cctv_audit": true,
+    "cctv_audit_sha256": "5e1605fccedd91bd4a56ee00e7621d9d77960b388e3216bf5bd59faa5f0b284a"
+  },
+  "route_metrics": {
+    "planned_departure": "2026-10-24T14:35:00+07:00",
+    "estimated_travel_time_mins": 12.8,
+    "access_distance_km": 0.812,
+    "objective_cost_s": 854.766,
+    "api_rounded_cctv_search_penalty_mins": 0.0,
+    "road_distance_km": 9.64,
+    "access_distance_scope": "Off-road endpoint access-distance estimate; not the total road route length."
+  },
+  "cctv_audit": {
+    "scope": "explicitly_mapped_directed_camera_edges_only",
+    "effect": "bounded_search_cost_only",
+    "source": "cctv_camera",
+    "limitations": "Image congestion is an estimate over the camera's mapped view. The penalty expresses a routing preference, not measured delay; unobserved roads retain the existing planning model.",
+    "snapshot_at": "2026-10-24T07:34:11.995817+00:00",
+    "observations": [
+      {
+        "camera_id": "13",
+        "age_seconds": 6.636,
+        "observed_at": "2026-10-24T07:34:05.360144+00:00",
+        "road_segment_id": "osm-edge:5526812765:5526750754:618",
+        "timestamp_basis": "stream_observation",
+        "congestion_index": 0.0,
+        "on_selected_path": false,
+        "validation_status": "estimated"
+      },
+      {
+        "camera_id": "51",
+        "age_seconds": 5.56,
+        "observed_at": "2026-10-24T07:34:06.435493+00:00",
+        "road_segment_id": "osm-edge:856986734:5291330620:618",
+        "timestamp_basis": "stream_observation",
+        "congestion_index": 0.0,
+        "on_selected_path": false,
+        "validation_status": "estimated"
+      },
+      {
+        "camera_id": "48",
+        "age_seconds": 3.305,
+        "observed_at": "2026-10-24T07:34:08.691243+00:00",
+        "road_segment_id": "osm-edge:5698748891:702710855:714",
+        "timestamp_basis": "stream_observation",
+        "congestion_index": 6.479273523838429,
+        "on_selected_path": true,
+        "validation_status": "estimated"
+      }
+    ],
+    "maximum_penalty": "2 times existing edge free-flow seconds before objective weighting",
+    "applied_to_objective": true,
+    "measured_speed_or_eta": false
+  },
+  "cost_derivation": [
+    {
+      "camera_id": "48",
+      "road_segment_id": "osm-edge:5698748891:702710855:714",
+      "congestion_index": 6.479273523838429,
+      "edge_length_m": 59.6,
+      "existing_free_flow_s": 3.3009230769230773,
+      "vehicle_profile": "COMMUTER",
+      "congestion_sensitivity": 1.0,
+      "derived_search_penalty_s": 0.02771520069759656,
+      "formula": "min(2*free_flow_s, 2*free_flow_s*congestion_sensitivity*(index/100)^2)",
+      "graph_revision_matches": true,
+      "provenance": "Derived from the actual saved planning-time observation and same immutable OSM graph/profile; not a measured delay, API-reported raw seconds value, new feed observation, or counterfactual route test."
+    }
+  ],
+  "scope": {
+    "actual_evidence_only": true,
+    "synthetic_camera_posts": false,
+    "new_authentication_roles": false,
+    "counterfactual_path_change_proven": false,
+    "physical_eta_from_cctv": false,
+    "shared_storage_proven_by_primary_lookup": true,
+    "cross_alias_lookup_proven": true,
+    "independent_function_instance_forced": false,
+    "limitation": "The production alias read explicitly came from shared Supabase; the protected deployment alias can reuse an ephemeral local cache. Alias equality alone does not force distinct function instances. Tiny positive CCTV cost is formula-derived; the saved API minute value rounds to zero."
+  }
+}

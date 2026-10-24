@@ -302,7 +302,7 @@ See [Auth Backend Roadmap](docs/AUTH_BACKEND_ROADMAP.md).
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js v22.12+
+- Node.js 24 LTS, v24.15+ (CI uses v24.19.0)
 - Python 3.12+
 
 ### One command

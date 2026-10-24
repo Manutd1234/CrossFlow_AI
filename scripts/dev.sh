@@ -94,10 +94,10 @@ if [ "$RUN_BACKEND" = 1 ] || [ "$INSTALL_ONLY" = 1 ]; then
     die "Python 3.12+ is required (found $(python3 --version 2>&1))."
 fi
 if [ "$RUN_FRONTEND" = 1 ] || [ "$INSTALL_ONLY" = 1 ]; then
-  command -v node >/dev/null || die "node not found. Install Node.js 22.12+."
-  command -v npm >/dev/null || die "npm not found. Install Node.js 22.12+."
-  node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit((major === 22 && minor >= 12) || major > 22 ? 0 : 1)' || \
-    die "Node.js 22.12+ is required (found $(node --version))."
+  command -v node >/dev/null || die "node not found. Install Node.js 24 LTS (24.15+)."
+  command -v npm >/dev/null || die "npm not found. Install Node.js 24 LTS (24.15+)."
+  node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major === 24 && minor >= 15 ? 0 : 1)' || \
+    die "Node.js 24 LTS (24.15+) is required; CI uses 24.19.0 (found $(node --version))."
 fi
 
 # `[ -r /dev/tty ]` only checks permission bits on the device node — it stays
