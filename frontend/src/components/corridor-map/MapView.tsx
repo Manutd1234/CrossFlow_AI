@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { corridorColor, prettyArrow, shortCorridorName } from '../../utils/format';
 import { corridorLiveView, corridorObservationTime } from '../../utils/corridorTelemetry';
+import { modelledHotspotPressure } from '../../utils/hotspotPressure';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
 import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from '../../theme/mapTiles';
@@ -127,12 +128,8 @@ export const MapView: React.FC<MapViewProps> = ({
         lat: liveZone?.lat ?? reference.lat,
         lng: liveZone?.lng ?? reference.lng,
         radiusM: liveZone?.radius_m ?? reference.radiusM,
-        planningScore: liveZone?.selection_score === undefined
-          ? reference.planningScore
-          : Math.round(liveZone.selection_score * 10) / 10,
+        pressureScore: modelledHotspotPressure(liveZone),
         priority: liveZone?.watch_priority ?? reference.priority,
-        currentCongestionIndex: liveZone?.congestion_index,
-        currentLevel: liveZone?.level,
         selectionRank: liveZone?.selection_rank,
         referenceIndex,
       };
@@ -307,10 +304,7 @@ export const MapView: React.FC<MapViewProps> = ({
         { text: `${hotspotPriorityLabel(zone.priority)} · modelled watch area`, strong: true, color },
         { text: zone.name, strong: true },
         { text: zone.category, italic: true },
-        { text: `Watch score: ${zone.planningScore}` },
-        ...(zone.currentCongestionIndex === undefined ? [] : [{
-          text: `Modelled congestion: ${zone.currentCongestionIndex} · ${zone.currentLevel}`,
-        }]),
+        { text: zone.pressureScore === null ? 'Modelled pressure unavailable' : `Modelled congestion pressure: ${zone.pressureScore} / 100` },
         { text: 'Modelled planning area', italic: true },
       ];
       const circle = L.circle([zone.lat, zone.lng], {
@@ -480,9 +474,14 @@ export const MapView: React.FC<MapViewProps> = ({
                         <span className={`badge ${zone.priority === 'CRITICAL' ? 'badge-critical' : 'badge-heavy'} hotspot-card__priority`}>
                           {hotspotPriorityLabel(zone.priority)}
                         </span>
-                        <strong className="hotspot-card__score" aria-label={`Watch score ${zone.planningScore} out of 100`}>
-                          {zone.planningScore}<small> / 100</small>
-                        </strong>
+                        <span className="hotspot-card__pressure">
+                          <small className="hotspot-card__pressure-label">Modelled pressure</small>
+                          <strong className="hotspot-card__score" aria-label={zone.pressureScore === null
+                            ? 'Modelled congestion pressure unavailable'
+                            : `Modelled congestion pressure ${zone.pressureScore} out of 100`}>
+                            {zone.pressureScore === null ? 'Unavailable' : <>{zone.pressureScore}<small> / 100</small></>}
+                          </strong>
+                        </span>
                       </span>
                     </span>
                   </button>

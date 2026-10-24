@@ -34,6 +34,7 @@ from typing import Any, Dict, List, Mapping, Optional
 
 from services import clock, tls, traffic_upstream, provider_json, cctv_store
 from services.congestion_math import speed_ratio_congestion_score
+from services.observed_conditions import PRESSURE_MULTIPLIER, PRESSURE_POLICY, pressure_index
 
 _TOMTOM_FLOW_BASE = (
     "https://api.tomtom.com/traffic/services/4/flowSegmentData/relative0/10/json"
@@ -541,6 +542,10 @@ def _score_map_hotspot(
         "lng": cfg["lng"],
         "radius_m": cfg["radius_m"],
         "congestion_index": published_score,
+        "pressure_index": pressure_index(published_score),
+        "pressure_multiplier": PRESSURE_MULTIPLIER,
+        "pressure_policy": PRESSURE_POLICY,
+        "pressure_basis": "modelled_congestion_index",
         **_level_payload(published_score),
         "category": cfg["category"],
         "corridor_ids": list(signal_mix),

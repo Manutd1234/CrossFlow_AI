@@ -1084,6 +1084,11 @@ export interface CongestionZone {
   lng: number;
   radius_m: number;
   congestion_index: number;
+  /** Display pressure derived from modelled congestion, never watch ranking. */
+  pressure_index?: number | null;
+  pressure_multiplier?: number;
+  pressure_policy?: 'congestion_pressure_v1';
+  pressure_basis?: 'modelled_congestion_index';
   level: 'SMOOTH' | 'HEAVY' | 'SUPER_CONGESTED';
   color: string;
   avoid_recommended: boolean;

@@ -106,6 +106,15 @@ averages the capped pressure of each qualified provider point, rather than
 amplifying the mean or blending camera and provider units. This multiplier is an
 engineering sensitivity setting, not a calibration or accuracy improvement.
 Missing pressure fields cannot fall back to a raw or synthetic value in the UI.
+Hotspot cards label their value **Modelled pressure**, with
+`pressure_basis=modelled_congestion_index`: the multiplier applies to the
+backend's published modelled `congestion_index`, never `selection_score`.
+Selection scores include recurrence, network role, demand and evidence weights;
+they determine the watch order and tier, not measured traffic severity. For
+example, Panbil can have selection score 45.5 while its modelled congestion is
+10.2 and its displayed pressure is 25.5. Missing modelled-pressure metadata shows
+Unavailable, with no fallback to bundled priority scores. These area estimates
+remain distinct from live provider measurements and exact road-camera views.
 A failed workspace bundle displays an explicit reload action instead of a
 blank page; it does not automatically reload and discard an in-progress draft.
 

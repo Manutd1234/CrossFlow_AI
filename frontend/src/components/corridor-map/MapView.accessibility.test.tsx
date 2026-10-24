@@ -127,7 +127,7 @@ function latestCorridorTooltip(): string {
   return (leafletTestState.corridorLayers[1]?.bindTooltip.mock.calls.slice(-1)[0]?.[0] as HTMLElement | undefined)?.textContent ?? '';
 }
 
-function trafficSnapshot(selectionScore: number): Fetched<LiveTrafficData> {
+function trafficSnapshot(selectionScore: number, congestionIndex = 10.2, pressureIndex = 25.5): Fetched<LiveTrafficData> {
   return {
     source: 'simulated',
     fetchedAt: '2026-08-13T12:00:00+07:00',
@@ -140,7 +140,10 @@ function trafficSnapshot(selectionScore: number): Fetched<LiveTrafficData> {
         lat: 1.122424,
         lng: 104.019539,
         radius_m: 650,
-        congestion_index: 63.4,
+        congestion_index: congestionIndex,
+        pressure_index: pressureIndex,
+        pressure_policy: 'congestion_pressure_v1', pressure_multiplier: 2.5,
+        pressure_basis: 'modelled_congestion_index', observed: false,
         level: 'HEAVY',
         color: '#f59e0b',
         avoid_recommended: false,
@@ -425,23 +428,25 @@ describe('MapView traffic overlay controls', () => {
     expect(leafletTestState.mapInstance.fitBounds).toHaveBeenCalled();
   });
 
-  it('uses backend hotspot weights while retaining photo metadata', () => {
+  it('shows backend modelled pressure separately from selection weight while retaining photo metadata', () => {
     const onSelectCorridor = vi.fn();
     const container = renderIntoDom(
       <MapView
         corridors={TEST_CORRIDORS}
         routes={[]}
-        trafficSnapshot={trafficSnapshot(71.3)}
+        trafficSnapshot={trafficSnapshot(45.5)}
         onSelectCorridor={onSelectCorridor}
       />,
     );
     const card = container.querySelector('#hotspot-card-zone-simpang-jam');
 
     expect(card?.querySelector('.hotspot-card__score')?.getAttribute('aria-label'))
-      .toBe('Watch score 71.3 out of 100');
+      .toBe('Modelled congestion pressure 25.5 out of 100');
+    expect(card?.querySelector('.hotspot-card__score')?.textContent).toContain('25.5');
+    expect(card?.textContent).toContain('Modelled pressure');
     expect(card?.querySelector('.hotspot-card__priority')?.textContent).toContain('Watch priority');
     expect(container.textContent).not.toMatch(/weighted|backend-weighted|formula/i);
-    expect(card?.querySelector('.hotspot-card__score')?.textContent).not.toContain('63.4');
+    expect(card?.querySelector('.hotspot-card__score')?.textContent).not.toMatch(/45\.5|10\.2/);
     expect(card?.querySelector('img')?.getAttribute('src')).toContain('wikimedia.org');
     expect(container.querySelectorAll('.hotspot-card')).toHaveLength(30);
 
@@ -449,14 +454,52 @@ describe('MapView traffic overlay controls', () => {
       <MapView
         corridors={TEST_CORRIDORS}
         routes={[]}
-        trafficSnapshot={trafficSnapshot(77.8)}
+        trafficSnapshot={trafficSnapshot(77.8, 15, 37.5)}
         onSelectCorridor={onSelectCorridor}
       />,
     ));
 
     expect(container.querySelector('#hotspot-card-zone-simpang-jam .hotspot-card__score')?.getAttribute('aria-label'))
-      .toBe('Watch score 77.8 out of 100');
+      .toBe('Modelled congestion pressure 37.5 out of 100');
+    expect(container.querySelector('#hotspot-card-zone-simpang-jam .hotspot-card__score')?.textContent).not.toContain('77.8');
     expect(leafletTestState.map).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps backend selection rank and priority independent of displayed modelled pressure', () => {
+    const snapshot = trafficSnapshot(99, 32, 80);
+    snapshot.data.zones[0].selection_rank = 2;
+    snapshot.data.zones.push({
+      ...snapshot.data.zones[0], zone_id: 'zone-panbil', name: 'Simpang Panbil / Muka Kuning',
+      selection_rank: 1, selection_score: 45.5, watch_priority: 'CRITICAL',
+      congestion_index: 10.2, pressure_index: 25.5,
+    });
+    const container = renderIntoDom(<MapView corridors={TEST_CORRIDORS} routes={EMPTY_ROUTES}
+      trafficSnapshot={snapshot} onSelectCorridor={vi.fn()} />);
+    const cards = container.querySelectorAll('.hotspot-card');
+    expect(cards[0].id).toBe('hotspot-card-zone-panbil');
+    expect(cards[1].id).toBe('hotspot-card-zone-simpang-jam');
+    expect(cards[0].querySelector('.hotspot-card__rank')?.textContent).toBe('01');
+    expect(cards[0].querySelector('.hotspot-card__priority')?.textContent).toBe('High priority');
+    expect(cards[0].querySelector('.hotspot-card__score')?.textContent).toContain('25.5');
+    expect(cards[0].querySelector('.hotspot-card__score')?.textContent).not.toContain('45.5');
+    expect(cards[1].querySelector('.hotspot-card__score')?.textContent).toContain('80');
+  });
+
+  it.each([
+    ['missing pressure', { pressure_index: undefined }],
+    ['missing policy', { pressure_policy: undefined }],
+    ['wrong multiplier', { pressure_multiplier: 3 }],
+    ['selection score passed as pressure', { pressure_index: 45.5 }],
+  ])('keeps planning priority but withholds unsupported modelled pressure: %s', (_name, overrides) => {
+    const snapshot = trafficSnapshot(45.5);
+    Object.assign(snapshot.data.zones[0], overrides);
+    const container = renderIntoDom(<MapView corridors={TEST_CORRIDORS} routes={EMPTY_ROUTES}
+      trafficSnapshot={snapshot} onSelectCorridor={vi.fn()} />);
+    const card = container.querySelector('#hotspot-card-zone-simpang-jam');
+    expect(card?.querySelector('.hotspot-card__score')?.textContent).toBe('Unavailable');
+    expect(card?.querySelector('.hotspot-card__score')?.getAttribute('aria-label')).toBe('Modelled congestion pressure unavailable');
+    expect(card?.querySelector('.hotspot-card__priority')?.textContent).toBe('Watch priority');
+    expect(card?.querySelector('.hotspot-card__score')?.textContent).not.toMatch(/45\.5|25\.5/);
   });
 
   it('withdraws unsupported legacy numbers while keeping the route controls available', () => {
