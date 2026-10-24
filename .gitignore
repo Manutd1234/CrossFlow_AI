@@ -266,7 +266,7 @@ backend/data/research/**/training/
 backend/data/research/**/runtime_config/
 .logs/
 .vercel/
-.venv*/
+.venv*
 
 # Private account-setup evidence is local, not part of the published app.
 docs/verification/nus-*
