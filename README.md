@@ -1,6 +1,6 @@
 # ⚡ CrossFlow AI — Smart Mobility & Cross-Border Logistics Platform
 
-CCTV is processed in the backend: a local Matanya pilot runs **YOLO26s → congestion estimates → mapped-road route costs**, feeding the existing route planner and map. Camera panels and manual image uploads are absent from the frontend. One of 28 listed camera candidates is enabled as an explicitly unvalidated local estimate. See [backend CCTV integration and current coverage](docs/CCTV_CONGESTION.md).
+CCTV is processed in the backend: a persistent Matanya collector runs **YOLO26s → congestion estimates → mapped-road route costs**, feeding the existing route planner and map. Three reviewed road views among 28 registered cameras can influence their exact directed road edges when fresh and eligible. Camera panels and manual image uploads are absent from the frontend. Production uses shared Supabase storage for saved routes and the latest numeric CCTV observations. See the [verified deployment and current coverage](docs/CCTV_LIVE_ROUTING_RELEASE_2026-10-24.md) and [backend CCTV integration](docs/CCTV_CONGESTION.md).
 
 <!-- ML_TRAINING_2026_10_24 -->
 **Historical testing expanded:** a source-specific Batam survey test reduces one-hour MAE by 6.47%; a new 61-day Guangzhou speed benchmark evaluates the methodology separately. The local collector now saves prospective Batam forecasts before their targets arrive. See [actual metrics, confidence intervals and geography limits](docs/OBSERVED_ML_TRAINING.md).
@@ -54,7 +54,7 @@ successful request must be live.
 | Route-learning observation store | Admin-authorized, map-matched first-party traversals keyed to the exact committed OSM graph | Optional; empty until verified telemetry is ingested |
 | Landmark coordinates | Verified against OSM features | **Real** |
 | Point traffic observations | Fresh validated TomTom responses through a server-side key or the configured project relay | Commercial point observation; not Batam-government telemetry |
-| CCTV route-search inputs | Local public Matanya Simpang BI view, YOLO26s and an explicitly provisional exact-road mapping | One local estimate pilot; 28 listed candidates; independent camera validation pending; no inferred physical speed |
+| CCTV route-search inputs | Public Matanya views, pretrained YOLO26s and reviewed directed-edge bindings for cameras 13, 51 and 48 | Three mapped road views among 28 registered cameras; fresh eligible estimates affect route-search costs; independent camera validation pending; no inferred physical speed |
 | 30 Batam planning hotspots (20 critical / 10 heavy) | Representative locations, local-area profiles and synthetic Random Forest inputs | Modelled watch-list priorities; not official severity labels |
 | Observed congestion history | Bounded validated spatial observations from the configured local/shared store | Empty until measured records exist; synthetic seeds excluded by default |
 | Legacy engineering history preview | Rolling synthetic seed and modelled telemetry snapshots, available only with explicit `include_modelled=true` | Non-observed; excluded from the default dashboard history |
@@ -90,21 +90,23 @@ Collection starts now; it cannot reconstruct earlier observed conditions.
 Traffic dashboard reads do not create observation rows, and serverless/shared-store collection is
 disabled. Collector state is exposed in operations/history metadata.
 
-### Local architecture and trust boundaries
+### Runtime architecture and trust boundaries
 
 ```mermaid
 flowchart LR
   UI[React operator and driver workspaces] -->|password, OTP, Google PKCE| Auth[Supabase Auth]
   UI -->|access token| API[FastAPI: verify token and server-owned role]
   API --> Routes[OSM road routing and published ferry connections]
-  API --> ML[Random Forest: bounded forecasts and scenarios]
-  API --> DB[(Local SQLite: routes and measured traffic)]
+  API --> ML[Observed forecast engine: persistence baseline selected]
+  API --> Shared[(Production Supabase: saved routes and latest CCTV)]
+  API -. local runtime .-> DB[(Local SQLite: routes and observations)]
+  Feeds[Matanya HLS streams] --> CV[Persistent FFmpeg and YOLO26s worker]
+  CV -->|CCTV-only credential, numeric aggregates| API
   API --> Scrapers[Allowlisted official-source scrapers]
   Scrapers --> Reports[(Parsed reporting-period snapshots)]
   Traffic[Validated current TomTom points] --> Worker[Opt-in local collector]
   Worker -->|original timestamps, idempotent ingest| DB
   API -->|persisted dispatch code and geometry| UI
-  API -. configured and migrated only .-> Shared[(Optional shared Supabase adapters)]
 ```
 
 Passwords, OTPs and OAuth credentials stay with Supabase's authentication flow;
@@ -117,8 +119,10 @@ Provider integrations have bounded requests, validated payloads and explicit
 freshness. The traffic collector writes measured observations; the simulation
 engine does not. The official-report scraper retains only successfully parsed
 published records and marks a failed refresh stale. Local files survive a local
-restart but do not provide shared cloud storage. Hosted adapters and migrations
-need their own deployment verification before a production rollout.
+restart but do not provide shared cloud storage. Production saved-route and
+CCTV migrations and shared storage have been verified; other optional history
+adapters retain separate configuration and deployment requirements. See the
+[production verification report](docs/CCTV_LIVE_ROUTING_RELEASE_2026-10-24.md).
 
 **On the model:** this workspace enables `CROSSFLOW_REAL_TRAFFIC_TRAINING=1`.
 Its real-only runtime fits three 100-tree forests for 15/30/60 minutes using
@@ -270,18 +274,55 @@ See [Auth Backend Roadmap](docs/AUTH_BACKEND_ROADMAP.md).
 
 ---
 
-## 🏗️ Technology Stack
+## 🏗️ Tech Stack
 
-| Component | Technology | Purpose |
+| Part | Technology | What it does |
 |---|---|---|
-| **Frontend UI** | React 18, Vite, TypeScript | Modern responsive dashboard |
-| **Styling & Design** | Vanilla CSS Glassmorphism, Outfit & Manrope Fonts | Bright light-mode aesthetic, micro-animations |
-| **Interactive Maps** | Leaflet JS + OpenStreetMap Tiles | Singapore-road, ferry-corridor and Batam-road leg visualization |
-| **Road Graph & Routing** | Committed OpenStreetMap Batam graph + stateful A\*; OSRM/OSM for online access legs | Per-leg road geometry with source-labelled continuity fallback |
-| **Multimodal Composition** | FastAPI journey composer + source-dated operator timetable snapshot | Legal terminal-pair selection, transfer timing and per-leg provenance |
-| **Data Visualization** | Recharts | Congestion trend charts & emissions reduction bars |
-| **Backend & AI Engine** | Python 3.12 baseline, FastAPI, uvicorn | High-performance REST API |
-| **Machine Learning** | scikit-learn Random Forest, NumPy | Real-only 15/30/60-minute forests, validation-selected persistence, causal weather and chronological calibration; explicit legacy research mode |
+| **Frontend** | React 18 + TypeScript + Vite | Operator and driver interfaces |
+| **Styling** | Custom CSS + self-hosted Plus Jakarta Sans | Website appearance and shared typography |
+| **Maps** | Leaflet + OpenStreetMap | Roads, congestion overlays and journey maps |
+| **Charts** | Recharts | Analytics and historical trends |
+| **Backend** | Python 3.12 baseline + FastAPI + Uvicorn | APIs, analytics, routing and local background collectors |
+| **Data validation** | Pydantic | Validates incoming requests and typed data |
+| **Vehicle detection** | Ultralytics **YOLO26s** + PyTorch | Detects cars, motorcycles, buses, trucks and bicycles in the separate CV worker |
+| **Video processing** | HLS streams + FFmpeg + custom temporal tracking | Decodes live frames in memory and estimates movement and occupancy |
+| **Traffic forecasting** | NumPy + scikit-learn Random Forest candidates | Evaluates 15-, 30- and 60-minute predictions; the deployed observed-only forecast currently serves persistence |
+| **Route algorithm** | Custom stateful A\* over the Batam OSM graph | Selects routes using vehicle restrictions, route objectives and eligible traffic costs |
+| **Journey composition** | FastAPI journey composer + published ferry timetable snapshots | Combines road access, supported terminal pairs and published ferry connections |
+| **Storage** | Local SQLite + server-only Supabase adapters | SQLite supports local records; production Supabase stores shared saved routes and latest numeric CCTV observations; other history/evaluation adapters are optional |
+| **Authentication** | Supabase Auth | Google sign-in, email/password and one-time email sign-in codes |
+| **Hosting & delivery** | Vercel + GitHub main and GitHub Actions | Hosts the frontend and FastAPI APIs, deploys commits and runs regression checks; the continuous CV worker runs separately |
+
+### External integrations
+
+- **TomTom Traffic API:** measured point road speeds and free-flow speeds, with source timestamps and freshness checks.
+- **Matanya Batam:** public CCTV HLS streams processed by the backend collector; reviewed camera-to-road bindings feed route-search costs.
+- **Open-Meteo:** regional weather context for traffic analytics and forecasts.
+- **Nominatim:** place search and reverse geocoding.
+- **OSRM:** mapped Singapore road-access routes used in composed journeys, with explicit fallback labels on failure.
+- **Official ferry websites:** published timetable collection and verification through custom Python scrapers; schedules remain separate from unavailable live queues, berth occupancy and cargo status.
+
+### Integration layer
+
+The application uses **REST/JSON APIs**, browser `fetch`, the **Supabase
+JavaScript SDK**, Google OAuth with **PKCE**, and authenticated bearer tokens.
+Supabase handles passwords and email codes directly; email-code sign-in is
+not restricted to Gmail and does not use the Gmail API. Vite proxies local
+frontend API requests to FastAPI. In production, Vercel routes `/api/*` to
+FastAPI. The separate CV collector submits numeric aggregates over HTTPS with
+a dedicated CCTV-only credential; raw camera frames stay out of the cloud
+ingestion payload and frontend.
+
+### Current deployment and model limits
+
+- **Vehicle detector:** the selected model is pretrained YOLO26s. Independent Batam vehicle-counting validation remains pending; no field-accuracy percentage is claimed.
+- **Forecasting:** production serves the **persistence baseline**, carrying forward the latest fresh measured congestion. Random Forest candidates have not passed the release checks for promotion. Cloud requests do not retrain the model or fabricate historical observations.
+- **CCTV routing:** cameras **13** (Jalan Engku Putri eastbound), **51** (Jalan Engku Putri westbound) and **48** (Jalan Jenderal Ahmad Yani toward Batu Aji) have reviewed directed-road mappings. Fresh eligible estimates already affect route-search costs. They are provisional image-based congestion estimates, without calibrated physical speed or measured-delay claims. Expired or revoked evidence is excluded from new route searches; an issued driver dispatch retains its saved route.
+- **Coverage and uptime:** the 24 October 2026 audit found five advancing streams and 23 ended streams among 28 registered cameras. Camera 1 is a disabled civic-plaza view; camera 19 remains aggregate-only while its exact road binding is unresolved. Eligibility is recomputed from current freshness and quality. The continuous collector currently runs on this computer; sleep, shutdown or network loss stops updates, after which stale evidence withdraws automatically.
+- **Shared history:** saved routes and latest CCTV evidence are deployed to shared Supabase storage. Shared historical traffic archiving and continuous prospective cloud evaluation require separate infrastructure; Vercel does not host a permanent YOLO process.
+
+Deployment evidence and the operator-to-driver dispatch check are documented in
+the [live CCTV routing release report](docs/CCTV_LIVE_ROUTING_RELEASE_2026-10-24.md).
 
 ---
 
