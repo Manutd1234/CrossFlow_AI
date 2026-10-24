@@ -16,6 +16,7 @@ import {
 import { corridorColor, prettyArrow, shortCorridorName } from '../../utils/format';
 import { corridorLiveView, corridorObservationTime } from '../../utils/corridorTelemetry';
 import { modelledHotspotPressure } from '../../utils/hotspotPressure';
+import { pressureBandView } from '../../utils/pressureBands';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
 import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from '../../theme/mapTiles';
@@ -49,12 +50,6 @@ function linesTooltip(lines: Array<{ text: string; strong?: boolean; italic?: bo
     container.append(element);
   });
   return container;
-}
-
-function hotspotPriorityColor(priority: HotspotWatchPriority): string {
-  return priority === 'CRITICAL'
-    ? MAP_PALETTE.traffic.critical
-    : MAP_PALETTE.traffic.heavy;
 }
 
 function hotspotPriorityLabel(priority: HotspotWatchPriority): string {
@@ -121,6 +116,8 @@ export const MapView: React.FC<MapViewProps> = ({
   const hotspots = useMemo(() => BATAM_HOTSPOT_REFERENCES
     .map((reference, referenceIndex) => {
       const liveZone = liveHotspotById.get(reference.id);
+      const pressureScore = modelledHotspotPressure(liveZone);
+      const pressureBand = pressureScore === null ? null : pressureBandView(liveZone);
       return {
         ...reference,
         name: liveZone?.name ?? reference.name,
@@ -128,7 +125,8 @@ export const MapView: React.FC<MapViewProps> = ({
         lat: liveZone?.lat ?? reference.lat,
         lng: liveZone?.lng ?? reference.lng,
         radiusM: liveZone?.radius_m ?? reference.radiusM,
-        pressureScore: modelledHotspotPressure(liveZone),
+        pressureScore,
+        pressureBand,
         priority: liveZone?.watch_priority ?? reference.priority,
         selectionRank: liveZone?.selection_rank,
         referenceIndex,
@@ -277,7 +275,7 @@ export const MapView: React.FC<MapViewProps> = ({
           color: traffic.color,
         },
         { text: traffic.coverage },
-        ...(traffic.cameraWarning ? [{ text: 'Local congestion estimated', color: corridorColor('HEAVY') }] : []),
+        ...(traffic.cameraWarning ? [{ text: 'Local congestion estimated', color: corridorColor(traffic.cameraWarningTone === 'critical' ? 'CRITICAL' : 'HEAVY') }] : []),
         { text: corridor.distance_km === null ? 'Distance unavailable' : `${corridor.distance_km} km` },
       ]), { sticky: true });
     });
@@ -298,13 +296,13 @@ export const MapView: React.FC<MapViewProps> = ({
     if (!showTrafficOverlays) return;
 
     hotspots.forEach(zone => {
-      const isCritical = zone.priority === 'CRITICAL';
-      const color = hotspotPriorityColor(zone.priority);
+      const isCritical = zone.pressureBand?.condition === 'CRITICAL';
+      const color = zone.pressureBand?.color ?? corridorColor('UNAVAILABLE');
       const tooltipLines = [
-        { text: `${hotspotPriorityLabel(zone.priority)} · modelled watch area`, strong: true, color },
+        { text: `${hotspotPriorityLabel(zone.priority)} · modelled watch area`, strong: true },
         { text: zone.name, strong: true },
         { text: zone.category, italic: true },
-        { text: zone.pressureScore === null ? 'Modelled pressure unavailable' : `Modelled congestion pressure: ${zone.pressureScore} / 100` },
+        { text: zone.pressureScore === null ? 'Modelled pressure unavailable' : `Modelled congestion pressure: ${zone.pressureScore} / 100`, color },
         { text: 'Modelled planning area', italic: true },
       ];
       const circle = L.circle([zone.lat, zone.lng], {
@@ -379,8 +377,10 @@ export const MapView: React.FC<MapViewProps> = ({
             Batam Mobility Watch • Hotspots
           </div>
           <div className="map-radar-card__legend" aria-label="Map radar legend">
-            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-critical" /> High priority</span>
-            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-heavy" /> Watch priority</span>
+            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot" style={{ background: MAP_PALETTE.traffic.smooth }} /> Pressure &lt;70</span>
+            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-heavy" /> Amber 70–79</span>
+            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot is-critical" /> Critical 80+</span>
+            <span className="map-radar-card__legend-item"><span className="map-radar-card__legend-dot" style={{ background: corridorColor('UNAVAILABLE') }} /> Unavailable</span>
             <span className="map-radar-card__legend-item"><MapPin aria-hidden="true" size={ICON_SIZE.small} /> {hotspots.length} areas</span>
           </div>
         </div>
@@ -421,8 +421,8 @@ export const MapView: React.FC<MapViewProps> = ({
                 </p>
               </div>
               <div className="hotspot-watch__counts" aria-label={`${criticalHotspots} high priority and ${heavyHotspots} watch priority modelled planning areas`}>
-                <span className="badge badge-critical">{criticalHotspots} high priority</span>
-                <span className="badge badge-heavy">{heavyHotspots} watch priority</span>
+                <span className="badge badge-neutral">{criticalHotspots} high priority</span>
+                <span className="badge badge-neutral">{heavyHotspots} watch priority</span>
               </div>
             </div>
 
@@ -471,14 +471,15 @@ export const MapView: React.FC<MapViewProps> = ({
                       <span className="hotspot-card__category">{zone.category}</span>
                       <strong className="hotspot-card__name">{zone.name}</strong>
                       <span className="hotspot-card__meta">
-                        <span className={`badge ${zone.priority === 'CRITICAL' ? 'badge-critical' : 'badge-heavy'} hotspot-card__priority`}>
+                        <span className="badge badge-neutral hotspot-card__priority">
                           {hotspotPriorityLabel(zone.priority)}
                         </span>
                         <span className="hotspot-card__pressure">
                           <small className="hotspot-card__pressure-label">Modelled pressure</small>
                           <strong className="hotspot-card__score" aria-label={zone.pressureScore === null
                             ? 'Modelled congestion pressure unavailable'
-                            : `Modelled congestion pressure ${zone.pressureScore} out of 100`}>
+                            : `Modelled congestion pressure ${zone.pressureScore} out of 100`}
+                            style={{ color: zone.pressureBand?.color ?? corridorColor('UNAVAILABLE') }}>
                             {zone.pressureScore === null ? 'Unavailable' : <>{zone.pressureScore}<small> / 100</small></>}
                           </strong>
                         </span>
@@ -514,9 +515,9 @@ export const MapView: React.FC<MapViewProps> = ({
           <section className="glass-panel selected-corridor-panel" aria-labelledby="selected-corridor-title">
             <div className="selected-corridor-panel__header">
               <span className={`badge badge-${selectedTraffic.tone}`}>
-                {selectedTraffic.available ? `${selectedTraffic.status.replace(/_/g, ' ')} · SAMPLED` : 'TRAFFIC UNAVAILABLE'}
+                {selectedTraffic.pressureScore !== null ? `${selectedTraffic.status.replace(/_/g, ' ')} · SAMPLED` : 'PRESSURE UNAVAILABLE'}
               </span>
-              {selectedTraffic.cameraWarning && <span className="badge badge-heavy">Local congestion estimated</span>}
+              {selectedTraffic.cameraWarning && <span className={`badge badge-${selectedTraffic.cameraWarningTone}`}>Local congestion estimated</span>}
             </div>
 
             <h3 id="selected-corridor-title" className="selected-corridor-panel__title">
@@ -601,7 +602,7 @@ export const MapView: React.FC<MapViewProps> = ({
                   <strong>{shortCorridorName(c.name)}</strong>
                   <span className={`badge badge-${traffic.tone}`}>{traffic.status.replace(/_/g, ' ')}</span>
                 </div>
-                {traffic.cameraWarning && <span className="badge badge-heavy">Local congestion estimated</span>}
+                {traffic.cameraWarning && <span className={`badge badge-${traffic.cameraWarningTone}`}>Local congestion estimated</span>}
                 <div className="corridor-feed-item__metrics">
                   <span>{c.distance_km === null ? 'Distance unavailable' : `Dist: ${c.distance_km} km`}</span>
                   <span>{traffic.delay === null ? 'Delay: Unavailable' : `Delay: +${traffic.delay}m`}</span>

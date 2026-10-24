@@ -96,8 +96,8 @@ class CurrentOperationsAnalyticsTests(unittest.TestCase):
         self.assertFalse(result["analytics_metadata"]["traffic_observed"])
 
     def test_live_bottleneck_critical_boundary_is_inclusive_and_matches_condition_policy(self):
-        for speed, score, count, status in (
-            (30.05, 39.9, 0, "MODERATE"), (30., 40., 1, "CONGESTED"),
+        for speed, score, pressure, count, status in (
+            (34.05, 31.9, 79.8, 0, "MODERATE"), (34., 32., 80., 1, "CONGESTED"),
         ):
             with self.subTest(score=score):
                 result = self.summary({"corridor-1": self.segment(speed=speed)})
@@ -105,15 +105,20 @@ class CurrentOperationsAnalyticsTests(unittest.TestCase):
                 self.assertEqual(result["active_bottlenecks"], count)
                 self.assertEqual(len(result["bottleneck_corridors"]), count)
                 self.assertEqual(result["overall_network_status"], status)
-                self.assertEqual(result["bottleneck_threshold"], 40.)
+                self.assertEqual(result["average_congestion_pressure"], pressure)
+                self.assertEqual(result["bottleneck_threshold"], 80.)
+                self.assertEqual(result["bottleneck_metric"], "pressure_index")
                 self.assertEqual(result["bottleneck_comparison"], "greater_than_or_equal")
+                if count:
+                    self.assertEqual(result["bottleneck_corridors"][0]["pressure_index"], pressure)
+                    self.assertEqual(result["alerts"][0]["severity"], "CRITICAL")
 
     def test_average_network_status_uses_the_same_live_warning_bands(self):
         for speed, score, status in (
-            (50., 0., "OPTIMAL"), (47.5, 5., "OPTIMAL"),
-            (47.45, 5.1, "SLOWING"), (40.05, 19.9, "SLOWING"),
-            (40., 20., "MODERATE"), (30.05, 39.9, "MODERATE"),
-            (30., 40., "CONGESTED"),
+            (50., 0., "OPTIMAL"), (49., 2., "OPTIMAL"),
+            (48.95, 2.1, "SLOWING"), (36.05, 27.9, "SLOWING"),
+            (36., 28., "MODERATE"), (34.05, 31.9, "MODERATE"),
+            (34., 32., "CONGESTED"),
         ):
             with self.subTest(score=score):
                 result = self.summary({"corridor-1": self.segment(speed=speed)})
@@ -129,6 +134,8 @@ class CurrentOperationsAnalyticsTests(unittest.TestCase):
         self.assertEqual(result["average_congestion_pressure"], 50.)
         self.assertEqual(result["pressure_policy"], "congestion_pressure_v1")
         self.assertEqual(result["pressure_multiplier"], 2.5)
+        self.assertEqual(result["pressure_condition"], "SLOWING")
+        self.assertEqual(result["pressure_condition_policy"], "congestion_pressure_bands_v1")
         self.assertEqual([row["score"] for row in result["current_traffic_samples"]], [95., 0.])
         self.assertEqual([row["pressure_index"] for row in result["current_traffic_samples"]], [100., 0.])
         self.assertTrue(all(row["pressure_policy"] == "congestion_pressure_v1" and row["pressure_multiplier"] == 2.5
@@ -141,6 +148,20 @@ class CurrentOperationsAnalyticsTests(unittest.TestCase):
                 self.assertEqual(result["current_traffic_samples"], [])
                 self.assertIsNone(result["average_congestion_index"])
                 self.assertIsNone(result["average_congestion_pressure"])
+                self.assertEqual(result["pressure_condition"], "UNAVAILABLE")
+
+    def test_sample_pressure_conditions_use_their_published_pressure_not_raw_warning_condition(self):
+        for speed, raw, pressure, condition in (
+            (44.9, 10.2, 25.5, "SLOWING"), (36., 28., 70., "HEAVY"), (34., 32., 80., "CRITICAL"),
+        ):
+            with self.subTest(pressure=pressure):
+                result = self.summary({"corridor-1": self.segment(speed=speed)})
+                sample = result["current_traffic_samples"][0]
+                self.assertEqual(sample["score"], raw)
+                self.assertEqual(sample["pressure_index"], pressure)
+                self.assertEqual(sample["pressure_condition"], condition)
+                self.assertEqual(sample["pressure_condition_policy"], "congestion_pressure_bands_v1")
+                self.assertEqual(result["pressure_condition"], condition)
 
     def test_current_source_expiry_is_not_renewed_by_refreshing_analytics(self):
         original = self.segment(speed=42.5, age=179)

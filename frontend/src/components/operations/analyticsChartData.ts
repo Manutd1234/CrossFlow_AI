@@ -1,6 +1,7 @@
 import type { AnalyticsSimulation } from '../../services/api';
 import type { OperationsSummary } from '../../types';
-import { shortCorridorName } from '../../utils/format';
+import { corridorColor, shortCorridorName } from '../../utils/format';
+import { pressureBandView } from '../../utils/pressureBands';
 
 export type TrafficPoint = NonNullable<OperationsSummary['current_traffic_samples']>[number];
 export const trafficBands = [
@@ -10,10 +11,10 @@ export const trafficBands = [
 ] as const;
 export const trafficBand = (score: number) => score >= 70 ? 2 : score >= 40 ? 1 : 0;
 const measuredConditions = [
-  { condition: 'FREE_FLOW', name: 'Free flow', color: 'var(--accent-emerald)' },
-  { condition: 'SLOWING', name: 'Slowing', color: 'var(--accent-amber)' },
-  { condition: 'HEAVY', name: 'Heavy', color: 'var(--accent-amber)' },
-  { condition: 'CRITICAL', name: 'Critical', color: 'var(--accent-rose)' },
+  { condition: 'FREE_FLOW', name: 'Free flow', color: corridorColor('SMOOTH') },
+  { condition: 'SLOWING', name: 'Slowing', color: corridorColor('SMOOTH') },
+  { condition: 'HEAVY', name: 'Heavy', color: corridorColor('HEAVY') },
+  { condition: 'CRITICAL', name: 'Critical', color: corridorColor('CRITICAL') },
   { condition: 'UNAVAILABLE', name: 'Unavailable', color: 'var(--text-muted)' },
 ] as const;
 
@@ -25,14 +26,13 @@ function qualifiedMeasuredPoint(point: TrafficPoint): boolean {
     || point.free_flow_speed_kmh <= 0 || point.free_flow_speed_kmh > 250
     || point.current_speed_kmh / point.free_flow_speed_kmh > 1.5
     || typeof confidence !== 'number' || !Number.isFinite(confidence) || confidence < 0.5 || confidence > 1
-    || point.condition_policy !== 'observed_speed_loss_bands_v2') return false;
-  // Validate the declared rounded index against the serving contract; never
-  // infer a condition when the backend's declaration is absent or incoherent.
+    || point.condition_policy !== 'observed_speed_loss_bands_v2'
+    || !['FREE_FLOW', 'SLOWING', 'HEAVY', 'CRITICAL'].includes(point.condition ?? '')) return false;
+  // Validate the raw measurement without using its legacy warning thresholds
+  // to classify displayed pressure. Camera proxies cannot qualify as speeds.
   if (Math.abs(point.score - 100 * (1 - Math.min(1, Math.max(0.05,
     point.current_speed_kmh / point.free_flow_speed_kmh)))) > 0.051) return false;
-  const expected = point.score <= 5 ? 'FREE_FLOW' : point.score < 20 ? 'SLOWING'
-    : point.score < 40 ? 'HEAVY' : 'CRITICAL';
-  return point.condition === expected;
+  return true;
 }
 
 export const forecastClock = (timestamp: string) => new Intl.DateTimeFormat('en-GB', {
@@ -40,15 +40,22 @@ export const forecastClock = (timestamp: string) => new Intl.DateTimeFormat('en-
 }).format(new Date(timestamp));
 
 export function measuredChartData(samples: TrafficPoint[]) {
-  const points = samples.map(point => ({ point, qualified: qualifiedMeasuredPoint(point) }));
+  const points = samples.map(point => {
+    const qualified = qualifiedMeasuredPoint(point);
+    const pressure = qualified && point.pressure_policy === 'congestion_pressure_v1'
+      && point.pressure_multiplier === 2.5 && typeof point.pressure_index === 'number'
+      && Math.abs(point.pressure_index - Math.min(100, point.score * 2.5)) <= 0.051
+      ? pressureBandView(point) : null;
+    return { point, qualified, pressure };
+  });
   const speeds = points.filter(({ qualified }) => qualified).map(({ point }) => ({
       id: point.id, name: shortCorridorName(point.name), measured: point.current_speed_kmh,
       freeFlow: point.free_flow_speed_kmh, score: point.score,
     }));
   const conditions = measuredConditions.map(band => ({ ...band,
-    count: points.filter(({ point, qualified }) => (qualified ? point.condition : 'UNAVAILABLE') === band.condition).length,
+    count: points.filter(({ pressure }) => (pressure?.condition ?? 'UNAVAILABLE') === band.condition).length,
   }));
-  return { speeds, conditions, pointCount: points.length };
+  return { speeds, conditions, pointCount: points.length, classifiedCount: points.filter(point => point.pressure !== null).length };
 }
 
 export function corridorForecastData(simulation: AnalyticsSimulation) {

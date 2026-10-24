@@ -13,6 +13,7 @@ import { AIModelPanel } from './AIModelPanel';
 import { CongestionHeatmap } from './CongestionHeatmap';
 import { OperationsAnalytics } from './OperationsAnalytics';
 import { observedReport } from '../../test/fixtures/observedBacktest';
+import { corridorColor } from '../../utils/format';
 
 vi.mock('../../services/api', async () => {
   const actual = await vi.importActual<typeof import('../../services/api')>('../../services/api');
@@ -109,6 +110,7 @@ describe('operations provenance presentation', () => {
     average_congestion_pressure: 50,
     pressure_policy: 'congestion_pressure_v1',
     pressure_multiplier: 2.5,
+    pressure_condition: 'SLOWING', pressure_condition_policy: 'congestion_pressure_bands_v1',
     analytics_metadata: {
       generated_at: referenceTime.toISOString(), as_of: referenceTime.toISOString(),
       input_snapshot_at: referenceTime.toISOString(), snapshot_age_seconds: 0,
@@ -148,6 +150,9 @@ describe('operations provenance presentation', () => {
     { name: 'nonfinite pressure', changes: { average_congestion_pressure: Number.NaN } },
     { name: 'negative pressure', changes: { average_congestion_pressure: -1 } },
     { name: 'over-range pressure', changes: { average_congestion_pressure: 101 } },
+    { name: 'missing pressure warning', changes: { pressure_condition: undefined } },
+    { name: 'missing pressure warning policy', changes: { pressure_condition_policy: undefined } },
+    { name: 'incoherent pressure warning', changes: { pressure_condition: 'CRITICAL' } },
   ])('withholds $name instead of multiplying or falling back to the raw index', ({ changes }) => {
     const operations = { ...observedOperations(), ...changes } as OperationsSummary;
     const container = renderIntoDom(<OperationsAnalytics operations={operations}
@@ -158,11 +163,28 @@ describe('operations provenance presentation', () => {
   });
 
   it.each([0, 100])('retains legitimate backend pressure %s within the published bounds', pressure => {
-    const operations = { ...observedOperations(), average_congestion_pressure: pressure };
+    const operations: OperationsSummary = { ...observedOperations(), average_congestion_pressure: pressure,
+      pressure_condition: pressure === 0 ? 'FREE_FLOW' : 'CRITICAL' };
     const container = renderIntoDom(<OperationsAnalytics operations={operations}
       operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
       corridors={INITIAL_CORRIDORS} />);
     expect(container.querySelector('.operations-metric-card__value')?.textContent).toBe(`${pressure} / 100`);
+  });
+
+  it.each([
+    { value: 69.9, condition: 'SLOWING', color: corridorColor('SMOOTH') },
+    { value: 70, condition: 'HEAVY', color: corridorColor('HEAVY') },
+    { value: 79.9, condition: 'HEAVY', color: corridorColor('HEAVY') },
+    { value: 80, condition: 'CRITICAL', color: corridorColor('CRITICAL') },
+  ] as const)('colors headline pressure $value on its own declared warning scale', ({ value, condition, color }) => {
+    const operations = { ...observedOperations(), average_congestion_pressure: value, pressure_condition: condition };
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    const headline = container.querySelector<HTMLElement>('.operations-metric-card__value');
+    const expected = document.createElement('span'); expected.style.color = color;
+    expect(headline?.style.color).toBe(expected.style.color);
+    expect(headline?.textContent).toBe(`${value} / 100`);
   });
 
   it.each(['offline', 'unobserved'] as const)('withholds pressure for an %s snapshot', state => {

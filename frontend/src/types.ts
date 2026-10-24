@@ -60,8 +60,13 @@ export interface Envelope {
 }
 
 export type CorridorObservedCondition = 'FREE_FLOW' | 'SLOWING' | 'HEAVY' | 'CRITICAL' | 'CAMERA_ESTIMATE' | 'UNAVAILABLE';
+export type PressureCondition = Exclude<CorridorObservedCondition, 'CAMERA_ESTIMATE'>;
+export interface PressureBandMetadata {
+  pressure_condition?: PressureCondition;
+  pressure_condition_policy?: 'congestion_pressure_bands_v1';
+}
 
-export interface CorridorObservedTraffic {
+export interface CorridorObservedTraffic extends PressureBandMetadata {
   status: 'available' | 'unavailable';
   source: 'tomtom_live' | 'cctv_camera' | 'unavailable';
   scope: 'representative_provider_point' | 'mapped_camera_road_views' | 'unavailable';
@@ -86,6 +91,9 @@ export interface CorridorObservedTraffic {
   camera_fresh_until?: string | null;
   camera_condition: 'LOCAL_CONGESTION_ESTIMATE' | 'LOW_PRESSURE_ESTIMATE' | null;
   camera_warning: boolean;
+  camera_pressure_index?: number | null;
+  camera_pressure_condition?: PressureCondition;
+  camera_pressure_condition_policy?: 'congestion_pressure_bands_v1';
   corridor_wide: false;
   forecast_30m: number | null;
   forecast_60m: number | null;
@@ -802,7 +810,7 @@ export interface OperationsTrafficEstimates {
   independently_validated: boolean;
 }
 
-export interface OperationsSummary extends Envelope {
+export interface OperationsSummary extends Envelope, PressureBandMetadata {
   road_network_coverage?: OperationsRoadCoverage;
   camera_traffic_summary?: OperationsTrafficEstimates;
   current_traffic_samples?: Array<{
@@ -813,6 +821,8 @@ export interface OperationsSummary extends Envelope {
     pressure_index?: number | null;
     pressure_multiplier?: number;
     pressure_policy?: 'congestion_pressure_v1';
+    pressure_condition?: PressureCondition;
+    pressure_condition_policy?: 'congestion_pressure_bands_v1';
   }>;
   average_congestion_pressure?: number | null;
   pressure_multiplier?: number;
@@ -822,6 +832,7 @@ export interface OperationsSummary extends Envelope {
   active_bottlenecks: number | null;
   bottleneck_corridors?: { id: string; name: string; score: number }[];
   bottleneck_threshold?: number;
+  bottleneck_metric?: 'pressure_index';
   /** Compatibility key: a modelled scenario opportunity, never a measured reduction. */
   total_co2_reduced_today_kg: number | null;
   modeled_avoidable_emissions_opportunity_kg_today?: number;
@@ -1077,7 +1088,7 @@ export interface EmissionsPressureModel {
   limitations: string;
 }
 
-export interface CongestionZone {
+export interface CongestionZone extends PressureBandMetadata {
   zone_id: string;
   name: string;
   lat: number;

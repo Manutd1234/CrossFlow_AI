@@ -19,7 +19,12 @@ function observedTraffic(overrides: Record<string, unknown> = {}): CorridorObser
     checked_at: iso(0), observed_at: iso(-5_000), fresh_until: iso(60_000),
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
     pressure_index: pressure, pressure_multiplier: 2.5, pressure_policy: 'congestion_pressure_v1',
+    pressure_condition: pressure <= 5 ? 'FREE_FLOW' : pressure < 70 ? 'SLOWING' : pressure < 80 ? 'HEAVY' : 'CRITICAL',
+    pressure_condition_policy: 'congestion_pressure_bands_v1',
     camera_congestion_index: camera ? score : null, corridor_wide: false,
+    camera_pressure_index: camera ? pressure : null,
+    camera_pressure_condition: camera ? pressure <= 5 ? 'FREE_FLOW' : pressure < 70 ? 'SLOWING' : pressure < 80 ? 'HEAVY' : 'CRITICAL' : null,
+    camera_pressure_condition_policy: 'congestion_pressure_bands_v1',
     camera_condition: camera ? score >= 40 ? 'LOCAL_CONGESTION_ESTIMATE' : 'LOW_PRESSURE_ESTIMATE' : null,
     camera_warning: false, camera_fresh_until: camera ? iso(60_000) : null,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
@@ -154,13 +159,17 @@ describe('current corridor observation contract', () => {
   });
 
   it.each([
-    [0, 'FREE_FLOW'], [5, 'FREE_FLOW'], [5.1, 'SLOWING'], [19.9, 'SLOWING'],
-    [20, 'HEAVY'], [39.9, 'HEAVY'], [40, 'CRITICAL'], [95, 'CRITICAL'],
-  ] as const)('uses the explicit observed speed-loss condition at index %s: %s', (score, status) => {
-    const result = view({ congestion_index: score });
+    [0, 'FREE_FLOW', 'smooth'], [2, 'FREE_FLOW', 'smooth'], [2.04, 'SLOWING', 'smooth'],
+    [10.2, 'SLOWING', 'smooth'], [27.96, 'SLOWING', 'smooth'], [28, 'HEAVY', 'heavy'],
+    [31.96, 'HEAVY', 'heavy'], [32, 'CRITICAL', 'critical'], [95, 'CRITICAL', 'critical'],
+  ] as const)('uses the backend pressure condition while retaining measured index %s: %s', (score, status, tone) => {
+    const evidence = observedTraffic({ congestion_index: score });
+    const result = corridorLiveView(corridor(evidence), NOW);
     expect(result).toMatchObject({ available: true, score, status });
-    if (status === 'SLOWING') expect(result.color).toBe(corridorColor('HEAVY'));
+    expect(result.tone).toBe(tone);
+    expect(result.color).toBe(corridorColor(tone === 'smooth' ? 'SMOOTH' : tone === 'heavy' ? 'HEAVY' : 'CRITICAL'));
     expect(result.status).not.toBe('SMOOTH');
+    expect(evidence.congestion_index).toBe(score);
   });
 
   it.each([
@@ -192,7 +201,7 @@ describe('current corridor observation contract', () => {
 
   it('accepts the minimum supported provider confidence without substituting a legacy condition', () => {
     expect(view({ congestion_index: 20, provider_confidence: 0.5 })).toMatchObject({
-      available: true, score: 20, status: 'HEAVY',
+      available: true, score: 20, status: 'SLOWING',
     });
   });
 
@@ -211,24 +220,48 @@ describe('current corridor observation contract', () => {
       available: true, score: 0, status: 'CAMERA_ESTIMATE', delay: null,
       forecast30: null, forecast60: null,
     });
-    expect(result.color).not.toBe(corridorColor('SMOOTH'));
+    expect(result.color).toBe(corridorColor('SMOOTH'));
   });
 
   it('withdraws only the local camera warning at its separate deadline', () => {
     const evidence = {
       congestion_index: 0, camera_count: 1, camera_congestion_index: 75,
       camera_condition: 'LOCAL_CONGESTION_ESTIMATE', camera_warning: true,
+      camera_pressure_index: 100, camera_pressure_condition: 'CRITICAL',
+      camera_pressure_condition_policy: 'congestion_pressure_bands_v1',
       camera_fresh_until: iso(2_000),
     };
-    expect(view(evidence)).toMatchObject({ available: true, score: 0, status: 'FREE_FLOW', cameraWarning: true });
+    expect(view(evidence)).toMatchObject({
+      available: true, score: 0, status: 'FREE_FLOW', cameraWarning: true, cameraWarningTone: 'critical',
+    });
     expect(view(evidence, NOW + 2_000)).toMatchObject({
-      available: true, score: 0, status: 'FREE_FLOW', cameraWarning: false,
+      available: true, score: 0, status: 'FREE_FLOW', cameraWarning: false, cameraWarningTone: null,
     });
   });
 
   it.each([
+    { raw: 27.96, pressure: 69.9, condition: 'SLOWING', warning: false, tone: null },
+    { raw: 28, pressure: 70, condition: 'HEAVY', warning: true, tone: 'heavy' },
+    { raw: 32, pressure: 80, condition: 'CRITICAL', warning: true, tone: 'critical' },
+  ])('uses local camera pressure $pressure for the warning tone without changing provider zero', ({ raw, pressure, condition, warning, tone }) => {
+    const evidence = {
+      congestion_index: 0, camera_count: 1, camera_congestion_index: raw,
+      camera_pressure_index: pressure, camera_pressure_condition: condition,
+      camera_pressure_condition_policy: 'congestion_pressure_bands_v1',
+      camera_condition: warning ? 'LOCAL_CONGESTION_ESTIMATE' : 'LOW_PRESSURE_ESTIMATE',
+      camera_warning: true, camera_fresh_until: iso(2_000),
+    };
+    expect(view(evidence)).toMatchObject({
+      available: true, score: 0, pressureScore: 0, status: 'FREE_FLOW',
+      cameraWarning: warning, cameraWarningTone: tone,
+    });
+    expect(evidence.camera_congestion_index).toBe(raw);
+  });
+
+  it.each([
     ['missing camera score', { camera_congestion_index: null }],
-    ['low camera pressure', { camera_congestion_index: 10, camera_condition: 'LOW_PRESSURE_ESTIMATE' }],
+    ['low camera pressure', { camera_congestion_index: 10, camera_condition: 'LOW_PRESSURE_ESTIMATE',
+      camera_pressure_index: 25, camera_pressure_condition: 'SLOWING' }],
     ['no mapped camera', { camera_count: 0 }],
     ['expired camera', { camera_fresh_until: iso(0) }],
     ['unparseable camera expiry', { camera_fresh_until: 'not-a-date' }],
@@ -236,6 +269,8 @@ describe('current corridor observation contract', () => {
     expect(view({
       congestion_index: 0, camera_count: 1, camera_congestion_index: 75,
       camera_condition: 'LOCAL_CONGESTION_ESTIMATE', camera_warning: true,
+      camera_pressure_index: 100, camera_pressure_condition: 'CRITICAL',
+      camera_pressure_condition_policy: 'congestion_pressure_bands_v1',
       camera_fresh_until: iso(2_000), ...overrides,
     })).toMatchObject({ available: true, score: 0, status: 'FREE_FLOW', cameraWarning: false });
   });
@@ -253,6 +288,16 @@ describe('current corridor observation contract', () => {
     expect(JSON.stringify(evidence)).toBe(original);
   });
 
+  it('accepts a local warning at camera pressure 70 while the provider pressure remains below 70', () => {
+    expect(view({
+      congestion_index: 20, camera_count: 1, camera_congestion_index: 28,
+      camera_pressure_index: 70, camera_pressure_condition: 'HEAVY',
+      camera_pressure_condition_policy: 'congestion_pressure_bands_v1',
+      camera_condition: 'LOCAL_CONGESTION_ESTIMATE', camera_warning: true,
+      camera_fresh_until: iso(2_000),
+    })).toMatchObject({ available: true, score: 20, pressureScore: 50, status: 'SLOWING', cameraWarning: true });
+  });
+
   it.each([
     ['missing pressure', { pressure_index: undefined }],
     ['null pressure', { pressure_index: null }],
@@ -265,9 +310,13 @@ describe('current corridor observation contract', () => {
     ['string multiplier', { pressure_multiplier: '2.5' }],
     ['missing policy', { pressure_policy: undefined }],
     ['unsupported policy', { pressure_policy: 'legacy_pressure' }],
+    ['missing pressure condition', { pressure_condition: undefined }],
+    ['missing pressure condition policy', { pressure_condition_policy: undefined }],
+    ['wrong pressure condition', { pressure_condition: 'CRITICAL' }],
+    ['unsupported pressure condition policy', { pressure_condition_policy: 'legacy_pressure_bands' }],
   ])('withholds an unsupported pressure without discarding valid raw evidence: %s', (_name, overrides) => {
     expect(view({ congestion_index: 15, ...overrides })).toMatchObject({
-      available: true, score: 15, status: 'SLOWING', pressureScore: null,
+      available: true, score: 15, status: 'UNAVAILABLE', tone: 'neutral', pressureScore: null,
       forecast30: 15, forecast60: 15,
     });
   });

@@ -83,17 +83,19 @@ hold-latest outlook is labelled **Latest-observation baseline**, and a point or
 camera view cannot establish a whole-corridor physical delay. These reads do
 not create historical records.
 
-Live corridor conditions and the observed analytics distribution use the shared
-versioned `observed_speed_loss_bands_v2` policy:
-**Free flow** at an index up to 5, **Slowing** above 5 and below 20,
-**Heavy** from 20 to below 40, and **Critical** at 40 or above. These more
-sensitive warning bands preserve the measured speed-loss index. They are
-engineering display bands, not independently calibrated traffic service levels.
+Displayed corridor, camera and hotspot pressure and the observed analytics
+distribution use the shared `congestion_pressure_bands_v1` policy, evaluated
+after pressure scaling and rounding: **green below 70**, **amber from 70 to
+below 80**, and **critical/red at 80 or above**. Green conditions distinguish
+Free flow (up to 5) from Slowing (above 5). These are engineering warning bands,
+not independently calibrated traffic service levels. The raw
+`observed_speed_loss_bands_v2` fields remain for API compatibility and do not
+determine display colors. Legacy routing and offline scenario math is unchanged.
 Only valid measured speeds with provider confidence of at least 0.5 qualify.
 Image-only evidence is labelled **Camera estimate**, including an empty view;
-it cannot establish measured free flow. A fresh mapped camera estimate at 40 or
-above produces a separate local-congestion warning when the provider point is
-below 40. Its own expiry withdraws the warning without extending the provider
+it cannot establish measured free flow. A fresh mapped camera pressure at 70 or
+above produces a separate local-congestion warning when provider pressure is
+below 70; the warning becomes red at 80. Its own expiry withdraws the warning without extending the provider
 measurement. No rule forces a mix of conditions when all sampled points are clear.
 Unqualified analytics entries remain neutral rather than being counted as free
 flow. The displayed **Congestion pressure** is a separate, versioned
@@ -105,6 +107,9 @@ pressure remains estimated; it is not measured road speed. The operations mean
 averages the capped pressure of each qualified provider point, rather than
 amplifying the mean or blending camera and provider units. This multiplier is an
 engineering sensitivity setting, not a calibration or accuracy improvement.
+For example, raw index 28 yields pressure 70 (amber), while 32 yields pressure
+80 (critical). Live Operations bottlenecks use pressure at least 80 and declare
+`bottleneck_metric=pressure_index`; their threshold is not applied to raw loss.
 Missing pressure fields cannot fall back to a raw or synthetic value in the UI.
 Hotspot cards label their value **Modelled pressure**, with
 `pressure_basis=modelled_congestion_index`: the multiplier applies to the
@@ -115,6 +120,9 @@ example, Panbil can have selection score 45.5 while its modelled congestion is
 10.2 and its displayed pressure is 25.5. Missing modelled-pressure metadata shows
 Unavailable, with no fallback to bundled priority scores. These area estimates
 remain distinct from live provider measurements and exact road-camera views.
+Hotspot rank and High priority/Watch priority badges remain neutral. Their map
+markers and pressure values follow the same 70/80 pressure colors, and missing
+or incoherent band metadata remains neutral/unavailable.
 A failed workspace bundle displays an explicit reload action instead of a
 blank page; it does not automatically reload and discard an in-progress draft.
 

@@ -18,7 +18,8 @@ from services import clock, cctv_routing, cctv_store, live_traffic, router
 from services.operations_analytics import MAX_SNAPSHOT_AGE_SECONDS, _sample
 from services.observed_conditions import (
     MIN_PROVIDER_CONFIDENCE, OBSERVED_CONDITION_POLICY, PRESSURE_MULTIPLIER,
-    PRESSURE_POLICY, observed_speed_condition, pressure_index,
+    PRESSURE_POLICY, PRESSURE_CONDITION_POLICY, PRESSURE_HEAVY_MIN_SCORE,
+    observed_speed_condition, pressure_band_condition, pressure_index,
 )
 from services.route_learning_store import LearningSnapshot
 from services.route_solver import CORRIDORS
@@ -92,6 +93,7 @@ def _empty_observation(now: datetime) -> dict[str, Any]:
         "congestion_index": None, "delay_mins": None,
         "pressure_index": None, "pressure_multiplier": PRESSURE_MULTIPLIER,
         "pressure_policy": PRESSURE_POLICY,
+        "pressure_condition": "UNAVAILABLE", "pressure_condition_policy": PRESSURE_CONDITION_POLICY,
         "pressure_forecast_30m": None, "pressure_forecast_60m": None,
         "condition": "UNAVAILABLE", "condition_policy": "unavailable",
         "current_speed_kmh": None, "free_flow_speed_kmh": None,
@@ -99,6 +101,8 @@ def _empty_observation(now: datetime) -> dict[str, Any]:
         "provider_point_count": 0, "camera_count": 0,
         "camera_congestion_index": None, "camera_fresh_until": None,
         "camera_condition": None, "camera_warning": False,
+        "camera_pressure_index": None, "camera_pressure_condition": "UNAVAILABLE",
+        "camera_pressure_condition_policy": PRESSURE_CONDITION_POLICY,
         "corridor_wide": False,
         "forecast_30m": None, "forecast_60m": None,
         "forecast_method": "unavailable", "forecast_observed_at": None,
@@ -145,6 +149,8 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
                 "LOCAL_CONGESTION_ESTIMATE" if observation["camera_congestion_index"] >= 40
                 else "LOW_PRESSURE_ESTIMATE"
             )
+            observation["camera_pressure_index"] = pressure_index(observation["camera_congestion_index"])
+            observation["camera_pressure_condition"] = pressure_band_condition(observation["camera_pressure_index"])
         provider = _provider_observation(segments.get(corridor["id"]), instant)
         if provider is not None:
             sample, captured, expiry = provider
@@ -159,7 +165,6 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
                 current_speed_kmh=sample["current_speed_kmh"],
                 free_flow_speed_kmh=sample["free_flow_speed_kmh"],
                 provider_confidence=sample["provider_confidence"],
-                camera_warning=(sample["score"] < 40 and observation["camera_condition"] == "LOCAL_CONGESTION_ESTIMATE"),
                 forecast_30m=sample["score"], forecast_60m=sample["score"],
                 forecast_method="persistence", forecast_observed_at=clock.iso(captured),
                 forecast_fresh_until=clock.iso(expiry),
@@ -176,8 +181,14 @@ def get_current_corridors(now: datetime | None = None) -> list[dict[str, Any]]:
         # This display metric transforms only the chosen, already-qualified
         # source. Camera views remain estimates and cannot invent forecasts.
         observation["pressure_index"] = pressure_index(score)
+        observation["pressure_condition"] = pressure_band_condition(observation["pressure_index"])
         observation["pressure_forecast_30m"] = pressure_index(observation["forecast_30m"])
         observation["pressure_forecast_60m"] = pressure_index(observation["forecast_60m"])
+        observation["camera_warning"] = bool(
+            provider is not None and observation["camera_pressure_index"] is not None
+            and observation["camera_pressure_index"] >= PRESSURE_HEAVY_MIN_SCORE
+            and observation["pressure_index"] < PRESSURE_HEAVY_MIN_SCORE
+        )
         status = "UNAVAILABLE" if score is None else "CRITICAL" if score >= 70 else "HEAVY" if score >= 40 else "SMOOTH"
         results.append({
             "id": corridor["id"], "name": corridor["name"],

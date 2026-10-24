@@ -34,7 +34,10 @@ from typing import Any, Dict, List, Mapping, Optional
 
 from services import clock, tls, traffic_upstream, provider_json, cctv_store
 from services.congestion_math import speed_ratio_congestion_score
-from services.observed_conditions import PRESSURE_MULTIPLIER, PRESSURE_POLICY, pressure_index
+from services.observed_conditions import (
+    PRESSURE_MULTIPLIER, PRESSURE_POLICY, PRESSURE_CONDITION_POLICY,
+    pressure_band_condition, pressure_index,
+)
 
 _TOMTOM_FLOW_BASE = (
     "https://api.tomtom.com/traffic/services/4/flowSegmentData/relative0/10/json"
@@ -474,6 +477,7 @@ def _score_map_hotspot(
         min(100.0, corridor_contribution + recurring_contribution),
     )
     published_score = round(raw_congestion_index, 1)
+    display_pressure = pressure_index(published_score)
 
     evidence_confidence = 100.0 * weighted_signal_confidence
     weights = HOTSPOT_SELECTION_WEIGHTS
@@ -542,10 +546,12 @@ def _score_map_hotspot(
         "lng": cfg["lng"],
         "radius_m": cfg["radius_m"],
         "congestion_index": published_score,
-        "pressure_index": pressure_index(published_score),
+        "pressure_index": display_pressure,
         "pressure_multiplier": PRESSURE_MULTIPLIER,
         "pressure_policy": PRESSURE_POLICY,
         "pressure_basis": "modelled_congestion_index",
+        "pressure_condition": pressure_band_condition(display_pressure),
+        "pressure_condition_policy": PRESSURE_CONDITION_POLICY,
         **_level_payload(published_score),
         "category": cfg["category"],
         "corridor_ids": list(signal_mix),

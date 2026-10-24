@@ -3,6 +3,7 @@ import type { Corridor, Fetched, OperationsSummary } from '../../types';
 import { ChartColumn, ExternalLink, Info, Landmark, Leaf, RefreshCw, ShieldAlert, Ship } from 'lucide-react';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { shortCorridorName } from '../../utils/format';
+import { pressureBandView } from '../../utils/pressureBands';
 import { CongestionHeatmap } from './CongestionHeatmap';
 import { WorkspaceSubtabs } from '../shared/WorkspaceSubtabs';
 import { PublishedOperatingRecords } from './PublishedOperatingRecords';
@@ -73,7 +74,7 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
   const metadata = operations.analytics_metadata;
   const apiAvailable = Boolean(operationsSnapshot && operationsSnapshot.source !== 'offline');
   const observedTraffic = apiAvailable && metadata?.traffic_observed === true;
-  const average = observedTraffic
+  const pressureValue = observedTraffic
     && operations.pressure_policy === 'congestion_pressure_v1'
     && operations.pressure_multiplier === 2.5
     && typeof operations.average_congestion_pressure === 'number'
@@ -81,6 +82,11 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
     && operations.average_congestion_pressure >= 0
     && operations.average_congestion_pressure <= 100
     ? operations.average_congestion_pressure : null;
+  const pressure = pressureValue === null ? null : pressureBandView({
+    pressure_index: pressureValue, pressure_condition: operations.pressure_condition,
+    pressure_condition_policy: operations.pressure_condition_policy,
+  });
+  const average = pressure ? pressureValue : null;
   const bottlenecks = observedTraffic ? operations.active_bottlenecks : null;
   const departures = apiAvailable ? operations.scheduled_ferry_departures_next_12h : null;
   const bottleneckNames = operations.bottleneck_corridors?.map(item => shortCorridorName(item.name)).join(' & ');
@@ -116,7 +122,7 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
               <section className="operations-metrics" aria-label="Operations headline metrics">
                 <article className="glass-panel operations-metric-card">
                   <div className="operations-metric-card__label"><ChartColumn aria-hidden="true" size={ICON_SIZE.medium} /> Congestion pressure</div>
-                  <div className="operations-metric-card__value">{average ?? 'Unavailable'}{average !== null ? <span className="operations-metric-card__unit"> / 100</span> : null}</div>
+                  <div className="operations-metric-card__value" style={{ color: pressure?.color ?? 'var(--text-muted)' }}>{average ?? 'Unavailable'}{average !== null ? <span className="operations-metric-card__unit"> / 100</span> : null}</div>
                   <p className="operations-metric-card__detail">{metadata?.observed_corridor_count ?? 0} fresh road points</p>
                 </article>
                 <article className="glass-panel operations-metric-card">

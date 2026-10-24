@@ -100,6 +100,7 @@ class CorridorObservationsTests(unittest.TestCase):
                 row = self.current()
                 value = row["observed_traffic"]
                 self.assertEqual(value["pressure_policy"], "congestion_pressure_v1")
+                self.assertEqual(value["pressure_condition_policy"], "congestion_pressure_bands_v1")
                 self.assertEqual(value["pressure_multiplier"], 2.5)
                 self.assertEqual(value["congestion_index"], raw)
                 self.assertEqual(value["pressure_index"], pressure)
@@ -110,6 +111,22 @@ class CorridorObservationsTests(unittest.TestCase):
         expired = self.current(now=NOW + timedelta(seconds=180))["observed_traffic"]
         self.assertIsNone(expired["pressure_index"])
         self.assertIsNone(expired["pressure_forecast_30m"])
+        self.assertEqual(expired["pressure_condition"], "UNAVAILABLE")
+
+    def test_published_pressure_is_amber_from70_and_critical_from80_without_changing_raw_conditions(self):
+        for speed, raw, pressure, condition in (
+            (44.9, 10.2, 25.5, "SLOWING"),
+            (36., 28., 70., "HEAVY"),
+            (34., 32., 80., "CRITICAL"),
+        ):
+            with self.subTest(pressure=pressure):
+                self.provider_mock.return_value = {"corridor-1": provider(speed)}
+                value = self.current()["observed_traffic"]
+                self.assertEqual(value["congestion_index"], raw)
+                self.assertEqual(value["pressure_index"], pressure)
+                self.assertEqual(value["pressure_condition"], condition)
+                self.assertEqual(value["pressure_condition_policy"], "congestion_pressure_bands_v1")
+                self.assertEqual(value["condition"], "SLOWING" if raw <20 else "HEAVY")
 
     def test_low_confidence_provider_cannot_claim_free_flow(self):
         for confidence, available in ((.499, False), (0., False), (.5, True), (1., True)):
@@ -198,6 +215,9 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertIsNone(value["pressure_forecast_30m"])
         self.assertIsNone(value["pressure_forecast_60m"])
         self.assertEqual(value["camera_condition"], "LOCAL_CONGESTION_ESTIMATE")
+        self.assertEqual(value["camera_pressure_index"], 100.)
+        self.assertEqual(value["camera_pressure_condition"], "CRITICAL")
+        self.assertEqual(value["camera_pressure_condition_policy"], "congestion_pressure_bands_v1")
         self.assertIsNone(value["current_speed_kmh"])
         self.assertIsNone(value["provider_confidence"])
         self.camera_mock.return_value = cctv_routing.CameraRoutingSnapshot(NOW.isoformat(), (camera(edge=(12, 11, 13)),))
@@ -252,12 +272,15 @@ class CorridorObservationsTests(unittest.TestCase):
         self.assertEqual(refreshed["camera_count"], 0)
         self.assertIsNone(refreshed["camera_fresh_until"])
         self.assertIsNone(refreshed["camera_condition"])
+        self.assertIsNone(refreshed["camera_pressure_index"])
+        self.assertEqual(refreshed["camera_pressure_condition"], "UNAVAILABLE")
         self.assertFalse(refreshed["camera_warning"])
 
     def test_local_camera_warning_requires_fresh_directed_pressure_distinct_from_provider(self):
         for score, edge, stamp, expected in (
             (40., EDGE, NOW, True),
-            (39.9, EDGE, NOW, False),
+            (28., EDGE, NOW, True),
+            (27.9, EDGE, NOW, False),
             (80., (12, 11, 13), NOW, False),
             (80., EDGE, NOW - timedelta(seconds=31), False),
         ):
@@ -272,6 +295,8 @@ class CorridorObservationsTests(unittest.TestCase):
                 self.assertEqual(value["camera_warning"], expected)
         self.provider_mock.return_value = {"corridor-1": provider(30.)}
         self.camera_mock.return_value = cctv_routing.CameraRoutingSnapshot(NOW.isoformat(), (camera(score=80.),))
+        self.assertFalse(self.current()["observed_traffic"]["camera_warning"])
+        self.provider_mock.return_value = {"corridor-1": provider(36.)}
         self.assertFalse(self.current()["observed_traffic"]["camera_warning"])
 
     def test_api_read_never_uses_synthetic_model_or_writes_history(self):

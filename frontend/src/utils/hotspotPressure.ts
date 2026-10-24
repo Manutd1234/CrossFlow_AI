@@ -1,4 +1,5 @@
 import type { CongestionZone } from '../types';
+import { pressureBandView } from './pressureBands';
 
 /** A modelled area's ranking score cannot stand in for congestion pressure. */
 export function modelledHotspotPressure(zone?: CongestionZone): number | null {
@@ -9,6 +10,7 @@ export function modelledHotspotPressure(zone?: CongestionZone): number | null {
     || zone.congestion_index < 0 || zone.congestion_index > 100
     || typeof zone.pressure_index !== 'number' || !Number.isFinite(zone.pressure_index)
     || zone.pressure_index < 0 || zone.pressure_index > 100
-    || Math.abs(zone.pressure_index - Math.min(100, zone.congestion_index * 2.5)) > 0.051) return null;
+    || Math.abs(zone.pressure_index - Math.min(100, zone.congestion_index * 2.5)) > 0.051
+    || !pressureBandView(zone)) return null;
   return zone.pressure_index;
 }

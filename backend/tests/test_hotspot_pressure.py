@@ -30,6 +30,8 @@ class HotspotPressureTests(unittest.TestCase):
         self.assertEqual(zone["pressure_multiplier"], 2.5)
         self.assertEqual(zone["pressure_policy"], "congestion_pressure_v1")
         self.assertEqual(zone["pressure_basis"], "modelled_congestion_index")
+        self.assertEqual(zone["pressure_condition"], "SLOWING")
+        self.assertEqual(zone["pressure_condition_policy"], "congestion_pressure_bands_v1")
         self.assertEqual(zone["source"], "modelled_spatial_hotspot")
         self.assertFalse(zone["observed"])
         self.assertEqual(zone["level"], "SMOOTH")
@@ -49,8 +51,9 @@ class HotspotPressureTests(unittest.TestCase):
         with patch.object(live_traffic, "pressure_index", return_value=99.):
             modified = self.panbil()
         self.assertEqual(modified["pressure_index"], 99.)
-        self.assertEqual({key: value for key, value in ordinary.items() if key != "pressure_index"},
-                         {key: value for key, value in modified.items() if key != "pressure_index"})
+        display_fields = {"pressure_index", "pressure_condition", "pressure_condition_policy"}
+        self.assertEqual({key: value for key, value in ordinary.items() if key not in display_fields},
+                         {key: value for key, value in modified.items() if key not in display_fields})
 
     def test_every_catalogue_area_supplies_policy_and_modelled_basis_without_upstream_pressure(self):
         for config in live_traffic.CORRIDOR_MAP_HOTSPOTS_CONFIG:
@@ -62,6 +65,14 @@ class HotspotPressureTests(unittest.TestCase):
                 self.assertGreaterEqual(zone["pressure_index"], 0.)
                 self.assertLessEqual(zone["pressure_index"], 100.)
                 self.assertFalse(zone["observed"])
+
+    def test_modelled_hotspot_pressure_bands_follow70_and80_boundaries(self):
+        for pressure, condition in ((69.9, "SLOWING"), (70., "HEAVY"), (79.9, "HEAVY"), (80., "CRITICAL")):
+            with self.subTest(pressure=pressure), patch.object(live_traffic, "pressure_index", return_value=pressure):
+                zone = self.panbil()
+                self.assertEqual(zone["pressure_condition"], condition)
+                self.assertEqual(zone["congestion_index"], 10.2)
+                self.assertEqual(zone["selection_score"], 45.5)
 
 
 if __name__ == "__main__":

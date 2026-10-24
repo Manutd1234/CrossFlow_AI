@@ -34,7 +34,7 @@ function ChartLegend({ items }: { items: Array<{ name: string; color: string; va
 }
 
 export function ObservedTrafficCharts({ samples, expectedCount }: { samples: TrafficPoint[]; expectedCount?: number }) {
-  const { speeds, conditions, pointCount } = measuredChartData(samples);
+  const { speeds, conditions, pointCount, classifiedCount } = measuredChartData(samples);
   const coverage = `${pointCount}${expectedCount ? ` of ${expectedCount}` : ''} sampled road points`;
   return <div className="analytics-charts-grid" aria-label="Observed traffic charts">
     <ChartCard title="Road speeds at a glance" icon={ChartColumn} source="Measured speeds"
@@ -59,8 +59,8 @@ export function ObservedTrafficCharts({ samples, expectedCount }: { samples: Tra
         </table></div></details>
       </> : <p className="analytics-chart-empty" role="status">No fresh measured speeds are available.</p>}
     </ChartCard>
-    <ChartCard title="Traffic conditions" icon={Activity} source={speeds.length ? 'Observed snapshot' : 'Measurements unavailable'}
-      description={`${coverage}. Unqualified measurements remain unavailable.`}>
+    <ChartCard title="Traffic conditions" icon={Activity} source={classifiedCount ? 'Observed pressure' : 'Conditions unavailable'}
+      description={`${coverage}. Pressure bands use validated provider observations; unqualified points remain unavailable.`}>
       {pointCount ? <>
         <div className="analytics-chart-plot analytics-chart-donut">
           <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 540, height: 260 }}>
@@ -76,7 +76,7 @@ export function ObservedTrafficCharts({ samples, expectedCount }: { samples: Tra
           </ResponsiveContainer>
         </div>
         <ChartLegend items={conditions.map(item => ({ name: item.name, color: item.color, value: `${item.count}` }))} />
-        <p className="analytics-chart-footnote">Conditions cover sampled road points only.</p>
+        <p className="analytics-chart-footnote">Below 70 · amber 70–79 · critical 80+. Sampled road points only.</p>
       </> : <p className="analytics-chart-empty" role="status">Traffic conditions are unavailable without fresh observations.</p>}
     </ChartCard>
   </div>;

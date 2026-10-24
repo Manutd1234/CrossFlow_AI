@@ -20,6 +20,8 @@ function freshObservation(score: number, at: number): CorridorObservedTraffic {
     checked_at: new Date(at).toISOString(), observed_at: observedAt, fresh_until: freshUntil,
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
     pressure_index: pressure, pressure_multiplier: 2.5, pressure_policy: 'congestion_pressure_v1',
+    pressure_condition: pressure <= 5 ? 'FREE_FLOW' : pressure < 70 ? 'SLOWING' : pressure < 80 ? 'HEAVY' : 'CRITICAL',
+    pressure_condition_policy: 'congestion_pressure_bands_v1',
     camera_congestion_index: null, camera_condition: null, camera_warning: false, camera_fresh_until: null,
     corridor_wide: false,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',

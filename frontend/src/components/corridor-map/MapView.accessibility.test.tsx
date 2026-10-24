@@ -81,6 +81,8 @@ function observedTraffic(score: number, at = Date.now(), secondsUntilExpiry = 60
     checked_at: new Date(at).toISOString(), observed_at: observedAt, fresh_until: freshUntil,
     congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
     pressure_index: pressure, pressure_multiplier: 2.5, pressure_policy: 'congestion_pressure_v1',
+    pressure_condition: pressure <= 5 ? 'FREE_FLOW' : pressure < 70 ? 'SLOWING' : pressure < 80 ? 'HEAVY' : 'CRITICAL',
+    pressure_condition_policy: 'congestion_pressure_bands_v1',
     camera_congestion_index: null, camera_condition: null, camera_warning: false, camera_fresh_until: null,
     corridor_wide: false,
     forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
@@ -144,6 +146,8 @@ function trafficSnapshot(selectionScore: number, congestionIndex = 10.2, pressur
         pressure_index: pressureIndex,
         pressure_policy: 'congestion_pressure_v1', pressure_multiplier: 2.5,
         pressure_basis: 'modelled_congestion_index', observed: false,
+        pressure_condition: pressureIndex <= 5 ? 'FREE_FLOW' : pressureIndex < 70 ? 'SLOWING' : pressureIndex < 80 ? 'HEAVY' : 'CRITICAL',
+        pressure_condition_policy: 'congestion_pressure_bands_v1',
         level: 'HEAVY',
         color: '#f59e0b',
         avoid_recommended: false,
@@ -471,7 +475,7 @@ describe('MapView traffic overlay controls', () => {
     snapshot.data.zones.push({
       ...snapshot.data.zones[0], zone_id: 'zone-panbil', name: 'Simpang Panbil / Muka Kuning',
       selection_rank: 1, selection_score: 45.5, watch_priority: 'CRITICAL',
-      congestion_index: 10.2, pressure_index: 25.5,
+      congestion_index: 10.2, pressure_index: 25.5, pressure_condition: 'SLOWING',
     });
     const container = renderIntoDom(<MapView corridors={TEST_CORRIDORS} routes={EMPTY_ROUTES}
       trafficSnapshot={snapshot} onSelectCorridor={vi.fn()} />);
@@ -480,9 +484,12 @@ describe('MapView traffic overlay controls', () => {
     expect(cards[1].id).toBe('hotspot-card-zone-simpang-jam');
     expect(cards[0].querySelector('.hotspot-card__rank')?.textContent).toBe('01');
     expect(cards[0].querySelector('.hotspot-card__priority')?.textContent).toBe('High priority');
+    expect(cards[0].querySelector('.hotspot-card__priority')?.classList.contains('badge-neutral')).toBe(true);
     expect(cards[0].querySelector('.hotspot-card__score')?.textContent).toContain('25.5');
     expect(cards[0].querySelector('.hotspot-card__score')?.textContent).not.toContain('45.5');
     expect(cards[1].querySelector('.hotspot-card__score')?.textContent).toContain('80');
+    expect(vi.mocked(L.circle).mock.calls.slice(-30)[0][1]).toMatchObject({ color: corridorColor('SMOOTH') });
+    expect(vi.mocked(L.circle).mock.calls.slice(-30)[1][1]).toMatchObject({ color: corridorColor('CRITICAL') });
   });
 
   it.each([
@@ -622,20 +629,23 @@ describe('MapView traffic overlay controls', () => {
     expect(onSelectCorridor).toHaveBeenCalledWith('corridor-1');
   });
 
-  it('shows moderate observed speed loss as slowing with amber road styling', () => {
+  it('shows low pressure as slowing with green road styling', () => {
     const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(15) };
     const container = renderIntoDom(corridorView([corridor]));
     showCorridorTab(container);
     expect(container.querySelector('.selected-corridor-panel')?.textContent).toMatch(/slowing/i);
     expect(container.querySelector('.corridor-feed-item')?.textContent).toMatch(/slowing/i);
     expect(container.querySelector('.selected-corridor-panel')?.textContent).not.toContain('SMOOTH');
-    expect(latestCorridorStyle()?.color).toBe(corridorColor('HEAVY'));
+    expect(latestCorridorStyle()?.color).toBe(corridorColor('SMOOTH'));
   });
 
   it.each([
     { score: 0, pressure: 0, condition: 'FREE FLOW', color: 'SMOOTH' as const },
-    { score: 15, pressure: 37.5, condition: 'SLOWING', color: 'HEAVY' as const },
-    { score: 20, pressure: 50, condition: 'HEAVY', color: 'HEAVY' as const },
+    { score: 10.2, pressure: 25.5, condition: 'SLOWING', color: 'SMOOTH' as const },
+    { score: 27.96, pressure: 69.9, condition: 'SLOWING', color: 'SMOOTH' as const },
+    { score: 28, pressure: 70, condition: 'HEAVY', color: 'HEAVY' as const },
+    { score: 31.96, pressure: 79.9, condition: 'HEAVY', color: 'HEAVY' as const },
+    { score: 32, pressure: 80, condition: 'CRITICAL', color: 'CRITICAL' as const },
     { score: 40, pressure: 100, condition: 'CRITICAL', color: 'CRITICAL' as const },
     { score: 95, pressure: 100, condition: 'CRITICAL', color: 'CRITICAL' as const },
   ])('shows pressure $pressure separately from the measured index $score and verified condition', ({ score, pressure, condition, color }) => {
@@ -656,7 +666,7 @@ describe('MapView traffic overlay controls', () => {
     const corridor = { ...TEST_CORRIDORS[0], observed_traffic: { ...observedTraffic(15), pressure_index: 99 } };
     const container = renderIntoDom(corridorView([corridor]));
     showCorridorTab(container);
-    expect(container.querySelector('.selected-corridor-panel')?.textContent).toContain('SLOWING');
+    expect(container.querySelector('.selected-corridor-panel')?.textContent).toContain('UNAVAILABLE');
     expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toBe('Unavailable');
     expect(container.querySelector('.corridor-feed-item')?.textContent).toContain('Pressure: Unavailable');
     expect(latestCorridorTooltip()).toContain('Pressure unavailable');
@@ -704,7 +714,7 @@ describe('MapView traffic overlay controls', () => {
     expect(panel?.textContent).toMatch(/camera.estimate/i);
     expect(panel?.textContent).not.toMatch(/SMOOTH|FREE.FLOW/i);
     expect(panel?.textContent).toContain('Forecast unavailable');
-    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
+    expect(latestCorridorStyle()?.color).toBe(corridorColor('SMOOTH'));
   });
 
   it('expires the local camera warning while retaining the fresh free-flow provider point', () => {
@@ -715,6 +725,8 @@ describe('MapView traffic overlay controls', () => {
       observed_traffic: {
         ...observedTraffic(0), camera_count: 1, camera_congestion_index: 75,
         camera_condition: 'LOCAL_CONGESTION_ESTIMATE', camera_warning: true,
+        camera_pressure_index: 100, camera_pressure_condition: 'CRITICAL',
+        camera_pressure_condition_policy: 'congestion_pressure_bands_v1',
         camera_fresh_until: new Date(Date.now() + 2_000).toISOString(),
       },
     };

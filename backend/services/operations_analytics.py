@@ -13,15 +13,16 @@ from typing import Any, Optional
 from services import clock, ferry_schedule, live_traffic, cctv_routing, cctv_store, router
 from services.congestion_math import speed_ratio_congestion_score
 from services.observed_conditions import (
-    CRITICAL_MIN_SCORE, MIN_PROVIDER_CONFIDENCE, OBSERVED_CONDITION_POLICY,
-    PRESSURE_MULTIPLIER, PRESSURE_POLICY, observed_speed_condition, pressure_index,
+    MIN_PROVIDER_CONFIDENCE, OBSERVED_CONDITION_POLICY, PRESSURE_CRITICAL_MIN_SCORE,
+    PRESSURE_MULTIPLIER, PRESSURE_POLICY, PRESSURE_CONDITION_POLICY,
+    observed_speed_condition, pressure_band_condition, pressure_index,
 )
 from services.route_solver import CORRIDORS
 
 
 MAX_SNAPSHOT_AGE_SECONDS = 180
 MAX_FUTURE_SKEW_SECONDS = 30
-BOTTLENECK_THRESHOLD = CRITICAL_MIN_SCORE
+BOTTLENECK_THRESHOLD = PRESSURE_CRITICAL_MIN_SCORE
 
 
 def _coverage(now: datetime) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -141,20 +142,24 @@ def get_operations_analytics(now: Optional[datetime] = None) -> dict[str, Any]:
         sample = _sample(segments.get(corridor["id"]), now)
         if (sample is not None and sample["provider_confidence"] >= MIN_PROVIDER_CONFIDENCE
                 and sample["age_seconds"] < MAX_SNAPSHOT_AGE_SECONDS):
+            pressure = pressure_index(sample["score"])
             samples.append({
                 "id": corridor["id"], "name": corridor["name"], **sample,
                 "condition": observed_speed_condition(sample["score"]),
                 "condition_policy": OBSERVED_CONDITION_POLICY,
-                "pressure_index": pressure_index(sample["score"]),
+                "pressure_index": pressure,
                 "pressure_multiplier": PRESSURE_MULTIPLIER, "pressure_policy": PRESSURE_POLICY,
+                "pressure_condition": pressure_band_condition(pressure),
+                "pressure_condition_policy": PRESSURE_CONDITION_POLICY,
             })
     observed = bool(samples)
     avg = round(sum(item["score"] for item in samples) / len(samples), 1) if observed else None
     average_pressure = round(sum(item["pressure_index"] for item in samples) / len(samples), 1) if observed else None
-    bottlenecks = [item for item in samples if item["score"] >= BOTTLENECK_THRESHOLD]
+    mean_pressure_condition = pressure_band_condition(average_pressure)
+    bottlenecks = [item for item in samples if item["pressure_index"] >= BOTTLENECK_THRESHOLD]
     oldest = max(samples, key=lambda item: item["age_seconds"]) if samples else None
     alerts = [{
-        "id": f"flow-{item['id']}", "severity": "CRITICAL",
+        "id": f"flow-{item['id']}", "severity": item["pressure_condition"],
         "corridor_id": item["id"],
         "title": f"{item['name']} traffic pressure",
         "message": (
@@ -196,16 +201,20 @@ def get_operations_analytics(now: Optional[datetime] = None) -> dict[str, Any]:
         "overall_network_status": {
             "UNAVAILABLE": "UNAVAILABLE", "FREE_FLOW": "OPTIMAL", "SLOWING": "SLOWING",
             "HEAVY": "MODERATE", "CRITICAL": "CONGESTED",
-        }[observed_speed_condition(avg)],
+        }[mean_pressure_condition],
         "average_congestion_index": avg,
         "average_congestion_pressure": average_pressure,
         "pressure_multiplier": PRESSURE_MULTIPLIER, "pressure_policy": PRESSURE_POLICY,
+        "pressure_condition": mean_pressure_condition, "pressure_condition_policy": PRESSURE_CONDITION_POLICY,
         "active_bottlenecks": len(bottlenecks) if observed else None,
         "bottleneck_corridors": [
-            {"id": item["id"], "name": item["name"], "score": item["score"]}
+            {"id": item["id"], "name": item["name"], "score": item["score"],
+             "pressure_index": item["pressure_index"], "pressure_condition": item["pressure_condition"],
+             "pressure_condition_policy": PRESSURE_CONDITION_POLICY}
             for item in bottlenecks
         ],
         "bottleneck_threshold": BOTTLENECK_THRESHOLD,
+        "bottleneck_metric": "pressure_index",
         "bottleneck_comparison": "greater_than_or_equal",
         "total_co2_reduced_today_kg": None,
         "co2_by_corridor_kg": {}, "co2_by_vehicle_type": {},

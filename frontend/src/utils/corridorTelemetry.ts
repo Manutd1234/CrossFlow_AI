@@ -1,5 +1,6 @@
 import type { Corridor, CorridorObservedCondition, CorridorObservedTraffic } from '../types';
 import { corridorColor } from './format';
+import { pressureBandView } from './pressureBands';
 
 function timestamp(value: unknown): number | null {
   if (typeof value !== 'string' || !/(Z|[+-]\d{2}:\d{2})$/.test(value)) return null;
@@ -24,6 +25,7 @@ export interface CorridorLiveView {
   status: CorridorObservedCondition;
   tone: 'smooth' | 'heavy' | 'critical' | 'neutral';
   cameraWarning: boolean;
+  cameraWarningTone: 'heavy' | 'critical' | null;
   color: string;
   coverage: string;
   observedAt: string | null;
@@ -37,7 +39,7 @@ export interface CorridorLiveView {
 export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): CorridorLiveView {
   const unknown: CorridorLiveView = {
     available: false, score: null, pressureScore: null, pressureForecast30: null, pressureForecast60: null,
-    status: 'UNAVAILABLE', tone: 'neutral', cameraWarning: false,
+    status: 'UNAVAILABLE', tone: 'neutral', cameraWarning: false, cameraWarningTone: null,
     color: corridorColor('UNAVAILABLE'),
     coverage: 'No fresh measurements for this corridor.', observedAt: null,
     delay: null, forecast30: null, forecast60: null, forecastMethod: 'unavailable',
@@ -78,22 +80,30 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
   } else if (evidence.condition_policy !== 'mapped_camera_proxy_v1' || evidence.condition !== 'CAMERA_ESTIMATE') {
     return unknown;
   }
-  const status = evidence.condition;
-  const tone = status === 'FREE_FLOW' ? 'smooth' : status === 'CRITICAL' ? 'critical'
-    : status === 'SLOWING' || status === 'HEAVY' ? 'heavy' : 'neutral';
-  const color = corridorColor(tone === 'smooth' ? 'SMOOTH' : tone === 'heavy' ? 'HEAVY'
-    : tone === 'critical' ? 'CRITICAL' : 'UNAVAILABLE');
-  const cameraUntil = timestamp(evidence.camera_fresh_until);
-  const cameraWarning = provider && evidence.camera_warning === true && score < 40
-    && count(evidence.camera_count) && index(evidence.camera_congestion_index)
-    && evidence.camera_congestion_index >= 40 && evidence.camera_condition === 'LOCAL_CONGESTION_ESTIMATE'
-    && cameraUntil !== null && cameraUntil > nowMs && cameraUntil <= checked + 120_000;
   // Pressure is a separate sensitivity scale supplied by the backend. Never
   // substitute the raw measured index when a pressure response is missing.
   const pressureMetadata = evidence.pressure_policy === 'congestion_pressure_v1' && evidence.pressure_multiplier === 2.5;
   const pressureValue = (raw: unknown, amplified: unknown): number | null => pressureMetadata && index(raw) && index(amplified)
     && Math.abs(amplified - Math.min(100, raw * 2.5)) <= 0.051 ? amplified : null;
-  const pressureScore = pressureValue(score, evidence.pressure_index);
+  const validatedPressure = pressureValue(score, evidence.pressure_index);
+  const band = validatedPressure === null ? null : pressureBandView(evidence);
+  const pressureScore = band ? validatedPressure : null;
+  const status: CorridorObservedCondition = band ? camera ? 'CAMERA_ESTIMATE' : band.condition : 'UNAVAILABLE';
+  const tone = band?.tone ?? 'neutral';
+  const color = band?.color ?? corridorColor('UNAVAILABLE');
+  const cameraUntil = timestamp(evidence.camera_fresh_until);
+  const cameraBand = pressureBandView({
+    pressure_index: evidence.camera_pressure_index,
+    pressure_condition: evidence.camera_pressure_condition,
+    pressure_condition_policy: evidence.camera_pressure_condition_policy,
+  });
+  const cameraWarning = provider && evidence.camera_warning === true
+    && pressureScore !== null && pressureScore < 70
+    && count(evidence.camera_count) && index(evidence.camera_congestion_index)
+    && index(evidence.camera_pressure_index) && evidence.camera_pressure_index >= 70
+    && Math.abs(evidence.camera_pressure_index - Math.min(100, evidence.camera_congestion_index * 2.5)) <= 0.051
+    && cameraBand !== null
+    && cameraUntil !== null && cameraUntil > nowMs && cameraUntil <= checked + 120_000;
   const forecastObserved = timestamp(evidence.forecast_observed_at);
   const forecastUntil = timestamp(evidence.forecast_fresh_until);
   const forecastAvailable = provider && index(evidence.forecast_30m) && index(evidence.forecast_60m)
@@ -106,6 +116,7 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
       && evidence.forecast_30m === score && evidence.forecast_60m === score));
   return {
     available: true, score, pressureScore, status, tone, color, cameraWarning,
+    cameraWarningTone: cameraWarning ? cameraBand?.condition === 'CRITICAL' ? 'critical' : 'heavy' : null,
     coverage: provider
       ? `Partial coverage · ${evidence.provider_point_count} measured road point${evidence.provider_point_count === 1 ? '' : 's'}`
       : `Partial coverage · ${evidence.camera_count} mapped road view${evidence.camera_count === 1 ? '' : 's'} · Estimated`,
@@ -115,8 +126,8 @@ export function corridorLiveView(corridor: Corridor, nowMs = Date.now()): Corrid
     forecast30: forecastAvailable ? evidence.forecast_30m : null,
     forecast60: forecastAvailable ? evidence.forecast_60m : null,
     forecastMethod: forecastAvailable ? evidence.forecast_method : 'unavailable',
-    pressureForecast30: forecastAvailable ? pressureValue(evidence.forecast_30m, evidence.pressure_forecast_30m) : null,
-    pressureForecast60: forecastAvailable ? pressureValue(evidence.forecast_60m, evidence.pressure_forecast_60m) : null,
+    pressureForecast30: forecastAvailable && band ? pressureValue(evidence.forecast_30m, evidence.pressure_forecast_30m) : null,
+    pressureForecast60: forecastAvailable && band ? pressureValue(evidence.forecast_60m, evidence.pressure_forecast_60m) : null,
   };
 }
 
