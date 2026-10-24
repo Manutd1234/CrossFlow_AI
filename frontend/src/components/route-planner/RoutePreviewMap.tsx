@@ -22,6 +22,7 @@ import type {
   RoadRouteOption,
   RouteLeg,
   RouteLocation,
+  RouteEndpointSnapshot,
 } from '../../types';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
@@ -34,6 +35,8 @@ interface RoutePreviewMapProps {
   onSelectRoute?: (routeId: string) => void;
   origin?: RouteLocation;
   destination?: RouteLocation;
+  /** Resolved response order, including waypoints; never the editable draft. */
+  stops?: ReadonlyArray<RouteEndpointSnapshot>;
   planningTrafficSnapshot?: PlanningTrafficSnapshot;
 }
 
@@ -101,11 +104,19 @@ function applyStyles(element: HTMLElement, styles: Partial<CSSStyleDeclaration>)
   Object.assign(element.style, styles);
 }
 
-function endpointPin(label: 'A' | 'B', color: string, endpoint: 'origin' | 'destination'): HTMLDivElement {
+function endpointPin(
+  label: string,
+  color: string,
+  role: 'origin' | 'waypoint' | 'destination',
+  position: number,
+): HTMLDivElement {
   const pin = document.createElement('div');
   const text = document.createElement('span');
   text.textContent = label;
-  pin.dataset.routeEndpoint = endpoint;
+  if (role !== 'waypoint') pin.dataset.routeEndpoint = role;
+  pin.dataset.routeStopId = `route-stop-${position}`;
+  pin.dataset.routeStopRole = role;
+  pin.dataset.routeStopSequence = String(position);
   pin.dataset.markerColor = color;
   pin.setAttribute('aria-hidden', 'true');
   pin.append(text);
@@ -114,12 +125,12 @@ function endpointPin(label: 'A' | 'B', color: string, endpoint: 'origin' | 'dest
     alignItems: 'center',
     background: color,
     border: `3px solid ${MAP_PALETTE.route.casing}`,
-    borderRadius: '50% 50% 50% 8px',
+    borderRadius: role === 'waypoint' ? '50%' : '50% 50% 50% 8px',
     boxShadow: '0 3px 10px rgba(7, 59, 76, 0.28)',
     display: 'flex',
     height: '34px',
     justifyContent: 'center',
-    transform: 'rotate(-45deg)',
+    transform: role === 'waypoint' ? 'none' : 'rotate(-45deg)',
     width: '34px',
   });
   applyStyles(text, {
@@ -128,7 +139,7 @@ function endpointPin(label: 'A' | 'B', color: string, endpoint: 'origin' | 'dest
     fontSize: 'var(--text-sm)',
     fontWeight: 'var(--weight-semibold)',
     lineHeight: '1',
-    transform: 'rotate(45deg)',
+    transform: role === 'waypoint' ? 'none' : 'rotate(45deg)',
   });
   return pin;
 }
@@ -240,6 +251,7 @@ export function RoutePreviewMap({
   onSelectRoute,
   origin,
   destination,
+  stops,
   planningTrafficSnapshot,
 }: RoutePreviewMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -266,12 +278,18 @@ export function RoutePreviewMap({
     || selectedRoute?.route_data_source === 'offline_access_estimate'
     || selectedRoute?.route_data_source === 'multimodal_offline_estimate'
     || hasEstimatedRoadLeg;
-  const originLat = origin?.lat;
-  const originLng = origin?.lng;
-  const originName = origin?.name;
-  const destinationLat = destination?.lat;
-  const destinationLng = destination?.lng;
-  const destinationName = destination?.name;
+  const plannedStops = useMemo(() => stops && stops.length >= 2 && stops.every(stop => (
+    Number.isFinite(stop.lat) && stop.lat >= -90 && stop.lat <= 90
+    && Number.isFinite(stop.lng) && stop.lng >= -180 && stop.lng <= 180
+  )) ? stops : undefined, [stops]);
+  const firstStop = plannedStops?.[0];
+  const lastStop = plannedStops?.[plannedStops.length - 1];
+  const originLat = firstStop?.lat ?? origin?.lat;
+  const originLng = firstStop?.lng ?? origin?.lng;
+  const originName = firstStop?.display_name ?? firstStop?.name ?? origin?.name;
+  const destinationLat = lastStop?.lat ?? destination?.lat;
+  const destinationLng = lastStop?.lng ?? destination?.lng;
+  const destinationName = lastStop?.display_name ?? lastStop?.name ?? destination?.name;
   const planningZones = planningTrafficSnapshot?.zones;
 
   useEffect(() => {
@@ -493,27 +511,33 @@ export function RoutePreviewMap({
       }).bindTooltip(plainTooltip('Connector from the nearest routable road')).addTo(layers);
     }
 
-    const originIcon = L.divIcon({
-      className: 'route-endpoint-pin route-endpoint-pin--origin',
-      html: endpointPin('A', MAP_PALETTE.endpoint.origin, 'origin'),
-      iconAnchor: [17, 34],
-      iconSize: [34, 34],
-      tooltipAnchor: [0, -30],
+    const resolvedStops: ReadonlyArray<RouteEndpointSnapshot> = plannedStops ?? [
+      { lat: requestedStart[0], lng: requestedStart[1], name: originName ?? 'Origin' },
+      { lat: requestedEnd[0], lng: requestedEnd[1], name: destinationName ?? 'Destination' },
+    ];
+    resolvedStops.forEach((stop, index) => {
+      const role = index === 0 ? 'origin' : index === resolvedStops.length - 1 ? 'destination' : 'waypoint';
+      const label = String.fromCharCode(65 + index);
+      const name = stop.display_name ?? stop.name ?? `Stop ${label}`;
+      const color = role === 'origin' ? MAP_PALETTE.endpoint.origin
+        : role === 'destination' ? MAP_PALETTE.endpoint.destination : MAP_PALETTE.node.batam;
+      const icon = L.divIcon({
+        className: `route-endpoint-pin route-endpoint-pin--${role}`,
+        html: endpointPin(label, color, role, index + 1),
+        iconAnchor: role === 'waypoint' ? [17, 17] : [17, 34],
+        iconSize: [34, 34],
+        tooltipAnchor: [0, -30],
+      });
+      L.marker([stop.lat, stop.lng], {
+        icon,
+        // Waypoint letters must remain above maneuver/terminal badges even
+        // when a navigation step shares the exact same resolved coordinate.
+        zIndexOffset: 1000,
+        title: `${label} · ${name}`,
+      })
+        .bindTooltip(tooltipContent(role === 'origin' ? 'From' : role === 'destination' ? 'To' : `Stop ${label}`, name), { direction: 'top' })
+        .addTo(layers);
     });
-    L.marker(requestedStart, { icon: originIcon, zIndexOffset: 1000 })
-      .bindTooltip(tooltipContent('From', originName ?? 'Origin'), { direction: 'top' })
-      .addTo(layers);
-
-    const destinationIcon = L.divIcon({
-      className: 'route-endpoint-pin route-endpoint-pin--destination',
-      html: endpointPin('B', MAP_PALETTE.endpoint.destination, 'destination'),
-      iconAnchor: [17, 34],
-      iconSize: [34, 34],
-      tooltipAnchor: [0, -30],
-    });
-    L.marker(requestedEnd, { icon: destinationIcon, zIndexOffset: 1000 })
-      .bindTooltip(tooltipContent('To', destinationName ?? 'Destination'), { direction: 'top' })
-      .addTo(layers);
 
     selectedRoute.navigation?.maneuvers?.forEach((maneuver) => {
       if (!maneuver.coords || maneuver.coords.length < 2) return;
@@ -552,7 +576,7 @@ export function RoutePreviewMap({
         iconSize: [28, 28],
         iconAnchor: [14, 14],
       });
-      L.marker(maneuver.coords, { icon: turnIcon })
+      L.marker(maneuver.coords, { icon: turnIcon, zIndexOffset: 0 })
         .bindTooltip(plainTooltip(`Step ${maneuver.step}: ${maneuver.instruction}`), { direction: 'top' })
         .addTo(layers);
     });
@@ -577,6 +601,7 @@ export function RoutePreviewMap({
     displayedGeometry.forEach(point => bounds.extend(point));
     bounds.extend(requestedStart);
     bounds.extend(requestedEnd);
+    resolvedStops.forEach(stop => bounds.extend([stop.lat, stop.lng]));
     routeBoundsRef.current = bounds;
     map.fitBounds(bounds.pad(0.14), { maxZoom: 14 });
     const resizeTimer = window.setTimeout(() => map.invalidateSize(), 50);
@@ -594,6 +619,7 @@ export function RoutePreviewMap({
     originLat,
     originLng,
     originName,
+    plannedStops,
     selectedLegs,
     selectedRoute,
   ]);

@@ -457,6 +457,22 @@ class FrontendCorridorContractTests(LiveServerTestCase):
         self.assertGreater(len(corridors), 0)
         for field in ("id", "name", "distance_km", "base_time_mins"):
             self.assertIn(field, corridors[0])
+        # This isolated server has no provider credential or authorized camera
+        # registry. A successful request must not turn missing data into clear
+        # roads, modelled observations or an apparently measured outlook.
+        self.assertEqual(body["data_source"], "unavailable")
+        for corridor in corridors:
+            self.assertEqual(corridor["status"], "UNAVAILABLE")
+            self.assertIsNone(corridor["live_congestion_score"])
+            self.assertIsNone(corridor["delay_mins"])
+            self.assertIsNone(corridor["forecast_30m"])
+            observation = corridor["observed_traffic"]
+            self.assertEqual(observation["status"], "unavailable")
+            self.assertIsNone(observation["congestion_index"])
+            self.assertEqual(observation["forecast_method"], "unavailable")
+            self.assertFalse(observation["corridor_wide"])
+        with urllib.request.urlopen(f"{self.base_url}/api/corridors", timeout=30) as response:
+            self.assertIn("no-store", response.headers.get("Cache-Control", ""))
 
     def test_route_locations_expose_coordinates_for_the_picker(self) -> None:
         """``fetchRouteLocations`` reads ``payload.locations``."""
@@ -468,6 +484,23 @@ class FrontendCorridorContractTests(LiveServerTestCase):
         self.assertGreater(len(locations), 0)
         for field in ("id", "name", "category", "lat", "lng"):
             self.assertIn(field, locations[0])
+
+    def test_modelled_history_query_serializes_only_scenario_sources(self) -> None:
+        status, body = self.call(
+            "/api/historical-congestion?corridor_id=corridor-1&days=7&modelled_only=true",
+        )
+        self.assertEqual(status, 200, body)
+        self.assertEqual(body["data_source"], "simulated")
+        self.assertEqual(len(body["hourly_profile"]), 24)
+        metadata = body["history_metadata"]
+        self.assertEqual(metadata["selection_scope"], "modelled_only")
+        self.assertFalse(metadata["observed"])
+        self.assertFalse(metadata["contains_observed_samples"])
+        self.assertGreater(metadata["sample_count"], 0)
+        self.assertEqual(metadata["sample_count"], sum(row["sample_count"] for row in body["hourly_profile"]))
+        self.assertEqual(metadata["sample_count"], sum(row["sample_count"] for row in body["weekly_trend"]))
+        self.assertEqual(set(metadata["source_counts"]), {"synthetic"})
+        self.assertIn("not observed", body["provenance"]["traffic"])
 
     def test_every_envelope_carries_the_provenance_badge_fields(self) -> None:
         """The header's source badge reads these off any enveloped response."""

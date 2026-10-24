@@ -57,6 +57,10 @@ _RETENTION_S = 60 * 86400
 _CURRENT_SAMPLE_MAX_AGE_S = _RECORD_INTERVAL_S * 2
 _RECENT_SAMPLE_MAX_AGE_S = 86400
 _OBSERVED_SOURCES = frozenset({"tomtom_live", "verified_traffic_observation"})
+# Only the server-owned, versioned synthetic scenario seed has unambiguous
+# model provenance. Legacy "simulated" rows may contain provider-derived
+# telemetry, so even that label is insufficient for this strict view.
+_MODELLED_SOURCES = frozenset({SYNTHETIC_SOURCE})
 
 
 def _database_path() -> str:
@@ -716,25 +720,37 @@ class HistoryStore:
         ).fetchall()
         return [self._spatial_observation_from_row(row) for row in rows]
 
+    def _history_selection(self, corridor_id, days, now, modelled_only):
+        self._require_corridor(corridor_id)
+        effective_now = self._now(now)
+        cutoff = int(effective_now.timestamp()) - days * 86400
+        clause = "corridor = ? AND ts >= ?"
+        parameters = [corridor_id, cutoff]
+        if modelled_only:
+            sources = sorted(_MODELLED_SOURCES)
+            clause += " AND ts <= ? AND source IN (" + ",".join("?" for _ in sources) + ")"
+            parameters.extend([int(effective_now.timestamp()), *sources])
+        return effective_now, clause, parameters
+
     def get_hourly_profile(
         self,
         corridor_id: str,
         days: int = 7,
         *,
         now: Optional[datetime] = None,
+        modelled_only: bool = False,
     ) -> List[Dict[str, Any]]:
-        self._require_corridor(corridor_id)
-        cutoff = int(self._now(now).timestamp()) - days * 86400
+        _, clause, parameters = self._history_selection(corridor_id, days, now, modelled_only)
         rows = self._conn.execute(
-            """
+            f"""
             SELECT CAST(strftime('%H', ts, 'unixepoch', '+7 hours') AS INTEGER),
                    AVG(score), COUNT(*)
             FROM observations
-            WHERE corridor = ? AND ts >= ?
+            WHERE {clause}
             GROUP BY 1
             ORDER BY 1
             """,
-            (corridor_id, cutoff),
+            parameters,
         ).fetchall()
         by_hour = {row[0]: row for row in rows}
         return [
@@ -752,18 +768,18 @@ class HistoryStore:
         days: int = 30,
         *,
         now: Optional[datetime] = None,
+        modelled_only: bool = False,
     ) -> List[Dict[str, Any]]:
-        self._require_corridor(corridor_id)
-        cutoff = int(self._now(now).timestamp()) - days * 86400
+        _, clause, parameters = self._history_selection(corridor_id, days, now, modelled_only)
         rows = self._conn.execute(
-            """
+            f"""
             SELECT DATE(ts, 'unixepoch', '+7 hours'), AVG(score), COUNT(*)
             FROM observations
-            WHERE corridor = ? AND ts >= ?
+            WHERE {clause}
             GROUP BY 1
             ORDER BY 1
             """,
-            (corridor_id, cutoff),
+            parameters,
         ).fetchall()
         return [
             {"date": row[0], "avg_score": round(row[1], 1), "sample_count": row[2]}
@@ -776,20 +792,19 @@ class HistoryStore:
         days: int = 7,
         *,
         now: Optional[datetime] = None,
+        modelled_only: bool = False,
     ) -> Dict[str, Any]:
         """Describe the requested history window without overstating provenance."""
-        self._require_corridor(corridor_id)
-        effective_now = self._now(now)
-        cutoff = int(effective_now.timestamp()) - days * 86400
+        effective_now, clause, parameters = self._history_selection(corridor_id, days, now, modelled_only)
         rows = self._conn.execute(
-            """
+            f"""
             SELECT source, COUNT(*), MAX(ts)
             FROM observations
-            WHERE corridor = ? AND ts >= ?
+            WHERE {clause}
             GROUP BY source
             ORDER BY source
             """,
-            (corridor_id, cutoff),
+            parameters,
         ).fetchall()
 
         source_counts = {str(row[0]): int(row[1]) for row in rows}
@@ -896,8 +911,9 @@ def get_hourly_profile(
     days: int = 7,
     *,
     now: Optional[datetime] = None,
+    modelled_only: bool = False,
 ) -> List[Dict[str, Any]]:
-    return _store.get_hourly_profile(corridor_id, days, now=now)
+    return _store.get_hourly_profile(corridor_id, days, now=now, modelled_only=modelled_only)
 
 
 def get_weekly_trend(
@@ -905,8 +921,9 @@ def get_weekly_trend(
     days: int = 30,
     *,
     now: Optional[datetime] = None,
+    modelled_only: bool = False,
 ) -> List[Dict[str, Any]]:
-    return _store.get_weekly_trend(corridor_id, days, now=now)
+    return _store.get_weekly_trend(corridor_id, days, now=now, modelled_only=modelled_only)
 
 
 def get_history_metadata(
@@ -914,8 +931,9 @@ def get_history_metadata(
     days: int = 7,
     *,
     now: Optional[datetime] = None,
+    modelled_only: bool = False,
 ) -> Dict[str, Any]:
-    return _store.get_history_metadata(corridor_id, days, now=now)
+    return _store.get_history_metadata(corridor_id, days, now=now, modelled_only=modelled_only)
 
 
 def get_storage_metadata() -> Dict[str, Any]:

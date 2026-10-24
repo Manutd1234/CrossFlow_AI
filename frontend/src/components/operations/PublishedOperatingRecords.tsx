@@ -2,18 +2,22 @@ import { useCallback } from 'react';
 import { ChevronDown, ExternalLink, Landmark, RefreshCw, Ship, Users } from 'lucide-react';
 import { fetchAuthorityReports, type AuthorityReport } from '../../services/api';
 import { useCheckedSource } from '../../hooks/useCheckedSource';
+import { englishReportingPeriod, englishSourceText, englishSourceUnit } from '../../utils/englishDisplay';
 import './PublishedOperatingRecords.css';
 
 const passengerColors = ['var(--accent-cyan)', 'var(--accent-indigo)'];
 
 function Report({ report }: { report: AuthorityReport }) {
-  const passengers = report.metrics.filter(metric => metric.unit === 'people');
+  const metrics = report.metrics.map(metric => ({
+    ...metric, label: englishSourceText(metric.label), unit: englishSourceUnit(metric.unit),
+  }));
+  const passengers = metrics.filter(metric => metric.unit === 'people');
   const passengerTotal = passengers.reduce((sum, metric) => sum + metric.value, 0);
   return <article className="operations-published-report maritime-report">
-    <div className="maritime-report-heading"><h4>{report.period_label}</h4>
+    <div className="maritime-report-heading"><h4>{englishReportingPeriod(report.period_label, report.period_start, report.period_end)}</h4>
       <a href={report.source_url} target="_blank" rel="noreferrer">{report.publisher}<ExternalLink size={14} aria-hidden="true" /></a>
     </div>
-    <dl className="maritime-report-metrics">{report.metrics.map(metric => {
+    <dl className="maritime-report-metrics">{metrics.map(metric => {
       const Icon = metric.unit === 'calls' ? Ship : Users;
       return <div key={metric.id} className="maritime-report-metric">
         <dt><Icon size={18} aria-hidden="true" />{metric.label}</dt>

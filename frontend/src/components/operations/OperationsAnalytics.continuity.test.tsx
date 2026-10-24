@@ -13,7 +13,6 @@ import { AIModelPanel } from './AIModelPanel';
 import { CongestionHeatmap } from './CongestionHeatmap';
 import { OperationsAnalytics } from './OperationsAnalytics';
 import { observedReport } from '../../test/fixtures/observedBacktest';
-import { realTrafficFixture } from '../../test/fixtures/realTraffic';
 
 vi.mock('../../services/api', async () => {
   const actual = await vi.importActual<typeof import('../../services/api')>('../../services/api');
@@ -36,6 +35,24 @@ const browserHistoryResult = (): Fetched<HistoricalProfile> => ({
   source: 'offline',
   fetchedAt: '2026-08-10T12:00:00.000+07:00',
 });
+
+function modelledHistoryResult(corridor = 'corridor-1', days = 7): Fetched<HistoricalProfile> {
+  return {
+    source: 'simulated', fetchedAt: referenceTime.toISOString(),
+    data: {
+      ...browserModeledHistoricalProfile(corridor, days, referenceTime),
+      history_metadata: {
+        selection_scope: 'modelled_only', window_days: days, observed: false, contains_observed_samples: false,
+        source_counts: { synthetic_profile_seed_v1: days * 24 },
+        sources: { synthetic_profile_seed_v1: { observed: false, sample_count: days * 24 } },
+        latest_sample_at: referenceTime.toISOString(), latest_sample_age_seconds: 0,
+        freshness: 'current', freshness_basis: 'latest modelled archive sample',
+        storage: { engine: 'sqlite', durability: 'persistent_file', durable: true, shared_across_instances: false, fallback_to_memory: false },
+        synthetic_seed: { source: 'synthetic_profile_seed_v1', version: 1, days: 30, timezone: 'WIB', generated_for_date: null, observed: false },
+      },
+    },
+  };
+}
 
 const bundledModelResult: Fetched<ModelMetrics> = {
   data: BUNDLED_RF_VALIDATION,
@@ -86,86 +103,16 @@ afterEach(() => {
 });
 
 describe('operations provenance presentation', () => {
-  it('keeps acknowledgement on an unchanged snapshot and resurfaces a later observation for the same road point', async () => {
-    vi.useFakeTimers();
-    const operationsAt = (timestamp: string, hasAlert = true): OperationsSummary => ({
-      ...MOCK_OPERATIONS,
-      alerts: hasAlert ? [{ id: 'flow-corridor-1', severity: 'CRITICAL', title: 'Measured road traffic pressure',
-        message: 'Observed representative-point congestion.', timestamp }] : [],
-      analytics_metadata: { generated_at: timestamp, as_of: timestamp, input_snapshot_at: timestamp,
-        snapshot_age_seconds: 0, traffic_observed: true, traffic_source: 'tomtom_live',
-        observed_corridor_count: 1, expected_corridor_count: 5, limitations: [] },
-    });
-    const viewFor = (operations: OperationsSummary) => <OperationsAnalytics operations={operations}
-      operationsSnapshot={{ data: operations, source: 'live', fetchedAt: '2026-10-24T01:00:00Z' }}
-      corridors={INITIAL_CORRIDORS} />;
-    const first = operationsAt('2026-10-24T00:00:00Z');
-    const container = renderIntoDom(viewFor(first));
-    selectWorkspaceTab(container, 'Alerts');
-    act(() => container.querySelector<HTMLButtonElement>('.operations-alert__action')!.click());
-    await act(async () => vi.advanceTimersByTimeAsync(220));
-    expect(container.querySelectorAll('.operations-alerts__list .operations-alert')).toHaveLength(0);
-    expect(container.querySelectorAll('.operations-alerts__acknowledged-list .operations-alert')).toHaveLength(1);
-
-    act(() => root!.render(viewFor({ ...first, alerts: first.alerts.map(alert => ({ ...alert })) })));
-    expect(container.querySelectorAll('.operations-alerts__list .operations-alert')).toHaveLength(0);
-    act(() => root!.render(viewFor(operationsAt('2026-10-24T00:01:00Z', false))));
-    expect(container.textContent).toContain('No congestion alerts right now');
-    act(() => root!.render(viewFor(operationsAt('2026-10-24T00:02:00Z'))));
-    expect(container.querySelectorAll('.operations-alerts__list .operations-alert')).toHaveLength(1);
-    expect(container.querySelectorAll('.operations-alerts__acknowledged-list .operations-alert')).toHaveLength(0);
-  });
-
-  it('does not let a pending acknowledgement animation dismiss a newer observation with the same ID', async () => {
-    vi.useFakeTimers();
-    const first: OperationsSummary = { ...MOCK_OPERATIONS,
-      alerts: [{ id: 'flow-corridor-1', severity: 'WARNING', title: 'Measured road traffic pressure',
-        message: 'Observed congestion.', timestamp: '2026-10-24T00:00:00Z' }],
-      analytics_metadata: { generated_at: '2026-10-24T00:00:00Z', as_of: '2026-10-24T00:00:00Z',
-        input_snapshot_at: '2026-10-24T00:00:00Z', snapshot_age_seconds: 0, traffic_observed: true,
-        traffic_source: 'tomtom_live', observed_corridor_count: 1, expected_corridor_count: 5, limitations: [] },
-    };
-    const viewFor = (operations: OperationsSummary) => <OperationsAnalytics operations={operations}
-      operationsSnapshot={{ data: operations, source: 'live', fetchedAt: '2026-10-24T00:00:00Z' }}
-      corridors={INITIAL_CORRIDORS} />;
-    const container = renderIntoDom(viewFor(first));
-    selectWorkspaceTab(container, 'Alerts');
-    act(() => container.querySelector<HTMLButtonElement>('.operations-alert__action')!.click());
-    act(() => root!.render(viewFor({ ...first, alerts: [{ ...first.alerts[0], severity: 'CRITICAL',
-      timestamp: '2026-10-24T00:01:00Z' }] })));
-    expect(container.querySelector('.operations-alerts__item.is-dismissing')).toBeNull();
-    await act(async () => vi.advanceTimersByTimeAsync(220));
-    expect(container.querySelectorAll('.operations-alerts__list .operations-alert')).toHaveLength(1);
-    expect(container.querySelector('.operations-alerts__list')?.textContent).toContain('CRITICAL');
-  });
-
-  it.each([true, false])('distinguishes a healthy empty alert feed from missing observations (observed: %s)', async (observed) => {
-    const onRefresh = vi.fn().mockResolvedValue(undefined);
-    const operations: OperationsSummary = { ...MOCK_OPERATIONS, alerts: [], bottleneck_threshold: 60,
-      current_traffic_samples: observed ? [{ id: 'point-a', name: 'Measured road', score: 2.5,
-        current_speed_kmh: 39, free_flow_speed_kmh: 40, provider_confidence: 0.9,
-        age_seconds: 0, as_of: '2026-10-24T00:00:00Z' }] : [],
-      analytics_metadata: { generated_at: '2026-10-24T00:00:00Z', as_of: '2026-10-24T00:00:00Z',
-        input_snapshot_at: observed ? '2026-10-24T00:00:00Z' : null, snapshot_age_seconds: observed ? 0 : null,
-        traffic_observed: observed, traffic_source: observed ? 'tomtom_live' : 'unavailable',
-        observed_corridor_count: observed ? 1 : 0, expected_corridor_count: 5, limitations: [] } };
-    const view = renderIntoDom(<OperationsAnalytics operations={operations}
-      operationsSnapshot={{ data: operations, source: 'live', fetchedAt: '2026-10-24T00:00:00Z' }}
-      corridors={INITIAL_CORRIDORS} onRefresh={onRefresh} />);
-    selectWorkspaceTab(view, 'Alerts');
-    const alerts = view.querySelector('#operations-workspace-panel-3')!;
-    if (observed) {
-      expect(alerts.textContent).toContain('No congestion alerts right now');
-      expect(alerts.textContent).toContain('Highest index 2.5 / 100');
-      expect(alerts.textContent).toContain('>60 / 100');
-    } else {
-      expect(alerts.textContent).toContain('Traffic monitoring unavailable');
-      expect(alerts.textContent).not.toContain('0 alerts');
-    }
-    expect(alerts.querySelectorAll('.operations-alert')).toHaveLength(0);
-    await act(async () => Array.from(alerts.querySelectorAll<HTMLButtonElement>('button'))
-      .find(button => button.textContent === 'Check traffic')!.click());
-    expect(onRefresh).toHaveBeenCalledOnce();
+  it('exposes only Overview, Ports and History and does not mount removed workspaces', () => {
+    const container = renderIntoDom(<OperationsAnalytics operations={MOCK_OPERATIONS}
+      operationsSnapshot={null} corridors={INITIAL_CORRIDORS} />);
+    expect(Array.from(container.querySelectorAll('.operations-tabs > .workspace-subtabs__rail [role="tab"]'), tab => tab.textContent))
+      .toEqual(['Overview', 'Ports', 'History']);
+    expect(container.querySelector('.operations-alerts')).toBeNull();
+    expect(container.querySelector('.real-traffic-workspace')).toBeNull();
+    expect(fetchRealTrafficForecast).not.toHaveBeenCalled();
+    expect(modelStatusMock).not.toHaveBeenCalled();
+    expect(historyMock).not.toHaveBeenCalled();
   });
 
   it('labels browser operations and unitless planning charts without API or live claims', () => {
@@ -195,9 +142,9 @@ describe('operations provenance presentation', () => {
     expect(text).not.toContain('32 ATCS and 6 non-ATCS intersections');
     expect(text).not.toContain('PDF p. 64 (report p. 54)');
     expect(text).toContain('Overview');
-    expect(text).toContain('Trends');
-    expect(text).toContain('Model');
-    expect(text).toContain('Alerts');
+    expect(text).not.toContain('Trends');
+    expect(text).not.toContain('Model');
+    expect(text).not.toContain('Alerts');
     expect(text).toContain('History');
     expect(text).toContain('Observed Traffic Index');
     expect(markup).toContain('ui-card-shadow-hover official-evidence-panel');
@@ -251,162 +198,75 @@ describe('operations provenance presentation', () => {
     expect(text).not.toContain('TOMTOM');
   });
 
-  it('mounts only the active operations workspace panel while switching tabs', async () => {
-    const observedOperations: OperationsSummary = { ...MOCK_OPERATIONS,
-      alerts: [{ id: 'observed-alert', severity: 'WARNING', title: 'Observed test congestion',
-        message: 'A measured test point is above the threshold.', timestamp: '2026-10-23T05:00:00Z' }],
-      analytics_metadata: { generated_at: '2026-10-23T05:00:00Z', as_of: '2026-10-23T05:00:00Z',
-        input_snapshot_at: '2026-10-23T05:00:00Z', snapshot_age_seconds: 0, traffic_observed: true,
-        traffic_source: 'tomtom_live', observed_corridor_count: 1, expected_corridor_count: 5, limitations: [] } };
-    const container = renderIntoDom(
-      <OperationsAnalytics
-        operations={observedOperations}
-        operationsSnapshot={{
-          data: observedOperations,
-          source: 'live',
-          fetchedAt: '2026-08-10T12:00:00.000+07:00',
-        }}
-        corridors={INITIAL_CORRIDORS}
-        ferryAndPortsContent={<div>Ferry workspace content</div>}
-      />,
-    );
-
-    const visiblePanels = () => container.querySelectorAll(
-      '.operations-tabs > [role="tabpanel"]:not([hidden])',
-    );
-
+  it('keeps observed Overview separate from the single modelled History panel', async () => {
+    historyMock.mockResolvedValue(modelledHistoryResult());
+    const container = renderIntoDom(<OperationsAnalytics operations={MOCK_OPERATIONS}
+      operationsSnapshot={{ data: MOCK_OPERATIONS, source: 'offline', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} ferryAndPortsContent={<p>Ferry workspace content</p>} />);
+    const visiblePanels = () => container.querySelectorAll('.operations-tabs > [role="tabpanel"]:not([hidden])');
     expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0]?.textContent).toContain('Batam Authority Operating Context');
-    expect(container.textContent).not.toContain('Illustrative Fleet Emissions-Pressure Share');
+    expect(visiblePanels()[0].textContent).toContain('Observed Traffic Index');
+    expect(historyMock).not.toHaveBeenCalled();
 
-    selectWorkspaceTab(container, 'Trends');
+    selectWorkspaceTab(container, 'History');
+    await act(async () => { await Promise.resolve(); });
     expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0]?.textContent).toContain('Live traffic forecasts');
-    expect(visiblePanels()[0]?.querySelector('#fleet-chart-summary')).toBeNull();
-    expect(visiblePanels()[0]?.querySelector('#emissions-chart-summary')).toBeNull();
-    expect(visiblePanels()[0]?.querySelector('#scenario-chart-summary')).toBeNull();
-    expect(visiblePanels()[0]?.querySelector('#corridor-carbon-summary')).toBeNull();
-    expect(container.textContent).not.toContain('Batam authority operating context');
-
-    selectWorkspaceTab(container, 'Alerts');
-    expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0]?.textContent).toContain('Observed Traffic Alerts');
-    expect(visiblePanels()[0]?.textContent).toContain('1 alert');
-    expect(visiblePanels()[0]?.querySelector('.operations-alerts__acknowledged-summary')?.classList)
-      .toContain('ui-sand-interactive');
-    expect(container.textContent).not.toContain('Illustrative Fleet Emissions-Pressure Share');
-
-    const acknowledgeButton = visiblePanels()[0]?.querySelector<HTMLButtonElement>(
-      '.operations-alert__action',
-    );
-    const acknowledgedTitle = acknowledgeButton
-      ?.closest('.operations-alert')
-      ?.querySelector('.operations-alert__title')
-      ?.textContent;
-    expect(acknowledgedTitle).toBeTruthy();
-
-    act(() => acknowledgeButton?.click());
-
-    expect(visiblePanels()[0]?.querySelector('.operations-alerts__item.is-dismissing'))
-      .not.toBeNull();
-
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 240));
-    });
-
-    expect(visiblePanels()[0]?.querySelector('.operations-alerts__list')?.textContent)
-      .not.toContain(acknowledgedTitle);
-    expect(visiblePanels()[0]?.querySelector('.operations-alerts__acknowledged-list')?.textContent)
-      .toContain(acknowledgedTitle);
-    expect(visiblePanels()[0]?.querySelector('.operations-alerts__acknowledged-count')?.textContent)
-      .toBe('1');
-
-    expect(container.querySelectorAll('[role="tab"]')).toHaveLength(6);
-    expect(Array.from(container.querySelectorAll('[role="tab"]'))
-      .some(tab => tab.textContent === 'Ports')).toBe(true);
+    expect(visiblePanels()[0].textContent).toContain('Modelled traffic-flow analysis');
+    expect(visiblePanels()[0].textContent).toContain('MODELLED TRAFFIC FLOW');
+    expect(visiblePanels()[0].querySelector('[role="tablist"]')).toBeNull();
+    expect(visiblePanels()[0].querySelector('[aria-label="Historical data source"]')).toBeNull();
+    expect(visiblePanels()[0].textContent).not.toMatch(/Observed traffic|Batam speed survey|Intersection study|Singapore benchmark/);
+    expect(historyMock).toHaveBeenCalledWith('corridor-1', 7, false, true);
+    expect(modelStatusMock).not.toHaveBeenCalled();
+    expect(fetchRealTrafficForecast).not.toHaveBeenCalled();
 
     selectWorkspaceTab(container, 'Ports');
-    expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0]?.textContent).toContain('Ferry workspace content');
-
-    selectWorkspaceTab(container, 'History');
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0]?.textContent).toContain('Historical Congestion Analysis');
-    expect(visiblePanels()[0]?.textContent).not.toContain('Random Forest Congestion Forecasting Engine');
-    expect(historyMock).toHaveBeenCalledTimes(1);
-    expect(modelStatusMock).not.toHaveBeenCalled();
-
-    selectWorkspaceTab(container, 'Model');
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0]?.textContent).toContain('Observed traffic engine');
-    expect(visiblePanels()[0]?.textContent).not.toContain('Historical Congestion Analysis');
-    expect(fetchRealTrafficForecast).toHaveBeenCalledTimes(2);
-    expect(historyMock).toHaveBeenCalledTimes(1);
-
+    expect(visiblePanels()[0].textContent).toContain('Ferry workspace content');
     selectWorkspaceTab(container, 'Overview');
-    expect(visiblePanels()).toHaveLength(1);
-    expect(visiblePanels()[0]?.textContent).toContain('Batam Authority Operating Context');
-    expect(container.querySelector('#operations-workspace-panel-4')?.textContent)
-      .toContain('Historical Congestion Analysis');
-    expect(container.querySelector('#operations-workspace-panel-5')?.textContent)
-      .toContain('Observed traffic engine');
-
+    expect(visiblePanels()[0].textContent).toContain('Observed Traffic Index');
     selectWorkspaceTab(container, 'History');
-    selectWorkspaceTab(container, 'Model');
-    expect(fetchRealTrafficForecast).toHaveBeenCalledTimes(2);
-    expect(historyMock).toHaveBeenCalledTimes(1);
+    expect(historyMock).toHaveBeenCalledOnce();
   });
 });
 
 describe('analytics tab continuity', () => {
-  it('keeps all six panels navigable when protected forecasts reject an expired session', async () => {
+  it('keeps the three remaining panels navigable without requesting protected model tools', async () => {
     vi.mocked(fetchRealTrafficForecast).mockRejectedValue(new Error('Authorized operator access is required.'));
+    historyMock.mockResolvedValue(modelledHistoryResult());
     const view = renderIntoDom(<OperationsAnalytics operations={MOCK_OPERATIONS}
-      operationsSnapshot={{ data: MOCK_OPERATIONS, source: 'simulated', fetchedAt: '2026-10-24T00:00:00Z' }}
-      corridors={INITIAL_CORRIDORS} accessToken="expired-operator-fixture"
+      operationsSnapshot={null} corridors={INITIAL_CORRIDORS} accessToken="expired-operator-fixture"
       ferryAndPortsContent={<p>Published ferry schedule</p>} />);
-    for (const label of ['Overview', 'Ports', 'Trends', 'Alerts', 'History', 'Model']) {
+    for (const label of ['Overview', 'Ports', 'History']) {
       selectWorkspaceTab(view, label);
       await act(async () => { await Promise.resolve(); });
       const visible = view.querySelectorAll('.operations-tabs > [role="tabpanel"]:not([hidden])');
       expect(visible).toHaveLength(1);
       expect(view.querySelector('.operations-tabs > .workspace-subtabs__rail [aria-selected="true"]')?.textContent).toBe(label);
       expect(visible[0].textContent?.trim().length).toBeGreaterThan(0);
-      if (label === 'Trends' || label === 'Model') {
-        expect(visible[0].querySelector('[role="alert"]')?.textContent).toContain('Authorized operator access is required.');
-        expect(visible[0].querySelector('.real-traffic-actions .badge')?.textContent).toBe('Unavailable');
-        expect(visible[0].querySelector('.real-traffic-kpis')).toBeNull();
-      }
     }
-    expect(fetchRealTrafficForecast).toHaveBeenCalledTimes(2);
+    expect(fetchRealTrafficForecast).not.toHaveBeenCalled();
+    expect(modelStatusMock).not.toHaveBeenCalled();
   });
 
-  it('retains port selection and a real forecast snapshot across other workspace tabs', async () => {
-    vi.mocked(fetchRealTrafficForecast).mockResolvedValue(realTrafficFixture());
+  it('retains port and modelled-history filters across the remaining tabs', async () => {
+    historyMock.mockImplementation(async (corridor, days) => modelledHistoryResult(corridor, days));
     const view = renderIntoDom(<OperationsAnalytics operations={MOCK_OPERATIONS}
-      operationsSnapshot={{ data: MOCK_OPERATIONS, source: 'simulated', fetchedAt: '2026-10-24T00:00:00Z' }}
-      corridors={INITIAL_CORRIDORS} accessToken="operator-fixture"
+      operationsSnapshot={null} corridors={INITIAL_CORRIDORS}
       ferryAndPortsContent={<label>Port filter<input defaultValue="All ports" /></label>} />);
     selectWorkspaceTab(view, 'Ports');
     const portFilter = view.querySelector<HTMLInputElement>('input')!;
     portFilter.value = 'Batam Centre';
-    selectWorkspaceTab(view, 'Trends');
+    selectWorkspaceTab(view, 'History');
     await act(async () => { await Promise.resolve(); });
-    const forecast = view.querySelector('#operations-workspace-panel-2 .real-traffic-kpis');
-    expect(forecast?.textContent).toContain('20.0 / 100');
+    await act(async () => view.querySelector<HTMLButtonElement>('[aria-label="Show the last 14 days"]')?.click());
+    expect(historyMock).toHaveBeenLastCalledWith('corridor-1', 14, false, true);
     selectWorkspaceTab(view, 'Overview');
-    selectWorkspaceTab(view, 'Trends');
-    expect(view.querySelector('#operations-workspace-panel-2 .real-traffic-kpis')).toBe(forecast);
-    expect(fetchRealTrafficForecast).toHaveBeenCalledOnce();
     selectWorkspaceTab(view, 'Ports');
     expect(view.querySelector('input')).toBe(portFilter);
     expect(portFilter.value).toBe('Batam Centre');
+    selectWorkspaceTab(view, 'History');
+    expect(view.querySelector('[aria-label="Show the last 14 days"]')?.getAttribute('aria-pressed')).toBe('true');
+    expect(historyMock).toHaveBeenCalledTimes(2);
     expect(view.querySelectorAll('.operations-tabs > [role="tabpanel"]:not([hidden])')).toHaveLength(1);
   });
 

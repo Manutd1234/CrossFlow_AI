@@ -20,7 +20,7 @@ const HISTORY_LIMIT = 20;
 function formatRunTime(isoTimestamp: string): string {
   const parsed = new Date(isoTimestamp);
   if (Number.isNaN(parsed.getTime())) return 'Unknown time';
-  return parsed.toLocaleString(undefined, {
+  return parsed.toLocaleString('en-SG', {
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   });
 }

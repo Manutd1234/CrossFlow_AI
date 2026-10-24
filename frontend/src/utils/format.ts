@@ -24,7 +24,9 @@ export const corridorBadgeClass = (status: Corridor['status']): string =>
   `badge-${status.toLowerCase()}`;
 
 export const corridorColor = (status: Corridor['status']): string =>
-  status === 'CRITICAL'
+  status === 'UNAVAILABLE'
+    ? '#64748B'
+    : status === 'CRITICAL'
     ? TRAFFIC_COLORS.critical
     : status === 'HEAVY'
       ? TRAFFIC_COLORS.heavy
@@ -63,7 +65,7 @@ export function formatTime(value: string): string {
 
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  return d.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
 /** Keep the terminal's clock and label the Singapore/Batam offset explicitly. */
@@ -80,7 +82,7 @@ export function formatClock(value?: string): string {
   if (match) return `${match[1]}:${match[2]}:${match[3]}`;
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return '--:--:--';
-  return d.toLocaleTimeString([], { hour12: false });
+  return d.toLocaleTimeString('en-SG', { hour12: false });
 }
 
 /** Published schedule verification timestamp, kept in Batam/WIB wall time. */

@@ -100,7 +100,17 @@ export const ROUTE_LOCATIONS: RouteLocation[] = [
 
 /** Corridor telemetry for the current time of day, so an offline demo still
  *  shows a plausible rush hour rather than frozen mid-afternoon numbers. */
-function seedCorridors(at: Date = new Date()): Corridor[] {
+type SimulatedCorridor = Corridor & {
+  distance_km: number;
+  live_congestion_score: number;
+  delay_mins: number;
+  status: 'SMOOTH' | 'HEAVY' | 'CRITICAL';
+  risk_level: 'LOW' | 'MODERATE' | 'HIGH';
+  forecast_30m: number;
+  forecast_60m: number;
+};
+
+function seedCorridors(at: Date = new Date()): SimulatedCorridor[] {
   const batam = batamParts(at);
   const hourFloat = batam.hour + batam.minute / 60;
   const isWeekend = batam.weekday === 0 || batam.weekday === 6 ? 1 : 0;
@@ -124,7 +134,19 @@ function seedCorridors(at: Date = new Date()): Corridor[] {
   });
 }
 
-export const INITIAL_CORRIDORS: Corridor[] = seedCorridors();
+export const INITIAL_CORRIDORS: SimulatedCorridor[] = seedCorridors();
+
+/** Orientation survives outages; synthetic planning values do not become telemetry. */
+export const CORRIDOR_CATALOG: Corridor[] = CORRIDOR_SEEDS.map(seed => ({
+  ...seed,
+  live_congestion_score: null,
+  delay_mins: null,
+  status: 'UNAVAILABLE',
+  risk_level: 'UNAVAILABLE',
+  forecast_30m: null,
+  forecast_60m: null,
+  trend: null,
+}));
 
 interface OfflineHotspotSeed {
   zone_id: string;

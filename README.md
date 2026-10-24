@@ -34,7 +34,7 @@ observation.
 4. **Ferry & Port Intelligence**
    - Source-dated operator timetable snapshots cover published Batam-Singapore sailings, alongside official BP Batam terminal references. Upcoming published departures are computed at request time. Live queues, processing, occupancy and operating status remain unavailable without an observed source; verify conditions with the terminal or operator before travel.
 5. **Operations & Carbon Analytics Dashboard**
-   - Current congestion and bottlenecks derive from fresh validated TomTom representative-point speeds, with actual sample timestamps and coverage counts. Missing measurements stay unavailable. Observed history stays empty until validated measurements are stored; unsupported fleet, emissions and historical-performance figures are not invented.
+   - Current congestion and bottlenecks derive from fresh validated TomTom representative-point speeds, with actual sample timestamps and coverage counts. Mapped CCTV estimates remain separately labelled. Missing measurements stay unavailable. Analytics contains **Overview**, **Ports** and **History**; History presents a clearly labelled modelled traffic-flow scenario, separate from measured traffic archives. Unsupported fleet, emissions and historical-performance figures are not invented.
 
 ---
 
@@ -74,6 +74,24 @@ Default historical metadata reports only validated observed rows for the
 requested Batam calendar-day window. Empty buckets remain null, not zero or a
 synthetic profile. Model validation metrics describe the trained model and its
 declared evaluation scope; they should change only after a real training run.
+
+The corridor card, feed list and map colours use timestamped `observed_traffic`
+from `/api/corridors`, with explicit partial coverage and source expiry.
+Bundled planning values cannot populate live conditions. Genuine measured zero
+is retained; missing or expired observations display **Unavailable**. A
+hold-latest outlook is labelled **Latest-observation baseline**, and a point or
+camera view cannot establish a whole-corridor physical delay. These reads do
+not create historical records.
+
+The simplified **History** workspace requests
+`/api/historical-congestion?modelled_only=true`. This mode selects only the
+identified synthetic scenario seed and excludes measured, unknown and ambiguous
+legacy `simulated` rows. It computes modelled hourly/daily profiles in the
+backend and labels them as possible traffic patterns, not observed history.
+Default measured-history APIs remain available separately. Journey maps label
+all resolved stops **A, B, C, D…** in the planned order, including saved driver
+dispatches. Interface report periods use English; proper place names and source
+records retain their original names and provenance.
 
 The operator's `POST /api/analytics/simulation` endpoint computes a useful
 24-hour model forecast with P10/mean/P90 and weather counterfactuals. It accepts
@@ -668,7 +686,7 @@ alternative HERE Traffic Analytics trial registration succeeded. The owner
 requested `e1525902@u.nus.edu` after the first message did not arrive; the new
 submission succeeded and emailed credentials are pending delivery verification. Batam coverage, export and ML reuse rights
 remain unverified; no provider Batam historical key/export is verified.
-**Free academic historical data has now been acquired:** 48 published Batam direction/interval speeds from 16–18 February 2023, plus a separate Singapore LTA archive of 397,341 ordinal speed-band values over 53 links and 27 dates in March–April 2021. The Singapore chronological Random Forest benchmark uses zero synthetic training rows and beats persistence at 15/30/60 minutes. Its error is measured in band units, not km/h; it is not Batam field validation. The small Batam survey lacks a verified canonical corridor mapping and cannot support network-model promotion. Neither research dataset is used to pad the local real-traffic training archive. Inspect the source-linked survey filters and benchmark in **Analytics → History**. The renewed search adds 28 dated Batam intersection saturation ratios from 12–18 June 2023, visible in History with their own date filter, and six separately transcribed 2024 regional speed ranges. Saturation ratios are not speeds; regional ranges have no exact observation dates. Neither contributes fabricated speed-training labels.
+**Free academic historical data has now been acquired:** 48 published Batam direction/interval speeds from 16–18 February 2023, plus a separate Singapore LTA archive of 397,341 ordinal speed-band values over 53 links and 27 dates in March–April 2021. The Singapore chronological Random Forest benchmark uses zero synthetic training rows and beats persistence at 15/30/60 minutes. Its error is measured in band units, not km/h; it is not Batam field validation. The small Batam survey lacks a verified canonical corridor mapping and cannot support network-model promotion. Neither research dataset is used to pad the local real-traffic training archive. Inspect the source-linked survey filters and benchmark in the research documentation and verification artifacts. The renewed search adds 28 dated Batam intersection saturation ratios from 12–18 June 2023, retained as dated research artifacts, and six separately transcribed 2024 regional speed ranges. Saturation ratios are not speeds; regional ranges have no exact observation dates. Neither contributes fabricated speed-training labels.
 See the [historical-source review](docs/HISTORICAL_TRAFFIC_SOURCES.md) and [full academic backtest](docs/verification/singapore-academic-backtest.json).
 The latest two-million-scenario check passed with zero
 invariant failures on the **synthetic baseline**, not field-accuracy evidence.
@@ -735,7 +753,7 @@ border requirements.
 
 ### Latest local website audit
 
-See the [23 October full website audit](docs/WEBSITE_AUDIT_2026-10-23.md) for local driver/operator verification, routing/authentication fixes, measured-data limitations and test evidence. The new [Batam site benchmark](scripts/backtest_batam_survey.py) trains on 48 real published speed aggregates with chronological day holdouts and no synthetic labels; results appear in Analytics → History. This sparse research diagnostic remains separate from the local real-traffic pipeline.
+See the [23 October full website audit](docs/WEBSITE_AUDIT_2026-10-23.md) for local driver/operator verification, routing/authentication fixes, measured-data limitations and test evidence. The new [Batam site benchmark](scripts/backtest_batam_survey.py) trains on 48 real published speed aggregates with chronological day holdouts and no synthetic labels; results are retained in the research documentation and verification artifacts. This sparse research diagnostic remains separate from the local real-traffic pipeline.
 
 The [frontend and hardening follow-up](docs/FRONTEND_AND_HARDENING_2026-10-23.md) records the bundled font and shared typography, bounded provider JSON, saved-route integrity guards, numeric-model validation, seven local database integrity checks and the latest driver/operator regression results.
 

@@ -10,6 +10,7 @@ import { batamParts } from '../../utils/batamTime';
 
 interface CongestionHeatmapProps {
   corridors: Corridor[];
+  mode?: 'history' | 'modelled';
 }
 
 const HOUR_LABELS = [
@@ -51,7 +52,8 @@ function isBrowserHistoryMetadata(
   return 'source' in metadata;
 }
 
-export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors }) => {
+export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors, mode = 'history' }) => {
+  const modelledOnly = mode === 'modelled';
   const trendGradientId = `operations-history-trend-${useId().replace(/:/g, '')}`;
   const [selectedCorridor, setSelectedCorridor] = useState<string>(
     corridors[0]?.id ?? 'corridor-1',
@@ -93,14 +95,24 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
       inFlight = true;
       setLoading(true);
       try {
-        const res = await fetchHistoricalCongestion(activeCorridorId, days, includeModelled);
+        const res = modelledOnly
+          ? await fetchHistoricalCongestion(activeCorridorId, days, false, true)
+          : await fetchHistoricalCongestion(activeCorridorId, days, includeModelled);
         if (cancelled) return;
+        const metadata = res.data.history_metadata;
+        if (modelledOnly && (isBrowserHistoryMetadata(metadata)
+          || metadata.selection_scope !== 'modelled_only'
+          || metadata.observed || metadata.contains_observed_samples
+          || Object.values(metadata.sources).some(source => source.observed))) {
+          throw new Error('Modelled traffic-flow analysis is unavailable. A verified model-only source is required.');
+        }
         setHistoryResult(res);
         setHourlyTooltip(null);
         setError(null);
       } catch (err) {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Historical congestion could not be loaded.');
+        if (modelledOnly) setHistoryResult(null);
+        setError(err instanceof Error ? err.message : modelledOnly ? 'Traffic-flow analysis could not be generated.' : 'Historical congestion could not be loaded.');
       } finally {
         inFlight = false;
         if (!cancelled) setLoading(false);
@@ -110,16 +122,16 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
       if (document.visibilityState !== 'hidden') void loadProfile();
     };
     void loadProfile();
-    const timer = window.setInterval(refreshWhenVisible, HISTORY_POLL_MS);
+    const timer = modelledOnly ? null : window.setInterval(refreshWhenVisible, HISTORY_POLL_MS);
     window.addEventListener('focus', refreshWhenVisible);
     document.addEventListener('visibilitychange', refreshWhenVisible);
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      if (timer !== null) window.clearInterval(timer);
       window.removeEventListener('focus', refreshWhenVisible);
       document.removeEventListener('visibilitychange', refreshWhenVisible);
     };
-  }, [activeCorridorId, days, includeModelled, refreshRevision]);
+  }, [activeCorridorId, days, includeModelled, modelledOnly, refreshRevision]);
 
   const profile = historyResult?.data ?? null;
   const displayedCorridorId = profile?.corridor_id ?? activeCorridorId;
@@ -176,7 +188,9 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
     )
     : 0;
   const emptyObservedHistory = apiMetadata?.selection_scope === 'observed_only' && apiSampleCount === 0;
-  const historyBadge = !historyResult
+  const historyBadge = modelledOnly
+    ? loading ? 'LOADING ANALYSIS' : historyResult ? 'MODELLED TRAFFIC FLOW' : 'ANALYSIS UNAVAILABLE'
+    : !historyResult
     ? (loading ? 'LOADING HISTORY' : 'HISTORY UNAVAILABLE')
     : browserMetadata
       ? historyUnavailable ? 'HISTORY UNAVAILABLE' : 'BROWSER-MODELLED BASELINE'
@@ -187,7 +201,9 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         : apiMetadata?.contains_observed_samples
           ? 'MIXED HISTORY'
           : 'API-MODELLED HISTORY';
-  const dataSourceValue = browserMetadata
+  const dataSourceValue = modelledOnly
+    ? 'Modelled archive'
+    : browserMetadata
     ? 'Browser model'
     : emptyObservedHistory ? 'No observations' : apiMetadata?.observed
       ? 'Observed'
@@ -196,7 +212,9 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         : apiMetadata
           ? 'API modelled'
           : 'Loading';
-  const sampleSummary = browserMetadata
+  const sampleSummary = modelledOnly
+    ? `${apiSampleCount} modelled samples`
+    : browserMetadata
     ? '0 observed samples'
     : emptyObservedHistory ? '0 observed samples' : apiMetadata?.observed
       ? `${apiSampleCount} observed samples`
@@ -213,7 +231,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         <div className="operations-history__title-row">
           <ChartNoAxesColumn size={ICON_SIZE.large} color="var(--accent-indigo)" />
           <h3 id="history-panel-title" className="operations-history__title">
-            Historical Congestion Analysis
+            {modelledOnly ? 'Possible traffic patterns' : 'Historical Congestion Analysis'}
           </h3>
         </div>
         <div className="operations-history__status">
@@ -223,7 +241,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
             disabled={loading}
             onClick={() => setRefreshRevision(value => value + 1)}
           >
-            <RefreshCw aria-hidden="true" size={ICON_SIZE.small} /> Refresh history
+            <RefreshCw aria-hidden="true" size={ICON_SIZE.small} /> {modelledOnly ? 'Update analysis' : 'Refresh history'}
           </button>
           {loading ? <RefreshCw className="operations-spinner" aria-label="Loading history" size={ICON_SIZE.big} color="var(--text-muted)" /> : null}
           <span className="badge badge-neutral">
@@ -232,7 +250,11 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         </div>
       </div>
 
-      <div className="operations-history__filters">
+      {modelledOnly ? (
+        <p className="operations-history__provenance" role="note">
+          Modelled scenarios only. These possible traffic patterns are separate from recorded observations and live conditions; they are not measured speeds, vehicle counts or a live forecast.
+        </p>
+      ) : <div className="operations-history__filters">
         <div className="operations-history__window-controls" role="group" aria-label="Historical data source">
           <button
             type="button"
@@ -259,7 +281,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
             }}
           >Synthetic replay</button>
         </div>
-      </div>
+      </div>}
       {error ? (
         <div role="alert" className="operations-inline-alert">
           <TriangleAlert aria-hidden="true" size={ICON_SIZE.big} /> {error}
@@ -312,14 +334,14 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
           {[
             {
               icon: <TrendingUp size={ICON_SIZE.medium} color="var(--accent-rose)" />,
-              label: 'Peak Hour',
+              label: modelledOnly ? 'Modelled peak hour' : 'Peak Hour',
               value: HOUR_LABELS[peakHour?.hour ?? 0],
               sub: `avg ${peakHour?.avg_score?.toFixed(0) ?? '—'}`,
               tone: 'rose',
             },
             {
               icon: <Clock size={ICON_SIZE.medium} color="var(--accent-emerald)" />,
-              label: 'Quietest',
+              label: modelledOnly ? 'Modelled quietest hour' : 'Quietest',
               value: HOUR_LABELS[quietHour?.hour ?? 0],
               sub: `avg ${quietHour?.avg_score?.toFixed(0) ?? '—'}`,
               tone: 'emerald',
@@ -359,14 +381,14 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         {/* Hourly bar chart */}
         <div className="operations-history-chart-card">
         <div className="operations-history__chart-title">
-          <ChartNoAxesColumn size={ICON_SIZE.medium} /> 24-Hour Average Profile
+          <ChartNoAxesColumn size={ICON_SIZE.medium} /> {modelledOnly ? 'Modelled 24-hour profile' : '24-Hour Average Profile'}
         </div>
         {hasHourlyData ? (
           <>
             <div
               className={`operations-history-chart-plot operations-history-bars${loading ? ' is-loading' : ''}`}
               role="img"
-              aria-label={`24-hour congestion profile for ${corridor?.name}`}
+              aria-label={`${modelledOnly ? 'Modelled 24-hour' : '24-hour'} congestion profile for ${corridor?.name}`}
             >
               {hourly.map(bucket => {
                 const height = scoreToHeight(
@@ -423,7 +445,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
                   {HOUR_LABELS[hourlyTooltip.bucket.hour]}
                 </div>
                 <div className="operations-chart-tooltip__body">
-                  Average congestion index: {hourlyTooltip.bucket.avg_score === null
+                  {modelledOnly ? 'Modelled congestion index' : 'Average congestion index'}: {hourlyTooltip.bucket.avg_score === null
                     ? 'No data'
                     : `${hourlyTooltip.bucket.avg_score.toFixed(1)} / 100`}
                 </div>
@@ -432,7 +454,8 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
           </>
         ) : (
           <div role="status" className="operations-history__empty-chart">
-            {loading ? 'Loading hourly congestion samples…' : 'No historical samples are available for this corridor and time window.'}
+            {loading ? modelledOnly ? 'Generating traffic-flow scenarios…' : 'Loading hourly congestion samples…'
+              : modelledOnly ? 'No modelled scenarios are available for this corridor and time window.' : 'No historical samples are available for this corridor and time window.'}
           </div>
         )}
         </div>
@@ -441,13 +464,13 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
         {weekly.length >= 2 ? (
           <div className="operations-history-chart-card">
             <div className="operations-history__chart-title operations-history__chart-title--compact">
-              <TrendingUp size={ICON_SIZE.medium} /> Daily Trend
+              <TrendingUp size={ICON_SIZE.medium} /> {modelledOnly ? 'Modelled daily pattern' : 'Daily Trend'}
             </div>
             <div className="operations-history-chart-plot operations-history-trend">
               <svg
                 className="operations-history-trend__svg"
                 role="img"
-                aria-label={`Daily congestion trend for ${corridor?.name}`}
+                aria-label={`${modelledOnly ? 'Modelled daily pattern' : 'Daily congestion trend'} for ${corridor?.name}`}
                 viewBox={`0 0 ${TREND_VIEWBOX_WIDTH} ${TREND_VIEWBOX_HEIGHT}`}
                 preserveAspectRatio="none"
               >
@@ -484,13 +507,13 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors 
             <div className="operations-history-legend" aria-label="Daily trend legend">
               <div className="operations-history-legend__item">
                 <span className="operations-history-legend__swatch is-trend" aria-hidden="true" />
-                Daily average congestion index
+                {modelledOnly ? 'Modelled daily congestion index' : 'Daily average congestion index'}
               </div>
             </div>
           </div>
         ) : !loading && hasHourlyData ? (
           <div className="operations-history__trend-placeholder">
-            A daily trend will appear after at least two days of samples are available.
+            {modelledOnly ? 'Select at least two days to compare modelled daily patterns.' : 'A daily trend will appear after at least two days of samples are available.'}
           </div>
         ) : null}
       </div>

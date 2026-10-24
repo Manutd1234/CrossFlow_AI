@@ -1455,6 +1455,7 @@ export const RouteOptimizer: React.FC<RouteOptimizerProps> = ({
                   onSelectRoute={handleSelectRoute}
                   origin={originForPreview}
                   destination={destForPreview}
+                  stops={result.stops}
                   planningTrafficSnapshot={result.planning_traffic_snapshot}
                 />
               </div>

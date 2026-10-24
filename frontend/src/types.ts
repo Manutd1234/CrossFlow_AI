@@ -59,24 +59,47 @@ export interface Envelope {
   model?: string;
 }
 
+export interface CorridorObservedTraffic {
+  status: 'available' | 'unavailable';
+  source: 'tomtom_live' | 'cctv_camera' | 'unavailable';
+  scope: 'representative_provider_point' | 'mapped_camera_road_views' | 'unavailable';
+  checked_at: string;
+  observed_at: string | null;
+  fresh_until: string | null;
+  congestion_index: number | null;
+  delay_mins: number | null;
+  provider_point_count: number;
+  camera_count: number;
+  camera_congestion_index: number | null;
+  camera_fresh_until?: string | null;
+  corridor_wide: false;
+  forecast_30m: number | null;
+  forecast_60m: number | null;
+  forecast_method: 'persistence' | 'random_forest' | 'mixed' | 'unavailable';
+  forecast_observed_at: string | null;
+  forecast_fresh_until: string | null;
+}
+
 export interface Corridor {
   id: string;
   name: string;
   origin?: string;
   destination?: string;
-  distance_km: number;
+  distance_km: number | null;
   base_time_mins: number;
-  live_congestion_score: number;
-  delay_mins: number;
-  status: 'SMOOTH' | 'HEAVY' | 'CRITICAL';
-  risk_level: 'LOW' | 'MODERATE' | 'HIGH';
-  forecast_30m: number;
-  forecast_60m?: number;
-  trend?: 'UPWARD' | 'DOWNWARD' | 'STABLE';
+  live_congestion_score: number | null;
+  delay_mins: number | null;
+  status: 'SMOOTH' | 'HEAVY' | 'CRITICAL' | 'UNAVAILABLE';
+  risk_level: 'LOW' | 'MODERATE' | 'HIGH' | 'UNAVAILABLE' | null;
+  forecast_30m: number | null;
+  forecast_60m?: number | null;
+  trend?: 'UPWARD' | 'DOWNWARD' | 'STABLE' | null;
   ferry_surge?: number;
   surge_source?: FerrySchedule | null;
   key_checkpoints: string[];
   is_weekend?: boolean;
+  /** Only this timestamped evidence may populate live corridor conditions. */
+  observed_traffic?: CorridorObservedTraffic;
 }
 
 /** A named place that can be used as either end of a planned road trip. */
@@ -545,6 +568,12 @@ export interface RouteEndpointSnapshot {
   region?: 'BATAM' | 'SINGAPORE';
 }
 
+export interface RouteStopSnapshot extends RouteEndpointSnapshot {
+  sequence?: number;
+  role?: 'ORIGIN' | 'WAYPOINT' | 'DESTINATION';
+  dwell_mins?: number;
+}
+
 /** Optional wall-clock scheduling constraint for route requests.
  *
  * Values should be ISO-8601 strings with an explicit offset (for example
@@ -576,6 +605,8 @@ export interface RouteScheduleProvenance {
 }
 
 export interface RouteOptimizationResult {
+  /** Resolved stops in the actual planned order, including intermediate visits. */
+  stops?: RouteStopSnapshot[];
   schedule_feasibility?: ScheduleFeasibility | null;
   /** Content-addressed identifier returned by the authoritative route API. */
   route_id?: string;
@@ -943,7 +974,7 @@ export interface HistoricalSyntheticSeedMetadata {
 
 /** Provenance for persisted history returned by the backend. */
 export interface ApiHistoryMetadata {
-  selection_scope?: 'observed_only' | 'all_sources' | 'legacy_modelled_preview';
+  selection_scope?: 'observed_only' | 'all_sources' | 'legacy_modelled_preview' | 'modelled_only';
   sample_count?: number;
   snapshot_may_be_truncated?: boolean;
   snapshot_loaded_rows?: number;

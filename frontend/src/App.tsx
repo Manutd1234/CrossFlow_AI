@@ -19,7 +19,7 @@ import {
   refreshOfficialFerrySources, scheduleInformedPortSeed,
 } from './services/api';
 import {
-  INITIAL_CORRIDORS, INITIAL_FERRIES,
+  CORRIDOR_CATALOG, INITIAL_FERRIES,
   PUBLISHED_FERRY_TIMETABLE_METADATA, ROUTE_LOCATIONS,
 } from './data/mockData';
 import { UNAVAILABLE_OPERATIONS } from './data/unavailableOperations';
@@ -128,7 +128,7 @@ export function App() {
   useSessionRefresh(authResolved && identity ? session : null, handleSessionChange, handleIdentityChange, handleSessionRecovery);
   const [routes, setRoutes] = useState<CorridorRoute[]>([]);
   const [routesLoading, setRoutesLoading] = useState(true);
-  const [corridors, setCorridors] = useState<Corridor[]>(INITIAL_CORRIDORS);
+  const [corridors, setCorridors] = useState<Corridor[]>(CORRIDOR_CATALOG);
   const [ferries, setFerries] = useState<FerrySchedule[]>(INITIAL_FERRIES);
   const [ferryTimetable, setFerryTimetable] = useState<FerryTimetableMetadata>(
     PUBLISHED_FERRY_TIMETABLE_METADATA,

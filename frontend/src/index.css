@@ -2230,6 +2230,11 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-amber);
 }
 
+.selected-corridor-panel__metric-value.is-unavailable {
+  color: var(--text-muted);
+  font-size: var(--text-body);
+}
+
 .selected-corridor-panel__metric-suffix {
   color: var(--text-muted);
   font-size: var(--text-sm);

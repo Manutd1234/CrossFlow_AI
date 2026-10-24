@@ -60,6 +60,7 @@ from services.route_solver import (
 )
 from services.route_solver import optimize_free_route, optimize_multi_stop_route
 from services.operations_analytics import get_operations_analytics
+from services.corridor_observations import get_current_corridors
 from services.analytics_history import get_observed_history, AnalyticsHistoryUnavailable
 from services.authority_reports import STORE as AUTHORITY_REPORTS
 from services.research_history import load_research_history, ResearchHistoryUnavailable
@@ -1200,19 +1201,25 @@ def read_root():
 
 @app.get("/api/corridors")
 @app.get("/corridors")
-def get_corridors():
-    """Corridor telemetry with 30 and 60 minute forecasts."""
+def get_corridors(response: Response = None):
+    """Current, partially observed corridors; absent evidence stays unavailable.
+
+    This read never appends modelled rows to historical observations. Road
+    planning retains its separate forecast/scenario functions and contracts.
+    """
+    if response is not None:
+        response.headers.update(_ROUTE_NO_STORE_HEADERS)
+    telemetry = get_current_corridors()
     now = clock.now()
-    telemetry = get_live_corridor_telemetry(now)
-    # Record each observation to the historical store.
-    for c in telemetry:
-        historical_store.record(
-            c["id"],
-            c["live_congestion_score"],
-            "simulated",
-            now=now,
-        )
-    return envelope({"corridors": telemetry}, now)
+    observed = any(row["observed_traffic"]["status"] == "available" for row in telemetry)
+    return envelope(
+        {"corridors": telemetry}, now,
+        data_source="live" if observed else "unavailable",
+        provenance_overrides={"traffic": (
+            "Fresh representative provider points and explicitly mapped camera road views; partial coverage only"
+            if observed else "No fresh associated road observations are available"
+        )},
+    )
 
 
 @app.get("/api/corridor-routes")
@@ -1816,6 +1823,7 @@ def api_historical_congestion(
     days: int = Query(7, ge=1, le=30, description="History window in days"),
     include_modelled: bool = False,
     response: Response = None,
+    modelled_only: bool = False,
 ):
     """Historical congestion profile for one corridor.
 
@@ -1825,7 +1833,9 @@ def api_historical_congestion(
       - history_metadata: explicit provenance, freshness, and storage durability.
     By default reads only validated measured spatial observations. Missing
     observations produce empty buckets. ``include_modelled`` explicitly opts
-    into the legacy synthetic engineering preview, labelled non-observed.
+    into the legacy mixed engineering archive. ``modelled_only`` selects only
+    the versioned synthetic scenario baseline, never measurements or ambiguous
+    legacy "simulated" samples.
     """
     if corridor_id not in _CORRIDOR_IDS:
         raise HTTPException(
@@ -1836,7 +1846,7 @@ def api_historical_congestion(
     now = clock.now()
     if response is not None:
         response.headers.update(_ROUTE_NO_STORE_HEADERS)
-    if not include_modelled:
+    if not include_modelled and not modelled_only:
         try:
             history = get_observed_history(
                 corridor_id, days, now, shared_store=_SHARED_ROUTING_INTELLIGENCE,
@@ -1851,21 +1861,35 @@ def api_historical_congestion(
         return envelope(history, now, data_source="observed_history", provenance_overrides={
             "traffic": "Validated measured spatial observations only; no synthetic history",
         })
-    hourly = historical_store.get_hourly_profile(corridor_id, days=days, now=now)
-    weekly = historical_store.get_weekly_trend(corridor_id, days=30, now=now)
+    hourly = historical_store.get_hourly_profile(
+        corridor_id, days=days, now=now, modelled_only=modelled_only,
+    )
+    weekly = historical_store.get_weekly_trend(
+        corridor_id, days=days if modelled_only else 30, now=now, modelled_only=modelled_only,
+    )
     metadata = historical_store.get_history_metadata(
         corridor_id,
         days=days,
         now=now,
+        modelled_only=modelled_only,
     )
-    metadata["selection_scope"] = "legacy_modelled_preview"
+    metadata["selection_scope"] = "modelled_only" if modelled_only else "legacy_modelled_preview"
+    if modelled_only:
+        metadata.update(
+            sample_count=sum(metadata["source_counts"].values()),
+            window_basis="Rolling days ending at the request time",
+            freshness_basis="Latest modelled scenario sample; not live road measurements",
+        )
     return envelope({
         "corridor_id": corridor_id,
         "hourly_profile": hourly,
         "weekly_trend": weekly,
         "days_requested": days,
         "history_metadata": metadata,
-    }, now)
+    }, now, data_source="simulated", provenance_overrides={"traffic": (
+        "Synthetic scenario baseline only; possible traffic patterns, not observed or measured history"
+        if modelled_only else "Legacy engineering archive; source metadata separates measured and modelled samples"
+    )})
 
 
 def _canonical_spatial_observation(

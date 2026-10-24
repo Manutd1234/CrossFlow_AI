@@ -193,6 +193,77 @@ afterEach(() => {
 });
 
 describe('route preview alternatives', () => {
+  it('marks every resolved planned stop in order, with final D and waypoints above turn badges', () => {
+    const plannedStops = [
+      { sequence: 1, name: 'Batam Centre', lat: 1.1318, lng: 104.0554 },
+      { sequence: 2, name: 'Sekupang', lat: 1.125, lng: 103.928 },
+      { sequence: 3, name: 'Batu Besar', lat: 1.152, lng: 104.135 },
+      { sequence: 4, name: 'Batamindo', lat: 1.06, lng: 104.0303 },
+    ];
+    const selected = {
+      ...routes[0],
+      navigation: {
+        ...routes[0].navigation!,
+        maneuvers: [{ ...routes[0].navigation!.maneuvers[0], coords: [1.125, 103.928] as [number, number] }],
+      },
+    };
+    const container = renderIntoDom(<RoutePreviewMap
+      routes={[selected]}
+      selectedRouteId="primary"
+      stops={plannedStops}
+      origin={{ id: 'draft-origin', name: 'Unsaved origin', category: 'Draft', lat: 1.2, lng: 104.2 }}
+      destination={{ id: 'draft-destination', name: 'Unsaved destination', category: 'Draft', lat: 1.3, lng: 104.3 }}
+    />);
+
+    const stopMarkers = leafletSpies.marker.mock.calls.filter(call => call[1]?.icon?.html?.dataset.routeStopId);
+    expect(stopMarkers.map(call => call[0])).toEqual(plannedStops.map(stop => [stop.lat, stop.lng]));
+    expect(stopMarkers.map(call => call[1].icon.html.textContent)).toEqual(['A', 'B', 'C', 'D']);
+    expect(stopMarkers.map(call => call[1].icon.html.dataset.routeStopRole))
+      .toEqual(['origin', 'waypoint', 'waypoint', 'destination']);
+    expect(stopMarkers.map(call => call[1].icon.html.dataset.markerColor)).toEqual([
+      MAP_PALETTE.endpoint.origin, MAP_PALETTE.node.batam, MAP_PALETTE.node.batam, MAP_PALETTE.endpoint.destination,
+    ]);
+    expect(stopMarkers[1][1].icon.html.style.borderRadius).toBe('50%');
+    expect(stopMarkers[1][1].icon.html.querySelector('span')?.style.fontFamily).toBe('var(--font-body)');
+    expect(stopMarkers.every(call => call[1].zIndexOffset === 1000)).toBe(true);
+    const turn = leafletSpies.marker.mock.calls.find(call => call[1]?.icon?.className === 'gmaps-turn-badge');
+    expect(turn?.[0]).toEqual([1.125, 103.928]);
+    expect(turn?.[1].zIndexOffset).toBeLessThan(stopMarkers[1][1].zIndexOffset);
+    expect(container.querySelector('[role="region"]')?.getAttribute('aria-label'))
+      .toContain('from Batam Centre to Batamindo');
+    const bounds = leafletSpies.polyline.mock.results
+      .map(result => result.value.getBounds.mock.results[0]?.value)
+      .find(Boolean);
+    plannedStops.forEach(stop => expect(bounds.extend).toHaveBeenCalledWith([stop.lat, stop.lng]));
+  });
+
+  it('keeps planned stop positions and marker identities when an alternative is selected', () => {
+    const plannedStops = [
+      { name: 'Start', lat: 1.06, lng: 104.03 },
+      { name: 'First visit', lat: 1.09, lng: 104.04 },
+      { name: 'Return to start', lat: 1.06, lng: 104.03 },
+      { name: 'Finish', lat: 1.13, lng: 104.055 },
+    ];
+    renderIntoDom(<RoutePreviewMap routes={routes} selectedRouteId="primary" stops={plannedStops} />);
+    const readMarkers = () => leafletSpies.marker.mock.calls
+      .filter(call => call[1]?.icon?.html?.dataset.routeStopId)
+      .map(call => ({ coords: call[0], id: call[1].icon.html.dataset.routeStopId, label: call[1].icon.html.textContent }));
+    const first = readMarkers();
+    expect(first.map(marker => marker.id)).toEqual(['route-stop-1', 'route-stop-2', 'route-stop-3', 'route-stop-4']);
+    expect(first[0].coords).toEqual(first[2].coords);
+    expect(first[0].id).not.toBe(first[2].id);
+    leafletSpies.marker.mockClear();
+    act(() => root?.render(<RoutePreviewMap routes={routes} selectedRouteId="osm-alternative-1" stops={plannedStops} />));
+    expect(readMarkers()).toEqual(first);
+  });
+
+  it('preserves two endpoint markers for a legacy saved route without stop snapshots', () => {
+    renderIntoDom(<RoutePreviewMap routes={[routes[1]]} selectedRouteId="osm-alternative-1" />);
+    const stopMarkers = leafletSpies.marker.mock.calls.filter(call => call[1]?.icon?.html?.dataset.routeStopId);
+    expect(stopMarkers.map(call => call[1].icon.html.textContent)).toEqual(['A', 'B']);
+    expect(stopMarkers.map(call => call[0])).toEqual([alternativeGeometry[0], alternativeGeometry[alternativeGeometry.length - 1]]);
+  });
+
   it.each([
     { layout: 'small-width', smallWidth: true, smallHeight: false },
     { layout: 'small-height', smallWidth: false, smallHeight: true },

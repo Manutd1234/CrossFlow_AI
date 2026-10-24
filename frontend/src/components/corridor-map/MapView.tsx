@@ -13,7 +13,8 @@ import {
   Radio,
   Sparkles,
 } from 'lucide-react';
-import { corridorColor, prettyArrow, shortCorridorName } from '../../utils/format';
+import { prettyArrow, shortCorridorName } from '../../utils/format';
+import { corridorLiveView, corridorObservationTime } from '../../utils/corridorTelemetry';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
 import { MAP_TILE_ATTRIBUTION, MAP_TILE_URL } from '../../theme/mapTiles';
@@ -82,6 +83,22 @@ export const MapView: React.FC<MapViewProps> = ({
     : corridors[0]?.id ?? null;
   const selectedCorridor =
     corridors.find(c => c.id === activeSelectedId) ?? null;
+  const [nowMs, setNowMs] = useState(Date.now);
+  useEffect(() => {
+    const updateClock = () => setNowMs(Date.now());
+    const timer = window.setInterval(updateClock, 1000);
+    window.addEventListener('focus', updateClock);
+    document.addEventListener('visibilitychange', updateClock);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('focus', updateClock);
+      document.removeEventListener('visibilitychange', updateClock);
+    };
+  }, []);
+  const corridorViews = useMemo(() => new Map(
+    corridors.map(corridor => [corridor.id, corridorLiveView(corridor, nowMs)]),
+  ), [corridors, nowMs]);
+  const selectedTraffic = selectedCorridor ? corridorViews.get(selectedCorridor.id) : undefined;
 
   // One control intentionally governs both the planning-watch catalogue and
   // the current/provider-or-model traffic markers drawn over the base map.
@@ -213,7 +230,7 @@ export const MapView: React.FC<MapViewProps> = ({
         opacity: 0.9,
       }).addTo(map);
       const line = L.polyline(latlngs, {
-        color: MAP_PALETTE.traffic.smooth,
+        color: MAP_PALETTE.route.connector,
         weight: 5,
         opacity: 1,
         dashArray: isModelled ? undefined : '8, 6',
@@ -236,12 +253,18 @@ export const MapView: React.FC<MapViewProps> = ({
    * rebuilding them, so a 30-second refresh never resets the viewport.
    */
   useEffect(() => {
+    corridorLineRefs.current.forEach((line, id) => {
+      if (corridorViews.has(id)) return;
+      line.setStyle({ color: MAP_PALETTE.route.connector, weight: 4, opacity: 0.75 });
+      line.bindTooltip(linesTooltip([{ text: 'Traffic unavailable' }]), { sticky: true });
+    });
     corridors.forEach(corridor => {
       const line = corridorLineRefs.current.get(corridor.id);
-      if (!line) return;
+      const traffic = corridorViews.get(corridor.id);
+      if (!line || !traffic) return;
       const isSelected = corridor.id === activeSelectedId;
       line.setStyle({
-        color: corridorColor(corridor.status),
+        color: traffic.color,
         weight: isSelected ? 7 : 4,
         opacity: isSelected ? 1 : 0.75,
       });
@@ -249,13 +272,14 @@ export const MapView: React.FC<MapViewProps> = ({
       line.bindTooltip(linesTooltip([
         { text: prettyArrow(corridor.name), strong: true },
         {
-          text: `Index ${corridor.live_congestion_score} · ${corridor.status}`,
-          color: corridorColor(corridor.status),
+          text: traffic.available ? `Sampled index ${traffic.score} · ${traffic.status}` : 'Traffic unavailable',
+          color: traffic.color,
         },
-        { text: `Delay +${corridor.delay_mins} min · ${corridor.distance_km} km` },
+        { text: traffic.coverage },
+        { text: corridor.distance_km === null ? 'Distance unavailable' : `${corridor.distance_km} km` },
       ]), { sticky: true });
     });
-  }, [activeSelectedId, corridors, routes]);
+  }, [activeSelectedId, corridors, corridorViews, routes]);
 
   /** Render backend-weighted watch areas alongside the corridor network. */
   useEffect(() => {
@@ -482,27 +506,32 @@ export const MapView: React.FC<MapViewProps> = ({
               label: 'Corridor',
               content: (
         <div className="map-corridor-stack">
-          {selectedCorridor ? (
+          {selectedCorridor && selectedTraffic ? (
           <section className="glass-panel selected-corridor-panel" aria-labelledby="selected-corridor-title">
             <div className="selected-corridor-panel__header">
-              <span className={`badge badge-${selectedCorridor.status.toLowerCase()}`}>
-                {selectedCorridor.status} FLOW
+              <span className={`badge badge-${selectedTraffic.available ? selectedTraffic.status.toLowerCase() : 'neutral'}`}>
+                {selectedTraffic.available ? `${selectedTraffic.status} · SAMPLED` : 'TRAFFIC UNAVAILABLE'}
               </span>
             </div>
 
             <h3 id="selected-corridor-title" className="selected-corridor-panel__title">
               {prettyArrow(selectedCorridor.name)}
             </h3>
-            <p className="muted">Modelled corridor estimates and forecasts. Provider observations are shown separately on the map.</p>
+            <p className="muted">{selectedTraffic.coverage}</p>
+            {selectedTraffic.observedAt && (
+              <p className="selected-corridor-panel__route-meta">
+                <Clock aria-hidden="true" size={ICON_SIZE.small} />
+                Updated {corridorObservationTime(selectedTraffic.observedAt)}
+              </p>
+            )}
 
             <div className="selected-corridor-panel__metrics">
               <article className="selected-corridor-panel__metric">
                 <div className="selected-corridor-panel__metric-label">
                   <Gauge aria-hidden="true" size={ICON_SIZE.medium} color="var(--accent-cyan)" /> Current Congestion
                 </div>
-                {/* Coloured from status, so this can never disagree with the badge. */}
-                <div className="selected-corridor-panel__metric-value" style={{ color: corridorColor(selectedCorridor.status) }}>
-                  {selectedCorridor.live_congestion_score} <span className="selected-corridor-panel__metric-suffix">/ 100</span>
+                <div className={`selected-corridor-panel__metric-value${selectedTraffic.available ? '' : ' is-unavailable'}`} style={{ color: selectedTraffic.color }}>
+                  {selectedTraffic.score === null ? 'Unavailable' : <>{selectedTraffic.score} <span className="selected-corridor-panel__metric-suffix">/ 100</span></>}
                 </div>
               </article>
 
@@ -510,22 +539,20 @@ export const MapView: React.FC<MapViewProps> = ({
                 <div className="selected-corridor-panel__metric-label">
                   <Clock aria-hidden="true" size={ICON_SIZE.medium} color="var(--accent-amber)" /> Est. Traffic Delay
                 </div>
-                <div className="selected-corridor-panel__metric-value is-delay">
-                  +{selectedCorridor.delay_mins} <span className="selected-corridor-panel__metric-suffix">mins</span>
+                <div className={`selected-corridor-panel__metric-value ${selectedTraffic.delay === null ? 'is-unavailable' : 'is-delay'}`}>
+                  {selectedTraffic.delay === null ? 'Unavailable' : <>+{selectedTraffic.delay} <span className="selected-corridor-panel__metric-suffix">mins</span></>}
                 </div>
               </article>
             </div>
 
             <div className="selected-corridor-panel__forecast">
               <div className="selected-corridor-panel__forecast-title">
-                <Sparkles aria-hidden="true" size={ICON_SIZE.medium} /> AI 30-Min Trend Forecast
+                <Sparkles aria-hidden="true" size={ICON_SIZE.medium} /> 30 / 60 min outlook
               </div>
               <p className="selected-corridor-panel__forecast-copy">
-                Predicted to reach <strong>{selectedCorridor.forecast_30m}</strong> in 30 minutes
-                {selectedCorridor.forecast_60m !== undefined && (
-                  <> and <strong>{selectedCorridor.forecast_60m}</strong> in 60</>
-                )}
-                {' '}({selectedCorridor.trend?.toLowerCase() ?? 'stable'}).
+                {selectedTraffic.forecast30 === null || selectedTraffic.forecast60 === null
+                  ? 'Forecast unavailable for this corridor.'
+                  : <>{selectedTraffic.forecastMethod === 'persistence' ? 'Latest-observation baseline' : 'Observed-data forecast'}: <strong>{selectedTraffic.forecast30}</strong> in 30 min · <strong>{selectedTraffic.forecast60}</strong> in 60 min <span>/ 100</span>.</>}
               </p>
             </div>
 
@@ -549,13 +576,15 @@ export const MapView: React.FC<MapViewProps> = ({
             Batam Corridor Telemetry Feeds ({corridors.length})
           </h3>
           <div className="corridor-feed-list" tabIndex={0} aria-label="Scrollable Batam corridor telemetry feeds">
-            {corridors.map((c) => (
+            {corridors.map((c) => {
+              const traffic = corridorViews.get(c.id)!;
+              return (
               <button
                 key={c.id}
                 type="button"
                 className="ui-sand-interactive corridor-feed-item"
                 aria-pressed={activeSelectedId === c.id}
-                aria-label={`Select ${prettyArrow(c.name)}, ${c.status.toLowerCase()} flow, congestion index ${c.live_congestion_score}`}
+                aria-label={`Select ${prettyArrow(c.name)}, ${traffic.available ? `sampled ${traffic.status.toLowerCase()} flow, congestion index ${traffic.score}` : 'traffic unavailable'}`}
                 onClick={() => {
                   focusSelectedTabOnOpenRef.current = true;
                   setSelectedId(c.id);
@@ -565,15 +594,16 @@ export const MapView: React.FC<MapViewProps> = ({
               >
                 <div className="corridor-feed-item__heading">
                   <strong>{shortCorridorName(c.name)}</strong>
-                  <span className={`badge badge-${c.status.toLowerCase()}`}>{c.status}</span>
+                  <span className={`badge badge-${traffic.available ? traffic.status.toLowerCase() : 'neutral'}`}>{traffic.status}</span>
                 </div>
                 <div className="corridor-feed-item__metrics">
-                  <span>Dist: {c.distance_km} km</span>
-                  <span>Delay: +{c.delay_mins}m</span>
-                  <span>Idx: {c.live_congestion_score}</span>
+                  <span>{c.distance_km === null ? 'Distance unavailable' : `Dist: ${c.distance_km} km`}</span>
+                  <span>{traffic.delay === null ? 'Delay: Unavailable' : `Delay: +${traffic.delay}m`}</span>
+                  <span>{traffic.score === null ? 'Idx: Unavailable' : `Idx: ${traffic.score}`}</span>
                 </div>
               </button>
-            ))}
+              );
+            })}
             {corridors.length === 0 ? (
               <div role="status" className="corridor-feed-panel__empty">
                 No corridor feeds are available yet.

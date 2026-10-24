@@ -8,7 +8,7 @@ import {
   ApiRequestError, fetchRouteRunHistory, requestFreeRouteOptimization,
   requestPersistedRoute,
 } from '../../services/api';
-import type { DataSource, Fetched, FreeLocation, RouteOptimizationResult, RouteRunHistory } from '../../types';
+import type { DataSource, Fetched, FreeLocation, RouteOptimizationResult, RouteRunHistory, RouteStopSnapshot } from '../../types';
 import { RouteOptimizer } from './RouteOptimizer';
 
 vi.mock('../../services/api', async (importOriginal) => ({
@@ -16,7 +16,11 @@ vi.mock('../../services/api', async (importOriginal) => ({
   fetchRouteRunHistory: vi.fn(), requestPersistedRoute: vi.fn(),
   requestFreeRouteOptimization: vi.fn(), googleRouteBenchmarkEnabled: () => false,
 }));
-vi.mock('./RoutePreviewMap', () => ({ RoutePreviewMap: () => null }));
+vi.mock('./RoutePreviewMap', () => ({
+  RoutePreviewMap: ({ stops }: { stops?: RouteStopSnapshot[] }) => (
+    <div data-testid="saved-journey-map" data-stops={JSON.stringify(stops)} />
+  ),
+}));
 vi.mock('./LocationSearch', () => ({
   LocationSearch: ({ id, label, value, onChange }: {
     id: string; label: string; value: FreeLocation | null;
@@ -92,6 +96,25 @@ afterEach(() => {
 });
 
 describe('saved route sidebar', () => {
+  it('forwards all saved resolved stops to the journey map without replacing them with editable endpoints', async () => {
+    const stops: RouteStopSnapshot[] = [
+      { sequence: 1, name: 'Saved Batam Centre', lat: 1.1318, lng: 104.0554, role: 'ORIGIN' },
+      { sequence: 2, name: 'Saved Sekupang', lat: 1.125, lng: 103.928, role: 'WAYPOINT' },
+      { sequence: 3, name: 'Saved Batu Besar', lat: 1.152, lng: 104.135, role: 'WAYPOINT' },
+      { sequence: 4, name: 'Saved Batamindo', lat: 1.06, lng: 104.0303, role: 'DESTINATION' },
+    ];
+    vi.mocked(requestPersistedRoute).mockResolvedValueOnce({ ...saved, data: {
+      ...saved.data, stops, route_geometry: stops.map(stop => [stop.lat, stop.lng]),
+    } });
+    const container = await render();
+    await click(container, 'Saved');
+    await selectHistoryRun(container);
+    await click(container, 'Journey map');
+    expect(JSON.parse(container.querySelector('[data-testid="saved-journey-map"]')!.getAttribute('data-stops')!))
+      .toEqual(stops);
+    expect(requestFreeRouteOptimization).not.toHaveBeenCalled();
+  });
+
   it('replaces planning controls with real history, opens a run and preserves its result tab across view switches', async () => {
     const container = await render();
     expect(container.querySelector('form[aria-label="Route planning controls"]')).not.toBeNull();

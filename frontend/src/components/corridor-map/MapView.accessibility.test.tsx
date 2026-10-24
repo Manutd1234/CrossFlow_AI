@@ -6,7 +6,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import L from 'leaflet';
 import { MapView } from './MapView';
 import { corridorColor } from '../../utils/format';
-import type { Corridor, Fetched, LiveTrafficData } from '../../types';
+import type { Corridor, CorridorRoute, Fetched, LiveTrafficData } from '../../types';
 
 const leafletTestState = vi.hoisted(() => ({
   corridorClickHandlers: [] as Array<() => void>,
@@ -69,6 +69,19 @@ vi.mock('leaflet', () => {
 
 let root: Root | undefined;
 
+function observedTraffic(score: number, at = Date.now(), secondsUntilExpiry = 60): NonNullable<Corridor['observed_traffic']> {
+  const observedAt = new Date(at - 5_000).toISOString();
+  const freshUntil = new Date(at + secondsUntilExpiry * 1_000).toISOString();
+  return {
+    status: 'available', source: 'tomtom_live', scope: 'representative_provider_point',
+    checked_at: new Date(at).toISOString(), observed_at: observedAt, fresh_until: freshUntil,
+    congestion_index: score, delay_mins: null, provider_point_count: 1, camera_count: 0,
+    camera_congestion_index: null, corridor_wide: false,
+    forecast_30m: score, forecast_60m: score, forecast_method: 'persistence',
+    forecast_observed_at: observedAt, forecast_fresh_until: freshUntil,
+  };
+}
+
 const TEST_CORRIDORS: Corridor[] = [
   {
     id: 'corridor-1',
@@ -83,8 +96,29 @@ const TEST_CORRIDORS: Corridor[] = [
     forecast_60m: 81,
     trend: 'UPWARD',
     key_checkpoints: ['Mukakuning Gate', 'Batam Centre Ferry'],
+    observed_traffic: observedTraffic(72),
   },
 ];
+
+const EMPTY_ROUTES: CorridorRoute[] = [];
+
+function corridorView(corridors: Corridor[], onSelectCorridor = vi.fn(), canPlanRoutes = true): ReactElement {
+  return <MapView corridors={corridors} routes={EMPTY_ROUTES} trafficSnapshot={null}
+    onSelectCorridor={onSelectCorridor} canPlanRoutes={canPlanRoutes} />;
+}
+
+function showCorridorTab(container: HTMLElement): void {
+  const tabs = container.querySelectorAll<HTMLButtonElement>('[aria-label="Corridor map sections"] [role="tab"]');
+  act(() => tabs[1].click());
+}
+
+function latestCorridorStyle(): { color?: string; weight?: number } | undefined {
+  return leafletTestState.corridorLayers[1]?.setStyle.mock.calls.slice(-1)[0]?.[0];
+}
+
+function latestCorridorTooltip(): string {
+  return (leafletTestState.corridorLayers[1]?.bindTooltip.mock.calls.slice(-1)[0]?.[0] as HTMLElement | undefined)?.textContent ?? '';
+}
 
 function trafficSnapshot(selectionScore: number): Fetched<LiveTrafficData> {
   return {
@@ -140,6 +174,7 @@ afterEach(() => {
   leafletTestState.mapInstance.fitBounds.mockClear();
   vi.mocked(L.polyline).mockClear();
   vi.unstubAllGlobals();
+  vi.useRealTimers();
   document.body.replaceChildren();
 });
 
@@ -320,6 +355,7 @@ describe('MapView traffic overlay controls', () => {
       forecast_60m: 27,
       trend: 'STABLE',
       key_checkpoints: ['Batu Ampar Gate 2', 'Batam Centre'],
+      observed_traffic: observedTraffic(31),
     };
     const container = renderIntoDom(
       <MapView
@@ -412,5 +448,123 @@ describe('MapView traffic overlay controls', () => {
     expect(container.querySelector('#hotspot-card-zone-simpang-jam .hotspot-card__score')?.getAttribute('aria-label'))
       .toBe('Watch score 77.8 out of 100');
     expect(leafletTestState.map).toHaveBeenCalledTimes(1);
+  });
+
+  it('withdraws unsupported legacy numbers while keeping the route controls available', () => {
+    const legacy = { ...TEST_CORRIDORS[0] };
+    delete legacy.observed_traffic;
+    const onSelectCorridor = vi.fn();
+    const container = renderIntoDom(corridorView([legacy], onSelectCorridor));
+    showCorridorTab(container);
+
+    const panel = container.querySelector('.selected-corridor-panel');
+    const metrics = panel?.querySelectorAll('.selected-corridor-panel__metric-value');
+    expect(metrics?.[0].textContent).toContain('Unavailable');
+    expect(metrics?.[0].textContent).not.toContain('72');
+    expect(metrics?.[1].textContent).toContain('Unavailable');
+    expect(metrics?.[1].textContent).not.toMatch(/\+0|\+8/);
+    expect(panel?.textContent).toContain('Forecast unavailable');
+    expect(panel?.textContent).not.toContain('AI 30-Min');
+    const feed = container.querySelector('.corridor-feed-item');
+    expect(feed?.textContent).toContain('Unavailable');
+    expect(feed?.textContent).not.toMatch(/Idx: 72|Delay: \+8/);
+    expect(latestCorridorStyle()?.color).toEqual(expect.any(String));
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('CRITICAL'));
+    expect(latestCorridorTooltip()).toMatch(/unavailable/i);
+    expect(latestCorridorTooltip()).not.toContain('72');
+    // Geometry also includes corridors absent from this response. They have
+    // no evidence either and must not retain a default green traffic stroke.
+    const missingCorridorStyle = vi.mocked(L.polyline).mock.calls[3]?.[1];
+    expect(missingCorridorStyle?.color).toEqual(expect.any(String));
+    expect(missingCorridorStyle?.color).not.toBe(corridorColor('SMOOTH'));
+
+    act(() => container.querySelector<HTMLButtonElement>('.selected-corridor-panel__solve')?.click());
+    expect(onSelectCorridor).toHaveBeenCalledWith('corridor-1');
+  });
+
+  it('updates the selected corridor from a fresh busy observation to a genuine zero on refresh', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-24T08:00:00Z'));
+    const busy = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(72) };
+    const container = renderIntoDom(corridorView([busy]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/72\s*\/ 100/);
+    expect(latestCorridorStyle()?.color).toBe(corridorColor('CRITICAL'));
+
+    act(() => vi.advanceTimersByTime(1_000));
+    // Deliberately leave the old legacy fields at 72/CRITICAL/+8: the fresh
+    // backend observation, including numeric zero, is the authoritative input.
+    const clear = { ...busy, observed_traffic: observedTraffic(0) };
+    act(() => root?.render(corridorView([clear])));
+
+    expect(container.querySelector('#selected-corridor-title')?.textContent).toContain('Mukakuning');
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toMatch(/^0\s*\/ 100/);
+    expect(container.querySelector('.corridor-feed-item')?.textContent).not.toContain('Idx: 72');
+    expect(container.querySelector('.corridor-feed-item')?.getAttribute('aria-pressed')).toBe('true');
+    expect(latestCorridorStyle()?.color).toBe(corridorColor('SMOOTH'));
+    expect(latestCorridorTooltip()).toMatch(/index 0\b/i);
+    expect(latestCorridorTooltip()).not.toMatch(/index 72\b/i);
+    expect(leafletTestState.map).toHaveBeenCalledTimes(1);
+  });
+
+  it('expires the card, feed and map tooltip without waiting for another server response', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-24T08:00:00Z'));
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(72, Date.now(), 2) };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(container.querySelector('.selected-corridor-panel__metric-value')?.textContent).toContain('72');
+    expect(latestCorridorTooltip()).toMatch(/index 72\b/i);
+
+    act(() => vi.advanceTimersByTime(3_000));
+
+    const panel = container.querySelector('.selected-corridor-panel');
+    expect(panel?.querySelector('.selected-corridor-panel__metric-value')?.textContent).toContain('Unavailable');
+    expect(panel?.textContent).toContain('Forecast unavailable');
+    expect(container.querySelector('.corridor-feed-item')?.textContent).toContain('Unavailable');
+    expect(latestCorridorTooltip()).toMatch(/unavailable/i);
+    expect(latestCorridorTooltip()).not.toMatch(/index 72\b/i);
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('CRITICAL'));
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
+    expect(leafletTestState.map).toHaveBeenCalledTimes(1);
+  });
+
+  it('withdraws a previously observed road when its corridor disappears from the refreshed response', () => {
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(72) };
+    const container = renderIntoDom(corridorView([corridor]));
+    showCorridorTab(container);
+    expect(latestCorridorStyle()?.color).toBe(corridorColor('CRITICAL'));
+    expect(latestCorridorTooltip()).toMatch(/index 72\b/i);
+
+    act(() => root?.render(corridorView([])));
+
+    expect(container.querySelector('.selected-corridor-panel')).toBeNull();
+    expect(container.querySelectorAll('.corridor-feed-item')).toHaveLength(0);
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('CRITICAL'));
+    expect(latestCorridorStyle()?.color).not.toBe(corridorColor('SMOOTH'));
+    expect(latestCorridorTooltip()).toMatch(/unavailable/i);
+    expect(latestCorridorTooltip()).not.toMatch(/index 72\b/i);
+    expect(leafletTestState.map).toHaveBeenCalledTimes(1);
+  });
+
+  it('labels persistence as a partial-coverage baseline and preserves the driver workspace boundary', () => {
+    const corridor = { ...TEST_CORRIDORS[0], observed_traffic: observedTraffic(22) };
+    const onSelectCorridor = vi.fn();
+    const container = renderIntoDom(corridorView([corridor], onSelectCorridor, false));
+    showCorridorTab(container);
+
+    const panel = container.querySelector('.selected-corridor-panel');
+    expect(panel?.textContent).toContain('30 / 60 min outlook');
+    expect(panel?.textContent).toContain('Latest-observation baseline');
+    expect(panel?.textContent).toContain('Partial coverage');
+    expect(panel?.textContent).toMatch(/1 measured road point/);
+    expect(panel?.textContent).not.toMatch(/AI 30-Min|Predicted to reach|Modelled corridor estimates/);
+    expect(panel?.querySelectorAll('video, iframe, canvas')).toHaveLength(0);
+    const action = panel?.querySelector<HTMLButtonElement>('.selected-corridor-panel__solve');
+    expect(action?.textContent).toContain('View Assigned Routes');
+    expect(action?.getAttribute('aria-label')).toBe('View assigned routes');
+    act(() => action?.click());
+    expect(onSelectCorridor).toHaveBeenCalledWith('corridor-1');
   });
 });

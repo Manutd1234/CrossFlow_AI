@@ -11,7 +11,7 @@ import {
 } from '../types';
 
 import {
-  INITIAL_CORRIDORS, CORRIDOR_INDEX, ROUTE_LOCATIONS,
+  INITIAL_CORRIDORS, CORRIDOR_CATALOG, CORRIDOR_INDEX, ROUTE_LOCATIONS,
   EMISSIONS_PRESSURE_MODEL, PUBLISHED_FERRY_TIMETABLE_METADATA,
   offlineCongestionZones, offlineFerries,
 } from '../data/mockData';
@@ -266,7 +266,7 @@ function validatedRoadPayload<T extends RouteOptimizationResult>(payload: T | nu
 export async function fetchCorridors(): Promise<Fetched<Corridor[]>> {
   const payload = await getJSON<Envelope & { corridors: Corridor[] }>(
     '/api/corridors', CORRIDOR_TIMEOUT_MS);
-  if (!payload?.corridors?.length) return wrap(null, INITIAL_CORRIDORS);
+  if (!Array.isArray(payload?.corridors) || !payload.corridors.length) return wrap(null, CORRIDOR_CATALOG);
   return wrap(payload, payload.corridors);
 }
 
@@ -1881,13 +1881,23 @@ export async function fetchHistoricalCongestion(
   corridorId: string,
   days = 7,
   includeModelled = false,
+  modelledOnly = false,
 ): Promise<Fetched<HistoricalProfile>> {
   const params = new URLSearchParams({ corridor_id: corridorId, days: String(days) });
-  if (includeModelled) params.set('include_modelled', 'true');
+  if (modelledOnly) params.set('modelled_only', 'true');
+  else if (includeModelled) params.set('include_modelled', 'true');
   const payload = await getJSON<Envelope & HistoricalProfile>(
     `/api/historical-congestion?${params}`, ROUTE_TIMEOUT_MS,
   );
-  if (isHistoricalProfilePayload(payload, corridorId, days)) return wrap(payload, payload);
+  if (isHistoricalProfilePayload(payload, corridorId, days)
+    && (!modelledOnly || (
+      hasApiHistoryMetadata(payload.history_metadata)
+      && payload.history_metadata.selection_scope === 'modelled_only'
+      && !payload.history_metadata.observed
+      && !payload.history_metadata.contains_observed_samples
+      && Object.values(payload.history_metadata.sources).every(source => !source.observed)
+      && Object.keys(payload.history_metadata.source_counts).every(source => source === 'synthetic')
+    ))) return wrap(payload, payload);
   const referenceTime = new Date().toISOString();
   return wrap(null, {
     corridor_id: corridorId,
@@ -1898,8 +1908,12 @@ export async function fetchHistoricalCongestion(
       observed: false,
       source: 'history_unavailable',
       model: 'crossflow_local_forecast_equation_v1',
-      methodology: 'Observed traffic history could not be retrieved; no synthetic samples were substituted.',
-      limitations: ['Connect an observed traffic source and a reachable history store.'],
+      methodology: modelledOnly
+        ? 'Modelled traffic-flow analysis could not be retrieved; no mixed or observed history was substituted.'
+        : 'Observed traffic history could not be retrieved; no synthetic samples were substituted.',
+      limitations: [modelledOnly
+        ? 'Connect a reachable modelled-only analysis endpoint.'
+        : 'Connect an observed traffic source and a reachable history store.'],
       reference_time: referenceTime,
     },
   });
