@@ -52,24 +52,17 @@ jobs:
           cache-dependency-path: backend/requirements.txt
       - name: Install pinned runtime dependencies
         run: python -m pip install -r backend/requirements.txt
-      # unittest discovery imports function-style pytest modules too. Install
-      # the test runner before discovery, without adding it to the API runtime.
+      # pytest is a CI-only runner; keep it out of the pinned API runtime.
       - name: Install backend test runner
         run: python -m pip install pytest
       - name: Compile Python sources
         run: python -m compileall -q backend scripts
       - name: Run backend checks
         run: python backend/test_backend.py
-      - name: Run modular backend unit tests
-        run: python -m unittest discover -s backend/tests -p 'test_*.py'
-      # Some modules under backend/tests use bare `def test_*` functions rather
-      # than unittest.TestCase. `unittest discover` imports those modules but
-      # collects nothing from them, so without this step their assertions never
-      # run in CI. pytest is a CI-only tool and deliberately stays out of
-      # backend/requirements.txt, which pins the production runtime.
-      - name: Run function-style backend tests
-        run: |
-          cd backend && python -m pytest tests -q
+      # pytest collects both unittest.TestCase methods and function-style tests,
+      # including the HTTP subprocess checks, in one pass.
+      - name: Run modular backend tests
+        run: python -m pytest backend/tests -q
       - name: Run authentication boundary tests
         run: python -m unittest discover -s backend/auth/tests -t . -p 'test_*.py'
       - name: Stress congestion calculation invariants

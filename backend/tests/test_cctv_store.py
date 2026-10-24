@@ -64,20 +64,34 @@ class CCTVStoreTests(unittest.TestCase):
     def write_registry(self, rows):
         self.registry.write_text(json.dumps({"schema_version": 1, "cameras": rows}, allow_nan=False))
 
-    def test_bundled_registry_has_six_reviewed_public_pilots_and_22_pending_without_creating_db(self):
+    def test_bundled_registry_has_five_road_collectors_disabled_plaza_and_22_pending_without_creating_db(self):
         with patch.dict(os.environ, {"CROSSFLOW_CCTV_REGISTRY": str(store.DATA_DIR / "cctv_cameras.json")}):
+            registered = {camera["camera_id"]: camera for camera in store.load_registry()}
             status = store.camera_status(now=NOW)
             self.assertEqual(status["status"], "awaiting_feeds")
             self.assertEqual(status["summary"]["listed"], 28)
             self.assertEqual(status["summary"]["permission_pending"], 22)
-            self.assertEqual(status["summary"]["configured"], 6)
+            self.assertEqual(status["summary"]["configured"], 5)
             self.assertEqual(status["summary"]["live"], 0)
             self.assertEqual(status["summary"]["estimated"], 0)
             pilot = next(camera for camera in status["cameras"] if camera["camera_id"] == "15")
             self.assertEqual(pilot["status"], "calibration_pending")
             self.assertFalse(pilot["operational_eligible"])
             configured_ids = {camera["camera_id"] for camera in status["cameras"] if camera["status"] == "calibration_pending"}
-            self.assertEqual(configured_ids, {"1", "13", "15", "19", "48", "51"})
+            self.assertEqual(configured_ids, {"13", "15", "19", "48", "51"})
+            plaza = registered["1"]
+            self.assertFalse(plaza["analysis_config"]["enabled"])
+            self.assertFalse(plaza["estimation_config"]["enabled"])
+            self.assertFalse(plaza["estimation_config"]["allow_routing"])
+            self.assertEqual(
+                next(camera for camera in status["cameras"] if camera["camera_id"] == "1")["status"],
+                "disabled",
+            )
+            self.assertEqual({
+                camera_id for camera_id, camera in registered.items()
+                if camera["estimation_config"]["allow_routing"]
+                and camera["analysis_config"]["road_segment_id"]
+            }, {"13", "48", "51"})
             self.assertFalse(self.database.exists())
             for camera in status["cameras"]:
                 for field in ("vehicle_count", "moving_vehicles", "stopped_vehicles", "occupancy_ratio", "congestion_score", "queue_length_m"):
