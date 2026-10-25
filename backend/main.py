@@ -1880,13 +1880,16 @@ def api_historical_congestion(
             window_basis="Rolling days ending at the request time",
             freshness_basis="Latest modelled scenario sample; not live road measurements",
         )
-    return envelope({
+    payload = {
         "corridor_id": corridor_id,
         "hourly_profile": hourly,
         "weekly_trend": weekly,
         "days_requested": days,
         "history_metadata": metadata,
-    }, now, data_source="simulated", provenance_overrides={"traffic": (
+    }
+    if modelled_only:
+        payload["modelled_analysis"] = historical_store.get_modelled_analysis(corridor_id, days=days, now=now)
+    return envelope(payload, now, data_source="simulated", provenance_overrides={"traffic": (
         "Synthetic scenario baseline only; possible traffic patterns, not observed or measured history"
         if modelled_only else "Legacy engineering archive; source metadata separates measured and modelled samples"
     )})

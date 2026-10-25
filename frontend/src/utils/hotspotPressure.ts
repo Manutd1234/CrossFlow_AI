@@ -1,6 +1,22 @@
 import type { CongestionZone } from '../types';
 import { pressureBandView } from './pressureBands';
 
+interface RankedHotspot {
+  id: string;
+  pressureScore: number | null;
+}
+
+/** Order the validated value shown on each card, independently of planning priority. */
+export function compareModelledHotspotPressure(left: RankedHotspot, right: RankedHotspot): number {
+  if (left.pressureScore === null && right.pressureScore !== null) return 1;
+  if (right.pressureScore === null && left.pressureScore !== null) return -1;
+  if (left.pressureScore !== null && right.pressureScore !== null && left.pressureScore !== right.pressureScore) {
+    return right.pressureScore - left.pressureScore;
+  }
+  // Match the backend's zone-id tie order without browser-locale collation.
+  return left.id < right.id ? -1 : left.id > right.id ? 1 : 0;
+}
+
 /** A modelled area's ranking score cannot stand in for congestion pressure. */
 export function modelledHotspotPressure(zone?: CongestionZone): number | null {
   if (!zone || zone.source !== 'modelled_spatial_hotspot' || zone.observed !== false

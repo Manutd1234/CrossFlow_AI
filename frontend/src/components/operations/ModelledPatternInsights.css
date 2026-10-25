@@ -1,0 +1,38 @@
+.modelled-patterns { display: grid; gap: 20px; min-width: 0; }
+.modelled-patterns__toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.modelled-patterns__toolbar p, .modelled-patterns__chart > p, .modelled-patterns__note { margin: 0; color: var(--text-secondary); font-size: var(--text-xs); line-height: 1.6; }
+.modelled-patterns__day-types { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--surface-1); }
+.modelled-patterns__day-types button { padding: 8px 14px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+.modelled-patterns__day-types button[aria-pressed="true"] { background: var(--tint-cyan-strong); border-color: var(--border-accent); color: var(--lagoon-text); }
+.modelled-patterns__metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.modelled-patterns__metrics article { display: grid; gap: 8px; min-width: 0; padding: 18px; border: 1px solid var(--border-color); border-radius: 14px; background: var(--surface-1); }
+.modelled-patterns__metrics article > span { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: var(--text-xs); }
+.modelled-patterns__metrics strong { color: var(--lagoon-text); font-size: var(--text-section-title); font-variant-numeric: tabular-nums; }
+.modelled-patterns__metrics small { color: var(--text-secondary); font-size: var(--text-xs); }
+.modelled-patterns__charts { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; }
+.modelled-patterns__chart { display: grid; align-content: start; gap: 12px; min-width: 0; padding: 20px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--warm-card); }
+.modelled-patterns__chart-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.modelled-patterns__chart-heading h4 { margin: 0; color: var(--text-primary); font-size: var(--text-card-title); }
+.modelled-patterns__chart-heading > span { font-size: var(--text-xs); color: var(--text-muted); }
+.modelled-patterns__plot-wrap { display: flex; gap: 8px; margin-top: 10px; }
+.modelled-patterns__y-axis { display: flex; flex-direction: column; justify-content: space-between; flex: 0 0 24px; height: 170px; color: var(--text-muted); font-size: 10px; }
+.modelled-patterns__hourly, .modelled-patterns__daily { position: relative; display: flex; flex: 1; gap: 3px; height: 170px; min-width: 0; border-bottom: 1px solid var(--border-color); background: linear-gradient(to bottom, var(--border-color) 1px, transparent 1px) 0 0 / 100% 50%; }
+.modelled-patterns__hour, .modelled-patterns__daily button { position: relative; flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; background: transparent; cursor: help; }
+.modelled-patterns__hour.is-current { background: var(--tint-cyan-strong); border-radius: 4px; }
+.modelled-patterns__range { position: absolute; left: 22%; right: 22%; min-height: 3px; border-radius: 4px; background: color-mix(in srgb, var(--lagoon-text) 20%, transparent); }
+.modelled-patterns__mean { position: absolute; left: 8%; right: 8%; height: 4px; border-radius: 3px; transform: translateY(50%); background: var(--lagoon-text); }
+.modelled-patterns__hour.is-empty::after { content: ''; position: absolute; left: 20%; right: 20%; bottom: 0; border-bottom: 2px dotted var(--text-muted); }
+.modelled-patterns__hour-tooltip { display: none; position: absolute; z-index: 5; bottom: 105%; left: 50%; transform: translateX(-50%); width: max-content; max-width: 190px; padding: 8px 10px; border-radius: 8px; background: var(--text-primary); color: var(--warm-card); font-size: 11px; line-height: 1.5; pointer-events: none; }
+.modelled-patterns__hour:hover .modelled-patterns__hour-tooltip, .modelled-patterns__hour:focus-visible .modelled-patterns__hour-tooltip, .modelled-patterns__daily button:hover .modelled-patterns__hour-tooltip, .modelled-patterns__daily button:focus-visible .modelled-patterns__hour-tooltip { display: block; }
+.modelled-patterns__x-axis { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); margin-left: 32px; color: var(--text-muted); font-size: 10px; }
+.modelled-patterns__x-axis span { white-space: nowrap; }
+.modelled-patterns__legend { display: flex; flex-wrap: wrap; gap: 12px; color: var(--text-secondary); font-size: var(--text-xs); }
+.modelled-patterns__legend > span { display: flex; gap: 5px; align-items: center; }
+.modelled-patterns__legend i { display: block; width: 12px; height: 5px; border-radius: 3px; background: var(--lagoon-text); }
+.modelled-patterns__legend .is-range { height: 10px; opacity: .25; }
+.modelled-patterns__legend .is-current { height: 10px; background: var(--tint-cyan-strong); border: 1px solid var(--border-accent); }
+.modelled-patterns__day-bar { position: absolute; bottom: 0; left: 12%; right: 12%; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--lagoon-text); opacity: .65; }
+.modelled-patterns__daily-labels { margin-left: 32px; display: flex; justify-content: space-between; gap: 8px; color: var(--text-muted); font-size: 10px; }
+.modelled-patterns__empty { min-height: 180px; display: grid; place-content: center; text-align: center; }
+@media (max-width: 1000px) { .modelled-patterns__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .modelled-patterns__charts { grid-template-columns: 1fr; } }
+@media (max-width: 540px) { .modelled-patterns__chart { padding: 14px; } .modelled-patterns__metrics article { padding: 14px; } .modelled-patterns__day-types button { padding: 8px 10px; } }

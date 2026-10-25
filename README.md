@@ -115,12 +115,17 @@ Hotspot cards label their value **Modelled pressure**, with
 `pressure_basis=modelled_congestion_index`: the multiplier applies to the
 backend's published modelled `congestion_index`, never `selection_score`.
 Selection scores include recurrence, network role, demand and evidence weights;
-they determine the watch order and tier, not measured traffic severity. For
+they determine the planning selection and tier, not measured traffic severity. For
 example, Panbil can have selection score 45.5 while its modelled congestion is
 10.2 and its displayed pressure is 25.5. Missing modelled-pressure metadata shows
 Unavailable, with no fallback to bundled priority scores. These area estimates
 remain distinct from live provider measurements and exact road-camera views.
-Hotspot rank and High priority/Watch priority badges remain neutral. Their map
+Hotspot display order and `pressure_rank` follow validated, rounded pressure
+from highest to lowest. Ties use ascending zone ID, including scores capped at
+100. Unavailable or incoherent pressure comes last and remains unranked; the
+frontend independently applies the same validation and order. Separate
+`selection_rank`, `selection_score` and High priority/Watch priority metadata
+retain their planning meaning. Rank and planning badges remain neutral. Their map
 markers and pressure values follow the same 70/80 pressure colors, and missing
 or incoherent band metadata remains neutral/unavailable.
 A failed workspace bundle displays an explicit reload action instead of a
@@ -131,6 +136,17 @@ The simplified **History** workspace requests
 identified synthetic scenario seed and excludes measured, unknown and ambiguous
 legacy `simulated` rows. It computes modelled hourly/daily profiles in the
 backend and labels them as possible traffic patterns, not observed history.
+The additive `modelled_analysis` response compares all days, weekdays and
+weekends from the same strict scenario-only snapshot. It supplies sample-weighted
+means, hourly empirical P10/P90, distinct-day coverage and actual first/last dates.
+The UI uses a fixed 0–100 scale and shows missing coverage without filling it in;
+a 30-day request can contain only the 14 seeded scenario days. The middle-80%
+spread describes synthetic sample variation, not prediction confidence or field
+accuracy. No extra scenarios, measured rows or trained models are created by
+reading this view.
+Overview prioritizes pressure-ranked fresh provider points, measured versus
+free-flow speeds, per-point timestamps and explicit sampling coverage. Map
+coverage and dated port reports are available in a secondary context disclosure.
 Default measured-history APIs remain available separately. Journey maps label
 all resolved stops **A, B, C, D…** in the planned order, including saved driver
 dispatches. Interface report periods use English; proper place names and source

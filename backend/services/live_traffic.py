@@ -569,12 +569,30 @@ def _score_map_hotspot(
     }
 
 
+def _rankable_hotspot_pressure(zone: Mapping[str, Any]) -> Optional[float]:
+    """Use only the modelled pressure that clients can validly display."""
+    if (zone.get("source") != "modelled_spatial_hotspot" or zone.get("observed") is not False
+            or zone.get("pressure_basis") != "modelled_congestion_index"
+            or zone.get("pressure_policy") != PRESSURE_POLICY
+            or zone.get("pressure_multiplier") != PRESSURE_MULTIPLIER
+            or zone.get("pressure_condition_policy") != PRESSURE_CONDITION_POLICY):
+        return None
+    raw, pressure = zone.get("congestion_index"), zone.get("pressure_index")
+    if any(type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 100
+           for value in (raw, pressure)):
+        return None
+    if (abs(pressure - min(100., raw * PRESSURE_MULTIPLIER)) > .051
+            or zone.get("pressure_condition") != pressure_band_condition(pressure)):
+        return None
+    return float(pressure)
+
+
 def get_corridor_map_hotspots(
     at_time: Optional[datetime] = None,
     weather: int = 0,
     corridor_scores: Optional[Mapping[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
-    """Return the ranked 30-area modelled catalogue used by the corridor map."""
+    """Return display-pressure order with separate planning-selection ranks."""
     from services.simulator import get_live_corridor_telemetry
 
     now = (at_time or clock.now()).astimezone(clock.BATAM_TZ)
@@ -606,6 +624,13 @@ def get_corridor_map_hotspots(
     for rank, zone in enumerate(selected, start=1):
         zone["selection_rank"] = rank
         zone["watch_priority"] = "CRITICAL" if rank <= 20 else "HEAVY"
+    pressures = {zone["zone_id"]: _rankable_hotspot_pressure(zone) for zone in selected}
+    selected.sort(key=lambda zone: (
+        pressures[zone["zone_id"]] is None,
+        -(pressures[zone["zone_id"]] or 0.), zone["zone_id"],
+    ))
+    for rank, zone in enumerate(selected, start=1):
+        zone["pressure_rank"] = rank if pressures[zone["zone_id"]] is not None else None
     return selected
 
 
@@ -807,10 +832,11 @@ def get_live_traffic() -> Dict[str, Any]:
             "level_counts": level_counts,
             "emissions_pressure_level_counts": emissions_pressure_level_counts,
             "method": (
-                "30 backend-owned modelled areas ranked from corridor pressure, "
-                "recurrence, network criticality, demand exposure and evidence "
-                "confidence"
+                "30 backend-owned modelled areas displayed by descending validated "
+                "pressure. Planning selection separately uses corridor pressure, "
+                "recurrence, network criticality, demand exposure and evidence confidence"
             ),
+            "display_order_metric": "pressure_index",
             "methodology": copy.deepcopy(CORRIDOR_MAP_HOTSPOT_METHODOLOGY),
             "catalog_version": CORRIDOR_HOTSPOT_CATALOG["catalog_version"],
             "emissions_pressure_model": EMISSIONS_PRESSURE_MODEL,

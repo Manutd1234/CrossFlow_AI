@@ -7,6 +7,8 @@ import {
 } from '../../types';
 import { fetchHistoricalCongestion } from '../../services/api';
 import { batamParts } from '../../utils/batamTime';
+import { validatedModelledPatterns } from '../../utils/modelledPatterns';
+import { ModelledPatternInsights } from './ModelledPatternInsights';
 
 interface CongestionHeatmapProps {
   corridors: Corridor[];
@@ -138,10 +140,10 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
   const displayedDays = profile?.days_requested ?? days;
   const corridor = corridors.find(c => c.id === displayedCorridorId);
   const hourly = profile?.hourly_profile ?? [];
-  // The API currently returns up to 30 daily points for every request, while
-  // the history filter controls `days_requested`. Trim the plotted series so
-  // the Daily Trend always represents the selected window as well.
-  const weekly = (profile?.weekly_trend ?? []).slice(-displayedDays);
+  // Strict scenarios already use the exact rolling window, which can span
+  // N+1 calendar dates. Only the legacy history preview needs date trimming.
+  const weekly = modelledOnly ? profile?.weekly_trend ?? []
+    : (profile?.weekly_trend ?? []).slice(-displayedDays);
   const hasHourlyData = hourly.some(bucket => bucket.avg_score !== null);
   const peakHour = hourly.reduce(
     (best, b) => (b.avg_score ?? 0) > (best.avg_score ?? 0) ? b : best,
@@ -181,6 +183,13 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
   const apiSampleCount = apiMetadata
     ? Object.values(apiMetadata.source_counts).reduce((total, count) => total + count, 0)
     : 0;
+  const qualifiedPatterns = modelledOnly ? validatedModelledPatterns(profile?.modelled_analysis, displayedDays) : null;
+  const modelledAnalysis = qualifiedPatterns
+    && qualifiedPatterns.coverage.sample_count === apiSampleCount
+    && qualifiedPatterns.coverage.day_count === weekly.length
+    && qualifiedPatterns.coverage.sample_count === weekly.reduce((total, day) => total + day.sample_count, 0)
+    && qualifiedPatterns.coverage.sample_count === hourly.reduce((total, bucket) => total + bucket.sample_count, 0)
+    ? qualifiedPatterns : null;
   const observedSampleCount = apiMetadata
     ? Object.values(apiMetadata.sources).reduce(
       (total, item) => total + (item.observed ? item.sample_count : 0),
@@ -250,11 +259,11 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
         </div>
       </div>
 
-      {modelledOnly ? (
+      {modelledOnly && !modelledAnalysis ? (
         <p className="operations-history__provenance" role="note">
           Modelled scenarios only. These possible traffic patterns are separate from recorded observations and live conditions; they are not measured speeds, vehicle counts or a live forecast.
         </p>
-      ) : <div className="operations-history__filters">
+      ) : !modelledOnly ? <div className="operations-history__filters">
         <div className="operations-history__window-controls" role="group" aria-label="Historical data source">
           <button
             type="button"
@@ -281,7 +290,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
             }}
           >Synthetic replay</button>
         </div>
-      </div>}
+      </div> : null}
       {error ? (
         <div role="alert" className="operations-inline-alert">
           <TriangleAlert aria-hidden="true" size={ICON_SIZE.big} /> {error}
@@ -314,7 +323,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
               key={d}
               type="button"
               aria-pressed={days === d}
-              aria-label={d === 1 ? 'Show today' : `Show the last ${d} days`}
+              aria-label={d === 1 ? modelledOnly ? 'Show the last 24 hours' : 'Show today' : `Show the last ${d} days`}
               onClick={() => {
                 if (d === days) return;
                 setLoading(true);
@@ -322,12 +331,16 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
               }}
               className="ui-sand-interactive operations-history__window-button"
             >
-              {d === 1 ? 'Today' : `${d}d`}
+              {d === 1 ? modelledOnly ? '24h' : 'Today' : `${d}d`}
             </button>
           ))}
         </div>
       </div>
 
+      {modelledAnalysis ? <ModelledPatternInsights
+        key={displayedCorridorId}
+        analysis={modelledAnalysis} daily={weekly} corridorName={corridor?.name ?? displayedCorridorId}
+      /> : <>
       {/* Summary stats */}
       {profile && hasHourlyData ? (
         <div className="operations-history__summary">
@@ -517,7 +530,7 @@ export const CongestionHeatmap: React.FC<CongestionHeatmapProps> = ({ corridors,
           </div>
         ) : null}
       </div>
-
+      </>}
     </section>
   );
 };

@@ -1,12 +1,15 @@
 """Hotspot display pressure must use modelled congestion, not watch ranking."""
 from datetime import datetime, timezone
+import copy
 from pathlib import Path
 import sys
 import unittest
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from services import live_traffic
+from services.observed_conditions import pressure_index, pressure_band_condition
 
 NOW = datetime(2026, 10, 24, 18, 30, tzinfo=timezone.utc).astimezone(live_traffic.clock.BATAM_TZ)  #01:30WIB; no peak.
 
@@ -73,6 +76,62 @@ class HotspotPressureTests(unittest.TestCase):
                 self.assertEqual(zone["pressure_condition"], condition)
                 self.assertEqual(zone["congestion_index"], 10.2)
                 self.assertEqual(zone["selection_score"], 45.5)
+
+    def ranked_catalogue(self, rows):
+        # A complete supplied snapshot needs neither a forecasting module nor
+        # model inference. Keep this ordering test isolated from those stores.
+        unused_forecast = Mock(side_effect=AssertionError("ranking requested a forecast"))
+        with patch.dict(sys.modules, {"services.simulator": SimpleNamespace(get_live_corridor_telemetry=unused_forecast)}), \
+                patch.object(live_traffic, "_score_map_hotspot", side_effect=lambda config, *_: copy.deepcopy(rows[config["zone_id"]])):
+            result = live_traffic.get_corridor_map_hotspots(NOW, corridor_scores=self.signals())
+        unused_forecast.assert_not_called()
+        return result
+
+    def ranking_rows(self):
+        rows = {}
+        for index, config in enumerate(live_traffic.CORRIDOR_MAP_HOTSPOTS_CONFIG):
+            row = live_traffic._score_map_hotspot(config, NOW, self.signals())
+            raw = float(index + 1)
+            row.update(congestion_index=raw, pressure_index=pressure_index(raw),
+                       pressure_condition=pressure_band_condition(pressure_index(raw)), selection_score=100. - index)
+            rows[row["zone_id"]] = row
+        return rows
+
+    def test_display_pressure_ranks_descend_without_replacing_planning_ranks(self):
+        rows = self.ranking_rows()
+        result = self.ranked_catalogue(rows)
+        self.assertEqual([row["pressure_index"] for row in result], sorted((row["pressure_index"] for row in result), reverse=True))
+        self.assertEqual([row["pressure_rank"] for row in result], list(range(1, 31)))
+        self.assertEqual(result[0]["selection_rank"], 30)
+        self.assertEqual(result[0]["watch_priority"], "HEAVY")
+        planning = sorted(result, key=lambda row: row["selection_rank"])
+        self.assertEqual([row["selection_score"] for row in planning], sorted((row["selection_score"] for row in rows.values()), reverse=True))
+        for row in planning:
+            self.assertEqual(row["watch_priority"], "CRITICAL" if row["selection_rank"] <= 20 else "HEAVY")
+
+    def test_saturated_pressure_ties_use_zone_id_instead_of_planning_rank(self):
+        rows = self.ranking_rows()
+        for row in rows.values():
+            row.update(congestion_index=95., pressure_index=100., pressure_condition="CRITICAL")
+        result = self.ranked_catalogue(rows)
+        self.assertEqual([row["zone_id"] for row in result], sorted(rows))
+        self.assertEqual([row["pressure_rank"] for row in result], list(range(1, 31)))
+
+    def test_missing_invalid_and_incoherent_pressure_metadata_is_unranked_and_last(self):
+        rows = self.ranking_rows()
+        ids = sorted(rows)
+        invalid = [None, True, float("nan"), "70", 101.]
+        for zone_id, value in zip(ids, invalid):
+            rows[zone_id]["pressure_index"] = value
+        rows[ids[5]].pop("pressure_index")
+        rows[ids[6]]["pressure_policy"] = None
+        rows[ids[7]]["pressure_condition"] = "CRITICAL"
+        unknown = set(ids[:8])
+        result = self.ranked_catalogue(rows)
+        self.assertEqual({row["zone_id"] for row in result[-8:]}, unknown)
+        self.assertEqual([row["zone_id"] for row in result[-8:]], sorted(unknown))
+        self.assertTrue(all(row["pressure_rank"] is None for row in result[-8:]))
+        self.assertEqual([row["pressure_rank"] for row in result[:-8]], list(range(1, 23)))
 
 
 if __name__ == "__main__":

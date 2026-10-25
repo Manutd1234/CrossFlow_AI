@@ -4555,14 +4555,19 @@ def test_corridor_map_hotspot_ranking_and_breakdowns_are_deterministic():
     assert [zone["zone_id"] for zone in first] == [
         zone["zone_id"] for zone in second
     ]
-    assert [zone["selection_rank"] for zone in first] == list(range(1, 31))
-    assert [zone["selection_score"] for zone in first] == sorted(
-        (zone["selection_score"] for zone in first),
+    assert [zone["pressure_rank"] for zone in first] == list(range(1, 31))
+    assert [zone["pressure_index"] for zone in first] == sorted(
+        (zone["pressure_index"] for zone in first),
         reverse=True,
     )
     for previous, current in zip(first, first[1:]):
-        if previous["selection_score"] == current["selection_score"]:
+        if previous["pressure_index"] == current["pressure_index"]:
             assert previous["zone_id"] < current["zone_id"]
+    planning_order = sorted(first, key=lambda zone: zone["selection_rank"])
+    assert [zone["selection_rank"] for zone in planning_order] == list(range(1, 31))
+    assert [zone["selection_score"] for zone in planning_order] == sorted(
+        (zone["selection_score"] for zone in first), reverse=True,
+    )
 
     for zone in first:
         dynamic = zone["score_breakdown"]

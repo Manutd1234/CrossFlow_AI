@@ -1041,12 +1041,44 @@ export interface BrowserHistoryMetadata {
 export type HistoryMetadata = ApiHistoryMetadata | BrowserHistoryMetadata;
 
 /** Full historical profile for one corridor from /api/historical-congestion. */
+export interface ModelledPatternBucket extends HourlyBucket {
+  p10_score: number | null;
+  p90_score: number | null;
+  day_count: number;
+}
+
+export interface ModelledDayProfile {
+  sample_count: number;
+  day_count: number;
+  hourly_profile: ModelledPatternBucket[];
+  weighted_mean_score: number | null;
+}
+
+export interface ModelledPatternAnalysis {
+  version: 'modelled_pattern_analysis_v1';
+  basis: 'synthetic_scenario_samples';
+  observed: false;
+  timezone: 'Asia/Jakarta';
+  spread_method: 'empirical_linear_interpolation';
+  spread_interpretation: 'descriptive_scenario_spread_not_calibrated_confidence';
+  day_profiles: Record<'all' | 'weekday' | 'weekend', ModelledDayProfile>;
+  coverage: {
+    sample_count: number;
+    day_count: number;
+    hour_count: number;
+    first_sample_at: string | null;
+    last_sample_at: string | null;
+    requested_days: number;
+  };
+}
+
 export interface HistoricalProfile {
   corridor_id: string;
   hourly_profile: HourlyBucket[];
   weekly_trend: DailyTrend[];
   days_requested: number;
   history_metadata: HistoryMetadata;
+  modelled_analysis?: ModelledPatternAnalysis;
 }
 
 /** Live traffic data for one corridor segment. */

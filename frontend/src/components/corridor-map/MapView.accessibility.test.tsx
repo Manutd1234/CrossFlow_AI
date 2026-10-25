@@ -6,6 +6,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import L from 'leaflet';
 import { MapView } from './MapView';
 import { corridorColor } from '../../utils/format';
+import { BATAM_HOTSPOT_REFERENCES } from '../../data/batamHotspots';
 import type { Corridor, CorridorRoute, Fetched, LiveTrafficData } from '../../types';
 
 const leafletTestState = vi.hoisted(() => ({
@@ -348,11 +349,12 @@ describe('MapView traffic overlay controls', () => {
       .toContain('Scrollable');
     expect(mapPanel?.closest('[hidden]')).toBeNull();
 
+    const firstHotspotId = container.querySelector('.hotspot-card')?.id;
     act(() => leafletTestState.hotspotClickHandlers[0]?.());
 
     expect(tabs[0].getAttribute('aria-selected')).toBe('true');
     expect(container.querySelector('.hotspot-card.is-focused')?.id)
-      .toBe('hotspot-card-zone-simpang-jam');
+      .toBe(firstHotspotId);
   });
 
   it('keeps corridor road geometry coloured by congestion across both subtabs', () => {
@@ -469,7 +471,7 @@ describe('MapView traffic overlay controls', () => {
     expect(leafletTestState.map).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps backend selection rank and priority independent of displayed modelled pressure', () => {
+  it('ranks displayed modelled pressure above the independent planning priority and selection rank', () => {
     const snapshot = trafficSnapshot(99, 32, 80);
     snapshot.data.zones[0].selection_rank = 2;
     snapshot.data.zones.push({
@@ -480,16 +482,53 @@ describe('MapView traffic overlay controls', () => {
     const container = renderIntoDom(<MapView corridors={TEST_CORRIDORS} routes={EMPTY_ROUTES}
       trafficSnapshot={snapshot} onSelectCorridor={vi.fn()} />);
     const cards = container.querySelectorAll('.hotspot-card');
-    expect(cards[0].id).toBe('hotspot-card-zone-panbil');
-    expect(cards[1].id).toBe('hotspot-card-zone-simpang-jam');
+    expect(cards[0].id).toBe('hotspot-card-zone-simpang-jam');
+    expect(cards[1].id).toBe('hotspot-card-zone-panbil');
     expect(cards[0].querySelector('.hotspot-card__rank')?.textContent).toBe('01');
-    expect(cards[0].querySelector('.hotspot-card__priority')?.textContent).toBe('High priority');
-    expect(cards[0].querySelector('.hotspot-card__priority')?.classList.contains('badge-neutral')).toBe(true);
-    expect(cards[0].querySelector('.hotspot-card__score')?.textContent).toContain('25.5');
-    expect(cards[0].querySelector('.hotspot-card__score')?.textContent).not.toContain('45.5');
-    expect(cards[1].querySelector('.hotspot-card__score')?.textContent).toContain('80');
-    expect(vi.mocked(L.circle).mock.calls.slice(-30)[0][1]).toMatchObject({ color: corridorColor('SMOOTH') });
-    expect(vi.mocked(L.circle).mock.calls.slice(-30)[1][1]).toMatchObject({ color: corridorColor('CRITICAL') });
+    expect(cards[1].querySelector('.hotspot-card__rank')?.textContent).toBe('02');
+    expect(cards[1].querySelector('.hotspot-card__priority')?.textContent).toBe('High priority');
+    expect(cards[1].querySelector('.hotspot-card__priority')?.classList.contains('badge-neutral')).toBe(true);
+    expect(cards[1].querySelector('.hotspot-card__score')?.textContent).toContain('25.5');
+    expect(cards[1].querySelector('.hotspot-card__score')?.textContent).not.toContain('45.5');
+    expect(cards[0].querySelector('.hotspot-card__score')?.textContent).toContain('80');
+    expect(vi.mocked(L.circle).mock.calls.slice(-30)[0][1]).toMatchObject({ color: corridorColor('CRITICAL') });
+    expect(vi.mocked(L.circle).mock.calls.slice(-30)[1][1]).toMatchObject({ color: corridorColor('SMOOTH') });
+    expect(container.textContent).toContain('Highest modelled pressure first');
+  });
+
+  it('keeps rank one at least as high as rank ten, places invalid pressure last and stabilizes capped ties', () => {
+    const snapshot = trafficSnapshot(99);
+    const template = snapshot.data.zones[0];
+    const rawScores = [10.2, 35, 28, 32, 40, 95, 0, 15, 20, 30];
+    snapshot.data.zones = rawScores.map((raw, index) => {
+      const pressure = Number(Math.min(100, raw * 2.5).toFixed(1));
+      return {
+        ...template, zone_id: BATAM_HOTSPOT_REFERENCES[index].id,
+        selection_rank: index + 1, selection_score: 100 - index,
+        congestion_index: raw, pressure_index: pressure,
+        pressure_condition: pressure <= 5 ? 'FREE_FLOW' : pressure < 70 ? 'SLOWING' : pressure < 80 ? 'HEAVY' : 'CRITICAL',
+      };
+    });
+    snapshot.data.zones.push({ ...template, zone_id: BATAM_HOTSPOT_REFERENCES[10].id,
+      selection_rank: 0, selection_score: 100, pressure_index: 99 });
+    const original = JSON.stringify(snapshot);
+    const view = (value: Fetched<LiveTrafficData>) => <MapView corridors={TEST_CORRIDORS} routes={EMPTY_ROUTES}
+      trafficSnapshot={value} onSelectCorridor={vi.fn()} />;
+    const container = renderIntoDom(view(snapshot));
+    const cards = Array.from(container.querySelectorAll('.hotspot-card'));
+    const displayed = cards.slice(0, 10).map(card => Number(card.querySelector('.hotspot-card__score')?.textContent?.split(' / ')[0]));
+    expect(displayed).toEqual([100, 100, 87.5, 80, 75, 70, 50, 37.5, 25.5, 0]);
+    expect(displayed[0]).toBeGreaterThanOrEqual(displayed[9]);
+    expect(cards.slice(10).every(card => card.querySelector('.hotspot-card__score')?.textContent === 'Unavailable')).toBe(true);
+    expect(cards.map(card => card.querySelector('.hotspot-card__rank')?.textContent))
+      .toEqual(Array.from({ length: 30 }, (_, index) => index < 10 ? String(index + 1).padStart(2, '0') : '—'));
+    const tiedIds = cards.slice(0, 2).map(card => card.id);
+    expect(tiedIds).toEqual([...tiedIds].sort());
+    expect(JSON.stringify(snapshot)).toBe(original);
+
+    act(() => root?.render(view({ ...snapshot, data: { ...snapshot.data, zones: [...snapshot.data.zones].reverse() } })));
+    expect(Array.from(container.querySelectorAll('.hotspot-card')).slice(0, 2).map(card => card.id)).toEqual(tiedIds);
+    expect(leafletTestState.map).toHaveBeenCalledTimes(1);
   });
 
   it.each([
@@ -504,6 +543,7 @@ describe('MapView traffic overlay controls', () => {
       trafficSnapshot={snapshot} onSelectCorridor={vi.fn()} />);
     const card = container.querySelector('#hotspot-card-zone-simpang-jam');
     expect(card?.querySelector('.hotspot-card__score')?.textContent).toBe('Unavailable');
+    expect(card?.querySelector('.hotspot-card__rank')?.textContent).toBe('—');
     expect(card?.querySelector('.hotspot-card__score')?.getAttribute('aria-label')).toBe('Modelled congestion pressure unavailable');
     expect(card?.querySelector('.hotspot-card__priority')?.textContent).toBe('Watch priority');
     expect(card?.querySelector('.hotspot-card__score')?.textContent).not.toMatch(/45\.5|25\.5/);

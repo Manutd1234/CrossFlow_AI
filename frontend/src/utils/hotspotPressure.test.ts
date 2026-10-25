@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CongestionZone } from '../types';
-import { modelledHotspotPressure } from './hotspotPressure';
+import { compareModelledHotspotPressure, modelledHotspotPressure } from './hotspotPressure';
 
 function zone(overrides: Record<string, unknown> = {}): CongestionZone {
   const pressure = typeof overrides.pressure_index === 'number' ? overrides.pressure_index : 25.5;
@@ -68,5 +68,36 @@ describe('modelled hotspot pressure provenance', () => {
 
   it('does not derive pressure for a static planning catalogue entry without a backend zone', () => {
     expect(modelledHotspotPressure()).toBeNull();
+  });
+
+  it('orders validated displayed pressure descending with unavailable values after genuine zero', () => {
+    const sources = [
+      zone({ zone_id: 'zone-invalid', selection_rank: 1, pressure_index: 99 }),
+      zone({ zone_id: 'zone-low', selection_rank: 2 }),
+      zone({ zone_id: 'zone-high', selection_rank: 99, congestion_index: 32, pressure_index: 80 }),
+      zone({ zone_id: 'zone-zero', congestion_index: 0, pressure_index: 0 }),
+    ];
+    const original = JSON.stringify(sources);
+    const rows = sources.map(source => ({ id: source.zone_id, pressureScore: modelledHotspotPressure(source) }))
+      .sort(compareModelledHotspotPressure);
+    expect(rows).toEqual([
+      { id: 'zone-high', pressureScore: 80 }, { id: 'zone-low', pressureScore: 25.5 },
+      { id: 'zone-zero', pressureScore: 0 }, { id: 'zone-invalid', pressureScore: null },
+    ]);
+    expect(JSON.stringify(sources)).toBe(original);
+  });
+
+  it('uses zone-id code-point order for equal capped pressure and unavailable ties', () => {
+    const rows = [
+      { id: 'zone-z', pressureScore: 100 }, { id: 'zone-unknown-z', pressureScore: null },
+      { id: 'zone-ab', pressureScore: 100 }, { id: 'zone-a-b', pressureScore: 100 },
+      { id: 'zone-unknown-a', pressureScore: null },
+    ];
+    const original = JSON.stringify(rows);
+    const sorted = [...rows].sort(compareModelledHotspotPressure);
+    expect(sorted.map(row => row.id)).toEqual(['zone-a-b', 'zone-ab', 'zone-z', 'zone-unknown-a', 'zone-unknown-z']);
+    expect([...rows].reverse().sort(compareModelledHotspotPressure)).toEqual(sorted);
+    expect(compareModelledHotspotPressure(rows[0], rows[0])).toBe(0);
+    expect(JSON.stringify(rows)).toBe(original);
   });
 });

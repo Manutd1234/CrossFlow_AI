@@ -67,6 +67,55 @@ describe('backend modelled traffic-flow analysis', () => {
       .toContain(INITIAL_CORRIDORS[1].name);
   });
 
+  it('labels the rolling one-day scenario window as 24 hours', async () => {
+    const view = await render();
+    expect(view.querySelector('[aria-label="Show today"]')).toBeNull();
+    await act(async () => view.querySelector<HTMLButtonElement>('[aria-label="Show the last 24 hours"]')?.click());
+    expect(history).toHaveBeenLastCalledWith('corridor-1', 1, false, true);
+  });
+
+  it('retains both calendar dates when a rolling 24-hour window spans midnight', async () => {
+    const result = modelledResult('corridor-1', 1);
+    result.data.weekly_trend = [
+      { date: '2026-10-23', avg_score: 20, sample_count: 12 },
+      { date: '2026-10-24', avg_score: 30, sample_count: 12 },
+    ];
+    history.mockImplementation(async (_corridor, days) => days === 1 ? result : modelledResult());
+    const view = await render();
+    await act(async () => view.querySelector<HTMLButtonElement>('[aria-label="Show the last 24 hours"]')?.click());
+    expect(view.querySelector('[aria-label^="Modelled daily pattern"]')).not.toBeNull();
+    expect(view.querySelector('.operations-history-trend__labels')?.textContent).toContain('10-23');
+    expect(view.querySelector('.operations-history-trend__labels')?.textContent).toContain('10-24');
+  });
+
+  it('renders qualified backend day-type ranges without making another request for filter changes', async () => {
+    const result = modelledResult();
+    const dayProfile = (days: number) => ({
+      sample_count: days * 24, day_count: days, weighted_mean_score: 31.5,
+      hourly_profile: Array.from({ length: 24 }, (_, hour) => ({ hour,
+        avg_score: hour + 20, p10_score: hour + 17, p90_score: hour + 23,
+        sample_count: days, day_count: days,
+      })),
+    });
+    result.data.modelled_analysis = {
+      version: 'modelled_pattern_analysis_v1', basis: 'synthetic_scenario_samples', observed: false,
+      timezone: 'Asia/Jakarta', spread_method: 'empirical_linear_interpolation',
+      spread_interpretation: 'descriptive_scenario_spread_not_calibrated_confidence',
+      day_profiles: { all: dayProfile(7), weekday: dayProfile(5), weekend: dayProfile(2) },
+      coverage: { sample_count: 168, day_count: 7, hour_count: 24,
+        first_sample_at: '2026-10-17T08:00:00Z', last_sample_at: '2026-10-24T08:00:00Z', requested_days: 7 },
+    };
+    history.mockResolvedValueOnce(result);
+    const view = await render();
+    expect(view.textContent).toContain('7 modelled days in the 7-day window');
+    expect(view.querySelector('.operations-history__charts')).toBeNull();
+    expect(view.querySelector('.modelled-patterns__hourly')).not.toBeNull();
+    await act(async () => view.querySelectorAll<HTMLButtonElement>('[aria-label="Modelled day type"] button')[2].click());
+    expect(history).toHaveBeenCalledTimes(1);
+    expect(view.textContent).toContain('48 modelled samples');
+    expect(view.textContent).toContain('not a prediction confidence interval');
+  });
+
   it.each(['legacy-mixed', 'observed-flag', 'observed-source', 'browser-fallback'] as const)(
     'withholds data that cannot establish model-only provenance: %s', async reason => {
       const result = modelledResult();

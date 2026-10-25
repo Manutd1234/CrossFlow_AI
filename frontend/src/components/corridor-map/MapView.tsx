@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { corridorColor, prettyArrow, shortCorridorName } from '../../utils/format';
 import { corridorLiveView, corridorObservationTime } from '../../utils/corridorTelemetry';
-import { modelledHotspotPressure } from '../../utils/hotspotPressure';
+import { compareModelledHotspotPressure, modelledHotspotPressure } from '../../utils/hotspotPressure';
 import { pressureBandView } from '../../utils/pressureBands';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { MAP_PALETTE } from '../../theme/mapPalette';
@@ -114,7 +114,7 @@ export const MapView: React.FC<MapViewProps> = ({
     (trafficSnapshot?.data.zones ?? []).map(zone => [zone.zone_id, zone]),
   ), [trafficSnapshot]);
   const hotspots = useMemo(() => BATAM_HOTSPOT_REFERENCES
-    .map((reference, referenceIndex) => {
+    .map((reference) => {
       const liveZone = liveHotspotById.get(reference.id);
       const pressureScore = modelledHotspotPressure(liveZone);
       const pressureBand = pressureScore === null ? null : pressureBandView(liveZone);
@@ -128,15 +128,9 @@ export const MapView: React.FC<MapViewProps> = ({
         pressureScore,
         pressureBand,
         priority: liveZone?.watch_priority ?? reference.priority,
-        selectionRank: liveZone?.selection_rank,
-        referenceIndex,
       };
     })
-    .sort((left, right) => (
-      (left.selectionRank ?? left.referenceIndex + 1)
-      - (right.selectionRank ?? right.referenceIndex + 1)
-      || left.id.localeCompare(right.id)
-    )), [liveHotspotById]);
+    .sort(compareModelledHotspotPressure), [liveHotspotById]);
 
   /** Create the map exactly once. */
   useEffect(() => {
@@ -427,10 +421,10 @@ export const MapView: React.FC<MapViewProps> = ({
             </div>
 
             <p className="hotspot-watch__disclaimer">
-              Modelled planning priorities · choose a place to explore.
+              Highest modelled pressure first · choose a place to explore.
             </p>
 
-            <div className="hotspot-watch__list" role="list" tabIndex={0} aria-label="Scrollable Batam congestion planning watch areas">
+            <div className="hotspot-watch__list" role="list" tabIndex={0} aria-label="Scrollable Batam hotspots ranked by modelled pressure">
               {hotspots.map((zone, index) => (
                 <article
                   key={zone.id}
@@ -464,7 +458,7 @@ export const MapView: React.FC<MapViewProps> = ({
                           onError={() => markPhotoUnavailable(zone.photo.id)}
                         />
                       )}
-                      <span className="hotspot-card__rank" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="hotspot-card__rank" aria-hidden="true">{zone.pressureScore === null ? '—' : String(index + 1).padStart(2, '0')}</span>
                     </span>
 
                     <span className="hotspot-card__body">

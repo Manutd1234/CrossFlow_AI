@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Corridor, Fetched, OperationsSummary } from '../../types';
-import { ChartColumn, ExternalLink, Info, Landmark, Leaf, RefreshCw, ShieldAlert, Ship } from 'lucide-react';
+import { ChartColumn, ChevronDown, Clock3, ExternalLink, Gauge, Info, Landmark, MapPinned, RefreshCw, ShieldAlert, Ship } from 'lucide-react';
 import { ICON_SIZE } from '../../theme/iconSizes';
 import { shortCorridorName } from '../../utils/format';
 import { pressureBandView } from '../../utils/pressureBands';
@@ -9,6 +9,7 @@ import { WorkspaceSubtabs } from '../shared/WorkspaceSubtabs';
 import { PublishedOperatingRecords } from './PublishedOperatingRecords';
 import { PublishedTrafficHistory } from './PublishedTrafficHistory';
 import { ObservedTrafficCharts } from './AnalyticsCharts';
+import { measuredChartData } from './analyticsChartData';
 import { RoadCoverageSummary } from './RoadCoverageSummary';
 import './OperationsAnalytics.css';
 
@@ -34,6 +35,21 @@ function timestamp(value: string | null | undefined): string {
     dateStyle: 'medium', timeStyle: 'medium', timeZone: 'Asia/Singapore',
   }).format(new Date(value))} SGT`;
 }
+
+function sampleClock(value: string): string {
+  if (!Number.isFinite(Date.parse(value))) return 'Unavailable';
+  return new Intl.DateTimeFormat('en-SG', {
+    hour: 'numeric', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Singapore',
+  }).format(new Date(value));
+}
+
+function sampleAge(value: number | null | undefined): string {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return 'Sample age unavailable';
+  return value < 60 ? `${Math.floor(value)}s old` : `${Math.floor(value / 60)}m ${Math.floor(value % 60)}s old`;
+}
+
+const PRESSURE_LABELS = { FREE_FLOW: 'Free flow', SLOWING: 'Slowing', HEAVY: 'Heavy', CRITICAL: 'Critical', UNAVAILABLE: 'Unavailable' };
+const speedFormat = new Intl.NumberFormat('en-SG', { maximumFractionDigits: 1 });
 
 export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
   operations, operationsSnapshot, corridors, ferryAndPortsContent, checkedAt, onRefresh,
@@ -90,6 +106,23 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
   const bottlenecks = observedTraffic ? operations.active_bottlenecks : null;
   const departures = apiAvailable ? operations.scheduled_ferry_departures_next_12h : null;
   const bottleneckNames = operations.bottleneck_corridors?.map(item => shortCorridorName(item.name)).join(' & ');
+  const samples = observedTraffic ? operations.current_traffic_samples ?? [] : [];
+  const measuredSpeeds = measuredChartData(samples).speeds.map(point => point.measured);
+  const lowestSpeed = measuredSpeeds.length ? Math.min(...measuredSpeeds) : null;
+  const highestSpeed = measuredSpeeds.length ? Math.max(...measuredSpeeds) : null;
+  const speedRange = lowestSpeed === null || highestSpeed === null ? null
+    : lowestSpeed === highestSpeed ? speedFormat.format(lowestSpeed) : `${speedFormat.format(lowestSpeed)}–${speedFormat.format(highestSpeed)}`;
+  const locations = samples.map(point => {
+    const qualified = measuredChartData([point]);
+    const locationPressure = qualified.classifiedCount ? pressureBandView(point) : null;
+    return {
+      point,
+      measured: qualified.speeds.length > 0,
+      pressure: locationPressure,
+      pressureValue: locationPressure ? point.pressure_index : null,
+    };
+  }).sort((left, right) => (right.pressureValue ?? -1) - (left.pressureValue ?? -1));
+  const highestPressure = locations.find(location => location.pressure);
 
   return (
     <div className="app-screen-layout operations-layout">
@@ -123,7 +156,7 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
                 <article className="glass-panel operations-metric-card">
                   <div className="operations-metric-card__label"><ChartColumn aria-hidden="true" size={ICON_SIZE.medium} /> Congestion pressure</div>
                   <div className="operations-metric-card__value" style={{ color: pressure?.color ?? 'var(--text-muted)' }}>{average ?? 'Unavailable'}{average !== null ? <span className="operations-metric-card__unit"> / 100</span> : null}</div>
-                  <p className="operations-metric-card__detail">{metadata?.observed_corridor_count ?? 0} fresh road points</p>
+                  <p className="operations-metric-card__detail">{observedTraffic ? `${metadata?.observed_corridor_count ?? 0} fresh road points` : 'Awaiting fresh observations'}</p>
                 </article>
                 <article className="glass-panel operations-metric-card">
                   <div className="operations-metric-card__label"><ShieldAlert aria-hidden="true" size={ICON_SIZE.medium} /> Observed Bottlenecks</div>
@@ -131,38 +164,68 @@ export const OperationsAnalytics: React.FC<OperationsAnalyticsProps> = ({
                   <p className="operations-metric-card__detail">{bottlenecks === null ? 'No measured congestion coverage.' : bottleneckNames || 'No measured points above threshold.'}</p>
                 </article>
                 <article className="glass-panel operations-metric-card">
+                  <div className="operations-metric-card__label"><Gauge aria-hidden="true" size={ICON_SIZE.medium} /> Measured speeds</div>
+                  <div className="operations-metric-card__value">{speedRange ?? 'Unavailable'}{speedRange !== null ? <span className="operations-metric-card__unit"> km/h</span> : null}</div>
+                  <p className="operations-metric-card__detail">{measuredSpeeds.length ? `${measuredSpeeds.length} measured road ${measuredSpeeds.length === 1 ? 'point' : 'points'}` : 'Awaiting fresh speed measurements'}</p>
+                </article>
+                <article className="glass-panel operations-metric-card">
                   <div className="operations-metric-card__label"><Ship aria-hidden="true" size={ICON_SIZE.medium} /> Published Departures</div>
                   <div className="operations-metric-card__value">{departures ?? 'Unavailable'}</div>
                   <p className="operations-metric-card__detail">Published timetable · next 12 hours</p>
                 </article>
-                <article className="glass-panel operations-metric-card">
-                  <div className="operations-metric-card__label"><Leaf aria-hidden="true" size={ICON_SIZE.medium} /> Measured Emissions Impact</div>
-                  <div className="operations-metric-card__value">Unavailable</div>
-                  <p className="operations-metric-card__detail">Awaiting measured emissions data</p>
-                </article>
               </section>
-              {apiAvailable && operations.road_network_coverage ? <RoadCoverageSummary
-                coverage={operations.road_network_coverage} estimates={operations.camera_traffic_summary} /> : null}
-              <ObservedTrafficCharts samples={observedTraffic ? operations.current_traffic_samples ?? [] : []}
-                expectedCount={metadata?.expected_corridor_count} />
-              {observedTraffic && operations.current_traffic_samples?.length ? (
-                <section className="glass-panel operations-chart-card">
-                  <h3>Current observed corridor points</h3>
+              <section className="glass-panel operations-live-roads" aria-labelledby="operations-live-roads-title">
+                <header className="operations-live-roads__header">
+                  <div><h3 id="operations-live-roads-title"><MapPinned aria-hidden="true" size={ICON_SIZE.medium} /> Live road conditions</h3>
+                    <p>Measured locations, highest pressure first.</p></div>
+                  <div className="operations-live-roads__coverage"><strong>{samples.length}{metadata?.expected_corridor_count ? ` of ${metadata.expected_corridor_count}` : ''} sampled road points</strong>
+                    <span><Clock3 aria-hidden="true" size={ICON_SIZE.small} />{observedTraffic ? `Oldest sample · ${sampleAge(metadata?.snapshot_age_seconds)}` : 'Awaiting fresh observations'}</span></div>
+                </header>
+                {highestPressure?.pressure ? <div className="operations-live-roads__highlight" style={{ borderColor: highestPressure.pressure.color }}>
+                  <span>Highest sampled pressure</span><strong>{shortCorridorName(highestPressure.point.name)}</strong>
+                  <span style={{ color: highestPressure.pressure.color }}>{highestPressure.pressureValue} / 100 · {PRESSURE_LABELS[highestPressure.pressure.condition]}</span>
+                </div> : null}
+                {locations.length ? <div className="operations-live-roads__table-wrap"><table className="operations-live-roads__table">
+                  <thead><tr><th scope="col">Road point</th><th scope="col">Congestion pressure</th><th scope="col">Measured speed</th><th scope="col">Observed (SGT)</th></tr></thead>
+                  <tbody>{locations.map(({ point, measured, pressure: locationPressure }) => <tr key={point.id}>
+                    <th scope="row">{shortCorridorName(point.name)}</th>
+                    <td><div className="operations-live-roads__pressure" style={{ color: locationPressure?.color ?? 'var(--text-muted)' }}>
+                      <strong>{locationPressure ? `${point.pressure_index} / 100` : 'Unavailable'}</strong><span>{locationPressure ? PRESSURE_LABELS[locationPressure.condition] : 'Unverified'}</span>
+                      <div className="operations-live-roads__track" aria-hidden="true"><span style={{ width: `${locationPressure ? point.pressure_index : 0}%`, background: locationPressure?.color }} /></div>
+                    </div></td>
+                    <td>{measured ? <><strong>{speedFormat.format(point.current_speed_kmh)} <small>km/h</small></strong><span className="operations-live-roads__muted">{speedFormat.format(point.free_flow_speed_kmh)} km/h free flow</span></> : <span className="operations-live-roads__muted">Unavailable</span>}</td>
+                    <td><time dateTime={point.as_of}>{sampleClock(point.as_of)}</time><span className="operations-live-roads__muted">{sampleAge(point.age_seconds)}</span></td>
+                  </tr>)}</tbody>
+                </table></div> : <p className="operations-live-roads__empty" role="status">Live road conditions are unavailable. Refresh data to check the sources.</p>}
+                <p className="operations-live-roads__scope">Sampled locations only · below 70 green · 70–79 amber · 80+ critical</p>
+              </section>
+              <ObservedTrafficCharts samples={samples} expectedCount={metadata?.expected_corridor_count} />
+              {samples.length ? (
+                <details className="glass-panel operations-chart-card operations-disclosure operations-source-readings">
+                  <summary>Source measurements <ChevronDown aria-hidden="true" size={ICON_SIZE.medium} /></summary>
                   <div className="operations-observed-table"><table><thead><tr><th>Corridor point</th><th>Measured speed</th><th>Free-flow speed</th><th>Measured congestion index</th><th>Snapshot (SGT)</th></tr></thead><tbody>
-                    {operations.current_traffic_samples.map(point => <tr key={point.id}><th>{shortCorridorName(point.name)}</th><td>{point.current_speed_kmh} km/h</td><td>{point.free_flow_speed_kmh} km/h</td><td>{point.score} / 100</td><td><time dateTime={point.as_of}>{timestamp(point.as_of)}</time></td></tr>)}
+                    {samples.map(point => <tr key={point.id}><th>{shortCorridorName(point.name)}</th><td>{point.current_speed_kmh} km/h</td><td>{point.free_flow_speed_kmh} km/h</td><td>{point.score} / 100</td><td><time dateTime={point.as_of}>{timestamp(point.as_of)}</time></td></tr>)}
                   </tbody></table></div>
-                </section>
+                </details>
               ) : null}
-              <PublishedOperatingRecords />
-              <section className="ui-card-shadow-hover official-evidence-panel" aria-labelledby="official-evidence-title">
-                <div className="official-evidence-heading"><h3 id="official-evidence-title">Batam Authority Operating Context</h3><span><Landmark aria-hidden="true" size={ICON_SIZE.medium} /> Primary-source references</span></div>
-                <p className="operations-reference-note">Open the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.</p>
-                <div className="official-evidence-grid">{OFFICIAL_SOURCE_LINKS.map(source => (
-                  <article key={source.url}>
-                    <div className="operations-alert__content"><a href={source.url} target="_blank" rel="noreferrer">{source.publisher} <ExternalLink aria-hidden="true" size={ICON_SIZE.medium} /></a></div>
-                  </article>
-                ))}</div>
-              </section>
+              <details className="operations-context operations-disclosure">
+                <summary className="glass-panel"><div><strong>Coverage & published context</strong><span>Map coverage, dated reports and official sources</span></div><ChevronDown aria-hidden="true" size={ICON_SIZE.medium} /></summary>
+                <div className="operations-section-stack">
+                  {apiAvailable && operations.road_network_coverage ? <RoadCoverageSummary
+                    coverage={operations.road_network_coverage} estimates={operations.camera_traffic_summary} /> : null}
+                  <PublishedOperatingRecords />
+                  <section className="ui-card-shadow-hover official-evidence-panel" aria-labelledby="official-evidence-title">
+                    <div className="official-evidence-heading"><h3 id="official-evidence-title">Batam Authority Operating Context</h3><span><Landmark aria-hidden="true" size={ICON_SIZE.medium} /> Primary-source references</span></div>
+                    <p className="operations-reference-note">Open the source for its reporting period and latest published totals. Historical report figures are not copied into current operational measurements.</p>
+                    <div className="official-evidence-grid">{OFFICIAL_SOURCE_LINKS.map(source => (
+                      <article key={source.url}>
+                        <div className="operations-alert__content"><a href={source.url} target="_blank" rel="noreferrer">{source.publisher} <ExternalLink aria-hidden="true" size={ICON_SIZE.medium} /></a></div>
+                      </article>
+                    ))}</div>
+                    <p className="operations-reference-note">Measured emissions impact: unavailable.</p>
+                  </section>
+                </div>
+              </details>
             </div>
           ) : null },
           { id: 'ferry-ports', label: 'Ports', content: visitedTabs.has('ferry-ports') ? ferryAndPortsContent ?? <p role="status">Ferry and port data is unavailable. Refresh data to reconnect.</p> : null },

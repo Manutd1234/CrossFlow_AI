@@ -729,6 +729,7 @@ class HistoryStore:
         if modelled_only:
             sources = sorted(_MODELLED_SOURCES)
             clause += " AND ts <= ? AND source IN (" + ",".join("?" for _ in sources) + ")"
+            clause += " AND typeof(score) IN ('integer','real') AND score >= 0 AND score <= 100"
             parameters.extend([int(effective_now.timestamp()), *sources])
         return effective_now, clause, parameters
 
@@ -868,6 +869,79 @@ class HistoryStore:
             },
         }
 
+    def get_modelled_analysis(
+        self,
+        corridor_id: str,
+        days: int = 7,
+        *,
+        now: Optional[datetime] = None,
+    ) -> Dict[str, Any]:
+        """Describe existing synthetic scenario samples; never generate rows.
+
+        All groups share one exact whitelist/window snapshot. The p10/p90
+        values describe empirical scenario spread, not predictive confidence.
+        Missing hours have no extrapolated values.
+        """
+        if type(days) is not int or not 1 <= days <= 30:
+            raise ValueError("Modelled analysis window must be 1..30 days.")
+        _, clause, parameters = self._history_selection(corridor_id, days, now, True)
+        rows = self._conn.execute(
+            f"SELECT ts, score FROM observations WHERE {clause} ORDER BY ts ASC", parameters,
+        ).fetchall()
+        selected = []
+        for epoch, score in rows:
+            if any(type(value) not in (int, float) or not math.isfinite(value) for value in (epoch, score)):
+                continue
+            if not 0 <= score <= 100:
+                continue
+            try:
+                stamp = datetime.fromtimestamp(epoch, tz=timezone.utc).astimezone(clock.BATAM_TZ)
+            except (ValueError, OverflowError, OSError):
+                continue
+            selected.append((stamp, float(score)))
+
+        def quantile(values, proportion):
+            if not values:
+                return None
+            ordered = sorted(values)
+            position = (len(ordered) - 1) * proportion
+            lower, upper = math.floor(position), math.ceil(position)
+            return round(ordered[lower] + (ordered[upper] - ordered[lower]) * (position - lower), 1)
+
+        def profile(samples):
+            hourly = []
+            for hour in range(24):
+                bucket = [(stamp, score) for stamp, score in samples if stamp.hour == hour]
+                scores = [score for _, score in bucket]
+                hourly.append({
+                    "hour": hour, "avg_score": round(sum(scores) / len(scores), 1) if scores else None,
+                    "p10_score": quantile(scores, .1), "p90_score": quantile(scores, .9),
+                    "sample_count": len(scores), "day_count": len({stamp.date() for stamp, _ in bucket}),
+                })
+            return {
+                "sample_count": len(samples), "day_count": len({stamp.date() for stamp, _ in samples}),
+                "hourly_profile": hourly,
+                "weighted_mean_score": round(sum(score for _, score in samples) / len(samples), 1) if samples else None,
+            }
+
+        return {
+            "version": "modelled_pattern_analysis_v1", "basis": "synthetic_scenario_samples", "observed": False,
+            "timezone": "Asia/Jakarta", "spread_method": "empirical_linear_interpolation",
+            "spread_interpretation": "descriptive_scenario_spread_not_calibrated_confidence",
+            "day_profiles": {
+                "all": profile(selected),
+                "weekday": profile([row for row in selected if row[0].weekday() < 5]),
+                "weekend": profile([row for row in selected if row[0].weekday() >= 5]),
+            },
+            "coverage": {
+                "sample_count": len(selected), "day_count": len({stamp.date() for stamp, _ in selected}),
+                "hour_count": len({stamp.hour for stamp, _ in selected}),
+                "first_sample_at": clock.iso(selected[0][0]) if selected else None,
+                "last_sample_at": clock.iso(selected[-1][0]) if selected else None,
+                "requested_days": days,
+            },
+        }
+
     def get_training_dataset(self) -> List[Dict[str, Any]]:
         rows = self._conn.execute(
             "SELECT ts, corridor, score, source FROM observations ORDER BY ts ASC"
@@ -934,6 +1008,15 @@ def get_history_metadata(
     modelled_only: bool = False,
 ) -> Dict[str, Any]:
     return _store.get_history_metadata(corridor_id, days, now=now, modelled_only=modelled_only)
+
+
+def get_modelled_analysis(
+    corridor_id: str,
+    days: int = 7,
+    *,
+    now: Optional[datetime] = None,
+) -> Dict[str, Any]:
+    return _store.get_modelled_analysis(corridor_id, days, now=now)
 
 
 def get_storage_metadata() -> Dict[str, Any]:

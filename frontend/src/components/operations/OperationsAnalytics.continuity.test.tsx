@@ -90,8 +90,7 @@ beforeEach(() => {
   vi.mocked(fetchRealTrafficForecast).mockImplementation(() => new Promise(() => {}));
   historyMock.mockResolvedValue(browserHistoryResult());
   modelStatusMock.mockResolvedValue(bundledModelResult);
-  vi.mocked(fetchAuthorityReports).mockResolvedValue({ status: 'unavailable', checked_at: null, fetched_at: null,
-    report: null, stored_reports: [], storage: { durable: false, scope: 'test' }, error: null });
+  vi.mocked(fetchAuthorityReports).mockImplementation(() => new Promise(() => {}));
   vi.mocked(requestAnalyticsSimulation).mockRejectedValue(new Error('Model service unavailable'));
 });
 
@@ -120,7 +119,92 @@ describe('operations provenance presentation', () => {
     current_traffic_samples: [{
       id: 'corridor-1', name: 'Measured road point', score: 20, as_of: referenceTime.toISOString(),
       age_seconds: 0, current_speed_kmh: 40, free_flow_speed_kmh: 50, provider_confidence: .9,
+      condition: 'HEAVY', condition_policy: 'observed_speed_loss_bands_v2',
+      pressure_index: 50, pressure_policy: 'congestion_pressure_v1', pressure_multiplier: 2.5,
+      pressure_condition: 'SLOWING', pressure_condition_policy: 'congestion_pressure_bands_v1',
     }],
+  });
+
+  it('puts actual location differences before map coverage and published reports', () => {
+    const operations = observedOperations();
+    operations.current_traffic_samples = [
+      { ...operations.current_traffic_samples![0], id: 'light', name: 'Light traffic point',
+        score: 8, current_speed_kmh: 46, condition: 'SLOWING', pressure_index: 20 },
+      { ...operations.current_traffic_samples![0], id: 'amber', name: 'Amber traffic point',
+        score: 28, current_speed_kmh: 36, pressure_index: 70, pressure_condition: 'HEAVY', age_seconds: 18 },
+      { ...operations.current_traffic_samples![0], id: 'critical', name: 'Critical traffic point',
+        score: 32, current_speed_kmh: 34, pressure_index: 80, pressure_condition: 'CRITICAL', age_seconds: 32 },
+    ];
+    operations.analytics_metadata = { ...operations.analytics_metadata!, observed_corridor_count: 3, snapshot_age_seconds: 32 };
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    const livePanel = container.querySelector('.operations-live-roads');
+    const rows = Array.from(livePanel!.querySelectorAll('tbody tr'));
+    expect(rows.map(row => row.querySelector('th')?.textContent))
+      .toEqual(['Critical traffic point', 'Amber traffic point', 'Light traffic point']);
+    expect(rows.map(row => row.querySelector('.operations-live-roads__pressure')?.textContent))
+      .toEqual(['80 / 100Critical', '70 / 100Heavy', '20 / 100Slowing']);
+    expect(rows[0].textContent).toContain('34 km/h50 km/h free flow');
+    expect(livePanel?.querySelector('.operations-live-roads__highlight')?.textContent)
+      .toContain('Highest sampled pressureCritical traffic point80 / 100 · Critical');
+    expect(livePanel?.textContent).toContain('3 of 5 sampled road points');
+    expect(livePanel?.textContent).toContain('Oldest sample · 32s old');
+    expect(rows[0].querySelector('time')?.dateTime).toBe(referenceTime.toISOString());
+    const speedCard = Array.from(container.querySelectorAll('.operations-metric-card'))
+      .find(card => card.querySelector('.operations-metric-card__label')?.textContent?.includes('Measured speeds'));
+    expect(speedCard?.querySelector('.operations-metric-card__value')?.textContent).toBe('34–46 km/h');
+    const context = container.querySelector('details.operations-context');
+    expect(context?.hasAttribute('open')).toBe(false);
+    expect(livePanel!.compareDocumentPosition(context!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(container.querySelector('details.operations-source-readings')?.hasAttribute('open')).toBe(false);
+    expect(operations.current_traffic_samples.map(point => point.score)).toEqual([8, 28, 32]);
+  });
+
+  it('keeps an unverified location neutral and genuine speed measurements visible', () => {
+    const operations = observedOperations();
+    operations.current_traffic_samples![0].pressure_condition_policy = undefined;
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    const livePanel = container.querySelector('.operations-live-roads');
+    expect(livePanel?.querySelector('.operations-live-roads__highlight')).toBeNull();
+    expect(livePanel?.querySelector('.operations-live-roads__pressure')?.textContent).toBe('UnavailableUnverified');
+    expect(livePanel?.querySelector('tbody')?.textContent).toContain('40 km/h50 km/h free flow');
+    expect(livePanel?.querySelector<HTMLElement>('.operations-live-roads__track > span')?.style.width).toBe('0%');
+  });
+
+  it('preserves an actual stopped-road speed of zero rather than treating it as missing', () => {
+    const operations = observedOperations();
+    Object.assign(operations.current_traffic_samples![0], { current_speed_kmh: 0, score: 95,
+      condition: 'CRITICAL', pressure_index: 100, pressure_condition: 'CRITICAL' });
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    const speedCard = Array.from(container.querySelectorAll('.operations-metric-card'))
+      .find(card => card.querySelector('.operations-metric-card__label')?.textContent?.includes('Measured speeds'));
+    expect(speedCard?.querySelector('.operations-metric-card__value')?.textContent).toBe('0 km/h');
+    expect(container.querySelector('.operations-live-roads tbody')?.textContent).toContain('0 km/h50 km/h free flow');
+    expect(container.querySelector('.operations-live-roads__pressure')?.textContent).toBe('100 / 100Critical');
+  });
+
+  it('never turns a camera proxy or offline payload into live location measurements', () => {
+    const operations = observedOperations();
+    operations.current_traffic_samples![0].condition = 'CAMERA_ESTIMATE';
+    const container = renderIntoDom(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />);
+    const row = container.querySelector('.operations-live-roads tbody tr');
+    expect(row?.querySelector('.operations-live-roads__pressure')?.textContent).toBe('UnavailableUnverified');
+    expect(row?.textContent).not.toContain('40 km/h');
+    act(() => root?.render(<OperationsAnalytics operations={operations}
+      operationsSnapshot={{ data: operations, source: 'offline', fetchedAt: referenceTime.toISOString() }}
+      corridors={INITIAL_CORRIDORS} />));
+    expect(container.querySelector('.operations-live-roads tbody')).toBeNull();
+    expect(container.querySelector('.operations-live-roads')?.textContent).toContain('0 of 5 sampled road points');
+    expect(container.querySelector('.operations-live-roads')?.textContent).toContain('Awaiting fresh observations');
+    expect(container.querySelector('.operations-live-roads')?.textContent).not.toContain('Measured road point');
+    expect(container.querySelector('.operations-metric-card__detail')?.textContent).toBe('Awaiting fresh observations');
   });
 
   it('shows the backend congestion pressure separately from unchanged measured values', () => {
@@ -131,7 +215,7 @@ describe('operations provenance presentation', () => {
     const headline = container.querySelector('.operations-metric-card');
     expect(headline?.querySelector('.operations-metric-card__label')?.textContent).toContain('Congestion pressure');
     expect(headline?.querySelector('.operations-metric-card__value')?.textContent).toBe('50 / 100');
-    const sourceTable = container.querySelector('.operations-observed-table');
+    const sourceTable = container.querySelector('.operations-source-readings .operations-observed-table');
     expect(sourceTable?.textContent).toContain('Measured congestion index');
     expect(sourceTable?.textContent).toContain('40 km/h');
     expect(sourceTable?.textContent).toContain('50 km/h');
@@ -159,7 +243,7 @@ describe('operations provenance presentation', () => {
       operationsSnapshot={{ data: operations, source: 'simulated', fetchedAt: referenceTime.toISOString() }}
       corridors={INITIAL_CORRIDORS} />);
     expect(container.querySelector('.operations-metric-card__value')?.textContent).toBe('Unavailable');
-    expect(container.querySelector('.operations-observed-table')?.textContent).toContain('20 / 100');
+    expect(container.querySelector('.operations-source-readings .operations-observed-table')?.textContent).toContain('20 / 100');
   });
 
   it.each([0, 100])('retains legitimate backend pressure %s within the published bounds', pressure => {
@@ -242,7 +326,7 @@ describe('operations provenance presentation', () => {
     expect(text).toContain('Congestion pressure');
     expect(markup).toContain('ui-card-shadow-hover official-evidence-panel');
     expect(text).toContain('Live operational measurements unavailable');
-    expect(text).toContain('Measured Emissions Impact');
+    expect(text).toContain('Measured emissions impact: unavailable.');
     expect(text).not.toContain('Modelled scenario to current hour');
     expect(text).toContain('Unavailable');
     expect(text).not.toContain('Model-Generated Dispatch Planning Alerts');
